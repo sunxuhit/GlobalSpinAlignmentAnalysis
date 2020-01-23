@@ -1,0 +1,23 @@
+# a comment - this is ignored
+# ignore share lib
+*/.sl*
+# ignore .consign, *.d, *.so, *.eps, *.swp, all the log file and script in StRoot
+*.swp
+temp_gccflags.c
+*/StRoot/**/.consign
+*/StRoot/**/*.d
+*/StRoot/**/*.so
+*/StRoot/**/*.eps
+*/StRoot/**/*.err
+*/StRoot/**/*.log
+*/StRoot/**/*.csh
+*/StRoot/**/*.swp
+*/*.swp
+*/temp_gccflags.c
+*/*_C.*
+*/macro/*_C.*
+
+TreeProduction/StRoot/CVS/
+TreeProduction/StRoot/StRefMultCorr/CVS/
+
+TreeProduction/submit/JOBS/
