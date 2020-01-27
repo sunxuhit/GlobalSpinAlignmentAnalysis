@@ -17,7 +17,12 @@ temp_gccflags.c
 */*_C.*
 */macro/*_C.*
 
+FileList/*/condor_failed.list
+FileList/*/pico_xrootd_resubmit.list
+
 TreeProduction/StRoot/CVS/
 TreeProduction/StRoot/StRefMultCorr/CVS/
-
-TreeProduction/submit/JOBS/
+TreeProduction/submit/*/JOBS/
+TreeProduction/submit/*/sched*
+TreeProduction/submit/*/*.session.xml
+TreeProduction/submit/*/Submitted/
