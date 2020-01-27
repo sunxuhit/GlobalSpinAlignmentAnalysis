@@ -206,63 +206,67 @@ int StVecMesonMaker::Make()
     return kStErr;
   }
 
-  // Event Information
-  const int runId = mPicoEvent->runId();
-  const int refMult = mPicoEvent->refMult();
-  const float vx    = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
-  const float vy    = mPicoEvent->primaryVertex().y();
-  const float vz    = mPicoEvent->primaryVertex().z();
-  const float vzVpd = mPicoEvent->vzVpd();
-  const float zdcX  = mPicoEvent->ZDCx();
-
-  // StRefMultCorr Cut & centrality
-  if(!mRefMultCorr)
+  // MinBias trigger
+  if( mVecMesonCut->isMinBias(mPicoEvent) )
   {
-    LOG_WARN << " No mRefMultCorr! Skip! " << endl;
-    return kStErr;
-  }
+    // Event Information
+    const int runId = mPicoEvent->runId();
+    const int refMult = mPicoEvent->refMult();
+    const float vx    = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
+    const float vy    = mPicoEvent->primaryVertex().y();
+    const float vz    = mPicoEvent->primaryVertex().z();
+    const float vzVpd = mPicoEvent->vzVpd();
+    const float zdcX  = mPicoEvent->ZDCx();
 
-  mRefMultCorr->init(runId);
-  if( !mVecMesonCut->isBES(mEnergy) ) mRefMultCorr->initEvent(refMult,vz,zdcX); // for 200 GeV
-  if( mVecMesonCut->isBES(mEnergy) ) mRefMultCorr->initEvent(refMult,vz,0.0); // for BES Energy
+    // StRefMultCorr Cut & centrality
+    if(!mRefMultCorr)
+    {
+      LOG_WARN << " No mRefMultCorr! Skip! " << endl;
+      return kStErr;
+    }
 
-  if(mRefMultCorr->isBadRun(runId))
-  {
-    LOG_ERROR << "Bad Run from StRefMultCorr! Skip!" << endm;
-    return kStErr;
-  }
+    mRefMultCorr->init(runId);
+    if( !mVecMesonCut->isBES(mEnergy) ) mRefMultCorr->initEvent(refMult,vz,zdcX); // for 200 GeV
+    if( mVecMesonCut->isBES(mEnergy) ) mRefMultCorr->initEvent(refMult,vz,0.0); // for BES Energy
 
-  const int cent9 = mRefMultCorr->getCentralityBin9(); // get Centrality9
-  const unsigned int nTracks = mPicoDst->numberOfTracks(); // get number of tracks
-  const unsigned int numOfBTofHits = mPicoDst->numberOfBTofHits(); // get number of tof hits
-  // const unsigned short numOfBTofHits = mPicoEvent->btofTrayMultiplicity();
-  const unsigned short numOfBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
+    if(mRefMultCorr->isBadRun(runId))
+    {
+      LOG_ERROR << "Bad Run from StRefMultCorr! Skip!" << endm;
+      return kStErr;
+    }
 
-  // vz sign
-  int vz_sign = 0; // 0 for -vz || 1 for vz
-  vz > 0.0 ? vz_sign = 1 : vz_sign = 0;
-  // if(vz > 0.0)
-  // {
-  //   vz_sign = 0;
-  // }
-  // else
-  // {
-  //   vz_sign = 1;
-  // }
+    const int cent9 = mRefMultCorr->getCentralityBin9(); // get Centrality9
+    const unsigned int nTracks = mPicoDst->numberOfTracks(); // get number of tracks
+    const unsigned int numOfBTofHits = mPicoDst->numberOfBTofHits(); // get number of tof hits
+    // const unsigned short numOfBTofHits = mPicoEvent->btofTrayMultiplicity();
+    const unsigned short numOfBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
 
-  if(mMode == 0)
-  {
-    mVecMesonHistoManager->Fill_EventQA_RefMult(refMult,cent9,numOfBTofHits,numOfBTofMatch,0);
-    mVecMesonHistoManager->Fill_EventQA_Vertex(vx,vy,vz,vzVpd,0);
-  }
+    // vz sign
+    int vz_sign = 0; // 0 for -vz || 1 for vz
+    vz > 0.0 ? vz_sign = 1 : vz_sign = 0;
+    // if(vz > 0.0)
+    // {
+    //   vz_sign = 0;
+    // }
+    // else
+    // {
+    //   vz_sign = 1;
+    // }
 
-  // Event Cut
-  if(mVecMesonCut->passEventCut(mPicoDst))
-  { 
     if(mMode == 0)
     {
-      mVecMesonHistoManager->Fill_EventQA_RefMult(refMult,cent9,numOfBTofHits,numOfBTofMatch,1);
-      mVecMesonHistoManager->Fill_EventQA_Vertex(vx,vy,vz,vzVpd,1);
+      mVecMesonHistoManager->Fill_EventQA_RefMult(refMult,cent9,numOfBTofHits,numOfBTofMatch,0);
+      mVecMesonHistoManager->Fill_EventQA_Vertex(vx,vy,vz,vzVpd,0);
+    }
+
+    // Event Cut
+    if(mVecMesonCut->passEventCut(mPicoDst))
+    { 
+      if(mMode == 0)
+      {
+	mVecMesonHistoManager->Fill_EventQA_RefMult(refMult,cent9,numOfBTofHits,numOfBTofMatch,1);
+	mVecMesonHistoManager->Fill_EventQA_Vertex(vx,vy,vz,vzVpd,1);
+      }
     }
   }
 
