@@ -22,7 +22,7 @@ namespace vmsa
 
   // track cut
   float const mSigScaleMap[NumBeamEnergy] = {1.0,1.0,1.0};
-  float const mDcaEPMax[NumBeamEnergy] = {3.0,1.0,1.0}; // for event plane reconstruction: 1.0 for BES
+  float const mDcaEPMax[NumBeamEnergy] = {3.0,3.0,3.0}; // for event plane reconstruction: 1.0 for BES
   float const mDcaTrMax = 1.0; // for pion, kaon, proton mDcaTrMax = 1.0 for flow
   float const mDcaTrMax_phi = 3.0; // for phi meson mDcaTrMax = 2.0 to fill a tree and apply an additional cut
   int const mHitsDedxMin = 5;

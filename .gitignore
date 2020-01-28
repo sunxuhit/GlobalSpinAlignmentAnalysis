@@ -17,7 +17,7 @@ temp_gccflags.c
 */*_C.*
 */macro/*_C.*
 
-FileList/*/condor_failed.list
+FileList/*/condor_*.list
 FileList/*/pico_xrootd_resubmit.list
 
 TreeProduction/StRoot/CVS/

@@ -147,6 +147,19 @@ int StVecMesonCut::getNnonprim()
   return mN_non_prim;
 }
 //---------------------------------------------------------------------------------
+float StVecMesonCut::getBeta(StPicoDst *picoDst, int i_track)
+{
+  float Beta = -999.9;
+  StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(i_track); // return ith track
+  int tofIndex = picoTrack->bTofPidTraitsIndex(); // return ToF PID traits
+  if(tofIndex >= 0)
+  {
+    StPicoBTofPidTraits *tofTrack = picoDst->btofPidTraits(tofIndex);
+    Beta = tofTrack->btofBeta();
+  }
+
+  return Beta;
+}
 
 float StVecMesonCut::getPrimaryMass2(StPicoDst *picoDst, int i_track)
 {
@@ -188,6 +201,36 @@ float StVecMesonCut::getGlobalMass2(StPicoDst *picoDst, int i_track)
   return Mass2;
 }
 
+bool StVecMesonCut::passTrackBasic(StPicoTrack *picoTrack)
+{
+  // nHitsFit cut
+  if(picoTrack->nHitsFit() < vmsa::mHitsFitTPCMin)
+  {
+    return kFALSE;
+  }
+
+  // nHitsRatio cut
+  if(picoTrack->nHitsMax() <= vmsa::mHitsMaxTPCMin)
+  {
+    return kFALSE;
+  }
+  if((float)picoTrack->nHitsFit()/(float)picoTrack->nHitsMax() < vmsa::mHitsRatioTPCMin)
+  {
+    return kFALSE;
+  }
+
+  // eta cut
+  // float eta = picoTrack->pMom().pseudoRapidity();
+  float eta = picoTrack->pMom().Eta();
+  if(fabs(eta) > vmsa::mEtaMax)
+  {
+    return kFALSE;
+  }
+
+  return kTRUE;
+}
+
+
 #if 0
 bool StVecMesonCut::passSigPionCut(StPicoTrack* track, float scale_nSigma_factor)
 {
@@ -220,35 +263,6 @@ bool StVecMesonCut::passSigProntonCut(StPicoTrack* track, float scale_nSigma_fac
 }
 
 //---------------------------------------------------------------------------------
-
-bool StVecMesonCut::passTrackBasic(StPicoTrack *track)
-{
-  // nHitsFit cut
-  if(track->nHitsFit() < vmsa::mHitsFitTPCMin)
-  {
-    return kFALSE;
-  }
-
-  // nHitsRatio cut
-  if(track->nHitsMax() <= vmsa::mHitsMaxTPCMin)
-  {
-    return kFALSE;
-  }
-  if((float)track->nHitsFit()/(float)track->nHitsMax() < vmsa::mHitsRatioTPCMin)
-  {
-    return kFALSE;
-  }
-
-  // eta cut
-  // float eta = track->pMom().pseudoRapidity();
-  float eta = track->pMom().Eta();
-  if(fabs(eta) > vmsa::mEtaMax)
-  {
-    return kFALSE;
-  }
-
-  return kTRUE;
-}
 
 bool StVecMesonCut::passTrackEP(StPicoTrack *track)
 {

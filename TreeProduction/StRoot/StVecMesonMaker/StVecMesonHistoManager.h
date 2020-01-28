@@ -2,6 +2,7 @@
 #define StVecMesonHistoManager_h
 
 #include "StMessMgr.h"
+#include "TVector3.h"
 
 class TH1F;
 class TH2F;
@@ -18,6 +19,9 @@ class StVecMesonHistoManager
     void Write_EventQA();
 
     void Init_TrackQA();
+    void Fill_TrackQA_Kinematics(TVector3 pMom, TVector3 gMom, int cutSelection);
+    void Fill_TrackQA_Quliaty(float gDca, int nHitsFit, int nHitsMax, int nHitsDEdx, int cutSelection);
+    void Fill_TrackQA_PID(float mom, short charge, float dEdx, float beta, float mass2, int cutSelection);
     void Write_TrackQA();
 
     /*
@@ -39,15 +43,17 @@ class StVecMesonHistoManager
     TH1F *h_mVertexZ[2];
     TH2F *h_mVertexXY[2];
     // Track Level:
-    TH1F *h_mPt[2];
-    TH1F *h_mEta[2];
-    TH1F *h_mPhi[2];
+    TH1F *h_mPrimPt[2];
+    TH1F *h_mPrimEta[2];
+    TH1F *h_mPrimPhi[2];
+    TH1F *h_mGlobPt[2];
+    TH1F *h_mGlobEta[2];
+    TH1F *h_mGlobPhi[2];
     TH1F *h_mDca[2];
     TH1F *h_mNHitsFit[2];
     TH1F *h_mNHitsRatio[2];
     TH1F *h_mNHitsDEdx[2];
     TH2F *h_mDEdxMom[2];
-    TH2F *h_mNSigmaPionMom[2];
     TH2F *h_mBetaMom[2];
     TH2F *h_mMass2Mom[2];
 

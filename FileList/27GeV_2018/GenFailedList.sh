@@ -8,34 +8,36 @@ then
   Energy=27GeV_2018
   SM=SE
   Mode=QA
+  JobId=F71366636E18534506106F32B39E062D #generate faild list for this Job
 
   OutPutDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/$Energy"
   SubmitDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/TreeProduction/submit/$Energy/JOBS/list"
 
   LogDirectory="/star/u/sunxuhit/AuAu$Energy/Log"
 
-  CompletedList="$OutPutDir/condor_completed.list"
+  CompletedList="$OutPutDir/condor_completed_${Mode}_${SM}_${JobId}.list"
   rm $CompletedList
   touch $CompletedList
   cd $LogDirectory
-  grep -l "exiting normally" *${SM}*.out | sort > $CompletedList
+  # grep -l "exiting normally" *${JOBS}*.out | sort > $CompletedList
+  grep -l "Work done" *${JobId}*.out | sort > $CompletedList
   cd $OutPutDir
   sed -i 's/QA_SE_/sched/g' $CompletedList
   sed -i 's/out/list/g' $CompletedList
 
-  SubmittedList="$OutPutDir/condor_submitted.list"
+  SubmittedList="$OutPutDir/condor_submitted_${Mode}_${SM}_${JobId}.list"
   rm $SubmittedList
   touch $SubmittedList
   cd $SubmitDir
-  ls -d sched*.list | sort > $SubmittedList
+  ls -d *${JobId}*.list | sort > $SubmittedList
   cd $OutPutDir
 
-  FailedList="$OutPutDir/condor_failed.list"
+  FailedList="$OutPutDir/condor_failed_${Mode}_${SM}_${JobId}.list"
   rm $FailedList
   touch $FailedList
   comm -13 $CompletedList $SubmittedList > $FailedList
-  rm $SubmittedList
-  rm $CompletedList
+  # rm $SubmittedList
+  # rm $CompletedList
 
   ResubmitList="$OutPutDir/pico_xrootd_resubmit.list"
   rm $ResubmitList

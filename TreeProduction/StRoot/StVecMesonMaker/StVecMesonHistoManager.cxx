@@ -21,6 +21,7 @@ StVecMesonHistoManager::~StVecMesonHistoManager()
 }
 
 //-------------------------------------------------------------------------------------------
+//Event QA
 void StVecMesonHistoManager::Init_EventQA()
 {
   for(int i_cut = 0; i_cut < 2; ++i_cut)
@@ -82,6 +83,109 @@ void StVecMesonHistoManager::Write_EventQA()
     h_mDiffVzVzVpd[i_cut]->Write();
   }
 }
+//-------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------
+//Track QA
+void StVecMesonHistoManager::Init_TrackQA()
+{
+  for(int i_cut = 0; i_cut < 2; ++i_cut)
+  {
+    std::string HistName = Form("h_mPrimPt_%s",mCutsQA[i_cut].c_str());
+    h_mPrimPt[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),1000,-0.5,49.5);
+
+    HistName = Form("h_mPrimEta_%s",mCutsQA[i_cut].c_str());
+    h_mPrimEta[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),205,-2.05,2.05);
+
+    HistName = Form("h_mPrimPhi_%s",mCutsQA[i_cut].c_str());
+    h_mPrimPhi[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),720,-TMath::TwoPi(),TMath::TwoPi());
+
+    HistName = Form("h_mGlobPt_%s",mCutsQA[i_cut].c_str());
+    h_mGlobPt[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),1000,-0.5,49.5);
+
+    HistName = Form("h_mGlobEta_%s",mCutsQA[i_cut].c_str());
+    h_mGlobEta[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),205,-2.05,2.05);
+
+    HistName = Form("h_mGlobPhi_%s",mCutsQA[i_cut].c_str());
+    h_mGlobPhi[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),720,-TMath::TwoPi(),TMath::TwoPi());
+
+    HistName = Form("h_mDca_%s",mCutsQA[i_cut].c_str());
+    h_mDca[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),100,-0.1,4.9);
+
+    HistName = Form("h_mNHitsFit_%s",mCutsQA[i_cut].c_str());
+    h_mNHitsFit[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),50,-0.5,49.5);
+
+    HistName = Form("h_mNHitsRatio_%s",mCutsQA[i_cut].c_str());
+    h_mNHitsRatio[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),120,-0.05,1.15);
+
+    HistName = Form("h_mNHitsDEdx_%s",mCutsQA[i_cut].c_str());
+    h_mNHitsDEdx[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),50,-0.5,49.5);
+
+    HistName = Form("h_mDEdxMom_%s",mCutsQA[i_cut].c_str());
+    h_mDEdxMom[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),450,-4.5,4.5,400,0,40);
+
+    HistName = Form("h_mMass2Mom_%s",mCutsQA[i_cut].c_str());
+    h_mMass2Mom[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),450,-4.5,4.5,200,-0.3,1.7);
+
+    HistName = Form("h_mBetaMom_%s",mCutsQA[i_cut].c_str());
+    h_mBetaMom[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),450,-4.5,4.5,300,0.0,3.0);
+  }
+}
+
+void StVecMesonHistoManager::Fill_TrackQA_Kinematics(TVector3 pMom, TVector3 gMom, int cutSelection)
+{
+  h_mPrimPt[cutSelection]->Fill(pMom.Pt()); 
+  h_mPrimEta[cutSelection]->Fill(pMom.Eta()); 
+  h_mPrimPhi[cutSelection]->Fill(pMom.Phi()); 
+
+  h_mGlobPt[cutSelection]->Fill(gMom.Pt()); 
+  h_mGlobEta[cutSelection]->Fill(gMom.Eta()); 
+  h_mGlobPhi[cutSelection]->Fill(gMom.Phi()); 
+}
+
+void StVecMesonHistoManager::Fill_TrackQA_Quliaty(float gDca, int nHitsFit, int nHitsMax, int nHitsDEdx, int cutSelection)
+{
+  h_mDca[cutSelection]->Fill(gDca); 
+  h_mNHitsFit[cutSelection]->Fill(nHitsFit); 
+  if(nHitsMax > 0)
+  {
+    float nHitsRatio = (float)nHitsFit/(float)nHitsMax;
+    h_mNHitsRatio[cutSelection]->Fill(nHitsRatio); 
+  }
+  else
+  {
+    h_mNHitsRatio[cutSelection]->Fill(-0.01); 
+  }
+  h_mNHitsDEdx[cutSelection]->Fill(nHitsDEdx); 
+}
+
+void StVecMesonHistoManager::Fill_TrackQA_PID(float mom, short charge, float dEdx, float beta, float mass2, int cutSelection)
+{
+  h_mDEdxMom[cutSelection]->Fill(mom*charge, dEdx); 
+  h_mMass2Mom[cutSelection]->Fill(mom*charge, mass2); 
+  h_mBetaMom[cutSelection]->Fill(mom*charge, 1.0/beta); 
+}
+
+void StVecMesonHistoManager::Write_TrackQA()
+{
+  for(int i_cut = 0; i_cut < 2; ++i_cut)
+  {
+    h_mPrimPt[i_cut]->Write(); 
+    h_mPrimEta[i_cut]->Write(); 
+    h_mPrimPhi[i_cut]->Write(); 
+    h_mGlobPt[i_cut]->Write(); 
+    h_mGlobEta[i_cut]->Write(); 
+    h_mGlobPhi[i_cut]->Write(); 
+    h_mDca[i_cut]->Write(); 
+    h_mNHitsFit[i_cut]->Write(); 
+    h_mNHitsRatio[i_cut]->Write(); 
+    h_mNHitsDEdx[i_cut]->Write(); 
+    h_mDEdxMom[i_cut]->Write(); 
+    h_mMass2Mom[i_cut]->Write(); 
+    h_mBetaMom[i_cut]->Write(); 
+  }
+}
+//-------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------
 /*

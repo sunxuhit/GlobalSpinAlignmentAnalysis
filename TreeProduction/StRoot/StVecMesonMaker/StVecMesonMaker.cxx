@@ -83,6 +83,7 @@ int StVecMesonMaker::Init()
     mFile_QA= new TFile(mOutPut_QA.c_str(),"RECREATE");
     mFile_QA->cd();
     mVecMesonHistoManager->Init_EventQA();
+    mVecMesonHistoManager->Init_TrackQA();
   }
 
   if(mMode == 1)
@@ -132,6 +133,7 @@ int StVecMesonMaker::Finish()
     {
       mFile_QA->cd();
       mVecMesonHistoManager->Write_EventQA();
+      mVecMesonHistoManager->Write_TrackQA();
       mFile_QA->Close();
     }
   }
@@ -253,19 +255,50 @@ int StVecMesonMaker::Make()
     //   vz_sign = 1;
     // }
 
+    // fill QA before event cuts
     if(mMode == 0)
     {
-      mVecMesonHistoManager->Fill_EventQA_RefMult(refMult,cent9,numOfBTofHits,numOfBTofMatch,0);
+      mVecMesonHistoManager->Fill_EventQA_RefMult(refMult,cent9,numOfBTofHits,numOfBTofMatch,0); // wo event cut
       mVecMesonHistoManager->Fill_EventQA_Vertex(vx,vy,vz,vzVpd,0);
     }
 
-    // Event Cut
+    // apply Event Cuts for anlaysis
     if(mVecMesonCut->passEventCut(mPicoDst))
     { 
       if(mMode == 0)
       {
-	mVecMesonHistoManager->Fill_EventQA_RefMult(refMult,cent9,numOfBTofHits,numOfBTofMatch,1);
+	mVecMesonHistoManager->Fill_EventQA_RefMult(refMult,cent9,numOfBTofHits,numOfBTofMatch,1); // with event cut
 	mVecMesonHistoManager->Fill_EventQA_Vertex(vx,vy,vz,vzVpd,1);
+	for(unsigned int i_track = 0; i_track < nTracks; i_track++) // track loop
+	{
+	  StPicoTrack *picoTrack = (StPicoTrack*)mPicoDst->track(i_track);
+	  if(!picoTrack)
+	  {
+	    continue;
+	  }
+
+	  // get pico track info
+	  TVector3 primMom = picoTrack->pMom();
+	  TVector3 globMom = picoTrack->gMom();
+	  float gDCA       = picoTrack->gDCA(vx,vy,vz);
+	  int nHitsFit     = picoTrack->nHitsFit();
+	  int nHitsMax     = picoTrack->nHitsMax();
+	  int nHitsDEdx    = picoTrack->nHitsDedx();
+	  float dEdx       = picoTrack->dEdx();
+	  short charge     = picoTrack->charge();
+	  float beta       = mVecMesonCut->getBeta(mPicoDst,i_track);
+	  float mass2      = mVecMesonCut->getPrimaryMass2(mPicoDst,i_track);
+
+	  mVecMesonHistoManager->Fill_TrackQA_Kinematics(primMom,globMom, 0); // wo track cut
+	  mVecMesonHistoManager->Fill_TrackQA_Quliaty(gDCA,nHitsFit,nHitsMax,nHitsDEdx,0);
+	  mVecMesonHistoManager->Fill_TrackQA_PID(primMom.Mag(),charge,dEdx,beta,mass2,0);
+	  if( mVecMesonCut->passTrackBasic(picoTrack) ) // apply basic track cut
+	  {
+	    mVecMesonHistoManager->Fill_TrackQA_Kinematics(primMom,globMom, 1); // wo track cut
+	    mVecMesonHistoManager->Fill_TrackQA_Quliaty(gDCA,nHitsFit,nHitsMax,nHitsDEdx,1);
+	    mVecMesonHistoManager->Fill_TrackQA_PID(primMom.Mag(),charge,dEdx,beta,mass2,1);
+	  }
+	}
       }
     }
   }
