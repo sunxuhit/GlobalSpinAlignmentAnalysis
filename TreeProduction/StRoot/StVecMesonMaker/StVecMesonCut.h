@@ -31,9 +31,9 @@ class StVecMesonCut : public TObject
     float getGlobalMass2(StPicoDst*, int); // return m^2 of i-th track (global || -999)
 
   private:
-    int mMatchedToF;
-    int mN_prim;
-    int mN_non_prim;
+    // int mMatchedToF;
+    // int mN_prim;
+    // int mN_non_prim;
     int mEnergy;
 
     ClassDef(StVecMesonCut,1)

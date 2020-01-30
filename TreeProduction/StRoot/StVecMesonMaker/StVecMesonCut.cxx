@@ -10,6 +10,8 @@
 #include "StRoot/StVecMesonMaker/StVecMesonCut.h"
 #include "StRoot/StVecMesonMaker/StVecMesonCons.h"
 
+#include "TVector3.h"
+
 ClassImp(StVecMesonCut)
 
 //---------------------------------------------------------------------------------
@@ -34,7 +36,7 @@ bool StVecMesonCut::isMinBias(StPicoEvent *picoEvent)
   // std::cout << "year: " << picoEvent->year() << std::endl;
   // std::cout << "day: " << picoEvent->day() << std::endl;
   // std::cout << "triggerIds: " << picoEvent->triggerIds()[0] << std::endl;
-  if(mEnergy == 1 && vmsa::mBeamYear[mEnergy] == picoEvent->year() && !( picoEvent->isTrigger(580001) || picoEvent->isTrigger(580011) || picoEvent->isTrigger(580021) )) return false; // 54GeV_2017
+  if(mEnergy == 1 && vmsa::mBeamYear[mEnergy] == picoEvent->year() && !( picoEvent->isTrigger(580001) || picoEvent->isTrigger(580021) )) return false; // 54GeV_2017 | 580011 ?
   if(mEnergy == 2 && vmsa::mBeamYear[mEnergy] == picoEvent->year() && !( picoEvent->isTrigger(610001) || picoEvent->isTrigger(610011) || picoEvent->isTrigger(610021) || picoEvent->isTrigger(610031) || picoEvent->isTrigger(610041) || picoEvent->isTrigger(610051) )) return false; // 27GeV_2018
 
   return true;
@@ -71,60 +73,42 @@ bool StVecMesonCut::passEventCut(StPicoDst *picoDst)
     return kFALSE;
   }
   // vr cut
-  if(sqrt(vx*vx+vy*vy) > vmsa::mVrMax)
+  if(sqrt(vx*vx+vy*vy) > vmsa::mVrMax[mEnergy])
   {
     return kFALSE;
   }
   // vz-vzVpd cut
-  if(fabs(vz-vzVpd) > vmsa::mVzVpdDiffMax)
+  if(fabs(vz-vzVpd) > vmsa::mVzVpdDiffMax[mEnergy])
   {
     return kFALSE;
   }
 
-  // initialize mMatchedToF
-  mMatchedToF = 0;
-  mN_prim = 0;
-  mN_non_prim = 0;
-
-  // ToF matched points cut
-  int nMatchedToF = 0;
-  int nN_prim = 0;
-  int nN_non_prim = 0;
-  const int nTracks = picoDst->numberOfTracks();
-  for(int i_track = 0; i_track < nTracks; ++i_track)
-  {
-    StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(i_track);
-    if(!picoTrack)
-    {
-      continue;
-    }
-    if(picoTrack->gDCA(vx,vy,vz) > 3) // global track
-    {
-      nN_non_prim++;
-    }
-    else
-    {
-      nN_prim++;
-      int tofIndex = picoTrack->bTofPidTraitsIndex();
-      if(tofIndex >= 0)
-      {
-	StPicoBTofPidTraits *tofTrack = picoDst->btofPidTraits(tofIndex);
-	if(tofTrack->btofMatchFlag() > 0 && tofTrack->btof() != 0 && tofTrack->btofBeta() != 0)
-	{
-	  nMatchedToF++;
-	}
-      }
-    }
-  }
-
-  mMatchedToF = nMatchedToF;
-  mN_prim = nN_prim;
-  mN_non_prim = nN_non_prim;
-
+  // ToF Match & ToF Hits cut
+  const int refMult = picoEvent->refMult();
   const unsigned short numOfBTofMatch = picoEvent->nBTOFMatch();
-  if(numOfBTofMatch < vmsa::mMatchedToFMin)
+  const unsigned int numOfBTofHits = picoDst->numberOfBTofHits(); // get number of tof hits
+  if(numOfBTofMatch <= vmsa::mMatchedToFMin[mEnergy])
   {
     return kFALSE;
+  }
+
+  if(mEnergy == 1) // ToF Hits vs RefMult cut for 54 GeV
+  { // from Shaowei Lan
+    float tofHits_low = (float)refMult*2.88 - 155.0;
+    if( numOfBTofHits < tofHits_low )
+    {
+      return kFALSE;
+    }
+  }
+
+  if(mEnergy == 2) // ToF Match vs. RefMult cut for 27 GeV
+  { // from Zaochen Ye
+    float tofMatch_up = (float)refMult*1.8 + 15.0;
+    float tofMatch_low = (float)refMult*0.75 - 20.0;
+    if( numOfBTofMatch > tofMatch_up || numOfBTofMatch < tofMatch_low )
+    {
+      return kFALSE;
+    }
   }
 
   return kTRUE;
@@ -132,6 +116,7 @@ bool StVecMesonCut::passEventCut(StPicoDst *picoDst)
 
 //---------------------------------------------------------------------------------
 
+/*
 int StVecMesonCut::getMatchedToF()
 {
   return mMatchedToF;
@@ -146,6 +131,7 @@ int StVecMesonCut::getNnonprim()
 {
   return mN_non_prim;
 }
+*/
 //---------------------------------------------------------------------------------
 float StVecMesonCut::getBeta(StPicoDst *picoDst, int i_track)
 {
@@ -170,7 +156,14 @@ float StVecMesonCut::getPrimaryMass2(StPicoDst *picoDst, int i_track)
   {
     StPicoBTofPidTraits *tofTrack = picoDst->btofPidTraits(tofIndex);
     float Beta = tofTrack->btofBeta();
-    float Momentum = picoTrack->pMom().Mag(); // primary momentum
+    // float Momentum = picoTrack->pMom().mag(); // primary momentum for 54GeV_2017
+    // float Momentum = picoTrack->pMom().Mag(); // primary momentum for 27GeV_2018
+    TVector3 primMom; // temp fix for StThreeVectorF & TVector3
+    float primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
+    float primPy    = picoTrack->pMom().y();
+    float primPz    = picoTrack->pMom().z();
+    primMom.SetXYZ(primPx,primPy,primPz);
+    float Momentum = primMom.Mag(); // primary momentum
 
     if(tofTrack->btofMatchFlag() > 0 && tofTrack->btof() != 0 && Beta != 0)
     {
@@ -190,7 +183,14 @@ float StVecMesonCut::getGlobalMass2(StPicoDst *picoDst, int i_track)
   {
     StPicoBTofPidTraits *tofTrack = picoDst->btofPidTraits(tofIndex);
     float Beta = tofTrack->btofBeta();
-    float Momentum = picoTrack->gMom().Mag(); // global momentum
+    // float Momentum = picoTrack->gMom().mag(); // global momentum for 54GeV_2017
+    // float Momentum = picoTrack->gMom().Mag(); // global momentum for 27GeV_2018
+    TVector3 globMom; // temp fix for StThreeVectorF & TVector3
+    float globPx     = picoTrack->gMom().x(); // x works for both TVector3 and StThreeVectorF
+    float globPy     = picoTrack->gMom().y();
+    float globPz     = picoTrack->gMom().z();
+    globMom.SetXYZ(globPx,globPy,globPz);
+    float Momentum = globMom.Mag(); // global momentum
 
     if(tofTrack->btofMatchFlag() > 0 && tofTrack->btof() != 0 && Beta != 0)
     {
@@ -221,7 +221,13 @@ bool StVecMesonCut::passTrackBasic(StPicoTrack *picoTrack)
 
   // eta cut
   // float eta = picoTrack->pMom().pseudoRapidity();
-  float eta = picoTrack->pMom().Eta();
+  // float eta = picoTrack->pMom().PseudoRapidity();
+  TVector3 primMom; // temp fix for StThreeVectorF & TVector3
+  float primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
+  float primPy    = picoTrack->pMom().y();
+  float primPz    = picoTrack->pMom().z();
+  primMom.SetXYZ(primPx,primPy,primPz);
+  float eta = primMom.PseudoRapidity();
   if(fabs(eta) > vmsa::mEtaMax)
   {
     return kFALSE;

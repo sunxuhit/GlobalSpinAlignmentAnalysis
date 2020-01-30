@@ -278,8 +278,20 @@ int StVecMesonMaker::Make()
 	  }
 
 	  // get pico track info
-	  TVector3 primMom = picoTrack->pMom();
-	  TVector3 globMom = picoTrack->gMom();
+	  // TVector3 primMom = picoTrack->pMom();
+	  // TVector3 globMom = picoTrack->gMom();
+	  TVector3 primMom;
+	  float primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
+	  float primPy    = picoTrack->pMom().y();
+	  float primPz    = picoTrack->pMom().z();
+	  primMom.SetXYZ(primPx,primPy,primPz);
+
+	  TVector3 globMom;
+	  float globPx     = picoTrack->gMom().x(); // x works for both TVector3 and StThreeVectorF
+	  float globPy     = picoTrack->gMom().y();
+	  float globPz     = picoTrack->gMom().z();
+	  globMom.SetXYZ(globPx,globPy,globPz);
+
 	  float gDCA       = picoTrack->gDCA(vx,vy,vz);
 	  int nHitsFit     = picoTrack->nHitsFit();
 	  int nHitsMax     = picoTrack->nHitsMax();

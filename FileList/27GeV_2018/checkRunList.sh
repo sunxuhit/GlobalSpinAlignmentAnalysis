@@ -13,7 +13,7 @@ then
   OutPutDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/$Energy"
   SubmitDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/TreeProduction/submit/$Energy/JOBS/list"
 
-  CompletedList="$OutPutDir/condor_completed_${Mode}_${SM}.list"
+  CompletedList="$OutPutDir/pico_xrootd_completed_${Mode}_${SM}.list"
   rm $CompletedList
   touch $CompletedList
 
@@ -33,7 +33,7 @@ then
   # sort -t '/' -k 16 pico_xrootd_production.list > $TempList
   sort pico_xrootd_production.list > $TempList
 
-  FailedList="$OutPutDir/condor_failed_${Mode}_${SM}.list"
+  FailedList="$OutPutDir/pico_xrootd_failed_${Mode}_${SM}.list"
   rm $FailedList
   touch $FailedList
   comm -13 $CompletedList $TempList > $FailedList

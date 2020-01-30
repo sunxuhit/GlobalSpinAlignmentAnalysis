@@ -15,10 +15,10 @@ namespace vmsa
   int const mBeamYear[NumBeamEnergy] = {2014,2017,2018};
 
   // event cut
-  float const mVzMaxMap[NumBeamEnergy] = {150.0,150.0,150.0}; // 0: 27GeV_2018 | 1: 54GeV_2017
-  float const mVrMax = 20.0;
-  float const mVzVpdDiffMax = 10.0; // 3.0
-  unsigned int const mMatchedToFMin = 0; // 2
+  float const mVzMaxMap[NumBeamEnergy] = {150.0,40.0,70.0}; // 0: 200GeV_2014 | 1: 54GeV_2017 | 2: 27GeV_2018 
+  float const mVrMax[NumBeamEnergy] = {2.0,2.0,2.0};
+  float const mVzVpdDiffMax[NumBeamEnergy] = {3.0,3.0,3.0}; // 3.0
+  unsigned int const mMatchedToFMin[NumBeamEnergy] = {2,2,2}; // 2
 
   // track cut
   float const mSigScaleMap[NumBeamEnergy] = {1.0,1.0,1.0};

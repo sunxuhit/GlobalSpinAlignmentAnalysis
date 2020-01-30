@@ -42,10 +42,10 @@ void StVecMesonHistoManager::Init_EventQA()
     h_mVertexXY[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),201,-10.05,10.05,201,-10.05,10.05);
 
     HistName = Form("h_mVertexZ_%s",mCutsQA[i_cut].c_str());
-    h_mVertexZ[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),201,-100.5,100.5);
+    h_mVertexZ[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),301,-150.5,150.5);
 
     HistName = Form("h_mVzVzVpd_%s",mCutsQA[i_cut].c_str());
-    h_mVzVzVpd[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),201,-100.5,100.5,201,-100.5,100.5);
+    h_mVzVzVpd[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),301,-150.5,150.5,301,-150.5,150.5);
 
     HistName = Form("h_mDiffVzVzVpd_%s",mCutsQA[i_cut].c_str());
     h_mDiffVzVzVpd[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),201,-10.05,10.05);
