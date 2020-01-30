@@ -1,0 +1,1 @@
+root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/27GeV_production_2018/ReversedFullField/P19ib/2018/134/19134030/st_physics_19134030_raw_1000002.picoDst.root

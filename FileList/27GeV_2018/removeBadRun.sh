@@ -12,14 +12,16 @@ then
   FullPicoList="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/27GeV_2018/pico_xrootd_full.list"
 
   BadRunIdList="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/27GeV_2018/badRunStRefMultCorr.txt"
+  BadPicoList="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/27GeV_2018/badPico.txt"
 
   BadRunTempList="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/27GeV_2018/pico_xrootd_badRun_temp.list"
   rm $BadRunTempList
   touch $BadRunTempList
-  for item in `cat $BadRunIdList`
+  for item in `cat $BadRunIdList` # get picos with bad run Id
   do
     cat $FullPicoList | grep $item >> $BadRunTempList
   done
+  cat $BadPicoList >> $BadRunTempList # get bad picos identfied through the QA test
 
   BadRunPicoList="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/27GeV_2018/pico_xrootd_badRun.list"
   rm $BadRunPicoList

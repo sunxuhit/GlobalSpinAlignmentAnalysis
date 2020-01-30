@@ -8,7 +8,7 @@ then
   Energy=27GeV_2018
   SM=SE
   Mode=QA
-  JobId=F71366636E18534506106F32B39E062D #clean faild run for this Job
+  JobId=09DDC6912DF49AF532AB39B70796C8FA #generate faild list for this Job
 
   FileDirectory="/star/u/sunxuhit/AuAu$Energy/SpinAlignment/$Mode"
 
@@ -20,7 +20,7 @@ then
   do
     echo deleting $FileDirectory/$item
     ls $FileDirectory/$item
-    # rm $FileDirectory/$item
+    rm $FileDirectory/$item
   done
   # rm $FailedList
 

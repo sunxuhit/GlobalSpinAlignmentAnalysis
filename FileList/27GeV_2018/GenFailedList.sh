@@ -8,7 +8,7 @@ then
   Energy=27GeV_2018
   SM=SE
   Mode=QA
-  JobId=F71366636E18534506106F32B39E062D #generate faild list for this Job
+  JobId=09DDC6912DF49AF532AB39B70796C8FA #generate faild list for this Job
 
   OutPutDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/$Energy"
   SubmitDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/TreeProduction/submit/$Energy/JOBS/list"
@@ -54,10 +54,6 @@ then
   # generate failed ROOT output list
   sed -i "s/sched/file_"$Energy"_"$Mode"_/g" $FailedList
   sed -i "s/list/root/g" $FailedList
-
-
-  # TempList="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/$Energy/Temp_"$Energy".list"
-  # cut -d '/' -f 7 $InPutList | sort | uniq > $TempList
 
 else
   echo "Wrong number of parameters"
