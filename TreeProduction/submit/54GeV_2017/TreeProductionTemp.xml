@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<job minFilesPerProcess="100" filesPerHour="25" maxFilesPerProcess="150" fileListSyntax="xrootd" simulateSubmission="false">
+
+  <command>
+    starver &library;
+    cons
+    root4star -l -b -q VecMesonTree.C\(\"$FILELIST\",\"$JOBID\",&mode;,&energy;,&flag_ME;\)
+  </command>
+
+  <SandBox installer="ZIP">
+    <Package>
+      <File>file:&codePath;/VecMesonTree.C</File>
+      <File>file:&codePath;/StRoot</File>
+    </Package>
+  </SandBox>
+
+  <input URL="filelist:&listPath;/pico_xrootd_production.list" />
+  <stdout URL="file:&outPath;/Log/&outDir;_&SM;_$JOBID.out"/>
+  <stderr URL="file:&outPath;/Log/&outDir;_&SM;_$JOBID.err"/>
+
+  <Generator>
+    <ReportLocation>./JOBS/report/</ReportLocation>
+    <ScriptLocation>./JOBS/csh/</ScriptLocation>
+    <ListLocation>./JOBS/list/</ListLocation>
+  </Generator>
+
+  <output fromScratch="*.root" toURL="file:&outPath;/SpinAlignment/&outDir;/" />
+
+</job>
+
