@@ -1,14 +1,14 @@
 #!/bin/bash
 date
 
-#. ./VecMesonTree.sh
+#. ./genFailedList.sh
 
 if [ $# -eq 0 ]
 then
   Energy=27GeV_2018
   SM=SE
   Mode=QA
-  JobId=09DDC6912DF49AF532AB39B70796C8FA #generate faild list for this Job
+  JobId=3D4900EE67D6DE4E3B8390DBCA82B0D9 #generate faild list for this Job
 
   OutPutDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/$Energy"
   SubmitDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/TreeProduction/submit/$Energy/JOBS/list"

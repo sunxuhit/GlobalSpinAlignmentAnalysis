@@ -10,6 +10,7 @@
 #include "StRoot/StVecMesonMaker/StVecMesonMaker.h"
 #include "StRoot/StVecMesonMaker/StVecMesonCut.h"
 #include "StRoot/StVecMesonMaker/StVecMesonHistoManager.h"
+#include "StRoot/StVecMesonMaker/StVecMesonUtility.h"
 // #include "StRoot/StVecMesonMaker/StVecMesonProManger.h"
 // #include "StRoot/StVecMesonMaker/StVecMesonCorr.h"
 // #include "StRoot/StVecMesonMaker/StVecMesonTree.h"
@@ -75,6 +76,8 @@ int StVecMesonMaker::Init()
   }
   mVecMesonCut = new StVecMesonCut(mEnergy);
   mVecMesonHistoManager = new StVecMesonHistoManager();
+  mVecMesonUtility = new StVecMesonUtility(mEnergy);
+  mVecMesonUtility->Init_RunIndex(); // initialize std::map for run index
   // mVecMesonProManger = new StVecMesonProManger();
   // mVecMesonCorrection = new StVecMesonCorrection(mEnergy);
 
@@ -219,6 +222,10 @@ int StVecMesonMaker::Make()
     const float vz    = mPicoEvent->primaryVertex().z();
     const float vzVpd = mPicoEvent->vzVpd();
     const float zdcX  = mPicoEvent->ZDCx();
+    const unsigned int numOfBTofHits = mPicoDst->numberOfBTofHits(); // get number of tof hits
+    // const unsigned short numOfBTofHits = mPicoEvent->btofTrayMultiplicity();
+    const unsigned short numOfBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
+    const unsigned int nTracks = mPicoDst->numberOfTracks(); // get number of tracks
 
     // StRefMultCorr Cut & centrality
     if(!mRefMultCorr)
@@ -228,8 +235,9 @@ int StVecMesonMaker::Make()
     }
 
     mRefMultCorr->init(runId);
-    if( !mVecMesonCut->isBES(mEnergy) ) mRefMultCorr->initEvent(refMult,vz,zdcX); // for 200 GeV
-    if( mVecMesonCut->isBES(mEnergy) ) mRefMultCorr->initEvent(refMult,vz,0.0); // for BES Energy
+    mRefMultCorr->initEvent(refMult,vz,zdcX); // BES-II might need  Luminosity corrections
+    // if( !mVecMesonCut->isBES(mEnergy) ) mRefMultCorr->initEvent(refMult,vz,zdcX); // for 200 GeV
+    // if( mVecMesonCut->isBES(mEnergy) ) mRefMultCorr->initEvent(refMult,vz,0.0); // for BES Energy
 
     if(mRefMultCorr->isBadRun(runId))
     {
@@ -237,23 +245,18 @@ int StVecMesonMaker::Make()
       return kStErr;
     }
 
-    const int cent9 = mRefMultCorr->getCentralityBin9(); // get Centrality9
-    const unsigned int nTracks = mPicoDst->numberOfTracks(); // get number of tracks
-    const unsigned int numOfBTofHits = mPicoDst->numberOfBTofHits(); // get number of tof hits
-    // const unsigned short numOfBTofHits = mPicoEvent->btofTrayMultiplicity();
-    const unsigned short numOfBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
-
     // vz sign
     int vz_sign = 0; // 0 for -vz || 1 for vz
     vz > 0.0 ? vz_sign = 1 : vz_sign = 0;
-    // if(vz > 0.0)
-    // {
-    //   vz_sign = 0;
-    // }
-    // else
-    // {
-    //   vz_sign = 1;
-    // }
+
+    const int cent9 = mRefMultCorr->getCentralityBin9(); // get Centrality9
+    const int runIndex = mVecMesonUtility->find_runIndex(runId); // find run index for a specific run
+    // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
+    if(runIndex < 0)
+    {
+      LOG_ERROR << "Could not find this run Index from StVecMesonUtility! Skip!" << endm;
+      return kStErr;
+    }
 
     // fill QA before event cuts
     if(mMode == 0)
