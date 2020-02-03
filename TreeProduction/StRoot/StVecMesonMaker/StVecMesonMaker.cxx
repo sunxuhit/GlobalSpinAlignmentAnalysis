@@ -11,7 +11,7 @@
 #include "StRoot/StVecMesonMaker/StVecMesonCut.h"
 #include "StRoot/StVecMesonMaker/StVecMesonHistoManager.h"
 #include "StRoot/StVecMesonMaker/StVecMesonUtility.h"
-// #include "StRoot/StVecMesonMaker/StVecMesonProManger.h"
+#include "StRoot/StVecMesonMaker/StVecMesonProManager.h"
 // #include "StRoot/StVecMesonMaker/StVecMesonCorr.h"
 // #include "StRoot/StVecMesonMaker/StVecMesonTree.h"
 #include "StRoot/StVecMesonMaker/StVecMesonCons.h"
@@ -78,7 +78,7 @@ int StVecMesonMaker::Init()
   mVecMesonHistoManager = new StVecMesonHistoManager();
   mVecMesonUtility = new StVecMesonUtility(mEnergy);
   mVecMesonUtility->Init_RunIndex(); // initialize std::map for run index
-  // mVecMesonProManger = new StVecMesonProManger();
+  mVecMesonProManager = new StVecMesonProManager();
   // mVecMesonCorrection = new StVecMesonCorrection(mEnergy);
 
   if(mMode == 0)
@@ -87,13 +87,14 @@ int StVecMesonMaker::Init()
     mFile_QA->cd();
     mVecMesonHistoManager->Init_EventQA();
     mVecMesonHistoManager->Init_TrackQA();
+    mVecMesonProManager->Init_RunQA();
   }
 
   if(mMode == 1)
   {
     mFile_ReCenterPar = new TFile(mOutPut_ReCenterPar.c_str(),"RECREATE");
     mFile_ReCenterPar->cd();
-    // mVecMesonProManger->InitReCenter();
+    // mVecMesonProManager->InitReCenter();
   }
 
   if(mMode == 2)
@@ -101,7 +102,7 @@ int StVecMesonMaker::Init()
     mFile_ShiftPar = new TFile(mOutPut_ShiftPar.c_str(),"RECREATE");
     mUsedTrackCounter = 0;
     // mVecMesonCorrection->InitReCenterCorrection();
-    // mVecMesonProManger->InitShift();
+    // mVecMesonProManager->InitShift();
   }
 
   if(mMode == 3)
@@ -109,7 +110,7 @@ int StVecMesonMaker::Init()
     mFile_Resolution = new TFile(mOutPut_Resolution.c_str(),"RECREATE");
     // mVecMesonCorrection->InitReCenterCorrection();
     // mVecMesonCorrection->InitShiftCorrection();
-    // mVecMesonProManger->InitResolution();
+    // mVecMesonProManager->InitResolution();
     // mVecMesonHistoManager->InitEP();
   }
 
@@ -137,6 +138,7 @@ int StVecMesonMaker::Finish()
       mFile_QA->cd();
       mVecMesonHistoManager->Write_EventQA();
       mVecMesonHistoManager->Write_TrackQA();
+      mVecMesonProManager->Write_RunQA();
       mFile_QA->Close();
     }
   }
@@ -146,7 +148,7 @@ int StVecMesonMaker::Finish()
     if(mOutPut_ReCenterPar != "")
     {
       mFile_ReCenterPar->cd();
-      // mVecMesonProManger->WriteReCenter();
+      // mVecMesonProManager->WriteReCenter();
       mVecMesonHistoManager->WriteQA();
       mFile_ReCenterPar->Close();
     }
@@ -156,7 +158,7 @@ int StVecMesonMaker::Finish()
     if(mOutPut_ShiftPar != "")
     {
       mFile_ShiftPar->cd();
-      // mVecMesonProManger->WriteShift();
+      // mVecMesonProManager->WriteShift();
       mFile_ShiftPar->Close();
     }
   }
@@ -166,7 +168,7 @@ int StVecMesonMaker::Finish()
     {
       mFile_Resolution->cd();
       // mVecMesonHistoManager->WriteEP();
-      // mVecMesonProManger->WriteResolution();
+      // mVecMesonProManager->WriteResolution();
       mFile_Resolution->Close();
     }
   }
@@ -235,7 +237,7 @@ int StVecMesonMaker::Make()
     }
 
     mRefMultCorr->init(runId);
-    mRefMultCorr->initEvent(refMult,vz,zdcX); // BES-II might need  Luminosity corrections
+    mRefMultCorr->initEvent(refMult,vz,zdcX); // BES-II might need Luminosity corrections
     // if( !mVecMesonCut->isBES(mEnergy) ) mRefMultCorr->initEvent(refMult,vz,zdcX); // for 200 GeV
     // if( mVecMesonCut->isBES(mEnergy) ) mRefMultCorr->initEvent(refMult,vz,0.0); // for BES Energy
 
@@ -263,6 +265,7 @@ int StVecMesonMaker::Make()
     {
       mVecMesonHistoManager->Fill_EventQA_RefMult(refMult,cent9,numOfBTofHits,numOfBTofMatch,0); // wo event cut
       mVecMesonHistoManager->Fill_EventQA_Vertex(vx,vy,vz,vzVpd,0);
+      mVecMesonProManager->Fill_RunQA_Event(runIndex,refMult,zdcX,vx,vy,vz,0);
     }
 
     // apply Event Cuts for anlaysis
@@ -272,6 +275,8 @@ int StVecMesonMaker::Make()
       {
 	mVecMesonHistoManager->Fill_EventQA_RefMult(refMult,cent9,numOfBTofHits,numOfBTofMatch,1); // with event cut
 	mVecMesonHistoManager->Fill_EventQA_Vertex(vx,vy,vz,vzVpd,1);
+	mVecMesonProManager->Fill_RunQA_Event(runIndex,refMult,zdcX,vx,vy,vz,1);
+
 	for(unsigned int i_track = 0; i_track < nTracks; i_track++) // track loop
 	{
 	  StPicoTrack *picoTrack = (StPicoTrack*)mPicoDst->track(i_track);
@@ -307,11 +312,13 @@ int StVecMesonMaker::Make()
 	  mVecMesonHistoManager->Fill_TrackQA_Kinematics(primMom,globMom, 0); // wo track cut
 	  mVecMesonHistoManager->Fill_TrackQA_Quliaty(gDCA,nHitsFit,nHitsMax,nHitsDEdx,0);
 	  mVecMesonHistoManager->Fill_TrackQA_PID(primMom.Mag(),charge,dEdx,beta,mass2,0);
+	  mVecMesonProManager->Fill_RunQA_Track(runIndex,gDCA,nHitsFit,primMom,globMom,0);
 	  if( mVecMesonCut->passTrackBasic(picoTrack) ) // apply basic track cut
 	  {
-	    mVecMesonHistoManager->Fill_TrackQA_Kinematics(primMom,globMom, 1); // wo track cut
+	    mVecMesonHistoManager->Fill_TrackQA_Kinematics(primMom,globMom, 1); // with track cut
 	    mVecMesonHistoManager->Fill_TrackQA_Quliaty(gDCA,nHitsFit,nHitsMax,nHitsDEdx,1);
 	    mVecMesonHistoManager->Fill_TrackQA_PID(primMom.Mag(),charge,dEdx,beta,mass2,1);
+	    mVecMesonProManager->Fill_RunQA_Track(runIndex,gDCA,nHitsFit,primMom,globMom,1);
 	  }
 	}
       }
@@ -354,20 +361,20 @@ int StVecMesonMaker::Make()
 	  if(mVecMesonCorrection->passTrackFull(track))
 	  {
 	    TVector2 q2Vector_Full = mVecMesonCorrection->calq2Vector(track);
-	    mVecMesonProManger->FillTrackFull(q2Vector_Full,cent9,runIndex,vz_sign,pt);
+	    mVecMesonProManager->FillTrackFull(q2Vector_Full,cent9,runIndex,vz_sign,pt);
 	    mVecMesonCorrection->addTrack_FullRaw(track,cent9,runIndex);
 	  }
 
 	  if(mVecMesonCorrection->passTrackEtaEast(track)) // neg eta sub
 	  {
 	    TVector2 q2Vector_East = mVecMesonCorrection->calq2Vector(track);
-	    mVecMesonProManger->FillTrackEast(q2Vector_East,cent9,runIndex,vz_sign,pt);
+	    mVecMesonProManager->FillTrackEast(q2Vector_East,cent9,runIndex,vz_sign,pt);
 	    mVecMesonCorrection->addTrack_EastRaw(track,cent9,runIndex);
 	  }
 	  if(mVecMesonCorrection->passTrackEtaWest(track)) // pos eta sub
 	  {
 	    TVector2 q2Vector_West = mVecMesonCorrection->calq2Vector(track);
-	    mVecMesonProManger->FillTrackWest(q2Vector_West,cent9,runIndex,vz_sign,pt);
+	    mVecMesonProManager->FillTrackWest(q2Vector_West,cent9,runIndex,vz_sign,pt);
 	    mVecMesonCorrection->addTrack_WestRaw(track,cent9,runIndex);
 	  }
 	}
@@ -417,7 +424,7 @@ int StVecMesonMaker::Make()
 	for(int k = 0; k < 5; k++) // ShiftOrder loop
 	{
 	  TVector2 Psi2Vector_Full_EP = mVecMesonCorrection->calPsi2_Full_EP(k);
-	  mVecMesonProManger->FillEventFull_EP(Psi2Vector_Full_EP,cent9,runIndex,vz_sign,k);
+	  mVecMesonProManager->FillEventFull_EP(Psi2Vector_Full_EP,cent9,runIndex,vz_sign,k);
 	}
       }
 
@@ -427,10 +434,10 @@ int StVecMesonMaker::Make()
 	for(int k = 0; k < 5; k++)
 	{
 	  TVector2 Psi2Vector_East_EP = mVecMesonCorrection->calPsi2_East_EP(k);
-	  mVecMesonProManger->FillEventEast_EP(Psi2Vector_East_EP,cent9,runIndex,vz_sign,k);
+	  mVecMesonProManager->FillEventEast_EP(Psi2Vector_East_EP,cent9,runIndex,vz_sign,k);
 
 	  TVector2 Psi2Vector_West_EP = mVecMesonCorrection->calPsi2_West_EP(k);
-	  mVecMesonProManger->FillEventWest_EP(Psi2Vector_West_EP,cent9,runIndex,vz_sign,k);
+	  mVecMesonProManager->FillEventWest_EP(Psi2Vector_West_EP,cent9,runIndex,vz_sign,k);
 	}
       }
     }
@@ -492,13 +499,13 @@ int StVecMesonMaker::Make()
       if(mVecMesonCorrection->passTrackEtaNumCut())
       {
 	mVecMesonHistoManager->FillEP_Sub(Psi2East_ReCenter,Psi2East_Shift,Psi2West_ReCenter,Psi2West_Shift);
-	mVecMesonProManger->FillRes_Sub(cent9,Psi2East_Shift,Psi2West_Shift);
+	mVecMesonProManager->FillRes_Sub(cent9,Psi2East_Shift,Psi2West_Shift);
       }
 
       if(mVecMesonCorrection->passTrackFullNumCut())
       {
 	mVecMesonHistoManager->FillEP_Ran(Psi2RanA_ReCenter,Psi2RanA_Shift,Psi2RanB_ReCenter,Psi2RanB_Shift,Psi2Full_ReCenter,Psi2Full_Shift);
-	mVecMesonProManger->FillRes_Ran(cent9,Psi2RanA_Shift,Psi2RanB_Shift);
+	mVecMesonProManager->FillRes_Ran(cent9,Psi2RanA_Shift,Psi2RanB_Shift);
       }
     }
 

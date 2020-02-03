@@ -48,7 +48,7 @@ int StVecMesonUtility::find_runIndex(int runId)
   }
   else
   {
-    std::cout << "StVecMesonUtility -> runId: " << it_runId->first << " => runIndex: " << it_runId->second << std::endl;
+    // std::cout << "StVecMesonUtility -> runId: " << it_runId->first << " => runIndex: " << it_runId->second << std::endl;
     return it_runId->second;
   }
 

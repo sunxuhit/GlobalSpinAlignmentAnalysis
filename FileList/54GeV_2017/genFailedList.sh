@@ -8,7 +8,7 @@ then
   Energy=54GeV_2017
   SM=SE
   Mode=QA
-  JobId=77B1F6390391E8AE9E31A98FF840BD77 #generate faild list for this Job
+  JobId=BFABA133A7F199B79CC8C8DCE58B4BB1 #generate faild list for this Job
 
   OutPutDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/$Energy"
   SubmitDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/TreeProduction/submit/$Energy/JOBS/list"

@@ -12,7 +12,7 @@ class StRefMultCorr;
 class StVecMesonCut;
 class StVecMesonHistoManager;
 class StVecMesonUtility;
-// class StVecMesonProManger;
+class StVecMesonProManager;
 // class StVecMesonCorrection;
 // class StVecMesonTree;
 
@@ -34,7 +34,7 @@ class StVecMesonMaker : public StMaker {
     StVecMesonCut  *mVecMesonCut;
     StVecMesonHistoManager *mVecMesonHistoManager;
     StVecMesonUtility *mVecMesonUtility;
-    // StVecMesonProManger *mVecMesonProManger;
+    StVecMesonProManager *mVecMesonProManager;
     // StVecMesonCorrection *mVecMesonCorrection;
     // StVecMesonTree *mVecMesonTree;
     

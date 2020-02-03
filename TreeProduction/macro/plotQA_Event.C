@@ -12,7 +12,7 @@ using namespace std;
 
 static const string CutsQA[2] = {"Before","After"};
 
-void plotQA_Event(int energy = 2)
+void plotQA_Event(int energy = 1)
 {
   string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/QA/file_%s_QA.root",vmsa::mBeamEnergy[energy].c_str(),vmsa::mBeamEnergy[energy].c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
@@ -60,15 +60,20 @@ void plotQA_Event(int energy = 2)
     h_mDiffVzVzVpd[i_cut]->SetLineColor(i_cut+1);
   }
 
-  TF1 *f_tofCut_low = new TF1("f_tofCut_low","0.75*x-20",0,800);
-  f_tofCut_low->SetLineColor(2);
-  f_tofCut_low->SetLineWidth(2);
-  f_tofCut_low->SetLineStyle(2);
+  TF1 *f_tofHitsCut_low = new TF1("f_tofHitsCut_low","2.88*x-155",0,800);
+  f_tofHitsCut_low->SetLineColor(2);
+  f_tofHitsCut_low->SetLineWidth(2);
+  f_tofHitsCut_low->SetLineStyle(2);
 
-  TF1 *f_tofCut_up  = new TF1("f_tofCut_up","1.80*x+15",0,800);
-  f_tofCut_up->SetLineColor(2);
-  f_tofCut_up->SetLineWidth(2);
-  f_tofCut_up->SetLineStyle(2);
+  TF1 *f_tofMatchCut_low = new TF1("f_tofMatchCut_low","0.75*x-20",0,800);
+  f_tofMatchCut_low->SetLineColor(2);
+  f_tofMatchCut_low->SetLineWidth(2);
+  f_tofMatchCut_low->SetLineStyle(2);
+
+  TF1 *f_tofMatchCut_up  = new TF1("f_tofMatchCut_up","1.80*x+15",0,800);
+  f_tofMatchCut_up->SetLineColor(2);
+  f_tofMatchCut_up->SetLineWidth(2);
+  f_tofMatchCut_up->SetLineStyle(2);
 
   TCanvas *c_EventQA[2];
   for(int i_cut = 0; i_cut < 2; ++i_cut)
@@ -95,10 +100,10 @@ void plotQA_Event(int energy = 2)
     h_mRefMultTofMatch[i_cut]->GetXaxis()->SetRangeUser(0.0,800.0);
     h_mRefMultTofMatch[i_cut]->GetYaxis()->SetRangeUser(0.0,800.0);
     h_mRefMultTofMatch[i_cut]->Draw("colz");
-    if(i_cut == 0)
+    if(i_cut == 0 && energy == 2)
     {
-      f_tofCut_low->Draw("l same");
-      f_tofCut_up->Draw("l same");
+      f_tofMatchCut_low->Draw("l same");
+      f_tofMatchCut_up->Draw("l same");
     }
 
     c_EventQA[i_cut]->cd(3);

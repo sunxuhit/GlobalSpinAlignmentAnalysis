@@ -77,8 +77,8 @@ bool StVecMesonCut::passEventCut(StPicoDst *picoDst)
   {
     return kFALSE;
   }
-  // vz-vzVpd cut
-  if(fabs(vz-vzVpd) > vmsa::mVzVpdDiffMax[mEnergy])
+  // vz-vzVpd cut only for 200 GeV
+  if(!isBES(mEnergy) && fabs(vz-vzVpd) > vmsa::mVzVpdDiffMax[mEnergy])
   {
     return kFALSE;
   }
@@ -229,6 +229,11 @@ bool StVecMesonCut::passTrackBasic(StPicoTrack *picoTrack)
   primMom.SetXYZ(primPx,primPy,primPz);
   float eta = primMom.PseudoRapidity();
   if(fabs(eta) > vmsa::mEtaMax)
+  {
+    return kFALSE;
+  }
+
+  if(primMom.Pt() < vmsa::mGlobPtMin) // minimum pT cuts
   {
     return kFALSE;
   }
