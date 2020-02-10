@@ -12,9 +12,12 @@ using namespace std;
 
 static const string CutsQA[2] = {"Before","After"};
 
-void plotQA_Event(int energy = 1)
+void plotQA_Event(int energy = 2)
 {
-  string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/QA/file_%s_QA.root",vmsa::mBeamEnergy[energy].c_str(),vmsa::mBeamEnergy[energy].c_str());
+  // string JobId = "BFABA133A7F199B79CC8C8DCE58B4BB1";
+  // string JobId = "8B0C4AEA7B86AF884EF60CA6323903E7";
+  string JobId = "1BF52441255F2963B937C4606B0ABF23";
+  string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/QA/file_%s_QA_%s.root",vmsa::mBeamEnergy[energy].c_str(),vmsa::mBeamEnergy[energy].c_str(),JobId.c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
   TH1F *h_mRefMult[2]; // 0: before cuts | 1: after cuts
   TH1F *h_mCentrality9[2];

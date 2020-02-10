@@ -43,7 +43,7 @@ int StVecMesonUtility::find_runIndex(int runId)
   std::map<int,int>::iterator it_runId = map_runIndex.find(runId);
   if(it_runId == map_runIndex.end())
   {
-    std::cout << "StVecMesonUtility -> could not find in full run list! & send signal to kill the run!" << std::endl;
+    // std::cout << "StVecMesonUtility -> could not find in full run list! & send signal to kill the run!" << std::endl;
     return -999;
   }
   else
@@ -57,7 +57,8 @@ int StVecMesonUtility::find_runIndex(int runId)
 
 bool StVecMesonUtility::read_in_runIndex()
 {
-  std::string inputfile = Form("StRoot/StVecMesonMaker/runIndex_%s.txt",vmsa::mBeamEnergy[mEnergy].c_str());
+  // std::string inputfile = Form("StRoot/StVecMesonMaker/runIndex_%s.txt",vmsa::mBeamEnergy[mEnergy].c_str());
+  std::string inputfile = Form("StRoot/StVecMesonUtility/RunIndex/runIndex_%s.txt",vmsa::mBeamEnergy[mEnergy].c_str());
   std::cout << "inputfile = " << inputfile.c_str() << std::endl;
   std::ifstream file_runIndex ( inputfile.c_str() );
   if ( !file_runIndex.is_open() )

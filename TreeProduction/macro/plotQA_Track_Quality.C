@@ -14,7 +14,11 @@ static const string CutsQA[2] = {"Before","After"};
 
 void plotQA_Track_Quality(int energy = 1)
 {
-  string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/QA/file_%s_QA.root",vmsa::mBeamEnergy[energy].c_str(),vmsa::mBeamEnergy[energy].c_str());
+  // string JobId = "BFABA133A7F199B79CC8C8DCE58B4BB1";
+  // string JobId = "8B0C4AEA7B86AF884EF60CA6323903E7";
+  string JobId = "65963AA6E8277E671144438647561DC5";
+  string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/QA/file_%s_QA_%s.root",vmsa::mBeamEnergy[energy].c_str(),vmsa::mBeamEnergy[energy].c_str(),JobId.c_str());
+  // string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/QA/file_%s_QA.root",vmsa::mBeamEnergy[energy].c_str(),vmsa::mBeamEnergy[energy].c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
   TH1F *h_mDca[2];
   TH1F *h_mNHitsFit[2];

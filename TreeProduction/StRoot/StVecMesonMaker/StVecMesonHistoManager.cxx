@@ -110,7 +110,7 @@ void StVecMesonHistoManager::Init_TrackQA()
     h_mGlobPhi[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),720,-TMath::TwoPi(),TMath::TwoPi());
 
     HistName = Form("h_mDca_%s",mCutsQA[i_cut].c_str());
-    h_mDca[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),100,-0.1,4.9);
+    h_mDca[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),1000,-0.1,4.9);
 
     HistName = Form("h_mNHitsFit_%s",mCutsQA[i_cut].c_str());
     h_mNHitsFit[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),50,-0.5,49.5);
