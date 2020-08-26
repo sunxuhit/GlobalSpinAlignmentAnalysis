@@ -22,7 +22,7 @@ StVecMesonProManager::~StVecMesonProManager()
 
 //---------------------------------------------------------------------------------
 
-void StVecMesonProManager::Init_RunQA()
+void StVecMesonProManager::initRunQA()
 {
   for(int i_cut = 0; i_cut < 2; ++i_cut)
   {
@@ -64,7 +64,7 @@ void StVecMesonProManager::Init_RunQA()
   }
 }
 
-void StVecMesonProManager::Fill_RunQA_Event(int runIdenx, float refMult, float zdcX, float vx, float vy, float vz, int cutSelection)
+void StVecMesonProManager::fillRunQA_Event(int runIdenx, float refMult, float zdcX, float vx, float vy, float vz, int cutSelection)
 {
     p_mQA_RefMult[cutSelection]->Fill(runIdenx, refMult);
     p_mQA_ZdcX[cutSelection]->Fill(runIdenx, zdcX);
@@ -72,7 +72,7 @@ void StVecMesonProManager::Fill_RunQA_Event(int runIdenx, float refMult, float z
     p_mQA_Vr[cutSelection]->Fill(runIdenx, TMath::Sqrt(vx*vx+vy*vy));
 }
 
-void StVecMesonProManager::Fill_RunQA_Track(int runIdenx, float gDca, int nHitsFit, TVector3 pMom, TVector3 gMom, int cutSelection)
+void StVecMesonProManager::fillRunQA_Track(int runIdenx, float gDca, int nHitsFit, TVector3 pMom, TVector3 gMom, int cutSelection)
 {
     p_mQA_gDca[cutSelection]->Fill(runIdenx, gDca);
     p_mQA_nHitsFit[cutSelection]->Fill(runIdenx, nHitsFit);
@@ -84,7 +84,7 @@ void StVecMesonProManager::Fill_RunQA_Track(int runIdenx, float gDca, int nHitsF
     p_mQA_GlobPhi[cutSelection]->Fill(runIdenx, gMom.Phi());
 }
 
-void StVecMesonProManager::Write_RunQA()
+void StVecMesonProManager::writeRunQA()
 {
   for(int i_cut = 0; i_cut < 2; ++i_cut)
   {

@@ -201,6 +201,7 @@ float StVecMesonCut::getGlobalMass2(StPicoDst *picoDst, int i_track)
   return Mass2;
 }
 
+//---------------------------------------------------------------------------------
 bool StVecMesonCut::passTrackBasic(StPicoTrack *picoTrack)
 {
   // nHitsFit cut
@@ -241,6 +242,7 @@ bool StVecMesonCut::passTrackBasic(StPicoTrack *picoTrack)
   return kTRUE;
 }
 
+//---------------------------------------------------------------------------------
 
 #if 0
 bool StVecMesonCut::passSigPionCut(StPicoTrack* track, float scale_nSigma_factor)
@@ -299,6 +301,7 @@ bool StVecMesonCut::passTrackEP(StPicoTrack *track)
 
   return kTRUE;
 }
+
 
 //---------------------------------------------------------------------------------
 bool StVecMesonCut::passTrackPhi(StPicoTrack *track)

@@ -2915,6 +2915,18 @@ root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_producti
 root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/170/18170021/st_physics_18170021_raw_5500017.picoDst.root
 root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/170/18170021/st_physics_18170021_raw_5500018.picoDst.root
 root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/170/18170021/st_physics_18170021_raw_5500019.picoDst.root
+root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/172/18172014/st_physics_18172014_raw_1000005.picoDst.root
+root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/172/18172014/st_physics_18172014_raw_1500002.picoDst.root
+root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/172/18172014/st_physics_18172014_raw_1500011.picoDst.root
+root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/172/18172014/st_physics_18172014_raw_2000003.picoDst.root
+root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/172/18172014/st_physics_18172014_raw_2000011.picoDst.root
+root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/172/18172014/st_physics_18172014_raw_2500001.picoDst.root
+root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/172/18172014/st_physics_18172014_raw_3000001.picoDst.root
+root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/172/18172014/st_physics_18172014_raw_3500002.picoDst.root
+root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/172/18172014/st_physics_18172014_raw_4000003.picoDst.root
+root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/172/18172014/st_physics_18172014_raw_4500002.picoDst.root
+root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/172/18172014/st_physics_18172014_raw_5000003.picoDst.root
+root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/172/18172014/st_physics_18172014_raw_5500003.picoDst.root
 root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/153/18153057/st_physics_adc_18153057_raw_0000005.picoDst.root
 root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/153/18153063/st_physics_adc_18153063_raw_3000002.picoDst.root
 root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/153/18153063/st_physics_adc_18153063_raw_3500003.picoDst.root
@@ -3253,3 +3265,4 @@ root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_producti
 root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/170/18170021/st_physics_adc_18170021_raw_5000006.picoDst.root
 root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/170/18170021/st_physics_adc_18170021_raw_5000027.picoDst.root
 root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/170/18170021/st_physics_adc_18170021_raw_5500006.picoDst.root
+root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu54_production_2017/ReversedFullField/P18ic/2017/172/18172014/st_physics_adc_18172014_raw_0000003.picoDst.root

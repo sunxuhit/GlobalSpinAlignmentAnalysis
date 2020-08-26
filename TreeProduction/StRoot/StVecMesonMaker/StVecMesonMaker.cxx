@@ -12,7 +12,7 @@
 #include "StRoot/StVecMesonMaker/StVecMesonHistoManager.h"
 #include "StRoot/StVecMesonMaker/StVecMesonUtility.h"
 #include "StRoot/StVecMesonMaker/StVecMesonProManager.h"
-// #include "StRoot/StVecMesonMaker/StVecMesonCorr.h"
+#include "StRoot/StVecMesonMaker/StVecMesonZdcEpManager.h"
 // #include "StRoot/StVecMesonMaker/StVecMesonTree.h"
 #include "StRoot/StVecMesonMaker/StVecMesonCons.h"
 
@@ -43,24 +43,31 @@ StVecMesonMaker::StVecMesonMaker(const char* name, StPicoDstMaker *picoMaker, co
   }
   if(mMode == 1)
   {
+    // mOutPut_ZdcGainCorr = Form("/star/data01/pwg/sunxuhit/AuAu%s/SpinAlignment/GainParameter/file_%s_ZdcGainCorr_%s.root",vmsa::mBeamEnergy[energy].c_str(),vmsa::mBeamEnergy[energy].c_str(),jobId.c_str());
+    mOutPut_ZdcGainCorr = Form("./file_%s_ZdcGainCorr_%s.root",vmsa::mBeamEnergy[energy].c_str(),jobId.c_str());
+  }
+  /*
+  if(mMode == 2)
+  {
     // mOutPut_ReCenterPar = Form("/star/data01/pwg/sunxuhit/AuAu%s/SpinAlignment/ReCenterParameter/file_%s_ReCenterPar_%s.root",vmsa::mBeamEnergy[energy].c_str(),vmsa::mBeamEnergy[energy].c_str(),jobId.c_str());
     mOutPut_ReCenterPar = Form("./file_%s_ReCenterPar_%s.root",vmsa::mBeamEnergy[energy].c_str(),jobId.c_str());
   }
-  if(mMode == 2)
+  if(mMode == 3)
   {
     // mOutPut_ShiftPar = Form("/star/data01/pwg/sunxuhit/AuAu%s/SpinAlignment/ShiftParameter/file_%s_ShiftPar_%s.root",vmsa::mBeamEnergy[energy].c_str(),vmsa::mBeamEnergy[energy].c_str(),jobId.c_str()); 
     mOutPut_ShiftPar = Form("./file_%s_ShiftPar_%s.root",vmsa::mBeamEnergy[energy].c_str(),jobId.c_str()); 
   }
-  if(mMode == 3)
+  if(mMode == 4)
   {
     // mOutPut_Resolution = Form("/star/data01/pwg/sunxuhit/AuAu%s/SpinAlignment/Resolution/file_%s_Resolution_%s.root",vmsa::mBeamEnergy[energy].c_str(),vmsa::mBeamEnergy[energy].c_str(),jobId.c_str()); 
     mOutPut_Resolution = Form("./file_%s_Resolution_%s.root",vmsa::mBeamEnergy[energy].c_str(),jobId.c_str()); 
   }
-  if(mMode == 4)
+  if(mMode == 5)
   {
     // mOutPut_Phi = Form("/star/data01/pwg/sunxuhit/AuAu%s/SpinAlignment/Phi/Forest/file_%s_Phi_%s_%s.root",vmsa::mBeamEnergy[energy].c_str(),vmsa::mBeamEnergy[energy].c_str(),vmsa::MixEvent[mFlag_ME].Data(),jobId.c_str()); 
     mOutPut_Phi = Form("./file_%s_Phi_%s_%s.root",vmsa::mBeamEnergy[energy].c_str(),vmsa::MixEvent[mFlag_ME].Data(),jobId.c_str()); 
   }
+  */
 }
 
 //----------------------------------------------------------------------------- 
@@ -77,27 +84,35 @@ int StVecMesonMaker::Init()
   mVecMesonCut = new StVecMesonCut(mEnergy);
   mVecMesonHistoManager = new StVecMesonHistoManager();
   mVecMesonUtility = new StVecMesonUtility(mEnergy);
-  mVecMesonUtility->Init_RunIndex(); // initialize std::map for run index
+  mVecMesonUtility->initRunIndex(); // initialize std::map for run index
   mVecMesonProManager = new StVecMesonProManager();
-  // mVecMesonCorrection = new StVecMesonCorrection(mEnergy);
+  mVecMesonZdcEpManager = new StVecMesonZdcEpManager(mEnergy); // initialize ZDC EP Manager
 
   if(mMode == 0)
-  {
+  { // QA
     mFile_QA= new TFile(mOutPut_QA.c_str(),"RECREATE");
     mFile_QA->cd();
-    mVecMesonHistoManager->Init_EventQA();
-    mVecMesonHistoManager->Init_TrackQA();
-    mVecMesonProManager->Init_RunQA();
+    mVecMesonHistoManager->initEventQA();
+    mVecMesonHistoManager->initTrackQA();
+    mVecMesonProManager->initRunQA();
   }
 
   if(mMode == 1)
+  { // fill Gain Correction Factors for BBC & ZDC
+    mFile_ZdcGainCorr= new TFile(mOutPut_ZdcGainCorr.c_str(),"RECREATE");
+    mVecMesonHistoManager->initZdcGainCorr();
+    // mVecMesonProManager->InitReCenter();
+  }
+
+  /*
+  if(mMode == 2)
   {
     mFile_ReCenterPar = new TFile(mOutPut_ReCenterPar.c_str(),"RECREATE");
     mFile_ReCenterPar->cd();
     // mVecMesonProManager->InitReCenter();
   }
 
-  if(mMode == 2)
+  if(mMode == 3)
   {
     mFile_ShiftPar = new TFile(mOutPut_ShiftPar.c_str(),"RECREATE");
     mUsedTrackCounter = 0;
@@ -105,7 +120,7 @@ int StVecMesonMaker::Init()
     // mVecMesonProManager->InitShift();
   }
 
-  if(mMode == 3)
+  if(mMode == 4)
   {
     mFile_Resolution = new TFile(mOutPut_Resolution.c_str(),"RECREATE");
     // mVecMesonCorrection->InitReCenterCorrection();
@@ -114,7 +129,7 @@ int StVecMesonMaker::Init()
     // mVecMesonHistoManager->InitEP();
   }
 
-  if(mMode == 4)
+  if(mMode == 5)
   {
     // mVecMesonTree = new StVecMesonTree(mEnergy);
     mFile_Phi = new TFile(mOutPut_Phi.c_str(),"RECREATE");
@@ -124,6 +139,7 @@ int StVecMesonMaker::Init()
     // mVecMesonCorrection->InitShiftCorrection();
     // mVecMesonCorrection->InitResolutionCorr();
   }
+  */
 
   return kStOK;
 }
@@ -136,14 +152,23 @@ int StVecMesonMaker::Finish()
     if(mOutPut_QA != "")
     {
       mFile_QA->cd();
-      mVecMesonHistoManager->Write_EventQA();
-      mVecMesonHistoManager->Write_TrackQA();
-      mVecMesonProManager->Write_RunQA();
+      mVecMesonHistoManager->writeEventQA();
+      mVecMesonHistoManager->writeTrackQA();
+      mVecMesonProManager->writeRunQA();
       mFile_QA->Close();
     }
   }
-  /*
   if(mMode == 1)
+  {
+    if(mOutPut_ZdcGainCorr != "")
+    {
+      mFile_ZdcGainCorr->cd();
+      mVecMesonHistoManager->writeZdcGainCorr();
+      mFile_ZdcGainCorr->Close();
+    }
+  }
+  /*
+  if(mMode == 2)
   {
     if(mOutPut_ReCenterPar != "")
     {
@@ -153,7 +178,7 @@ int StVecMesonMaker::Finish()
       mFile_ReCenterPar->Close();
     }
   }
-  if(mMode == 2)
+  if(mMode == 3)
   {
     if(mOutPut_ShiftPar != "")
     {
@@ -162,7 +187,7 @@ int StVecMesonMaker::Finish()
       mFile_ShiftPar->Close();
     }
   }
-  if(mMode == 3)
+  if(mMode == 4)
   {
     if(mOutPut_Resolution != "")
     {
@@ -172,7 +197,7 @@ int StVecMesonMaker::Finish()
       mFile_Resolution->Close();
     }
   }
-  if(mMode == 4)
+  if(mMode == 5)
   {
     if(mOutPut_Phi != "")
     {
@@ -252,7 +277,7 @@ int StVecMesonMaker::Make()
     vz > 0.0 ? vz_sign = 1 : vz_sign = 0;
 
     const int cent9 = mRefMultCorr->getCentralityBin9(); // get Centrality9
-    const int runIndex = mVecMesonUtility->find_runIndex(runId); // find run index for a specific run
+    const int runIndex = mVecMesonUtility->findRunIndex(runId); // find run index for a specific run
     // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
     if(runIndex < 0)
     {
@@ -260,22 +285,17 @@ int StVecMesonMaker::Make()
       return kStErr;
     }
 
-    // fill QA before event cuts
     if(mMode == 0)
-    {
-      mVecMesonHistoManager->Fill_EventQA_RefMult(refMult,cent9,numOfBTofHits,numOfBTofMatch,0); // wo event cut
-      mVecMesonHistoManager->Fill_EventQA_Vertex(vx,vy,vz,vzVpd,0);
-      mVecMesonProManager->Fill_RunQA_Event(runIndex,refMult,zdcX,vx,vy,vz,0);
-    }
+    { // fill QA before event cuts
+      mVecMesonHistoManager->fillEventQA_RefMult(refMult,cent9,numOfBTofHits,numOfBTofMatch,0); // wo event cut
+      mVecMesonHistoManager->fillEventQA_Vertex(vx,vy,vz,vzVpd,0);
+      mVecMesonProManager->fillRunQA_Event(runIndex,refMult,zdcX,vx,vy,vz,0);
 
-    // apply Event Cuts for anlaysis
-    if(mVecMesonCut->passEventCut(mPicoDst))
-    { 
-      if(mMode == 0)
-      {
-	mVecMesonHistoManager->Fill_EventQA_RefMult(refMult,cent9,numOfBTofHits,numOfBTofMatch,1); // with event cut
-	mVecMesonHistoManager->Fill_EventQA_Vertex(vx,vy,vz,vzVpd,1);
-	mVecMesonProManager->Fill_RunQA_Event(runIndex,refMult,zdcX,vx,vy,vz,1);
+      if(mVecMesonCut->passEventCut(mPicoDst))
+      { // apply Event Cuts for anlaysis 
+	mVecMesonHistoManager->fillEventQA_RefMult(refMult,cent9,numOfBTofHits,numOfBTofMatch,1); // with event cut
+	mVecMesonHistoManager->fillEventQA_Vertex(vx,vy,vz,vzVpd,1);
+	mVecMesonProManager->fillRunQA_Event(runIndex,refMult,zdcX,vx,vy,vz,1);
 
 	for(unsigned int i_track = 0; i_track < nTracks; i_track++) // track loop
 	{
@@ -309,16 +329,40 @@ int StVecMesonMaker::Make()
 	  float beta       = mVecMesonCut->getBeta(mPicoDst,i_track);
 	  float mass2      = mVecMesonCut->getPrimaryMass2(mPicoDst,i_track);
 
-	  mVecMesonHistoManager->Fill_TrackQA_Kinematics(primMom,globMom, 0); // wo track cut
-	  mVecMesonHistoManager->Fill_TrackQA_Quliaty(gDCA,nHitsFit,nHitsMax,nHitsDEdx,0);
-	  mVecMesonHistoManager->Fill_TrackQA_PID(primMom.Mag(),charge,dEdx,beta,mass2,0);
-	  mVecMesonProManager->Fill_RunQA_Track(runIndex,gDCA,nHitsFit,primMom,globMom,0);
+	  mVecMesonHistoManager->fillTrackQA_Kinematics(primMom,globMom, 0); // wo track cut
+	  mVecMesonHistoManager->fillTrackQA_Quliaty(gDCA,nHitsFit,nHitsMax,nHitsDEdx,0);
+	  mVecMesonHistoManager->fillTrackQA_PID(primMom.Mag(),charge,dEdx,beta,mass2,0);
+	  mVecMesonProManager->fillRunQA_Track(runIndex,gDCA,nHitsFit,primMom,globMom,0);
 	  if( mVecMesonCut->passTrackBasic(picoTrack) ) // apply basic track cut
 	  {
-	    mVecMesonHistoManager->Fill_TrackQA_Kinematics(primMom,globMom, 1); // with track cut
-	    mVecMesonHistoManager->Fill_TrackQA_Quliaty(gDCA,nHitsFit,nHitsMax,nHitsDEdx,1);
-	    mVecMesonHistoManager->Fill_TrackQA_PID(primMom.Mag(),charge,dEdx,beta,mass2,1);
-	    mVecMesonProManager->Fill_RunQA_Track(runIndex,gDCA,nHitsFit,primMom,globMom,1);
+	    mVecMesonHistoManager->fillTrackQA_Kinematics(primMom,globMom, 1); // with track cut
+	    mVecMesonHistoManager->fillTrackQA_Quliaty(gDCA,nHitsFit,nHitsMax,nHitsDEdx,1);
+	    mVecMesonHistoManager->fillTrackQA_PID(primMom.Mag(),charge,dEdx,beta,mass2,1);
+	    mVecMesonProManager->fillRunQA_Track(runIndex,gDCA,nHitsFit,primMom,globMom,1);
+	  }
+	}
+      }
+    }
+    if(mMode == 1)
+    { // fill Gain Correction Factors for BBC & ZDC
+      if(mVecMesonCut->passEventCut(mPicoDst))
+      { // apply Event Cuts for anlaysis 
+	for(int i_slat = 0; i_slat < 8; ++i_slat) // read in raw ADC value from ZDC-SMD
+	{
+	  mVecMesonZdcEpManager->setZdcSmd(0,0,i_slat,mPicoEvent->ZdcSmdEastVertical(i_slat));
+	  mVecMesonZdcEpManager->setZdcSmd(0,1,i_slat,mPicoEvent->ZdcSmdEastHorizontal(i_slat));
+	  mVecMesonZdcEpManager->setZdcSmd(1,0,i_slat,mPicoEvent->ZdcSmdWestVertical(i_slat));
+	  mVecMesonZdcEpManager->setZdcSmd(1,1,i_slat,mPicoEvent->ZdcSmdWestHorizontal(i_slat));
+	}
+	for(int i_eastwest = 0; i_eastwest < 2; ++i_eastwest) // fill ZDC Gain Correction Histograms
+	{
+	  for(int i_verthori = 0; i_verthori < 2; ++i_verthori)
+	  {
+	    for(int i_slat = 0; i_slat < 8; ++i_slat)
+	    {
+	      mVecMesonHistoManager->fillZdcGainCorr(i_eastwest,i_verthori,i_slat,runIndex,mVecMesonZdcEpManager->getZdcSmd(i_eastwest,i_verthori,i_slat));
+	      // cout << "i_eastwest = " << i_eastwest << ", i_verthori = " << i_verthori << ", i_slat = " << i_slat << ", zdc = " << mZdcSmdCorrection->getZdcSmd(i_eastwest,i_verthori,i_slat) << endl;
+	    }
 	  }
 	}
       }

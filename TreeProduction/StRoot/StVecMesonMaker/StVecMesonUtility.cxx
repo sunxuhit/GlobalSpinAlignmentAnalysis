@@ -23,14 +23,14 @@ StVecMesonUtility::~StVecMesonUtility()
 //---------------------------------------------------------------------------------
 
 
-void StVecMesonUtility::Init_RunIndex()
+void StVecMesonUtility::initRunIndex()
 {
   map_runIndex.clear();
   bool isOpen_runIndex = read_in_runIndex();
   if(isOpen_runIndex) std::cout << "Run Index read in!" << std::endl;
 }
 
-int StVecMesonUtility::find_runIndex(int runId)
+int StVecMesonUtility::findRunIndex(int runId)
 {
   // print map_runIndex content:
   /*

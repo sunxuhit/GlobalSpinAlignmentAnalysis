@@ -9,8 +9,8 @@ class StPicoEvent;
 
 StChain *chain;
 
-void VecMesonTree(const Char_t *inputFile="../FileList/54GeV_2017/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 0, const Int_t energy = 1, const Int_t flag_ME = 0)
-// void VecMesonTree(const Char_t *inputFile="../FileList/27GeV_2018/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 0, const Int_t energy = 2, const Int_t flag_ME = 0)
+void VecMesonTree(const Char_t *inputFile="../FileList/54GeV_2017/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 1, const Int_t energy = 1, const Int_t flag_ME = 0)
+// void VecMesonTree(const Char_t *inputFile="../FileList/27GeV_2018/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 1, const Int_t energy = 2, const Int_t flag_ME = 0)
 {
   // mBeamEnergy[NumBeamEnergy] = {"200GeV","54GeV","27GeV"};
   // Mode: 0 for QA, 1 for re-center correction, 2 for shift correction, 3 for resolution calculation, 4 for phi meson
@@ -30,8 +30,8 @@ void VecMesonTree(const Char_t *inputFile="../FileList/54GeV_2017/pico_xrootd_lo
     exit(1);
   }
 
-  Int_t nEvents = 10000000;
-  // Int_t nEvents = 10000;
+  // Int_t nEvents = 10000000;
+  Int_t nEvents = 10000;
 
   gROOT->LoadMacro("$STAR/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");
   loadSharedLibraries();

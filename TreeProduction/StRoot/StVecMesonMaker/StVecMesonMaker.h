@@ -13,7 +13,7 @@ class StVecMesonCut;
 class StVecMesonHistoManager;
 class StVecMesonUtility;
 class StVecMesonProManager;
-// class StVecMesonCorrection;
+class StVecMesonZdcEpManager;
 // class StVecMesonTree;
 
 class StVecMesonMaker : public StMaker {
@@ -35,7 +35,10 @@ class StVecMesonMaker : public StMaker {
     StVecMesonHistoManager *mVecMesonHistoManager;
     StVecMesonUtility *mVecMesonUtility;
     StVecMesonProManager *mVecMesonProManager;
-    // StVecMesonCorrection *mVecMesonCorrection;
+    StVecMesonZdcEpManager *mVecMesonZdcEpManager;
+    // StVecMesonBbcEpManager *mVecMesonBbcEpManager;
+    // StVecMesonEpdEpManager *mVecMesonEpdEpManager;
+    // StVecMesonTpcEpManager *mVecMesonTpcEpManager;
     // StVecMesonTree *mVecMesonTree;
     
     int mMode;
@@ -45,12 +48,16 @@ class StVecMesonMaker : public StMaker {
     string mInPut_Corr_ReCenter;
 
     string mOutPut_QA;
+    string mOutPut_ZdcGainCorr;
+    // string mOutPut_BbcGainCorr;
     string mOutPut_ReCenterPar;
     string mOutPut_ShiftPar;
     string mOutPut_Resolution;
     string mOutPut_Phi;
 
     TFile *mFile_QA;
+    TFile *mFile_ZdcGainCorr;
+    // TFile *mFile_BbcGainCorr;
     TFile *mFile_ReCenterPar;
     TFile *mFile_ShiftPar;
     TFile *mFile_Resolution;

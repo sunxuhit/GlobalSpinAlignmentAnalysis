@@ -13,16 +13,24 @@ class StVecMesonHistoManager
     StVecMesonHistoManager();
     virtual ~StVecMesonHistoManager();
 
-    void Init_EventQA();
-    void Fill_EventQA_RefMult(float refMult, float cent9, float tofHits, float tofMatch, int cutSelection);
-    void Fill_EventQA_Vertex(float vx, float vy, float vz, float vzVpd, int cutSelection);
-    void Write_EventQA();
+    //--------------QA---------------
+    void initEventQA();
+    void fillEventQA_RefMult(float refMult, float cent9, float tofHits, float tofMatch, int cutSelection);
+    void fillEventQA_Vertex(float vx, float vy, float vz, float vzVpd, int cutSelection);
+    void writeEventQA();
 
-    void Init_TrackQA();
-    void Fill_TrackQA_Kinematics(TVector3 pMom, TVector3 gMom, int cutSelection);
-    void Fill_TrackQA_Quliaty(float gDca, int nHitsFit, int nHitsMax, int nHitsDEdx, int cutSelection);
-    void Fill_TrackQA_PID(float mom, short charge, float dEdx, float beta, float mass2, int cutSelection);
-    void Write_TrackQA();
+    void initTrackQA();
+    void fillTrackQA_Kinematics(TVector3 pMom, TVector3 gMom, int cutSelection);
+    void fillTrackQA_Quliaty(float gDca, int nHitsFit, int nHitsMax, int nHitsDEdx, int cutSelection);
+    void fillTrackQA_PID(float mom, short charge, float dEdx, float beta, float mass2, int cutSelection);
+    void writeTrackQA();
+    //--------------QA---------------
+
+    //--------------ZDC EP---------------
+    void initZdcGainCorr();
+    void fillZdcGainCorr(int i_eastwest, int i_verthori, int i_slat, int runIndex, float zdcsmd);
+    void writeZdcGainCorr();
+    //--------------ZDC EP---------------
 
     /*
     void InitEP();
@@ -57,24 +65,9 @@ class StVecMesonHistoManager
     TH2F *h_mBetaMom[2];
     TH2F *h_mMass2Mom[2];
 
-    /*
-    TH1F *h_mEastRaw;
-    TH1F *h_mWestRaw;
-    TH1F *h_mFullRaw;
-
-    // event plane distribution
-    TH1F *h_mEastReCenter;
-    TH1F *h_mWestReCenter;
-    TH1F *h_mRanAReCenter;
-    TH1F *h_mRanBReCenter;
-    TH1F *h_mFullReCenter;
-
-    TH1F *h_mEastShift;
-    TH1F *h_mWestShift;
-    TH1F *h_mRanAShift;
-    TH1F *h_mRanBShift;
-    TH1F *h_mFullShift;
-    */
+    //--------------ZDC EP---------------
+    TH2F *h_mZdcGainCorr[2][2][8]; // 0: east/west | 1: vertical(x)/horizontal(y) | 2: 7 slats(x)/8 slats(y); | x-axis: runIndex | y-axis: ADC
+    //--------------ZDC EP---------------
 
     std::string mCutsQA[2] = {"Before","After"};
 

@@ -12,13 +12,11 @@ using namespace std;
 
 static const string CutsQA[2] = {"Before","After"};
 
-void plotQA_Track_Quality(int energy = 1)
+void plotQA_Track_Quality(int energy = 2)
 {
-  // string JobId = "BFABA133A7F199B79CC8C8DCE58B4BB1";
-  // string JobId = "8B0C4AEA7B86AF884EF60CA6323903E7";
-  string JobId = "65963AA6E8277E671144438647561DC5";
+  // string JobId = "FAEC35EE309DEE5B0A7F0F9B57AA6008";
+  string JobId = "B1C42134A640995406F8513F28A6447D";
   string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/QA/file_%s_QA_%s.root",vmsa::mBeamEnergy[energy].c_str(),vmsa::mBeamEnergy[energy].c_str(),JobId.c_str());
-  // string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/QA/file_%s_QA.root",vmsa::mBeamEnergy[energy].c_str(),vmsa::mBeamEnergy[energy].c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
   TH1F *h_mDca[2];
   TH1F *h_mNHitsFit[2];
@@ -55,15 +53,22 @@ void plotQA_Track_Quality(int energy = 1)
   for(int i_cut = 0; i_cut < 2; ++i_cut)
   {
     c_TrackQA_Quality->cd(i_cut*4+1);
+    h_mDca[i_cut]->GetXaxis()->SetTitle("dca");
     h_mDca[i_cut]->Draw("hE");
 
     c_TrackQA_Quality->cd(i_cut*4+2);
     h_mNHitsFit[i_cut]->Draw("hE");
+    h_mNHitsFit[i_cut]->GetXaxis()->SetTitle("nHitsFit");
 
     c_TrackQA_Quality->cd(i_cut*4+3);
     h_mNHitsRatio[i_cut]->Draw("hE");
+    h_mNHitsRatio[i_cut]->GetXaxis()->SetTitle("nHitsRatio");
 
     c_TrackQA_Quality->cd(i_cut*4+4);
     h_mNHitsDEdx[i_cut]->Draw("hE");
+    h_mNHitsDEdx[i_cut]->GetXaxis()->SetTitle("nHitsDedx");
   }
+
+  string FigName = Form("c_TrackQA_Quality_%s.eps",vmsa::mBeamEnergy[energy].c_str());
+  c_TrackQA_Quality->SaveAs(FigName.c_str());
 }

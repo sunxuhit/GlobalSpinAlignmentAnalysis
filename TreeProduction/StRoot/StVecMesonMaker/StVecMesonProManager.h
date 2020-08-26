@@ -14,10 +14,10 @@ class StVecMesonProManager
     virtual ~StVecMesonProManager();
 
     // Run-by-Run QA
-    void Init_RunQA();
-    void Fill_RunQA_Event(int runIdenx, float refMult, float zdcX, float vx, float vy, float vz, int cutSelection);
-    void Fill_RunQA_Track(int runIdenx, float gDca, int nHitsFit, TVector3 pMom, TVector3 gMom, int cutSelection);
-    void Write_RunQA();
+    void initRunQA();
+    void fillRunQA_Event(int runIdenx, float refMult, float zdcX, float vx, float vy, float vz, int cutSelection);
+    void fillRunQA_Track(int runIdenx, float gDca, int nHitsFit, TVector3 pMom, TVector3 gMom, int cutSelection);
+    void writeRunQA();
 
   private:
     // Run-by-Run QA | x axis is RunIndex

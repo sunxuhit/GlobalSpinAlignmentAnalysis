@@ -12,7 +12,7 @@ using namespace std;
 
 static const string CutsQA[2] = {"Before","After"};
 
-void plotQA_Track_Kinematics(int energy = 1)
+void plotQA_Track_Kinematics(int energy = 2)
 {
   string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/QA/file_%s_QA.root",vmsa::mBeamEnergy[energy].c_str(),vmsa::mBeamEnergy[energy].c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());

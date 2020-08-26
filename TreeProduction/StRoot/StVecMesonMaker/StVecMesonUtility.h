@@ -10,9 +10,9 @@ class StVecMesonUtility
     StVecMesonUtility(int energy);
     virtual ~StVecMesonUtility();
 
-    void Init_RunIndex();
+    void initRunIndex();
     bool read_in_runIndex();
-    int find_runIndex(int runId);
+    int findRunIndex(int runId);
 
   private:
     int mEnergy;

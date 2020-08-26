@@ -8,7 +8,7 @@ then
   Energy=54GeV_2017
   SM=SE
   Mode=QA
-  JobId=09DDC6912DF49AF532AB39B70796C8FA #generate faild list for this Job
+  JobId=8E7207D11F7C30A914199841DFBE6A97 #generate faild list for this Job
 
   FileDirectory="/star/u/sunxuhit/AuAu$Energy/SpinAlignment/$Mode"
 
