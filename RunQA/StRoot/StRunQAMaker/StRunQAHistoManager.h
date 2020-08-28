@@ -15,7 +15,7 @@ class StRunQAHistoManager
 
     //--------------QA---------------
     void initEventQA();
-    void fillEventQA_RefMult(float refMult, float cent9, float tofHits, float tofMatch, int cutSelection);
+    void fillEventQA_RefMult(float refMult, float grefMult, float cent9, float tofHits, float tofMatch, int cutSelection);
     void fillEventQA_Vertex(float vx, float vy, float vz, float vzVpd, int cutSelection);
     void writeEventQA();
 
@@ -30,9 +30,12 @@ class StRunQAHistoManager
     // QA Histograms
     // Event Level:
     TH1F *h_mRefMult[2]; // 0: before cuts | 1: after cuts
+    TH1F *h_mGRefMult[2];
     TH1F *h_mCentrality9[2];
     TH2F *h_mRefMultTofMatch[2];
     TH2F *h_mRefMultTofHits[2];
+    TH2F *h_mGRefMultTofMatch[2];
+    TH2F *h_mGRefMultTofHits[2];
     TH2F *h_mVzVzVpd[2];
     TH1F *h_mDiffVzVzVpd[2];
     TH1F *h_mVertexZ[2];

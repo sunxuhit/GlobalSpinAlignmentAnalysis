@@ -35,8 +35,8 @@ StRunQAMaker::StRunQAMaker(const char* name, StPicoDstMaker *picoMaker, const st
 
   if(mMode == 0)
   {
-    // mOutPut_QA = Form("/star/data01/pwg/sunxuhit/AuAu%s/SpinAlignment/QA/file_%s_QA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),jobId.c_str());
-    mOutPut_QA = Form("./file_%s_QA_%s.root",runQA::mBeamEnergy[energy].c_str(),jobId.c_str());
+    // mOutPut_RunQA = Form("/star/data01/pwg/sunxuhit/AuAu%s/SpinAlignment/QA/file_%s_QA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),jobId.c_str());
+    mOutPut_RunQA = Form("./file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),jobId.c_str());
   }
 }
 
@@ -47,19 +47,21 @@ StRunQAMaker::~StRunQAMaker()
 //----------------------------------------------------------------------------- 
 int StRunQAMaker::Init() 
 {
-  if(!mRefMultCorr)
-  {
-    mRefMultCorr = CentralityMaker::instance()->getRefMultCorr();
-  }
   mRunQACut = new StRunQACut(mEnergy);
   mRunQAHistoManager = new StRunQAHistoManager();
   mRunQAUtility = new StRunQAUtility(mEnergy);
   mRunQAUtility->initRunIndex(); // initialize std::map for run index
   mRunQAProManager = new StRunQAProManager();
 
+  if(!mRefMultCorr)
+  {
+    if(!mRunQACut->isBES(mEnergy)) mRefMultCorr = CentralityMaker::instance()->getgRefMultCorr_Run14_AuAu200_VpdMB5_P16id(); // 200GeV_2014
+    if(mRunQACut->isBES(mEnergy)) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr(); // BESII
+  }
+
   if(mMode == 0)
   { // QA
-    mFile_QA= new TFile(mOutPut_QA.c_str(),"RECREATE");
+    mFile_QA= new TFile(mOutPut_RunQA.c_str(),"RECREATE");
     mFile_QA->cd();
     mRunQAHistoManager->initEventQA();
     mRunQAHistoManager->initTrackQA();
@@ -74,7 +76,7 @@ int StRunQAMaker::Finish()
 {
   if(mMode == 0)
   {
-    if(mOutPut_QA != "")
+    if(mOutPut_RunQA != "")
     {
       mFile_QA->cd();
       mRunQAHistoManager->writeEventQA();
@@ -120,6 +122,7 @@ int StRunQAMaker::Make()
     // Event Information
     const int runId = mPicoEvent->runId();
     const int refMult = mPicoEvent->refMult();
+    const int grefMult = mPicoEvent->grefMult();
     const float vx    = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
     const float vy    = mPicoEvent->primaryVertex().y();
     const float vz    = mPicoEvent->primaryVertex().z();
@@ -138,9 +141,8 @@ int StRunQAMaker::Make()
     }
 
     mRefMultCorr->init(runId);
-    mRefMultCorr->initEvent(refMult,vz,zdcX); // BES-II might need Luminosity corrections
-    // if( !mRunQACut->isBES(mEnergy) ) mRefMultCorr->initEvent(refMult,vz,zdcX); // for 200 GeV
-    // if( mRunQACut->isBES(mEnergy) ) mRefMultCorr->initEvent(refMult,vz,0.0); // for BES Energy
+    if(!mRunQACut->isBES(mEnergy)) mRefMultCorr->initEvent(grefMult,vz,zdcX); // 200GeV_2014
+    if(mRunQACut->isBES(mEnergy)) mRefMultCorr->initEvent(refMult,vz,zdcX); // BES-II might need Luminosity corrections
 
     /*
     if(mRefMultCorr->isBadRun(runId))
@@ -165,15 +167,15 @@ int StRunQAMaker::Make()
 
     if(mMode == 0)
     { // fill QA before event cuts
-      mRunQAHistoManager->fillEventQA_RefMult(refMult,cent9,numOfBTofHits,numOfBTofMatch,0); // wo event cut
+      mRunQAHistoManager->fillEventQA_RefMult(refMult,grefMult,cent9,numOfBTofHits,numOfBTofMatch,0); // wo event cut
       mRunQAHistoManager->fillEventQA_Vertex(vx,vy,vz,vzVpd,0);
-      mRunQAProManager->fillRunQA_Event(runIndex,refMult,zdcX,vx,vy,vz,0);
+      mRunQAProManager->fillRunQA_Event(runIndex,refMult,grefMult,zdcX,vx,vy,vz,0);
 
       if(mRunQACut->passEventCut(mPicoDst))
       { // apply Event Cuts for anlaysis 
-	mRunQAHistoManager->fillEventQA_RefMult(refMult,cent9,numOfBTofHits,numOfBTofMatch,1); // with event cut
+	mRunQAHistoManager->fillEventQA_RefMult(refMult,grefMult,cent9,numOfBTofHits,numOfBTofMatch,1); // with event cut
 	mRunQAHistoManager->fillEventQA_Vertex(vx,vy,vz,vzVpd,1);
-	mRunQAProManager->fillRunQA_Event(runIndex,refMult,zdcX,vx,vy,vz,1);
+	mRunQAProManager->fillRunQA_Event(runIndex,refMult,grefMult,zdcX,vx,vy,vz,1);
 
 	for(unsigned int i_track = 0; i_track < nTracks; i_track++) // track loop
 	{

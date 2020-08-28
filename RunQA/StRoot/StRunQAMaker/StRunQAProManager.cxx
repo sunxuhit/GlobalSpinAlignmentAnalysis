@@ -30,6 +30,9 @@ void StRunQAProManager::initRunQA()
     std::string ProName = Form("p_mQA_RefMult_%s",mCutsQA[i_cut].c_str());
     p_mQA_RefMult[i_cut] = new TProfile(ProName.c_str(),ProName.c_str(),runQA::mNumOfRunIndex,-0.5,(float)runQA::mNumOfRunIndex-0.5); 
 
+    ProName = Form("p_mQA_gRefMult_%s",mCutsQA[i_cut].c_str());
+    p_mQA_gRefMult[i_cut] = new TProfile(ProName.c_str(),ProName.c_str(),runQA::mNumOfRunIndex,-0.5,(float)runQA::mNumOfRunIndex-0.5); 
+
     ProName = Form("p_mQA_ZdcX_%s",mCutsQA[i_cut].c_str());
     p_mQA_ZdcX[i_cut] = new TProfile(ProName.c_str(),ProName.c_str(),runQA::mNumOfRunIndex,-0.5,(float)runQA::mNumOfRunIndex-0.5);
 
@@ -65,9 +68,10 @@ void StRunQAProManager::initRunQA()
   }
 }
 
-void StRunQAProManager::fillRunQA_Event(int runIdenx, float refMult, float zdcX, float vx, float vy, float vz, int cutSelection)
+void StRunQAProManager::fillRunQA_Event(int runIdenx, float refMult, float grefMult, float zdcX, float vx, float vy, float vz, int cutSelection)
 {
     p_mQA_RefMult[cutSelection]->Fill(runIdenx, refMult);
+    p_mQA_gRefMult[cutSelection]->Fill(runIdenx, grefMult);
     p_mQA_ZdcX[cutSelection]->Fill(runIdenx, zdcX);
     p_mQA_Vz[cutSelection]->Fill(runIdenx, vz);
     p_mQA_Vr[cutSelection]->Fill(runIdenx, TMath::Sqrt(vx*vx+vy*vy));
@@ -90,6 +94,7 @@ void StRunQAProManager::writeRunQA()
   for(int i_cut = 0; i_cut < 2; ++i_cut)
   {
     p_mQA_RefMult[i_cut]->Write();
+    p_mQA_gRefMult[i_cut]->Write();
     p_mQA_ZdcX[i_cut]->Write();
     p_mQA_Vz[i_cut]->Write();
     p_mQA_Vr[i_cut]->Write();

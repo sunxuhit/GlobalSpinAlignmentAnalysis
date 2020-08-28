@@ -15,13 +15,14 @@ class StRunQAProManager
 
     // Run-by-Run QA
     void initRunQA();
-    void fillRunQA_Event(int runIdenx, float refMult, float zdcX, float vx, float vy, float vz, int cutSelection);
+    void fillRunQA_Event(int runIdenx, float refMult, float grefMult, float zdcX, float vx, float vy, float vz, int cutSelection);
     void fillRunQA_Track(int runIdenx, float gDca, int nHitsFit, TVector3 pMom, TVector3 gMom, int cutSelection);
     void writeRunQA();
 
   private:
     // Run-by-Run QA | x axis is RunIndex
     TProfile *p_mQA_RefMult[2]; // 0: before cuts | 1: after cuts
+    TProfile *p_mQA_gRefMult[2];
     TProfile *p_mQA_ZdcX[2];
     TProfile *p_mQA_Vz[2];
     TProfile *p_mQA_Vr[2];

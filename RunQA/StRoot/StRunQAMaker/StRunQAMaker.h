@@ -39,7 +39,7 @@ class StRunQAMaker : public StMaker {
 
     string mInPut_Corr_ReCenter;
 
-    string mOutPut_QA;
+    string mOutPut_RunQA;
 
     TFile *mFile_QA;
 

@@ -30,6 +30,9 @@ void StRunQAHistoManager::initEventQA()
     std::string HistName = Form("h_mRefMult_%s",mCutsQA[i_cut].c_str());
     h_mRefMult[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5);
 
+    HistName = Form("h_mGRefMult_%s",mCutsQA[i_cut].c_str());
+    h_mGRefMult[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5);
+
     HistName = Form("h_mCentrality9_%s",mCutsQA[i_cut].c_str());
     h_mCentrality9[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),12,-1.5,10.5);
 
@@ -38,6 +41,12 @@ void StRunQAHistoManager::initEventQA()
 
     HistName = Form("h_mRefMultTofHits_%s",mCutsQA[i_cut].c_str());
     h_mRefMultTofHits[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5,2000,-0.5,1999.5);
+
+    HistName = Form("h_mGRefMultTofMatch_%s",mCutsQA[i_cut].c_str());
+    h_mGRefMultTofMatch[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5,2000,-0.5,1999.5);
+
+    HistName = Form("h_mGRefMultTofHits_%s",mCutsQA[i_cut].c_str());
+    h_mGRefMultTofHits[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5,2000,-0.5,1999.5);
 
     HistName = Form("h_mVertexXY_%s",mCutsQA[i_cut].c_str());
     h_mVertexXY[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),201,-10.05,10.05,201,-10.05,10.05);
@@ -53,12 +62,15 @@ void StRunQAHistoManager::initEventQA()
   }
 }
 
-void StRunQAHistoManager::fillEventQA_RefMult(float refMult, float cent9, float tofHits, float tofMatch, int cutSelection)
+void StRunQAHistoManager::fillEventQA_RefMult(float refMult, float grefMult, float cent9, float tofHits, float tofMatch, int cutSelection)
 {
   h_mRefMult[cutSelection]->Fill(refMult);
+  h_mGRefMult[cutSelection]->Fill(grefMult);
   h_mCentrality9[cutSelection]->Fill(cent9);
   h_mRefMultTofMatch[cutSelection]->Fill(refMult,tofMatch);
   h_mRefMultTofHits[cutSelection]->Fill(refMult,tofHits);
+  h_mGRefMultTofMatch[cutSelection]->Fill(grefMult,tofMatch);
+  h_mGRefMultTofHits[cutSelection]->Fill(grefMult,tofHits);
 }
 
 void StRunQAHistoManager::fillEventQA_Vertex(float vx, float vy, float vz, float vzVpd, int cutSelection)
@@ -74,9 +86,12 @@ void StRunQAHistoManager::writeEventQA()
   for(int i_cut = 0; i_cut < 2; ++i_cut)
   {
     h_mRefMult[i_cut]->Write();
+    h_mGRefMult[i_cut]->Write();
     h_mCentrality9[i_cut]->Write();
     h_mRefMultTofMatch[i_cut]->Write();
     h_mRefMultTofHits[i_cut]->Write();
+    h_mGRefMultTofMatch[i_cut]->Write();
+    h_mGRefMultTofHits[i_cut]->Write();
 
     h_mVertexXY[i_cut]->Write();
     h_mVertexZ[i_cut]->Write();
