@@ -17,10 +17,10 @@ temp_gccflags.c
 */*_C.*
 */macro/*_C.*
 
-FileList/*/condor_*.list
-FileList/*/pico_xrootd_resubmit.list
-FileList/*/pico_xrootd_completed_*.list
-FileList/*/pico_xrootd_failed_*.list
+FileList/*/*.list
+!FileList/*/pico_sorted.list
+!FileList/*/runNumber.list
+!FileList/*/pico_xrootd_local.list
 
 TreeProduction/*.root
 TreeProduction/StRoot/CVS/
@@ -32,3 +32,14 @@ TreeProduction/submit/*/*.session.xml
 TreeProduction/submit/*/Submitted/
 TreeProduction/macro/*.eps
 TreeProduction/macro/*.png
+
+RunQA/*.root
+RunQA/StRoot/CVS/
+RunQA/StRoot/StRefMultCorr/CVS/
+RunQA/submit/*/JOBS/
+RunQA/submit/*/Log/
+RunQA/submit/*/sched*
+RunQA/submit/*/*.session.xml
+RunQA/submit/*/Submitted/
+RunQA/macro/*.eps
+RunQA/macro/*.png

@@ -6,11 +6,12 @@
 #include <iterator>
 #include "../StRoot/StVecMesonMaker/StVecMesonCons.h"
 
-int genRunIndex(int energy = 1)
+int genRunIndex(int energy = 0)
 {
-  int runId[2000];
-  int runIndex[2000];
-  for(int i_run = 0; i_run < 2000; ++i_run)
+  const int numOfRuns = 4000;
+  int runId[numOfRuns];
+  int runIndex[numOfRuns];
+  for(int i_run = 0; i_run < numOfRuns; ++i_run)
   {
     runId[i_run] = -999;
     runIndex[i_run] = -999;
@@ -39,7 +40,7 @@ int genRunIndex(int energy = 1)
   }
   file_runList.close();
 
-  std::string outputfile = Form("/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/TreeProduction/StRoot/StVecMesonMaker/runIndex_%s.txt",vmsa::mBeamEnergy[energy].c_str());
+  std::string outputfile = Form("/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/TreeProduction/StRoot/StVecMesonUtility/RunIndex/runIndex_%s.txt",vmsa::mBeamEnergy[energy].c_str());
   std::ofstream file_runIndex;
   file_runIndex.open(outputfile.c_str());
   if (!file_runIndex.is_open()) 
@@ -50,7 +51,7 @@ int genRunIndex(int energy = 1)
   else 
   {
     // write
-    for(int i_run = 0; i_run < 2000; ++i_run)
+    for(int i_run = 0; i_run < numOfRuns; ++i_run)
     {
       if(runId[i_run] > 0)
       {

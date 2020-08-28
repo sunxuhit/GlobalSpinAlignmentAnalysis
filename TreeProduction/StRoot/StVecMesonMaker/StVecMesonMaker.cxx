@@ -333,7 +333,7 @@ int StVecMesonMaker::Make()
 	  mVecMesonHistoManager->fillTrackQA_Quliaty(gDCA,nHitsFit,nHitsMax,nHitsDEdx,0);
 	  mVecMesonHistoManager->fillTrackQA_PID(primMom.Mag(),charge,dEdx,beta,mass2,0);
 	  mVecMesonProManager->fillRunQA_Track(runIndex,gDCA,nHitsFit,primMom,globMom,0);
-	  if( mVecMesonCut->passTrackBasic(picoTrack) ) // apply basic track cut
+	  if( mVecMesonCut->passTrackQA(picoTrack) ) // apply QA track cut
 	  {
 	    mVecMesonHistoManager->fillTrackQA_Kinematics(primMom,globMom, 1); // with track cut
 	    mVecMesonHistoManager->fillTrackQA_Quliaty(gDCA,nHitsFit,nHitsMax,nHitsDEdx,1);

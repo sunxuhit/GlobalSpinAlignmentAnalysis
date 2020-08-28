@@ -17,6 +17,7 @@ class StVecMesonCut : public TObject
     bool isMinBias(StPicoEvent*);
     bool isBES(int energy);
     bool passEventCut(StPicoDst*);
+    bool passTrackQA(StPicoTrack*);
     bool passTrackBasic(StPicoTrack*);
     bool passTrackEP(StPicoTrack*);
     bool passSigPionCut(StPicoTrack*, float);

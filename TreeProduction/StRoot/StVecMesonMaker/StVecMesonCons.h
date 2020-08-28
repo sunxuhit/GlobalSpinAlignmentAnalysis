@@ -15,13 +15,14 @@ namespace vmsa
   int const mBeamYear[NumBeamEnergy] = {2014,2017,2018};
 
   // event cut
-  float const mVzMaxMap[NumBeamEnergy] = {150.0,40.0,70.0}; // 0: 200GeV_2014 | 1: 54GeV_2017 | 2: 27GeV_2018 
+  float const mVzMaxMap[NumBeamEnergy] = {6.0,40.0,70.0}; // 0: 200GeV_2014 | 1: 54GeV_2017 | 2: 27GeV_2018 
   float const mVrMax[NumBeamEnergy] = {2.0,2.0,2.0};
   float const mVzVpdDiffMax[NumBeamEnergy] = {3.0,3.0,3.0}; // 3.0
   unsigned int const mMatchedToFMin[NumBeamEnergy] = {2,2,2}; // 2
 
   // track cut
   float const mSigScaleMap[NumBeamEnergy] = {1.0,1.0,1.0};
+  float const mDcaTrQAMax = 3.0; // use primary tracks run-by-run QA 
   float const mDcaEPMax[NumBeamEnergy] = {3.0,1.0,1.0}; // for event plane reconstruction: 1.0 for BES
   float const mDcaTrMax = 1.0; // for pion, kaon, proton mDcaTrMax = 1.0 for flow
   float const mDcaTrMax_phi = 3.0; // for phi meson mDcaTrMax = 2.0 to fill a tree and apply an additional cut
