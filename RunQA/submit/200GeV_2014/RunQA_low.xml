@@ -17,7 +17,7 @@
 
   <!-- <input URL="filelist:&#38;listPath;/pico_xrootd_production.list" /> -->
   <!-- <stdout URL="file:&#38;outPath;/Log/&#38;outDir;/$JOBID.out"/> -->
-  <input URL="catalog:star.bnl.gov?production=P19ib,filetype=daq_reco_picoDst,trgsetupname=27GeV_production_2018,storage!=hpss,filename~st_physics" preferStorage="local" singleCopy="true" nFiles="all"/>
+  <input URL="catalog:star.bnl.gov?production=P18ih,library=SL20a,filetype=daq_reco_picoDst,trgsetupname=AuAu_200_production_low_2014,storage!=hpss,filename~st_physics" preferStorage="local" singleCopy="true" nFiles="all"/>
 
   <stdout discard="true"/>
   <stderr URL="file:&outPath;/Log/&outDir;/$JOBID.err"/>

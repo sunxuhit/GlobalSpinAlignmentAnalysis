@@ -32,7 +32,7 @@ void RunQA(const Char_t *inputFile="../FileList/200GeV_2014/pico_xrootd_local.li
   }
 
   Int_t nEvents = 10000000000;
-  // Int_t nEvents = 10000;
+  // Int_t nEvents = 1000;
 
   gROOT->LoadMacro("$STAR/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");
   loadSharedLibraries();

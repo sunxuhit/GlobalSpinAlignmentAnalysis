@@ -6,16 +6,16 @@
 #include "TH2F.h"
 #include "TF1.h"
 #include "TLegend.h"
-#include "../StRoot/StVecMesonMaker/StVecMesonCons.h"
+#include "../StRoot/StRunQAMaker/StRunQACons.h"
 
 using namespace std;
 
 static const string CutsQA[2] = {"Before","After"};
 
-void plotQA_Event(int energy = 2)
+void plotQA_Event(int energy = 0)
 {
-  string JobId = "B1C42134A640995406F8513F28A6447D";
-  string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/QA/file_%s_QA_%s.root",vmsa::mBeamEnergy[energy].c_str(),vmsa::mBeamEnergy[energy].c_str(),JobId.c_str());
+  string JobId = "DAE8A13D7A97018FED7E2ECFA950C92A";
+  string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
   TH1F *h_mRefMult[2]; // 0: before cuts | 1: after cuts
   TH1F *h_mCentrality9[2];
@@ -129,7 +129,7 @@ void plotQA_Event(int energy = 2)
     // c_EventQA[i_cut]->cd(8)->SetLogy();
     h_mDiffVzVzVpd[i_cut]->Draw();
 
-    string FigName = Form("c_EventQA_%s_%s.png",CutsQA[i_cut].c_str(),vmsa::mBeamEnergy[energy].c_str());
+    string FigName = Form("c_EventQA_%s_%s.png",CutsQA[i_cut].c_str(),runQA::mBeamEnergy[energy].c_str());
     c_EventQA[i_cut]->SaveAs(FigName.c_str());
   }
 }

@@ -157,6 +157,7 @@ int StRunQAMaker::Make()
     vz > 0.0 ? vz_sign = 1 : vz_sign = 0;
 
     const int cent9 = mRefMultCorr->getCentralityBin9(); // get Centrality9
+    const double reweight = mRefMultCorr->getWeight(); // get Centrality9
     const int runIndex = mRunQAUtility->findRunIndex(runId); // find run index for a specific run
     // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
     if(runIndex < 0)
@@ -167,13 +168,13 @@ int StRunQAMaker::Make()
 
     if(mMode == 0)
     { // fill QA before event cuts
-      mRunQAHistoManager->fillEventQA_RefMult(refMult,grefMult,cent9,numOfBTofHits,numOfBTofMatch,0); // wo event cut
+      mRunQAHistoManager->fillEventQA_RefMult(refMult,grefMult,cent9,reweight,numOfBTofHits,numOfBTofMatch,0); // wo event cut
       mRunQAHistoManager->fillEventQA_Vertex(vx,vy,vz,vzVpd,0);
       mRunQAProManager->fillRunQA_Event(runIndex,refMult,grefMult,zdcX,vx,vy,vz,0);
 
       if(mRunQACut->passEventCut(mPicoDst))
       { // apply Event Cuts for anlaysis 
-	mRunQAHistoManager->fillEventQA_RefMult(refMult,grefMult,cent9,numOfBTofHits,numOfBTofMatch,1); // with event cut
+	mRunQAHistoManager->fillEventQA_RefMult(refMult,grefMult,cent9,reweight,numOfBTofHits,numOfBTofMatch,1); // with event cut
 	mRunQAHistoManager->fillEventQA_Vertex(vx,vy,vz,vzVpd,1);
 	mRunQAProManager->fillRunQA_Event(runIndex,refMult,grefMult,zdcX,vx,vy,vz,1);
 

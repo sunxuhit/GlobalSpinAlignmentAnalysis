@@ -4,20 +4,23 @@
 
   <command>
     starver &library;
-    cons
-    root4star -l -b -q RunQA.C\(\"$FILELIST\",\"$JOBID\",&mode;,&energy;\)
+    root4star -l -b -q RunQA.C\(\"$FILELIST\",\"$JOBID\",&mode;,&energy;\)&gt;&amp; ${JOBID}.log
   </command>
 
   <SandBox installer="ZIP">
     <Package>
       <File>file:&codePath;/RunQA.C</File>
-      <File>file:&codePath;/StRoot</File>
+      <File>file:&codePath;/.sl73_gcc485/</File>
+      <File>file:&codePath;/StRoot/</File>
     </Package>
   </SandBox>
 
-  <input URL="filelist:&listPath;/pico_xrootd_test.list" />
-  <stdout URL="file:&outPath;/Log/&outDir;_$JOBID.out"/>
-  <stderr URL="file:&outPath;/Log/&outDir;_$JOBID.err"/>
+  <!-- <input URL="filelist:&#38;listPath;/pico_xrootd_test.list" /> -->
+  <!-- <stdout URL="file:&#38;outPath;/Log/&#38;outDir;/$JOBID.out"/> -->
+  <input URL="catalog:star.bnl.gov?production=P19ib,filetype=daq_reco_picoDst,trgsetupname=27GeV_production_2018,storage!=hpss,filename~st_physics" preferStorage="local" singleCopy="true" nFiles="1024"/>
+
+  <stdout discard="true"/>
+  <stderr URL="file:&outPath;/Log/&outDir;/$JOBID.err"/>
 
   <Generator>
     <ReportLocation>./JOBS/report/</ReportLocation>
@@ -26,6 +29,6 @@
   </Generator>
 
   <output fromScratch="*.root" toURL="file:&outPath;/SpinAlignment/&outDir;/" />
-
+  <output fromScratch="*.log" toURL="file:&outPath;/Log/&outDir;/" />
 </job>
 

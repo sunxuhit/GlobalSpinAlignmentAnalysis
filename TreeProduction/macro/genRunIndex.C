@@ -6,7 +6,7 @@
 #include <iterator>
 #include "../StRoot/StVecMesonMaker/StVecMesonCons.h"
 
-int genRunIndex(int energy = 0)
+int genRunIndex(int energy = 2)
 {
   const int numOfRuns = 4000;
   int runId[numOfRuns];

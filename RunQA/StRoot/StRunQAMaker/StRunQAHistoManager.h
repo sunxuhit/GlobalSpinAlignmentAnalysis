@@ -15,7 +15,7 @@ class StRunQAHistoManager
 
     //--------------QA---------------
     void initEventQA();
-    void fillEventQA_RefMult(float refMult, float grefMult, float cent9, float tofHits, float tofMatch, int cutSelection);
+    void fillEventQA_RefMult(int refMult, int grefMult, int cent9, double reweight, int tofHits, int tofMatch, int cutSelection);
     void fillEventQA_Vertex(float vx, float vy, float vz, float vzVpd, int cutSelection);
     void writeEventQA();
 

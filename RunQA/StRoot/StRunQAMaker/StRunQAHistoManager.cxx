@@ -62,11 +62,11 @@ void StRunQAHistoManager::initEventQA()
   }
 }
 
-void StRunQAHistoManager::fillEventQA_RefMult(float refMult, float grefMult, float cent9, float tofHits, float tofMatch, int cutSelection)
+void StRunQAHistoManager::fillEventQA_RefMult(int refMult, int grefMult, int cent9, double reweight, int tofHits, int tofMatch, int cutSelection)
 {
   h_mRefMult[cutSelection]->Fill(refMult);
   h_mGRefMult[cutSelection]->Fill(grefMult);
-  h_mCentrality9[cutSelection]->Fill(cent9);
+  h_mCentrality9[cutSelection]->Fill(cent9,reweight);
   h_mRefMultTofMatch[cutSelection]->Fill(refMult,tofMatch);
   h_mRefMultTofHits[cutSelection]->Fill(refMult,tofHits);
   h_mGRefMultTofMatch[cutSelection]->Fill(grefMult,tofMatch);

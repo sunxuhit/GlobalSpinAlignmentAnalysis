@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<job minFilesPerProcess="100" filesPerHour="25" maxFilesPerProcess="150" fileListSyntax="xrootd" simulateSubmission="false">
+<job minFilesPerProcess="100" filesPerHour="25" maxFilesPerProcess="200" fileListSyntax="xrootd" simulateSubmission="false">
 
   <command>
     starver &library;
@@ -15,9 +15,9 @@
     </Package>
   </SandBox>
 
-  <!-- <input URL="filelist:&#38;listPath;/pico_xrootd_production.list" /> -->
+  <!-- <input URL="filelist:&#38;listPath;/pico_xrootd_test.list" /> -->
   <!-- <stdout URL="file:&#38;outPath;/Log/&#38;outDir;/$JOBID.out"/> -->
-  <input URL="catalog:star.bnl.gov?production=P19ib,filetype=daq_reco_picoDst,trgsetupname=27GeV_production_2018,storage!=hpss,filename~st_physics" preferStorage="local" singleCopy="true" nFiles="all"/>
+  <input URL="catalog:star.bnl.gov?production=P18ih,library=SL20a,filetype=daq_reco_picoDst,trgsetupname=AuAu_200_production_2014,storage!=hpss,filename~st_physics" preferStorage="local" singleCopy="true" nFiles="1024"/>
 
   <stdout discard="true"/>
   <stderr URL="file:&outPath;/Log/&outDir;/$JOBID.err"/>
