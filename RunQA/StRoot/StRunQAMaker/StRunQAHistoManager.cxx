@@ -59,6 +59,9 @@ void StRunQAHistoManager::initEventQA()
 
     HistName = Form("h_mDiffVzVzVpd_%s",mCutsQA[i_cut].c_str());
     h_mDiffVzVzVpd[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),201,-10.05,10.05);
+
+    HistName = Form("h_mTriggerID_%s",mCutsQA[i_cut].c_str());
+    h_mTriggerID[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),10,-0.5,9.5);
   }
 }
 
@@ -81,6 +84,11 @@ void StRunQAHistoManager::fillEventQA_Vertex(float vx, float vy, float vz, float
   h_mDiffVzVzVpd[cutSelection]->Fill(vz-vzVpd);
 }
 
+void StRunQAHistoManager::fillEventQA_Trigger(int triggerBin, int cutSelection)
+{
+  h_mTriggerID[cutSelection]->Fill(triggerBin);
+}
+
 void StRunQAHistoManager::writeEventQA()
 {
   for(int i_cut = 0; i_cut < 2; ++i_cut)
@@ -97,6 +105,8 @@ void StRunQAHistoManager::writeEventQA()
     h_mVertexZ[i_cut]->Write();
     h_mVzVzVpd[i_cut]->Write();
     h_mDiffVzVzVpd[i_cut]->Write();
+
+    h_mTriggerID[i_cut]->Write();
   }
 }
 //-------------------------------------------------------------------------------------------

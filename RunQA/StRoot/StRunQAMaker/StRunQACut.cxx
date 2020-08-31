@@ -36,7 +36,7 @@ bool StRunQACut::isMinBias(StPicoEvent *picoEvent)
   // std::cout << "year: " << picoEvent->year() << std::endl;
   // std::cout << "day: " << picoEvent->day() << std::endl;
   // std::cout << "triggerIds: " << picoEvent->triggerIds()[0] << std::endl;
-  if(mEnergy == 0 && runQA::mBeamYear[mEnergy] == picoEvent->year() && !( picoEvent->isTrigger(450005) || picoEvent->isTrigger(450008) || picoEvent->isTrigger(450015) || picoEvent->isTrigger(450025) || picoEvent->isTrigger(450050) || picoEvent->isTrigger(450060) )) return false; // 27GeV_2018
+  if(mEnergy == 0 && runQA::mBeamYear[mEnergy] == picoEvent->year() && !( picoEvent->isTrigger(450005) || picoEvent->isTrigger(450008) || picoEvent->isTrigger(450015) || picoEvent->isTrigger(450025) || picoEvent->isTrigger(450050) || picoEvent->isTrigger(450060) )) return false; // 200GeV_2014
   if(mEnergy == 1 && runQA::mBeamYear[mEnergy] == picoEvent->year() && !( picoEvent->isTrigger(580001) || picoEvent->isTrigger(580021) )) return false; // 54GeV_2017 | 580011 ?
   if(mEnergy == 2 && runQA::mBeamYear[mEnergy] == picoEvent->year() && !( picoEvent->isTrigger(610001) || picoEvent->isTrigger(610011) || picoEvent->isTrigger(610021) || picoEvent->isTrigger(610031) || picoEvent->isTrigger(610041) || picoEvent->isTrigger(610051) )) return false; // 27GeV_2018
 
@@ -118,6 +118,66 @@ bool StRunQACut::passEventCut(StPicoDst *picoDst)
 //---------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------
+bool StRunQACut::passTrackBasic(StPicoTrack *picoTrack)
+{
+  if(!picoTrack) return kFALSE;
+
+  // nHitsFit cut
+  if(picoTrack->nHitsFit() < runQA::mHitsFitTPCMin)
+  {
+    return kFALSE;
+  }
+
+  // nHitsRatio cut
+  if(picoTrack->nHitsMax() <= runQA::mHitsMaxTPCMin)
+  {
+    return kFALSE;
+  }
+  if((float)picoTrack->nHitsFit()/(float)picoTrack->nHitsMax() < runQA::mHitsRatioTPCMin)
+  {
+    return kFALSE;
+  }
+
+  // eta cut
+  // float eta = picoTrack->pMom().pseudoRapidity();
+  // float eta = picoTrack->pMom().PseudoRapidity();
+  TVector3 primMom; // temp fix for StThreeVectorF & TVector3
+  float primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
+  float primPy    = picoTrack->pMom().y();
+  float primPz    = picoTrack->pMom().z();
+  primMom.SetXYZ(primPx,primPy,primPz);
+  float eta = primMom.PseudoRapidity();
+  if(fabs(eta) > runQA::mEtaMax)
+  {
+    return kFALSE;
+  }
+
+  if(primMom.Pt() < runQA::mGlobPtMin) // minimum pT cuts
+  {
+    return kFALSE;
+  }
+
+  return kTRUE;
+}
+
+bool StRunQACut::passTrackQA(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
+{
+  if(!passTrackBasic(picoTrack)) return kFALSE;
+  if(!picoEvent) return kFALSE;
+
+  const float vx    = picoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
+  const float vy    = picoEvent->primaryVertex().y();
+  const float vz    = picoEvent->primaryVertex().z();
+
+  if(picoTrack->gDCA(vx,vy,vz) > runQA::mDcaTrQAMax)
+  {
+    return kFALSE;
+  }
+
+  return kTRUE;
+}
+
+//---------------------------------------------------------------------------------
 float StRunQACut::getBeta(StPicoDst *picoDst, int i_track)
 {
   float Beta = -999.9;
@@ -186,64 +246,35 @@ float StRunQACut::getGlobalMass2(StPicoDst *picoDst, int i_track)
   return Mass2;
 }
 
-//---------------------------------------------------------------------------------
-bool StRunQACut::passTrackBasic(StPicoTrack *picoTrack)
+int StRunQACut::getTriggerBin(StPicoEvent *picoEvent)
 {
-  if(!picoTrack) return kFALSE;
-
-  // nHitsFit cut
-  if(picoTrack->nHitsFit() < runQA::mHitsFitTPCMin)
-  {
-    return kFALSE;
+  // std::cout << "year: " << picoEvent->year() << std::endl;
+  // std::cout << "day: " << picoEvent->day() << std::endl;
+  // std::cout << "triggerIds: " << picoEvent->triggerIds()[0] << std::endl;
+  if( mEnergy == 0 && runQA::mBeamYear[mEnergy] == picoEvent->year() )
+  { // 200GeV_2014
+    if( picoEvent->isTrigger(450005) ) return 0;
+    if( picoEvent->isTrigger(450008) ) return 1; 
+    if( picoEvent->isTrigger(450015) ) return 2;
+    if( picoEvent->isTrigger(450025) ) return 3;
+    if( picoEvent->isTrigger(450050) ) return 4;
+    if( picoEvent->isTrigger(450060) ) return 5;
+  }
+  if( mEnergy == 1 && runQA::mBeamYear[mEnergy] == picoEvent->year() )
+  { // 54GeV_2017
+    if( picoEvent->isTrigger(580001) ) return 0;
+    if( picoEvent->isTrigger(580021) ) return 1;
+  }
+  if( mEnergy == 2 && runQA::mBeamYear[mEnergy] == picoEvent->year() )
+  { // 27GeV_2018
+    if( picoEvent->isTrigger(610001) ) return 0;
+    if( picoEvent->isTrigger(610011) ) return 1;
+    if( picoEvent->isTrigger(610021) ) return 2;
+    if( picoEvent->isTrigger(610031) ) return 3;
+    if( picoEvent->isTrigger(610041) ) return 4;
+    if( picoEvent->isTrigger(610051) ) return 5;
   }
 
-  // nHitsRatio cut
-  if(picoTrack->nHitsMax() <= runQA::mHitsMaxTPCMin)
-  {
-    return kFALSE;
-  }
-  if((float)picoTrack->nHitsFit()/(float)picoTrack->nHitsMax() < runQA::mHitsRatioTPCMin)
-  {
-    return kFALSE;
-  }
-
-  // eta cut
-  // float eta = picoTrack->pMom().pseudoRapidity();
-  // float eta = picoTrack->pMom().PseudoRapidity();
-  TVector3 primMom; // temp fix for StThreeVectorF & TVector3
-  float primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
-  float primPy    = picoTrack->pMom().y();
-  float primPz    = picoTrack->pMom().z();
-  primMom.SetXYZ(primPx,primPy,primPz);
-  float eta = primMom.PseudoRapidity();
-  if(fabs(eta) > runQA::mEtaMax)
-  {
-    return kFALSE;
-  }
-
-  if(primMom.Pt() < runQA::mGlobPtMin) // minimum pT cuts
-  {
-    return kFALSE;
-  }
-
-  return kTRUE;
+  return -1;
 }
-
-bool StRunQACut::passTrackQA(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
-{
-  if(!passTrackBasic(picoTrack)) return kFALSE;
-  if(!picoEvent) return kFALSE;
-
-  const float vx    = picoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
-  const float vy    = picoEvent->primaryVertex().y();
-  const float vz    = picoEvent->primaryVertex().z();
-
-  if(picoTrack->gDCA(vx,vy,vz) > runQA::mDcaTrQAMax)
-  {
-    return kFALSE;
-  }
-
-  return kTRUE;
-}
-
 //---------------------------------------------------------------------------------

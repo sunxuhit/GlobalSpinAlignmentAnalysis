@@ -160,6 +160,7 @@ int StRunQAMaker::Make()
     const double reweight = mRefMultCorr->getWeight(); // get Centrality9
     const int runIndex = mRunQAUtility->findRunIndex(runId); // find run index for a specific run
     // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
+    const int triggerBin = mRunQACut->getTriggerBin(mPicoEvent);
     if(runIndex < 0)
     {
       LOG_ERROR << "Could not find this run Index from StRunQAUtility! Skip!" << endm;
@@ -168,15 +169,17 @@ int StRunQAMaker::Make()
 
     if(mMode == 0)
     { // fill QA before event cuts
+      mRunQAProManager->fillRunQA_Event(runIndex,refMult,grefMult,zdcX,vx,vy,vz,0);
       mRunQAHistoManager->fillEventQA_RefMult(refMult,grefMult,cent9,reweight,numOfBTofHits,numOfBTofMatch,0); // wo event cut
       mRunQAHistoManager->fillEventQA_Vertex(vx,vy,vz,vzVpd,0);
-      mRunQAProManager->fillRunQA_Event(runIndex,refMult,grefMult,zdcX,vx,vy,vz,0);
+      mRunQAHistoManager->fillEventQA_Trigger(triggerBin,0);
 
       if(mRunQACut->passEventCut(mPicoDst))
       { // apply Event Cuts for anlaysis 
+	mRunQAProManager->fillRunQA_Event(runIndex,refMult,grefMult,zdcX,vx,vy,vz,1);
 	mRunQAHistoManager->fillEventQA_RefMult(refMult,grefMult,cent9,reweight,numOfBTofHits,numOfBTofMatch,1); // with event cut
 	mRunQAHistoManager->fillEventQA_Vertex(vx,vy,vz,vzVpd,1);
-	mRunQAProManager->fillRunQA_Event(runIndex,refMult,grefMult,zdcX,vx,vy,vz,1);
+	mRunQAHistoManager->fillEventQA_Trigger(triggerBin,1);
 
 	for(unsigned int i_track = 0; i_track < nTracks; i_track++) // track loop
 	{

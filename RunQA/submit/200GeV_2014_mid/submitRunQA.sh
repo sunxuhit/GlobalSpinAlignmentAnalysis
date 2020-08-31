@@ -29,17 +29,11 @@ mkdir -p JOBS/csh
 mkdir -p JOBS/list
 
 ##########Test Production##########
-star-submit-template -template testRunQA_prod.xml -entities mode=$mode,energy=$energy,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath,outDir=$outDir
-star-submit-template -template testRunQA_low.xml -entities mode=$mode,energy=$energy,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath,outDir=$outDir
 star-submit-template -template testRunQA_mid.xml -entities mode=$mode,energy=$energy,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath,outDir=$outDir
-star-submit-template -template testRunQA_high.xml -entities mode=$mode,energy=$energy,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath,outDir=$outDir
 ##########Test Production##########
 
 ##########Full Production##########
-# star-submit-template -template RunQA_prod.xml -entities mode=$mode,energy=$energy,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath,outDir=$outDir
-# star-submit-template -template RunQA_low.xml -entities mode=$mode,energy=$energy,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath,outDir=$outDir
 # star-submit-template -template RunQA_mid.xml -entities mode=$mode,energy=$energy,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath,outDir=$outDir
-# star-submit-template -template RunQA_high.xml -entities mode=$mode,energy=$energy,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath,outDir=$outDir
 ##########Full Production##########
 
 ##########Re-Submit##########
