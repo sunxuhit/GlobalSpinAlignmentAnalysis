@@ -32,6 +32,7 @@ class StRunQAHistoManager
     // Event Level:
     TH1F *h_mRefMult[2]; // 0: before cuts | 1: after cuts
     TH1F *h_mGRefMult[2];
+    TH2F *h_mRefMultGRefMult[2];
     TH1F *h_mCentrality9[2];
     TH2F *h_mRefMultTofMatch[2];
     TH2F *h_mRefMultTofHits[2];

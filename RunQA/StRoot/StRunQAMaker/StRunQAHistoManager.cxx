@@ -33,20 +33,23 @@ void StRunQAHistoManager::initEventQA()
     HistName = Form("h_mGRefMult_%s",mCutsQA[i_cut].c_str());
     h_mGRefMult[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5);
 
+    HistName = Form("h_mRefMultGRefMult_%s",mCutsQA[i_cut].c_str());
+    h_mRefMultGRefMult[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5,2000,-0.5,1999.5);
+
     HistName = Form("h_mCentrality9_%s",mCutsQA[i_cut].c_str());
     h_mCentrality9[i_cut] = new TH1F(HistName.c_str(),HistName.c_str(),12,-1.5,10.5);
 
     HistName = Form("h_mRefMultTofMatch_%s",mCutsQA[i_cut].c_str());
-    h_mRefMultTofMatch[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5,2000,-0.5,1999.5);
+    h_mRefMultTofMatch[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5,4000,-0.5,3999.5);
 
     HistName = Form("h_mRefMultTofHits_%s",mCutsQA[i_cut].c_str());
-    h_mRefMultTofHits[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5,2000,-0.5,1999.5);
+    h_mRefMultTofHits[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5,4000,-0.5,3999.5);
 
     HistName = Form("h_mGRefMultTofMatch_%s",mCutsQA[i_cut].c_str());
-    h_mGRefMultTofMatch[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5,2000,-0.5,1999.5);
+    h_mGRefMultTofMatch[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5,4000,-0.5,3999.5);
 
     HistName = Form("h_mGRefMultTofHits_%s",mCutsQA[i_cut].c_str());
-    h_mGRefMultTofHits[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5,2000,-0.5,1999.5);
+    h_mGRefMultTofHits[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5,4000,-0.5,3999.5);
 
     HistName = Form("h_mVertexXY_%s",mCutsQA[i_cut].c_str());
     h_mVertexXY[i_cut] = new TH2F(HistName.c_str(),HistName.c_str(),201,-10.05,10.05,201,-10.05,10.05);
@@ -69,6 +72,7 @@ void StRunQAHistoManager::fillEventQA_RefMult(int refMult, int grefMult, int cen
 {
   h_mRefMult[cutSelection]->Fill(refMult);
   h_mGRefMult[cutSelection]->Fill(grefMult);
+  h_mRefMultGRefMult[cutSelection]->Fill(refMult,grefMult);
   h_mCentrality9[cutSelection]->Fill(cent9,reweight);
   h_mRefMultTofMatch[cutSelection]->Fill(refMult,tofMatch);
   h_mRefMultTofHits[cutSelection]->Fill(refMult,tofHits);
@@ -95,6 +99,7 @@ void StRunQAHistoManager::writeEventQA()
   {
     h_mRefMult[i_cut]->Write();
     h_mGRefMult[i_cut]->Write();
+    h_mRefMultGRefMult[i_cut]->Write();
     h_mCentrality9[i_cut]->Write();
     h_mRefMultTofMatch[i_cut]->Write();
     h_mRefMultTofHits[i_cut]->Write();

@@ -14,13 +14,16 @@ static const string CutsQA[2] = {"Before","After"};
 
 void plotQA_Event(int energy = 0)
 {
-  string JobId = "DAE8A13D7A97018FED7E2ECFA950C92A";
-  string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
+  string JobId = "32110FBAF7850AADF3A45408E3398DDC";
+  string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/merged_file/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
   TH1F *h_mRefMult[2]; // 0: before cuts | 1: after cuts
+  TH1F *h_mGRefMult[2]; // 0: before cuts | 1: after cuts
   TH1F *h_mCentrality9[2];
   TH2F *h_mRefMultTofMatch[2];
   TH2F *h_mRefMultTofHits[2];
+  TH2F *h_mGRefMultTofMatch[2];
+  TH2F *h_mGRefMultTofHits[2];
   TH2F *h_mVzVzVpd[2];
   TH1F *h_mDiffVzVzVpd[2];
   TH1F *h_mVertexZ[2];
@@ -33,6 +36,11 @@ void plotQA_Event(int energy = 0)
     h_mRefMult[i_cut]->SetLineColor(i_cut+1);
     h_mRefMult[i_cut]->GetXaxis()->SetTitle("refMult");
 
+    string HistName = Form("h_mGRefMult_%s",CutsQA[i_cut].c_str());
+    h_mGRefMult[i_cut] = (TH1F*)File_InPut->Get(HistName.c_str());
+    h_mGRefMult[i_cut]->SetLineColor(i_cut+1);
+    h_mGRefMult[i_cut]->GetXaxis()->SetTitle("gRefMult");
+
     HistName = Form("h_mCentrality9_%s",CutsQA[i_cut].c_str());
     h_mCentrality9[i_cut] = (TH1F*)File_InPut->Get(HistName.c_str());
     h_mCentrality9[i_cut]->SetLineColor(i_cut+1);
@@ -42,19 +50,26 @@ void plotQA_Event(int energy = 0)
     h_mRefMultTofMatch[i_cut] = (TH2F*)File_InPut->Get(HistName.c_str());
     h_mRefMultTofMatch[i_cut]->GetXaxis()->SetTitle("refMult");
     h_mRefMultTofMatch[i_cut]->GetYaxis()->SetTitle("ToFMatch");
-    // h_mRefMultTofMatch[i_cut]->SetLineColor(i_cut+1);
 
     HistName = Form("h_mRefMultTofHits_%s",CutsQA[i_cut].c_str());
     h_mRefMultTofHits[i_cut] = (TH2F*)File_InPut->Get(HistName.c_str());
     h_mRefMultTofHits[i_cut]->GetXaxis()->SetTitle("refMult");
     h_mRefMultTofHits[i_cut]->GetYaxis()->SetTitle("ToFHits");
-    // h_mRefMultTofHits[i_cut]->SetLineColor(i_cut+1);
+
+    HistName = Form("h_mGRefMultTofMatch_%s",CutsQA[i_cut].c_str());
+    h_mGRefMultTofMatch[i_cut] = (TH2F*)File_InPut->Get(HistName.c_str());
+    h_mGRefMultTofMatch[i_cut]->GetXaxis()->SetTitle("gRefMult");
+    h_mGRefMultTofMatch[i_cut]->GetYaxis()->SetTitle("ToFMatch");
+
+    HistName = Form("h_mGRefMultTofHits_%s",CutsQA[i_cut].c_str());
+    h_mGRefMultTofHits[i_cut] = (TH2F*)File_InPut->Get(HistName.c_str());
+    h_mGRefMultTofHits[i_cut]->GetXaxis()->SetTitle("gRefMult");
+    h_mGRefMultTofHits[i_cut]->GetYaxis()->SetTitle("ToFHits");
 
     HistName = Form("h_mVertexXY_%s",CutsQA[i_cut].c_str());
     h_mVertexXY[i_cut] = (TH2F*)File_InPut->Get(HistName.c_str());
     h_mVertexXY[i_cut]->GetXaxis()->SetTitle("vx");
     h_mVertexXY[i_cut]->GetYaxis()->SetTitle("vy");
-    // h_mVertexXY[i_cut]->SetLineColor(i_cut+1);
 
     HistName = Form("h_mVertexZ_%s",CutsQA[i_cut].c_str());
     h_mVertexZ[i_cut] = (TH1F*)File_InPut->Get(HistName.c_str());
@@ -65,7 +80,6 @@ void plotQA_Event(int energy = 0)
     h_mVzVzVpd[i_cut] = (TH2F*)File_InPut->Get(HistName.c_str());
     h_mVzVzVpd[i_cut]->GetXaxis()->SetTitle("vz");
     h_mVzVzVpd[i_cut]->GetYaxis()->SetTitle("vzVpd");
-    // h_mVzVzVpd[i_cut]->SetLineColor(i_cut+1);
 
     HistName = Form("h_mDiffVzVzVpd_%s",CutsQA[i_cut].c_str());
     h_mDiffVzVzVpd[i_cut] = (TH1F*)File_InPut->Get(HistName.c_str());
@@ -96,18 +110,36 @@ void plotQA_Event(int energy = 0)
 
     c_EventQA[i_cut]->cd(1);
     c_EventQA[i_cut]->cd(1)->SetLogy();
-    h_mRefMult[i_cut]->Draw("hE");
+    if(energy == 0)h_mGRefMult[i_cut]->Draw("hE");
+    if(energy != 0)h_mRefMult[i_cut]->Draw("hE");
 
     c_EventQA[i_cut]->cd(2);
     c_EventQA[i_cut]->cd(2)->SetLogz();
-    h_mRefMultTofMatch[i_cut]->GetXaxis()->SetRangeUser(0.0,800.0);
-    h_mRefMultTofMatch[i_cut]->GetYaxis()->SetRangeUser(0.0,800.0);
-    h_mRefMultTofMatch[i_cut]->Draw("colz");
+    if(energy == 0)
+    {
+      h_mGRefMultTofMatch[i_cut]->GetXaxis()->SetRangeUser(0.0,800.0);
+      h_mGRefMultTofMatch[i_cut]->GetYaxis()->SetRangeUser(0.0,800.0);
+      h_mGRefMultTofMatch[i_cut]->Draw("colz");
+    }
+    if(energy != 0)
+    {
+      h_mRefMultTofMatch[i_cut]->GetXaxis()->SetRangeUser(0.0,800.0);
+      h_mRefMultTofMatch[i_cut]->GetYaxis()->SetRangeUser(0.0,800.0);
+      h_mRefMultTofMatch[i_cut]->Draw("colz");
+    }
 
     c_EventQA[i_cut]->cd(3);
     c_EventQA[i_cut]->cd(3)->SetLogz();
-    h_mRefMultTofHits[i_cut]->GetXaxis()->SetRangeUser(0.0,800.0);
-    h_mRefMultTofHits[i_cut]->Draw("colz");
+    if(energy == 0)
+    {
+      h_mGRefMultTofHits[i_cut]->GetXaxis()->SetRangeUser(0.0,800.0);
+      h_mGRefMultTofHits[i_cut]->Draw("colz");
+    }
+    if(energy != 0)
+    {
+      h_mRefMultTofHits[i_cut]->GetXaxis()->SetRangeUser(0.0,800.0);
+      h_mRefMultTofHits[i_cut]->Draw("colz");
+    }
 
     c_EventQA[i_cut]->cd(4);
     c_EventQA[i_cut]->cd(4)->SetLogy();
@@ -129,7 +161,7 @@ void plotQA_Event(int energy = 0)
     // c_EventQA[i_cut]->cd(8)->SetLogy();
     h_mDiffVzVzVpd[i_cut]->Draw();
 
-    string FigName = Form("c_EventQA_%s_%s.png",CutsQA[i_cut].c_str(),runQA::mBeamEnergy[energy].c_str());
+    string FigName = Form("c_EventQA_%s_%s_%s.png",CutsQA[i_cut].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
     c_EventQA[i_cut]->SaveAs(FigName.c_str());
   }
 }
