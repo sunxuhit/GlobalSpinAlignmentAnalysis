@@ -4,7 +4,7 @@ codePath=/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/RunQA
 
 ##########Energy Selection##########
 energy=0  # 200GeV
-library=SL20a
+library=SL18h
 listPath=/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/200GeV_2014
 outPath=/star/data01/pwg/sunxuhit/AuAu200GeV_2014
  
