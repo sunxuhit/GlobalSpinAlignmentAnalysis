@@ -18,9 +18,7 @@ temp_gccflags.c
 */macro/*_C.*
 
 FileList/*/*.list
-!FileList/*/pico_sorted.list
 !FileList/*/runNumber.list
-!FileList/*/pico_xrootd_local.list
 
 TreeProduction/*.root
 TreeProduction/StRoot/CVS/

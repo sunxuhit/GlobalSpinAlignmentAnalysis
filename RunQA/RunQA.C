@@ -20,8 +20,7 @@ void RunQA(const Char_t *inputFile="../FileList/200GeV_2014/pico_xrootd_local.li
   stopWatch->Start();
 
   string SL_version = "pro";
-  // if(energy == 0) SL_version = "SL18h"; // 200GeV_2014
-  if(energy == 0) SL_version = "SL18h"; // 200GeV_2014
+  if(energy == 0) SL_version = "SL18f"; // 200GeV_2014
   if(energy == 1) SL_version = "SL18c"; // 54GeV_2017
   if(energy == 2) SL_version = "SL19b"; // 27GeV_2018
   string env_SL = getenv ("STAR");
@@ -32,7 +31,7 @@ void RunQA(const Char_t *inputFile="../FileList/200GeV_2014/pico_xrootd_local.li
   }
 
   Int_t nEvents = 10000000000;
-  // Int_t nEvents = 1000;
+  // Int_t nEvents = 10000;
 
   gROOT->LoadMacro("$STAR/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");
   loadSharedLibraries();
