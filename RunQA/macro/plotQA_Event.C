@@ -14,8 +14,9 @@ static const string CutsQA[2] = {"Before","After"};
 
 void plotQA_Event(int energy = 0)
 {
-  string JobId = "32110FBAF7850AADF3A45408E3398DDC";
-  string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/merged_file/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
+  string JobId = "45056E11E5EFF5990EADD3B54A0E4FB6";
+  // string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/merged_file/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
+  string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/test/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
   TH1F *h_mRefMult[2]; // 0: before cuts | 1: after cuts
   TH1F *h_mGRefMult[2]; // 0: before cuts | 1: after cuts

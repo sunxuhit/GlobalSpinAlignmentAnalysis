@@ -20,7 +20,7 @@ void RunQA(const Char_t *inputFile="../FileList/200GeV_2014/pico_xrootd_local.li
   stopWatch->Start();
 
   string SL_version = "pro";
-  if(energy == 0) SL_version = "SL18f"; // 200GeV_2014
+  if(energy == 0) SL_version = "SL20a"; // 200GeV_2014
   if(energy == 1) SL_version = "SL18c"; // 54GeV_2017
   if(energy == 2) SL_version = "SL19b"; // 27GeV_2018
   string env_SL = getenv ("STAR");
