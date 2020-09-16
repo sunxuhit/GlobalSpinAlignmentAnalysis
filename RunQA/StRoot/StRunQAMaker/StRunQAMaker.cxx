@@ -169,16 +169,16 @@ int StRunQAMaker::Make()
 
     if(mMode == 0)
     { // fill QA before event cuts
-      mRunQAProManager->fillRunQA_Event(runIndex,refMult,grefMult,zdcX,vx,vy,vz,0);
-      mRunQAHistoManager->fillEventQA_RefMult(refMult,grefMult,cent9,reweight,numOfBTofHits,numOfBTofMatch,0); // wo event cut
-      mRunQAHistoManager->fillEventQA_Vertex(vx,vy,vz,vzVpd,0);
+      mRunQAProManager->fillRunQA_Event(triggerBin,runIndex,refMult,grefMult,zdcX,vx,vy,vz,0);
+      mRunQAHistoManager->fillEventQA_RefMult(triggerBin,refMult,grefMult,cent9,reweight,numOfBTofHits,numOfBTofMatch,0); // wo event cut
+      mRunQAHistoManager->fillEventQA_Vertex(triggerBin,vx,vy,vz,vzVpd,0);
       mRunQAHistoManager->fillEventQA_Trigger(triggerBin,0);
 
       if(mRunQACut->passEventCut(mPicoDst))
       { // apply Event Cuts for anlaysis 
-	mRunQAProManager->fillRunQA_Event(runIndex,refMult,grefMult,zdcX,vx,vy,vz,1);
-	mRunQAHistoManager->fillEventQA_RefMult(refMult,grefMult,cent9,reweight,numOfBTofHits,numOfBTofMatch,1); // with event cut
-	mRunQAHistoManager->fillEventQA_Vertex(vx,vy,vz,vzVpd,1);
+	mRunQAProManager->fillRunQA_Event(triggerBin,runIndex,refMult,grefMult,zdcX,vx,vy,vz,1);
+	mRunQAHistoManager->fillEventQA_RefMult(triggerBin,refMult,grefMult,cent9,reweight,numOfBTofHits,numOfBTofMatch,1); // with event cut
+	mRunQAHistoManager->fillEventQA_Vertex(triggerBin,vx,vy,vz,vzVpd,1);
 	mRunQAHistoManager->fillEventQA_Trigger(triggerBin,1);
 
 	for(unsigned int i_track = 0; i_track < nTracks; i_track++) // track loop
@@ -213,16 +213,16 @@ int StRunQAMaker::Make()
 	  float beta       = mRunQACut->getBeta(mPicoDst,i_track);
 	  float mass2      = mRunQACut->getPrimaryMass2(mPicoDst,i_track);
 
-	  mRunQAHistoManager->fillTrackQA_Kinematics(primMom,globMom, 0); // wo track cut
-	  mRunQAHistoManager->fillTrackQA_Quliaty(gDCA,nHitsFit,nHitsMax,nHitsDEdx,0);
-	  mRunQAHistoManager->fillTrackQA_PID(primMom.Mag(),charge,dEdx,beta,mass2,0);
-	  mRunQAProManager->fillRunQA_Track(runIndex,gDCA,nHitsFit,primMom,globMom,0);
+	  mRunQAHistoManager->fillTrackQA_Kinematics(triggerBin,primMom,globMom, 0); // wo track cut
+	  mRunQAHistoManager->fillTrackQA_Quliaty(triggerBin,gDCA,nHitsFit,nHitsMax,nHitsDEdx,0);
+	  mRunQAHistoManager->fillTrackQA_PID(triggerBin,primMom.Mag(),charge,dEdx,beta,mass2,0);
+	  mRunQAProManager->fillRunQA_Track(triggerBin,runIndex,gDCA,nHitsFit,primMom,globMom,0);
 	  if( mRunQACut->passTrackQA(picoTrack,mPicoEvent) ) // apply QA track cut
 	  {
-	    mRunQAHistoManager->fillTrackQA_Kinematics(primMom,globMom, 1); // with track cut
-	    mRunQAHistoManager->fillTrackQA_Quliaty(gDCA,nHitsFit,nHitsMax,nHitsDEdx,1);
-	    mRunQAHistoManager->fillTrackQA_PID(primMom.Mag(),charge,dEdx,beta,mass2,1);
-	    mRunQAProManager->fillRunQA_Track(runIndex,gDCA,nHitsFit,primMom,globMom,1);
+	    mRunQAHistoManager->fillTrackQA_Kinematics(triggerBin,primMom,globMom, 1); // with track cut
+	    mRunQAHistoManager->fillTrackQA_Quliaty(triggerBin,gDCA,nHitsFit,nHitsMax,nHitsDEdx,1);
+	    mRunQAHistoManager->fillTrackQA_PID(triggerBin,primMom.Mag(),charge,dEdx,beta,mass2,1);
+	    mRunQAProManager->fillRunQA_Track(triggerBin,runIndex,gDCA,nHitsFit,primMom,globMom,1);
 	  }
 	}
       }

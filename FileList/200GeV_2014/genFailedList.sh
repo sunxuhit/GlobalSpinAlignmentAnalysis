@@ -6,17 +6,20 @@ date
 if [ $# -eq 0 ]
 then
   Energy=200GeV_2014
-  Mode=RunQA
-  Luminosity=high
-  JobId=32110FBAF7850AADF3A45408E3398DDC #generate faild list for this Job
+  Luminosity=low
+  JobId=03E3F84524BEC775BF8BA060A2C3A6BB #generate faild list for this Job
+  Task=EventPlaneMaker
+  Mode=GainCorrParameter
+  # Task=RunQA
+  # Mode=RunQA
 
   OutPutDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/${Energy}"
-  SubmitDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/RunQA/submit/${Energy}_${Luminosity}/JOBS/list"
+  SubmitDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/${Task}/submit/${Energy}_${Luminosity}/JOBS/list"
   echo $SubmitDir
 
-  LogDirectory="/star/u/sunxuhit/AuAu$Energy/Log/RunQA"
+  LogDirectory="/star/u/sunxuhit/AuAu$Energy/Log/${Mode}"
 
-  CompletedList="$OutPutDir/condor_completed_${Mode}_${JobId}.list"
+  CompletedList="$OutPutDir/condor_completed_${Task}_${JobId}.list"
   rm $CompletedList
   touch $CompletedList
   cd $LogDirectory
@@ -26,14 +29,14 @@ then
   sed -i 's/^/sched/g' $CompletedList
   sed -i 's/log/list/g' $CompletedList
 
-  SubmittedList="$OutPutDir/condor_submitted_${Mode}_${JobId}.list"
+  SubmittedList="$OutPutDir/condor_submitted_${Task}_${JobId}.list"
   rm $SubmittedList
   touch $SubmittedList
   cd $SubmitDir
   ls -d *${JobId}*.list | sort > $SubmittedList
   cd $OutPutDir
 
-  FailedList="$OutPutDir/condor_failed_${Mode}_${JobId}.list"
+  FailedList="$OutPutDir/condor_failed_${Task}_${JobId}.list"
   rm $FailedList
   touch $FailedList
   comm -13 $CompletedList $SubmittedList > $FailedList
@@ -53,7 +56,7 @@ then
   rm $TempList
 
   # generate failed ROOT output list
-  sed -i "s/sched/file_"$Energy"_"$Mode"_/g" $FailedList
+  sed -i "s/sched/file_"$Energy"_"$Task"_/g" $FailedList
   sed -i "s/list/root/g" $FailedList
 
 else

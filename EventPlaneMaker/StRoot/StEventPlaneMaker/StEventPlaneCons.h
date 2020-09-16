@@ -1,14 +1,14 @@
-#ifndef StRunQACons_h
-#define StRunQACons_h
+#ifndef StEventPlaneCons_h
+#define StEventPlaneCons_h
 
 #include <string>
 #include "TString.h"
 // #include "StarClassLibrary/SystemOfUnits.h"
 
-namespace runQA
+namespace recoEP
 {
   //--------------------------------------------------
-  // used in RunQA
+  // used in Event Plane Reconstruction
   int const NumBeamEnergy = 3;
   std::string const mBeamEnergy[NumBeamEnergy] = {"200GeV_2014","54GeV_2017","27GeV_2018"};
   float const mEnergyValue[NumBeamEnergy] = {200.0,54.0,27.0};
@@ -35,6 +35,10 @@ namespace runQA
   float const mGlobPtMin = 0.1; // for phi, Lambda, K0s
 
   int const mNumOfRunIndex = 4000;
+
+  // ZDC-SMD Event Plane
+  std::string const mEastWest[2] = {"East","West"};
+  std::string const mVertHori[2] = {"Vertical","Horizontal"};
 }
 
 #endif
