@@ -15,7 +15,8 @@ static const string CutsQA[2] = {"Before","After"};
 void rejectPileUpEvent(int energy = 0)
 {
   string JobId = "low";
-  string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/merged_file/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
+  // string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/merged_file/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
+  string inputfile = Form("/Users/xusun/WorkSpace/STAR/Data/SpinAlignment/AuAu%s/RunQA/merged_file/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
   // string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/test/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
   TH2F *h_mRefMultGRefMult[2];
@@ -63,6 +64,7 @@ void rejectPileUpEvent(int energy = 0)
     h_mGRefMultTofHits[i_cut]->GetYaxis()->SetRangeUser(0.0,3500.0);
   }
 
+  /*
   TCanvas *c_EventQA = new TCanvas("c_EventQA","c_EventQA",10,10,1500,600);
   c_EventQA->Divide(5,2);
   for(int i_pad = 0; i_pad < 10; ++i_pad)
@@ -93,11 +95,74 @@ void rejectPileUpEvent(int energy = 0)
     c_EventQA->cd(i_cut*5+5);
     h_mGRefMultTofHits[i_cut]->Draw("colz");
   }
+  */
 
-  TCanvas *c_GRefMult_nBToFMatch = new TCanvas("c_GRefMult_nBToFMatch","c_GRefMult_nBToFMatch",10,10,900,900);
-  c_GRefMult_nBToFMatch->Divide(3,3);
-  TH1D *h_mGRefMultTofMatchProj_0 = (TH1D*)h_mGRefMultTofMatch[1]->ProjectionX("h_mGRefMultTofMatchProj_0",3,5);
-  c_GRefMult_nBToFMatch->cd(1);
-  c_GRefMult_nBToFMatch->cd(1)->SetLogy(1);
-  h_mGRefMultTofMatchProj_0->Draw("hE");
+  TH1D *h_projTofMatch[300];
+  int numTofMatch = 0;
+  int count = 0;
+
+  string outputname = Form("./projTofMatch.pdf");
+  TCanvas *c_projTofMatch= new TCanvas("c_projTofMatch","c_projTofMatch",10,10,900,900);
+  c_projTofMatch->Divide(3,3);
+  for(int i_pad = 0; i_pad < 9; ++i_pad)
+  {
+    c_projTofMatch->cd(i_pad+1);
+    c_projTofMatch->cd(i_pad+1)->SetLeftMargin(0.1);
+    c_projTofMatch->cd(i_pad+1)->SetRightMargin(0.1);
+    c_projTofMatch->cd(i_pad+1)->SetBottomMargin(0.1);
+    c_projTofMatch->cd(i_pad+1)->SetGrid(0,0);
+    c_projTofMatch->cd(i_pad+1)->SetTicks(1,1);
+    c_projTofMatch->cd(i_pad+1)->SetLogy(1);
+  }
+
+  string output_start = Form("./projTofMatch.pdf[");
+  c_projTofMatch->Print(output_start.c_str());
+
+  while(numTofMatch < 1000)
+  {
+    int deltaN = 2;
+    if(numTofMatch > 100) deltaN = 10;
+    if(numTofMatch > 300) deltaN = 20;
+    if(numTofMatch > 500) deltaN = 50;
+    int proj_start = numTofMatch;
+    int proj_stop  = numTofMatch + deltaN;
+    int bin_start = h_mGRefMultTofMatch[1]->GetXaxis()->FindBin(proj_start);
+    int bin_stop  = h_mGRefMultTofMatch[1]->GetXaxis()->FindBin(proj_stop);
+    // cout << "proj_start = " << proj_start << ", proj_stop = " << proj_stop << endl;
+    // cout << "bin_start = " << bin_start << ", bin_stop = " << bin_stop << endl;
+
+    string HistName = Form("h_projTofMatch_%d",count);
+    h_projTofMatch[count] = (TH1D*)h_mGRefMultTofMatch[1]->ProjectionX(HistName.c_str(),bin_start,bin_stop);
+    string title = Form("nTofMatch = [%d,%d]",proj_start,proj_stop);
+    h_projTofMatch[count]->SetTitle(title.c_str());
+    h_projTofMatch[count]->SetMarkerStyle(24);
+    h_projTofMatch[count]->SetMarkerColor(kGray+2);
+    h_projTofMatch[count]->SetMarkerSize(1.2);
+
+    int nPad = count%9;
+    c_projTofMatch->cd(nPad+1);
+    h_projTofMatch[count]->Draw("pE");
+
+    if(nPad == 8)
+    {
+      c_projTofMatch->Update();
+      c_projTofMatch->Print(outputname.c_str());
+      for(int i_pad = 0; i_pad < 9; ++i_pad)
+      {
+	c_projTofMatch->cd(i_pad+1)->Clear();
+      }
+    }
+
+    numTofMatch = proj_stop + 1;
+    count++;
+    // cout << "proj_start = " << proj_start << ", proj_stop = " << proj_stop << ", numTofMatch = " << numTofMatch << endl;
+  }
+
+  c_projTofMatch->Update();
+  c_projTofMatch->Print(outputname.c_str());
+
+  string output_stop = Form("./projTofMatch.pdf]");
+  c_projTofMatch->Print(output_stop.c_str());
+
+  cout << "count = " << count << endl;
 }
