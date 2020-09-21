@@ -12,7 +12,7 @@ using namespace std;
 
 static const string CutsQA[2] = {"Before","After"};
 
-void rejectPileUpEvent(int energy = 0)
+void rejectPileUpEvent_nTofMatch(int energy = 0)
 {
   string JobId = "low";
   // string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/merged_file/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
@@ -126,8 +126,8 @@ void rejectPileUpEvent(int energy = 0)
     if(numTofMatch > 500) deltaN = 50;
     int proj_start = numTofMatch;
     int proj_stop  = numTofMatch + deltaN;
-    int bin_start = h_mGRefMultTofMatch[1]->GetXaxis()->FindBin(proj_start);
-    int bin_stop  = h_mGRefMultTofMatch[1]->GetXaxis()->FindBin(proj_stop);
+    int bin_start = h_mGRefMultTofMatch[1]->GetYaxis()->FindBin(proj_start);
+    int bin_stop  = h_mGRefMultTofMatch[1]->GetYaxis()->FindBin(proj_stop);
     // cout << "proj_start = " << proj_start << ", proj_stop = " << proj_stop << endl;
     // cout << "bin_start = " << bin_start << ", bin_stop = " << bin_stop << endl;
 

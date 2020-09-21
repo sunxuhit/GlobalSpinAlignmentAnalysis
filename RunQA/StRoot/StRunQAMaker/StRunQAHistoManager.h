@@ -35,10 +35,10 @@ class StRunQAHistoManager
     TH1F *h_mGRefMult[2][10]; // 0-8 for different triggerID | 9 for all triggers
     TH2F *h_mRefMultGRefMult[2][10];
     TH1F *h_mCentrality9[2][10];
-    TH2F *h_mRefMultTofMatch[2][10];
-    TH2F *h_mRefMultTofHits[2][10];
-    TH2F *h_mGRefMultTofMatch[2][10];
-    TH2F *h_mGRefMultTofHits[2][10];
+    TH2F *h_mTofMatchRefMult[2][10];
+    TH2F *h_mTofHitsRefMult[2][10];
+    TH2F *h_mTofMatchGRefMult[2][10];
+    TH2F *h_mTofHitsGRefMult[2][10];
     TH2F *h_mVzVzVpd[2][10];
     TH1F *h_mDiffVzVzVpd[2][10];
     TH1F *h_mVertexZ[2][10];

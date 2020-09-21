@@ -44,17 +44,17 @@ void StRunQAHistoManager::initEventQA()
       HistName = Form("h_mCentrality9%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
       h_mCentrality9[i_cut][i_trig] = new TH1F(HistName.c_str(),HistName.c_str(),12,-1.5,10.5);
 
-      HistName = Form("h_mRefMultTofMatch%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      h_mRefMultTofMatch[i_cut][i_trig] = new TH2F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5,4000,-0.5,3999.5);
+      HistName = Form("h_mTofMatchRefMult%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
+      h_mTofMatchRefMult[i_cut][i_trig] = new TH2F(HistName.c_str(),HistName.c_str(),4000,-0.5,3999.5,2000,-0.5,1999.5);
 
-      HistName = Form("h_mRefMultTofHits%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      h_mRefMultTofHits[i_cut][i_trig] = new TH2F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5,4000,-0.5,3999.5);
+      HistName = Form("h_mTofHitsRefMult%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
+      h_mTofHitsRefMult[i_cut][i_trig] = new TH2F(HistName.c_str(),HistName.c_str(),4000,-0.5,3999.5,2000,-0.5,1999.5);
 
-      HistName = Form("h_mGRefMultTofMatch%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      h_mGRefMultTofMatch[i_cut][i_trig] = new TH2F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5,4000,-0.5,3999.5);
+      HistName = Form("h_mTofMatchGRefMult%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
+      h_mTofMatchGRefMult[i_cut][i_trig] = new TH2F(HistName.c_str(),HistName.c_str(),4000,-0.5,3999.5,2000,-0.5,1999.5);
 
-      HistName = Form("h_mGRefMultTofHits%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      h_mGRefMultTofHits[i_cut][i_trig] = new TH2F(HistName.c_str(),HistName.c_str(),2000,-0.5,1999.5,4000,-0.5,3999.5);
+      HistName = Form("h_mTofHitsGRefMult%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
+      h_mTofHitsGRefMult[i_cut][i_trig] = new TH2F(HistName.c_str(),HistName.c_str(),4000,-0.5,3999.5,2000,-0.5,1999.5);
 
       HistName = Form("h_mVertexXY%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
       h_mVertexXY[i_cut][i_trig] = new TH2F(HistName.c_str(),HistName.c_str(),201,-10.05,10.05,201,-10.05,10.05);
@@ -78,20 +78,20 @@ void StRunQAHistoManager::fillEventQA_RefMult(int triggerBin, int refMult, int g
   h_mGRefMult[cutSelection][triggerBin]->Fill(grefMult);
   h_mRefMultGRefMult[cutSelection][triggerBin]->Fill(refMult,grefMult);
   h_mCentrality9[cutSelection][triggerBin]->Fill(cent9,reweight);
-  h_mRefMultTofMatch[cutSelection][triggerBin]->Fill(refMult,tofMatch);
-  h_mRefMultTofHits[cutSelection][triggerBin]->Fill(refMult,tofHits);
-  h_mGRefMultTofMatch[cutSelection][triggerBin]->Fill(grefMult,tofMatch);
-  h_mGRefMultTofHits[cutSelection][triggerBin]->Fill(grefMult,tofHits);
+  h_mTofMatchRefMult[cutSelection][triggerBin]->Fill(tofMatch,refMult);
+  h_mTofHitsRefMult[cutSelection][triggerBin]->Fill(tofHits,refMult);
+  h_mTofMatchGRefMult[cutSelection][triggerBin]->Fill(tofMatch,grefMult);
+  h_mTofHitsGRefMult[cutSelection][triggerBin]->Fill(tofHits,grefMult);
 
   // for all triggers
   h_mRefMult[cutSelection][9]->Fill(refMult);
   h_mGRefMult[cutSelection][9]->Fill(grefMult);
   h_mRefMultGRefMult[cutSelection][9]->Fill(refMult,grefMult);
   h_mCentrality9[cutSelection][9]->Fill(cent9,reweight);
-  h_mRefMultTofMatch[cutSelection][9]->Fill(refMult,tofMatch);
-  h_mRefMultTofHits[cutSelection][9]->Fill(refMult,tofHits);
-  h_mGRefMultTofMatch[cutSelection][9]->Fill(grefMult,tofMatch);
-  h_mGRefMultTofHits[cutSelection][9]->Fill(grefMult,tofHits);
+  h_mTofMatchRefMult[cutSelection][9]->Fill(tofMatch,refMult);
+  h_mTofHitsRefMult[cutSelection][9]->Fill(tofHits,refMult);
+  h_mTofMatchGRefMult[cutSelection][9]->Fill(tofMatch,grefMult);
+  h_mTofHitsGRefMult[cutSelection][9]->Fill(tofHits,grefMult);
 }
 
 void StRunQAHistoManager::fillEventQA_Vertex(int triggerBin, float vx, float vy, float vz, float vzVpd, int cutSelection)
@@ -125,10 +125,10 @@ void StRunQAHistoManager::writeEventQA()
       h_mGRefMult[i_cut][i_trig]->Write();
       h_mRefMultGRefMult[i_cut][i_trig]->Write();
       h_mCentrality9[i_cut][i_trig]->Write();
-      h_mRefMultTofMatch[i_cut][i_trig]->Write();
-      h_mRefMultTofHits[i_cut][i_trig]->Write();
-      h_mGRefMultTofMatch[i_cut][i_trig]->Write();
-      h_mGRefMultTofHits[i_cut][i_trig]->Write();
+      h_mTofMatchRefMult[i_cut][i_trig]->Write();
+      h_mTofHitsRefMult[i_cut][i_trig]->Write();
+      h_mTofMatchGRefMult[i_cut][i_trig]->Write();
+      h_mTofHitsGRefMult[i_cut][i_trig]->Write();
 
       h_mVertexXY[i_cut][i_trig]->Write();
       h_mVertexZ[i_cut][i_trig]->Write();
