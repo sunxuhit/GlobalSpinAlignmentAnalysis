@@ -7,11 +7,11 @@ if [ $# -eq 0 ]
 then
   Energy=200GeV_2014
   Luminosity=low
-  JobId=03E3F84524BEC775BF8BA060A2C3A6BB #generate faild list for this Job
-  Task=EventPlaneMaker
-  Mode=GainCorrParameter
-  # Task=RunQA
-  # Mode=RunQA
+  JobId=A0C41D555DF378EC36FCFF0636388AAA #generate faild list for this Job
+  # Task=EventPlaneMaker
+  # Mode=GainCorrParameter
+  Task=RunQA
+  Mode=RunQA
 
   OutPutDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/${Energy}"
   SubmitDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/${Task}/submit/${Energy}_${Luminosity}/JOBS/list"

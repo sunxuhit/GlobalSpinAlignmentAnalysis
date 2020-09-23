@@ -84,6 +84,7 @@ bool StRunQACut::passEventCut(StPicoDst *picoDst)
     return kFALSE;
   }
 
+  /*
   // ToF Match & ToF Hits cut
   const int refMult = picoEvent->refMult();
   const unsigned short numOfBTofMatch = picoEvent->nBTOFMatch();
@@ -111,6 +112,7 @@ bool StRunQACut::passEventCut(StPicoDst *picoDst)
       return kFALSE;
     }
   }
+  */
 
   return kTRUE;
 }

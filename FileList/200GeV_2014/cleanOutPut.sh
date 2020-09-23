@@ -7,7 +7,7 @@ if [ $# -eq 0 ]
 then
   Energy=200GeV_2014
   Mode=RunQA
-  JobId=6DB5839CEBAADD58FC449474F2D751AD #generate faild list for this Job
+  JobId=A0C41D555DF378EC36FCFF0636388AAA #generate faild list for this Job
 
   FileDirectory="/star/u/sunxuhit/AuAu$Energy/SpinAlignment/$Mode"
 
