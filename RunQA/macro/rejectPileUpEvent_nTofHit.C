@@ -10,7 +10,7 @@
 
 using namespace std;
 
-static const string CutsQA[2] = {"Before","After"};
+static const string mCutsQA[2] = {"Before","After"};
 
 void rejectPileUpEvent_nTofHit(int energy = 0)
 {
@@ -19,49 +19,83 @@ void rejectPileUpEvent_nTofHit(int energy = 0)
   string inputfile = Form("/Users/xusun/WorkSpace/STAR/Data/SpinAlignment/AuAu%s/RunQA/merged_file/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
   // string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/test/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
-  TH2F *h_mRefMultGRefMult[2];
-  TH2F *h_mRefMultTofMatch[2];
-  TH2F *h_mRefMultTofHits[2];
-  TH2F *h_mGRefMultTofMatch[2];
-  TH2F *h_mGRefMultTofHits[2];
+  TH1F *h_mRefMult[2][10]; // 0: before cuts | 1: after cuts
+  TH1F *h_mGRefMult[2][10]; // 0-8 for different triggerID | 9 for all triggers
+  TH2F *h_mRefMultGRefMult[2][10];
+  TH1F *h_mCentrality9[2][10];
+  TH2F *h_mTofMatchRefMult[2][10];
+  TH2F *h_mTofHitsRefMult[2][10];
+  TH2F *h_mTofMatchGRefMult[2][10];
+  TH2F *h_mTofHitsGRefMult[2][10];
+  TH2F *h_mVzVzVpd[2][10];
+  TH1F *h_mDiffVzVzVpd[2][10];
+  TH1F *h_mVertexZ[2][10];
+  TH2F *h_mVertexXY[2][10];
 
   for(int i_cut = 0; i_cut < 2; ++i_cut)
   {
-    // string HistName = Form("h_mRefMultGRefMult%s_trigger9",mCutsQA[i_cut].c_str());
-    string HistName = Form("h_mRefMultGRefMult_%s",CutsQA[i_cut].c_str());
-    h_mRefMultGRefMult[i_cut] = (TH2F*)File_InPut->Get(HistName.c_str());
-    h_mRefMultGRefMult[i_cut]->GetXaxis()->SetTitle("refMult");
-    h_mRefMultGRefMult[i_cut]->GetXaxis()->SetRangeUser(0.0,800.0);
-    h_mRefMultGRefMult[i_cut]->GetYaxis()->SetTitle("grefMult");
-    h_mRefMultGRefMult[i_cut]->GetYaxis()->SetRangeUser(0.0,800.0);
+    for(int i_trig = 0; i_trig < 10; ++i_trig)
+    {
+      std::string HistName = Form("h_mRefMult%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
+      h_mRefMult[i_cut][i_trig] = (TH1F*)File_InPut->Get(HistName.c_str());
+      h_mRefMult[i_cut][i_trig]->SetLineColor(i_cut+1);
+      h_mRefMult[i_cut][i_trig]->GetXaxis()->SetTitle("refMult");
 
-    HistName = Form("h_mRefMultTofMatch_%s",CutsQA[i_cut].c_str());
-    h_mRefMultTofMatch[i_cut] = (TH2F*)File_InPut->Get(HistName.c_str());
-    h_mRefMultTofMatch[i_cut]->GetXaxis()->SetTitle("refMult");
-    h_mRefMultTofMatch[i_cut]->GetXaxis()->SetRangeUser(0.0,800.0);
-    h_mRefMultTofMatch[i_cut]->GetYaxis()->SetTitle("ToFMatch");
-    h_mRefMultTofMatch[i_cut]->GetYaxis()->SetRangeUser(0.0,1000.0);
+      HistName = Form("h_mGRefMult%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
+      h_mGRefMult[i_cut][i_trig] = (TH1F*)File_InPut->Get(HistName.c_str());;
+      h_mGRefMult[i_cut][i_trig]->SetLineColor(i_cut+1);
+      h_mGRefMult[i_cut][i_trig]->GetXaxis()->SetTitle("gRefMult");
 
-    HistName = Form("h_mRefMultTofHits_%s",CutsQA[i_cut].c_str());
-    h_mRefMultTofHits[i_cut] = (TH2F*)File_InPut->Get(HistName.c_str());
-    h_mRefMultTofHits[i_cut]->GetXaxis()->SetTitle("refMult");
-    h_mRefMultTofHits[i_cut]->GetXaxis()->SetRangeUser(0.0,800.0);
-    h_mRefMultTofHits[i_cut]->GetYaxis()->SetTitle("ToFHits");
-    h_mRefMultTofHits[i_cut]->GetYaxis()->SetRangeUser(0.0,3500.0);
+      HistName = Form("h_mRefMultGRefMult%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
+      h_mRefMultGRefMult[i_cut][i_trig] = (TH2F*)File_InPut->Get(HistName.c_str());
+      h_mRefMultGRefMult[i_cut][i_trig]->GetXaxis()->SetTitle("refMult");
+      h_mRefMultGRefMult[i_cut][i_trig]->GetYaxis()->SetTitle("gRefMult");
 
-    HistName = Form("h_mGRefMultTofMatch_%s",CutsQA[i_cut].c_str());
-    h_mGRefMultTofMatch[i_cut] = (TH2F*)File_InPut->Get(HistName.c_str());
-    h_mGRefMultTofMatch[i_cut]->GetXaxis()->SetTitle("gRefMult");
-    h_mGRefMultTofMatch[i_cut]->GetXaxis()->SetRangeUser(0.0,800.0);
-    h_mGRefMultTofMatch[i_cut]->GetYaxis()->SetTitle("ToFMatch");
-    h_mGRefMultTofMatch[i_cut]->GetYaxis()->SetRangeUser(0.0,1000.0);
+      HistName = Form("h_mCentrality9%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
+      h_mCentrality9[i_cut][i_trig] = (TH1F*)File_InPut->Get(HistName.c_str());
+      h_mCentrality9[i_cut][i_trig]->SetLineColor(i_cut+1);
+      h_mCentrality9[i_cut][i_trig]->GetXaxis()->SetTitle("centrality");
 
-    HistName = Form("h_mGRefMultTofHits_%s",CutsQA[i_cut].c_str());
-    h_mGRefMultTofHits[i_cut] = (TH2F*)File_InPut->Get(HistName.c_str());
-    h_mGRefMultTofHits[i_cut]->GetXaxis()->SetTitle("gRefMult");
-    h_mGRefMultTofHits[i_cut]->GetXaxis()->SetRangeUser(0.0,800.0);
-    h_mGRefMultTofHits[i_cut]->GetYaxis()->SetTitle("ToFHits");
-    h_mGRefMultTofHits[i_cut]->GetYaxis()->SetRangeUser(0.0,3500.0);
+      HistName = Form("h_mTofMatchRefMult%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
+      h_mTofMatchRefMult[i_cut][i_trig] = (TH2F*)File_InPut->Get(HistName.c_str());
+      h_mTofMatchRefMult[i_cut][i_trig]->GetXaxis()->SetTitle("tofMatch");
+      h_mTofMatchRefMult[i_cut][i_trig]->GetYaxis()->SetTitle("refMult");
+
+      HistName = Form("h_mTofHitsRefMult%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
+      h_mTofHitsRefMult[i_cut][i_trig] = (TH2F*)File_InPut->Get(HistName.c_str());
+      h_mTofHitsRefMult[i_cut][i_trig]->GetXaxis()->SetTitle("tofHits");
+      h_mTofHitsRefMult[i_cut][i_trig]->GetYaxis()->SetTitle("refMult");
+
+      HistName = Form("h_mTofMatchGRefMult%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
+      h_mTofMatchGRefMult[i_cut][i_trig] = (TH2F*)File_InPut->Get(HistName.c_str());;
+      h_mTofMatchGRefMult[i_cut][i_trig]->GetXaxis()->SetTitle("tofMatch");
+      h_mTofMatchGRefMult[i_cut][i_trig]->GetYaxis()->SetTitle("gRefMult");
+
+      HistName = Form("h_mTofHitsGRefMult%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
+      h_mTofHitsGRefMult[i_cut][i_trig] = (TH2F*)File_InPut->Get(HistName.c_str());
+      h_mTofHitsGRefMult[i_cut][i_trig]->GetXaxis()->SetTitle("tofHits");
+      h_mTofHitsGRefMult[i_cut][i_trig]->GetYaxis()->SetTitle("gRefMult");
+
+      HistName = Form("h_mVertexXY%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
+      h_mVertexXY[i_cut][i_trig] = (TH2F*)File_InPut->Get(HistName.c_str());
+      h_mVertexXY[i_cut][i_trig]->GetXaxis()->SetTitle("Vx");
+      h_mVertexXY[i_cut][i_trig]->GetYaxis()->SetTitle("Vy");
+
+      HistName = Form("h_mVertexZ%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
+      h_mVertexZ[i_cut][i_trig] = (TH1F*)File_InPut->Get(HistName.c_str());
+      h_mVertexZ[i_cut][i_trig]->SetLineColor(i_cut+1);
+      h_mVertexZ[i_cut][i_trig]->GetXaxis()->SetTitle("Vz");
+
+      HistName = Form("h_mVzVzVpd%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
+      h_mVzVzVpd[i_cut][i_trig] = (TH2F*)File_InPut->Get(HistName.c_str());
+      h_mVzVzVpd[i_cut][i_trig]->GetXaxis()->SetTitle("Vz");
+      h_mVzVzVpd[i_cut][i_trig]->GetYaxis()->SetTitle("VzVpd");
+
+      HistName = Form("h_mDiffVzVzVpd%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
+      h_mDiffVzVzVpd[i_cut][i_trig] = (TH1F*)File_InPut->Get(HistName.c_str());
+      h_mDiffVzVzVpd[i_cut][i_trig]->SetLineColor(i_cut+1);
+      h_mDiffVzVzVpd[i_cut][i_trig]->GetXaxis()->SetTitle("Vz-VzVpd");
+    }
   }
 
   /*
@@ -84,16 +118,16 @@ void rejectPileUpEvent_nTofHit(int energy = 0)
     h_mRefMultGRefMult[i_cut]->Draw("colz");
 
     c_EventQA->cd(i_cut*5+2);
-    h_mRefMultTofMatch[i_cut]->Draw("colz");
+    h_mTofMatchRefMult[i_cut]->Draw("colz");
 
     c_EventQA->cd(i_cut*5+3);
-    h_mRefMultTofHits[i_cut]->Draw("colz");
+    h_mTofHitsRefMult[i_cut]->Draw("colz");
 
     c_EventQA->cd(i_cut*5+4);
-    h_mGRefMultTofMatch[i_cut]->Draw("colz");
+    h_mTofMatchGRefMult[i_cut]->Draw("colz");
 
     c_EventQA->cd(i_cut*5+5);
-    h_mGRefMultTofHits[i_cut]->Draw("colz");
+    h_mTofHitsGRefMult[i_cut]->Draw("colz");
   }
   */
 
@@ -130,13 +164,13 @@ void rejectPileUpEvent_nTofHit(int energy = 0)
     if(numTofHit > 1000) deltaN = 100;
     int proj_start = numTofHit;
     int proj_stop  = numTofHit + deltaN;
-    int bin_start = h_mGRefMultTofHits[1]->GetYaxis()->FindBin(proj_start);
-    int bin_stop  = h_mGRefMultTofHits[1]->GetYaxis()->FindBin(proj_stop);
+    int bin_start = h_mTofHitsGRefMult[1][9]->GetXaxis()->FindBin(proj_start);
+    int bin_stop  = h_mTofHitsGRefMult[1][9]->GetXaxis()->FindBin(proj_stop);
     // cout << "proj_start = " << proj_start << ", proj_stop = " << proj_stop << endl;
     // cout << "bin_start = " << bin_start << ", bin_stop = " << bin_stop << endl;
 
     string HistName = Form("h_projTofHit_%d",count);
-    h_projTofHit[count] = (TH1D*)h_mGRefMultTofHits[1]->ProjectionX(HistName.c_str(),bin_start,bin_stop);
+    h_projTofHit[count] = (TH1D*)h_mTofHitsGRefMult[1][9]->ProjectionY(HistName.c_str(),bin_start,bin_stop);
     string title = Form("nTofHit = [%d,%d]",proj_start,proj_stop);
     h_projTofHit[count]->SetTitle(title.c_str());
     h_projTofHit[count]->SetMarkerStyle(24);
@@ -145,6 +179,7 @@ void rejectPileUpEvent_nTofHit(int energy = 0)
     if(numTofHit < 100) h_projTofHit[count]->GetXaxis()->SetRangeUser(0,100.0);
     else if(numTofHit < 200) h_projTofHit[count]->GetXaxis()->SetRangeUser(0,200.0);
     else if(numTofHit < 500) h_projTofHit[count]->GetXaxis()->SetRangeUser(0,400.0);
+    else h_projTofHit[count]->GetXaxis()->SetRangeUser(0,800.0);
 
     int nPad = count%9;
     c_projTofHit->cd(nPad+1);
@@ -179,6 +214,12 @@ void rejectPileUpEvent_nTofHit(int energy = 0)
   c_projTofHit->Print(output_stop.c_str());
 
   cout << "count = " << count << endl;
+  g_UpperBand->RemovePoint(g_UpperBand->GetN()-1);
+  g_UpperBand->RemovePoint(g_UpperBand->GetN()-1);
+  g_UpperBand->RemovePoint(0);
+  g_LowerBand->RemovePoint(g_LowerBand->GetN()-1);
+  g_LowerBand->RemovePoint(g_LowerBand->GetN()-1);
+  g_LowerBand->RemovePoint(0);
 
   TCanvas *c_PileUp = new TCanvas("c_PileUp","c_PileUp",10,10,800,800);
   c_PileUp->cd();
@@ -198,12 +239,47 @@ void rejectPileUpEvent_nTofHit(int energy = 0)
   h_play->GetYaxis()->SetRangeUser(-30.0,1000.0);
   h_play->Draw("hE");
 
-  g_UpperBand->SetMarkerStyle(20);
-  g_UpperBand->SetMarkerColor(kRed+2);
+  h_mTofHitsGRefMult[1][9]->Draw("colz same");
+
+  g_UpperBand->SetMarkerStyle(24);
+  g_UpperBand->SetMarkerColor(2);
   g_UpperBand->SetMarkerSize(0.8);
   g_UpperBand->Draw("pE Same");
-  g_LowerBand->SetMarkerStyle(20);
+  TF1 *f_UpperBand = new TF1("f_UpperBand","pol5",0,4000);
+  f_UpperBand->SetRange(0.0,3000.0);
+  g_UpperBand->Fit(f_UpperBand,"RN");
+  TF1 *f_UpperExt = new TF1("f_UpperExt","pol1",2500,4000);
+  f_UpperExt->SetRange(2500.0,3000.0);
+  g_UpperBand->Fit(f_UpperExt,"RN");
+
+  f_UpperBand->SetLineColor(kRed+2);
+  f_UpperBand->SetLineStyle(1);
+  f_UpperBand->SetRange(0.0,2800.0);
+  f_UpperBand->Draw("l Same");
+
+  f_UpperExt->SetLineColor(kRed+2);
+  f_UpperExt->SetLineStyle(2);
+  f_UpperExt->SetRange(2500.0,4000.0);
+  f_UpperExt->Draw("l same");
+
+  g_LowerBand->SetMarkerStyle(24);
   g_LowerBand->SetMarkerColor(kGray+2);
   g_LowerBand->SetMarkerSize(0.8);
   g_LowerBand->Draw("PE Same");
+  TF1 *f_LowerBand = new TF1("f_LowerBand","pol5",0,4000);
+  f_LowerBand->SetRange(50.0,3000.0);
+  g_LowerBand->Fit(f_LowerBand,"RN");
+  TF1 *f_LowerExt = new TF1("f_LowerExt","pol1",2500,4000);
+  f_LowerExt->SetRange(2500.0,3000.0);
+  g_LowerBand->Fit(f_LowerExt,"RN");
+
+  f_LowerBand->SetLineColor(kGray+2);
+  f_LowerBand->SetLineStyle(1);
+  f_LowerBand->SetRange(0.0,2800.0);
+  f_LowerBand->Draw("l Same");
+
+  f_LowerExt->SetLineColor(kGray+2);
+  f_LowerExt->SetLineStyle(2);
+  f_LowerExt->SetRange(2500.0,4000.0);
+  f_LowerExt->Draw("l same");
 }
