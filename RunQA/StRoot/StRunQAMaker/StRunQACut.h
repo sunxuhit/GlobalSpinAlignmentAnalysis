@@ -15,7 +15,8 @@ class StRunQACut : public TObject
     virtual ~StRunQACut();
 
     bool isMinBias(StPicoEvent*);
-    bool isBES(int energy);
+    bool isBES();
+    bool isPileUpEvent(int, int, int); // refmult/grefmult & nTofMatch & nTofHits
     bool passEventCut(StPicoDst*);
     bool passTrackBasic(StPicoTrack*);
     bool passTrackQA(StPicoTrack*, StPicoEvent*);

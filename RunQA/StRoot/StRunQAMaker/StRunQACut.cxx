@@ -43,11 +43,63 @@ bool StRunQACut::isMinBias(StPicoEvent *picoEvent)
   return true;
 }
 
-bool StRunQACut::isBES(int energy)
+bool StRunQACut::isBES()
 {
-  if(energy == 0) return false; // 200 GeV
+  if(mEnergy == 0) return false; // 200 GeV
 
   return true; // BES
+}
+
+bool StRunQACut::isPileUpEvent(int refMult, int numOfBTofMatch, int numOfBTofHits)
+{
+  // ToF Match & ToF Hits cut
+  // if(numOfBTofMatch > runQA::mMatchedToFMin[mEnergy])
+  // {
+  //   return kFALSE;
+  // }
+
+  if(mEnergy == 0)
+  {
+    // numOfBTofHits Cuts
+    const double h0Upper = 9.03081; // Upper Band
+    const double h1Upper = 0.387506;
+    const double h2Upper = -0.000141825;
+    const double h3Upper = 9.97792e-08;
+    const double h4Upper = -3.97333e-11;
+    const double h5Upper = 5.42501e-15;
+    const double h0UpperExt = 361.012; // pol1 when numOfBTofHits > 2650.0
+    const double h1UpperExt = 0.107772;
+    const double h0Lower = -10.6691; // Lower Band
+    const double h1Lower = 0.131997;
+    const double h2Lower = 0.000108037;
+    const double h3Lower = -8.93329e-08;
+    const double h4Lower = 3.23579e-11;
+    const double h5Lower = -4.66919e-15;
+    const double h0LowerExt = 210.652; // pol1 when numOfBTofHits > 2650.0
+    const double h1LowerExt = 0.0789303;
+
+    double refmultTofHitsUpper = h0Upper+h1Upper*(numOfBTofHits)+h2Upper*pow(numOfBTofHits,2)+h3Upper*pow(numOfBTofHits,3)+h4Upper*pow(numOfBTofHits,4)+h5Upper*pow(numOfBTofHits,5);
+    double refmultTofHitsLower = h0Lower+h1Lower*(numOfBTofHits)+h2Lower*pow(numOfBTofHits,2)+h3Lower*pow(numOfBTofHits,3)+h4Lower*pow(numOfBTofHits,4)+h5Lower*pow(numOfBTofHits,5);
+    if(numOfBTofHits > 2650)
+    {
+      refmultTofHitsUpper = h0UpperExt+h1UpperExt*(numOfBTofHits);
+      refmultTofHitsLower = h0LowerExt+h1LowerExt*(numOfBTofHits);
+    }
+    if(refMult >= refmultTofHitsLower && refMult <= refmultTofHitsUpper) return kFALSE; // good numOfBTofHits events
+  }
+
+  if(mEnergy == 1) // ToF Hits vs RefMult cut for 54 GeV
+  { // from Shaowei Lan
+    float tofHits_low = (float)refMult*2.88 - 155.0;
+    if( numOfBTofHits < tofHits_low ) return kFALSE;
+  }
+
+  if(mEnergy == 2)
+  { // will use StRefMultCorr
+    return kFALSE;
+  }
+
+  return kTRUE;
 }
 
 bool StRunQACut::passEventCut(StPicoDst *picoDst)
@@ -79,40 +131,10 @@ bool StRunQACut::passEventCut(StPicoDst *picoDst)
     return kFALSE;
   }
   // vz-vzVpd cut only for 200 GeV
-  if(!isBES(mEnergy) && fabs(vz-vzVpd) > runQA::mVzVpdDiffMax[mEnergy])
+  if(!isBES() && fabs(vz-vzVpd) > runQA::mVzVpdDiffMax[mEnergy])
   {
     return kFALSE;
   }
-
-  /*
-  // ToF Match & ToF Hits cut
-  const int refMult = picoEvent->refMult();
-  const unsigned short numOfBTofMatch = picoEvent->nBTOFMatch();
-  const unsigned int numOfBTofHits = picoDst->numberOfBTofHits(); // get number of tof hits
-  if(numOfBTofMatch <= runQA::mMatchedToFMin[mEnergy])
-  {
-    return kFALSE;
-  }
-
-  if(mEnergy == 1) // ToF Hits vs RefMult cut for 54 GeV
-  { // from Shaowei Lan
-    float tofHits_low = (float)refMult*2.88 - 155.0;
-    if( numOfBTofHits < tofHits_low )
-    {
-      return kFALSE;
-    }
-  }
-
-  if(mEnergy == 2) // ToF Match vs. RefMult cut for 27 GeV
-  { // from Zaochen Ye
-    float tofMatch_up = (float)refMult*1.8 + 15.0;
-    float tofMatch_low = (float)refMult*0.75 - 20.0;
-    if( numOfBTofMatch > tofMatch_up || numOfBTofMatch < tofMatch_low )
-    {
-      return kFALSE;
-    }
-  }
-  */
 
   return kTRUE;
 }
