@@ -223,23 +223,25 @@ void rejectPileUpEvent_nTofHit(int energy = 0)
 
   TCanvas *c_PileUp = new TCanvas("c_PileUp","c_PileUp",10,10,800,800);
   c_PileUp->cd();
-  c_PileUp->cd()->SetLeftMargin(0.1);
-  c_PileUp->cd()->SetRightMargin(0.1);
-  c_PileUp->cd()->SetBottomMargin(0.1);
+  c_PileUp->cd()->SetLeftMargin(0.15);
+  c_PileUp->cd()->SetBottomMargin(0.15);
   c_PileUp->cd()->SetGrid(0,0);
   c_PileUp->cd()->SetTicks(1,1);
+  c_PileUp->cd()->SetLogz(1);
   TH1D *h_play = new TH1D("h_play","h_play",4000,-0.5,3999.5);
   for(int i_bin = 0; i_bin < 4000; ++i_bin)
   {
     h_play->SetBinContent(i_bin+1,-100.0);
     h_play->SetBinError(i_bin+1,1.0);
   }
+  h_play->SetTitle("gRefMult vs. nTofHits");
+  h_play->SetStats(0);
   h_play->GetXaxis()->SetTitle("nTofHits");
   h_play->GetYaxis()->SetTitle("gRefMult");
   h_play->GetYaxis()->SetRangeUser(-30.0,1000.0);
   h_play->Draw("hE");
 
-  h_mTofHitsGRefMult[1][9]->Draw("colz same");
+  // h_mTofHitsGRefMult[1][9]->Draw("colz same");
 
   g_UpperBand->SetMarkerStyle(24);
   g_UpperBand->SetMarkerColor(2);
@@ -262,6 +264,18 @@ void rejectPileUpEvent_nTofHit(int energy = 0)
   f_UpperExt->SetRange(2500.0,4000.0);
   f_UpperExt->Draw("l same");
 
+  cout << "UpperBand: " << endl;
+  cout << "Pol5 fit" << endl;
+  cout << "p0Upper = " << f_UpperBand->GetParameter(0) << endl;
+  cout << "p1Upper = " << f_UpperBand->GetParameter(1) << endl;
+  cout << "p2Upper = " << f_UpperBand->GetParameter(2) << endl;
+  cout << "p3Upper = " << f_UpperBand->GetParameter(3) << endl;
+  cout << "p4Upper = " << f_UpperBand->GetParameter(4) << endl;
+  cout << "p5Upper = " << f_UpperBand->GetParameter(5) << endl;
+  cout << "Pol1 fit" << endl;
+  cout << "p0UpperExt = " << f_UpperExt->GetParameter(0) << endl;
+  cout << "p1UpperExt = " << f_UpperExt->GetParameter(1) << endl;
+
   g_LowerBand->SetMarkerStyle(24);
   g_LowerBand->SetMarkerColor(kGray+2);
   g_LowerBand->SetMarkerSize(0.8);
@@ -282,4 +296,19 @@ void rejectPileUpEvent_nTofHit(int energy = 0)
   f_LowerExt->SetLineStyle(2);
   f_LowerExt->SetRange(2500.0,4000.0);
   f_LowerExt->Draw("l same");
+
+  cout << "LowerBand: " << endl;
+  cout << "Pol5 fit" << endl;
+  cout << "p0Lower = " << f_LowerBand->GetParameter(0) << endl;
+  cout << "p1Lower = " << f_LowerBand->GetParameter(1) << endl;
+  cout << "p2Lower = " << f_LowerBand->GetParameter(2) << endl;
+  cout << "p3Lower = " << f_LowerBand->GetParameter(3) << endl;
+  cout << "p4Lower = " << f_LowerBand->GetParameter(4) << endl;
+  cout << "p5Lower = " << f_LowerBand->GetParameter(5) << endl;
+  cout << "Pol1 fit" << endl;
+  cout << "p0LowerExt = " << f_LowerExt->GetParameter(0) << endl;
+  cout << "p1LowerExt = " << f_LowerExt->GetParameter(1) << endl;
+
+  // c_PileUp->SaveAs("c_PileUp_nTofHit.eps");
+  c_PileUp->SaveAs("c_PileUp_nTofHit.png");
 }
