@@ -29,7 +29,7 @@ mkdir -p JOBS/csh
 mkdir -p JOBS/list
 
 ##########Test Production##########
-# star-submit-template -template testRunQA_low.xml -entities mode=$mode,energy=$energy,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath,outDir=$outDir
+star-submit-template -template testRunQA_low.xml -entities mode=$mode,energy=$energy,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath,outDir=$outDir
 ##########Test Production##########
 
 ##########Full Production##########
@@ -37,5 +37,5 @@ mkdir -p JOBS/list
 ##########Full Production##########
 
 ##########Re-Submit##########
-star-submit-template -template resubmitRunQATemp.xml -entities mode=$mode,energy=$energy,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath,outDir=$outDir
+# star-submit-template -template resubmitRunQATemp.xml -entities mode=$mode,energy=$energy,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath,outDir=$outDir
 ##########Re-Submit##########
