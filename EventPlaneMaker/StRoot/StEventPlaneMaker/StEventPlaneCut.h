@@ -15,7 +15,8 @@ class StEventPlaneCut : public TObject
     virtual ~StEventPlaneCut();
 
     bool isMinBias(StPicoEvent*);
-    bool isBES(int energy);
+    bool isBES();
+    bool isPileUpEvent(int, int, int); // refmult/grefmult & nTofMatch & nTofHits
     bool passEventCut(StPicoDst*);
     bool passTrackBasic(StPicoTrack*);
     bool passTrackQA(StPicoTrack*, StPicoEvent*);

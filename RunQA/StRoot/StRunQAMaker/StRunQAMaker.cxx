@@ -159,13 +159,19 @@ int StRunQAMaker::Make()
     const int cent9 = mRefMultCorr->getCentralityBin9(); // get Centrality9
     const double reweight = mRefMultCorr->getWeight(); // get Centrality9
     const int runIndex = mRunQAUtility->findRunIndex(runId); // find run index for a specific run
-    // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
     const int triggerBin = mRunQACut->getTriggerBin(mPicoEvent);
+    // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
     if(runIndex < 0)
     {
       LOG_ERROR << "Could not find this run Index from StRunQAUtility! Skip!" << endm;
       return kStErr;
     }
+
+    bool isPileUpEventStRunQACut = mRunQACut->isPileUpEvent(grefMult,numOfBTofMatch,numOfBTofHits); // 200GeV
+    if(mRunQACut->isBES()) isPileUpEventStRunQACut = mRunQACut->isPileUpEvent(refMult,numOfBTofMatch,numOfBTofHits); // 54 GeV | always return false for 27 GeV
+    bool isPileUpEventStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut(1.0*refMult, 1.0*numOfBTofMatch); // 27 GeV | always return !true for other energies
+    bool isPileUpEvent = isPileUpEventStRunQACut || isPileUpEventStRefMultCorr;
+    // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpEventStRunQACut = " << isPileUpEventStRunQACut << ", isPileUpEventStRefMultCorr = " << isPileUpEventStRefMultCorr << endl;
 
     if(mMode == 0)
     { // fill QA before event cuts
@@ -173,12 +179,6 @@ int StRunQAMaker::Make()
       mRunQAHistoManager->fillEventQA_RefMult(triggerBin,refMult,grefMult,cent9,reweight,numOfBTofHits,numOfBTofMatch,0); // wo event cut
       mRunQAHistoManager->fillEventQA_Vertex(triggerBin,vx,vy,vz,vzVpd,0);
       mRunQAHistoManager->fillEventQA_Trigger(triggerBin,0);
-
-      bool isPileUpEventStRunQACut = mRunQACut->isPileUpEvent(grefMult,numOfBTofMatch,numOfBTofHits); // 200GeV
-      if(mRunQACut->isBES()) isPileUpEventStRunQACut = mRunQACut->isPileUpEvent(refMult,numOfBTofMatch,numOfBTofHits); // 54 GeV | always return false for 27 GeV
-      bool isPileUpEventStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut(1.0*refMult, 1.0*numOfBTofMatch); // 27 GeV | always return !true for other energies
-      bool isPileUpEvent = isPileUpEventStRunQACut || isPileUpEventStRefMultCorr;
-      // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpEventStRunQACut = " << isPileUpEventStRunQACut << ", isPileUpEventStRefMultCorr = " << isPileUpEventStRefMultCorr << endl;
 
       if(mRunQACut->passEventCut(mPicoDst) && !isPileUpEvent)
       { // apply Event Cuts for anlaysis 

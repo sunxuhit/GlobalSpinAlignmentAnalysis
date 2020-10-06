@@ -28,6 +28,9 @@ FileList/*/*.list
 */submit/*/sched*
 */submit/*/*.session.xml
 */submit/*/Submitted/
+*/macro/figures/*.eps
+*/macro/figures/*.png
+*/macro/figures/*.pdf
 */macro/*.eps
 */macro/*.png
 */macro/*.pdf

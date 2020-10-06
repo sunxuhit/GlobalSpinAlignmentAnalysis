@@ -56,8 +56,8 @@ int StEventPlaneMaker::Init()
 
   if(!mRefMultCorr)
   {
-    if(!mEventPlaneCut->isBES(mEnergy)) mRefMultCorr = CentralityMaker::instance()->getgRefMultCorr_Run14_AuAu200_VpdMB5_P16id(); // 200GeV_2014
-    if(mEventPlaneCut->isBES(mEnergy)) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr(); // BESII
+    if(!mEventPlaneCut->isBES()) mRefMultCorr = CentralityMaker::instance()->getgRefMultCorr_Run14_AuAu200_VpdMB5_P16id(); // 200GeV_2014
+    if(mEventPlaneCut->isBES()) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr(); // BESII
   }
 
   if(mMode == 0)
@@ -138,8 +138,8 @@ int StEventPlaneMaker::Make()
     }
 
     mRefMultCorr->init(runId);
-    if(!mEventPlaneCut->isBES(mEnergy)) mRefMultCorr->initEvent(grefMult,vz,zdcX); // 200GeV_2014
-    if(mEventPlaneCut->isBES(mEnergy)) mRefMultCorr->initEvent(refMult,vz,zdcX); // BES-II might need Luminosity corrections
+    if(!mEventPlaneCut->isBES()) mRefMultCorr->initEvent(grefMult,vz,zdcX); // 200GeV_2014
+    if(mEventPlaneCut->isBES()) mRefMultCorr->initEvent(refMult,vz,zdcX); // BES-II might need Luminosity corrections
 
     // if(mRefMultCorr->isBadRun(runId))
     // {
@@ -154,6 +154,7 @@ int StEventPlaneMaker::Make()
     const int cent9 = mRefMultCorr->getCentralityBin9(); // get Centrality9
     const double reweight = mRefMultCorr->getWeight(); // get weight
     const int runIndex = mEventPlaneUtility->findRunIndex(runId); // find run index for a specific run
+    const int triggerBin = mEventPlaneCut->getTriggerBin(mPicoEvent);
     // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
     if(runIndex < 0)
     {
@@ -161,9 +162,15 @@ int StEventPlaneMaker::Make()
       return kStErr;
     }
 
+    bool isPileUpEventStEventPlaneCut = mEventPlaneCut->isPileUpEvent(grefMult,numOfBTofMatch,numOfBTofHits); // 200GeV
+    if(mEventPlaneCut->isBES()) isPileUpEventStEventPlaneCut = mEventPlaneCut->isPileUpEvent(refMult,numOfBTofMatch,numOfBTofHits); // 54 GeV | always return false for 27 GeV
+    bool isPileUpEventStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut(1.0*refMult, 1.0*numOfBTofMatch); // 27 GeV | always return !true for other energies
+    bool isPileUpEvent = isPileUpEventStEventPlaneCut || isPileUpEventStRefMultCorr;
+    // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpEventStEventPlaneCut = " << isPileUpEventStEventPlaneCut << ", isPileUpEventStRefMultCorr = " << isPileUpEventStRefMultCorr << endl;
+
     if(mMode == 0)
     { // fill Gain Correction Factors for BBC & ZDC
-      if(mEventPlaneCut->passEventCut(mPicoDst))
+      if(mEventPlaneCut->passEventCut(mPicoDst) && !isPileUpEvent)
       { // apply Event Cuts for anlaysis 
 	for(int i_slat = 0; i_slat < 8; ++i_slat) // read in raw ADC value from ZDC-SMD
 	{
