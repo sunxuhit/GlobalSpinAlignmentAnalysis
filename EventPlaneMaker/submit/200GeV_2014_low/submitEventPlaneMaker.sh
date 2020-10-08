@@ -21,7 +21,7 @@ outPath=/star/data01/pwg/sunxuhit/AuAu200GeV_2014
 
 ##########Mode Selection##########
 mode=0
-outDir=GainCorrParameter
+outDir=GainCorr
 ##########Mode Selection##########
 
 mkdir -p JOBS/report

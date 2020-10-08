@@ -7,11 +7,11 @@ if [ $# -eq 0 ]
 then
   Energy=200GeV_2014
   Luminosity=low
-  JobId=A0C41D555DF378EC36FCFF0636388AAA #generate faild list for this Job
-  # Task=EventPlaneMaker
-  # Mode=GainCorrParameter
-  Task=RunQA
-  Mode=RunQA
+  JobId=9E5703EB6FAE0E39F93C889E8039552F #generate faild list for this Job
+  Task=EventPlaneMaker
+  Mode=GainCorr
+  # Task=RunQA
+  # Mode=RunQA
 
   OutPutDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/${Energy}"
   SubmitDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/${Task}/submit/${Energy}_${Luminosity}/JOBS/list"
@@ -56,7 +56,7 @@ then
   rm $TempList
 
   # generate failed ROOT output list
-  sed -i "s/sched/file_"$Energy"_"$Task"_/g" $FailedList
+  sed -i "s/sched/file_"$Energy"_"$Mode"_/g" $FailedList
   sed -i "s/list/root/g" $FailedList
 
 else

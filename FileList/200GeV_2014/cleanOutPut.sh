@@ -6,13 +6,16 @@ date
 if [ $# -eq 0 ]
 then
   Energy=200GeV_2014
-  Mode=RunQA
-  JobId=A0C41D555DF378EC36FCFF0636388AAA #generate faild list for this Job
+  JobId=9E5703EB6FAE0E39F93C889E8039552F #generate faild list for this Job
+  Task=EventPlaneMaker
+  Mode=GainCorr
+  # Task=RunQA
+  # Mode=RunQA
 
   FileDirectory="/star/u/sunxuhit/AuAu$Energy/SpinAlignment/$Mode"
 
   OutPutDir="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/$Energy"
-  FailedList="$OutPutDir/condor_failed_${Mode}_${JobId}.list"
+  FailedList="$OutPutDir/condor_failed_${Task}_${JobId}.list"
   echo "delete following files from "
   echo $FailedList
   for item in `cat $FailedList`
@@ -21,7 +24,7 @@ then
     ls $FileDirectory/$item
     rm $FileDirectory/$item
   done
-  # rm $FailedList
+  rm $FailedList
 
 else
   echo "Wrong number of parameters"

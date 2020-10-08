@@ -9,8 +9,9 @@
 void fitGainCorr(int energy = 0)
 {
   string JobId = "03E3F84524BEC775BF8BA060A2C3A6BB";
-  // string InPutFile = Form("/star/data01/pwg/sunxuhit/AuAu%s/SpinAlignment/GainCorrParameter/merged_file/file_%s_GainCorrPar_%s.root",recoEP::mBeamEnergy[energy].c_str(),recoEP::mBeamEnergy[energy].c_str(),JobId.c_str());
-  string InPutFile = Form("/star/data01/pwg/sunxuhit/AuAu%s/SpinAlignment/GainCorrParameter/test/file_%s_GainCorr_%s.root",recoEP::mBeamEnergy[energy].c_str(),recoEP::mBeamEnergy[energy].c_str(),JobId.c_str());
+  // string InPutFile = Form("/star/data01/pwg/sunxuhit/AuAu%s/SpinAlignment/GainCorr/merged_file/file_%s_GainCorrPar_%s.root",recoEP::mBeamEnergy[energy].c_str(),recoEP::mBeamEnergy[energy].c_str(),JobId.c_str());
+  string InPutFile = Form("/star/data01/pwg/sunxuhit/AuAu%s/SpinAlignment/GainCorr/test/file_%s_GainCorrPar_%s.root",recoEP::mBeamEnergy[energy].c_str(),recoEP::mBeamEnergy[energy].c_str(),JobId.c_str());
+  // string InPutFile = Form("/star/data01/pwg/sunxuhit/AuAu%s/SpinAlignment/GainCorrParameter/test/file_%s_GainCorr_%s.root",recoEP::mBeamEnergy[energy].c_str(),recoEP::mBeamEnergy[energy].c_str(),JobId.c_str());
   TFile *File_InPut = TFile::Open(InPutFile.c_str());
   if(!File_InPut->IsOpen()) cout << "InPutFile: " << InPutFile.c_str() << "is problematic" << endl;
   cout << "InPutFile sets to: " << InPutFile.c_str() << endl;
