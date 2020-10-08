@@ -14,10 +14,10 @@ static const string mCutsQA[2] = {"Before","After"};
 
 void plotQA_Event(int energy = 0)
 {
-  string JobId = "low";
-  string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/merged_file/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
+  string JobId = "EEE0479FEE171BB7ACDE3FBF146413E7";
+  // string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/merged_file/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
   // string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/test/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
-  // string inputfile = Form("/Users/xusun/WorkSpace/STAR/Data/SpinAlignment/AuAu%s/RunQA/merged_file/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
+  string inputfile = Form("/Users/xusun/WorkSpace/STAR/Data/SpinAlignment/AuAu%s/RunQA/merged_file/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
   TH1F *h_mRefMult[2][10]; // 0: before cuts | 1: after cuts
   TH1F *h_mGRefMult[2][10]; // 0-8 for different triggerID | 9 for all triggers
@@ -116,16 +116,16 @@ void plotQA_Event(int energy = 0)
 
     c_EventQA[i_cut]->cd(1);
     c_EventQA[i_cut]->cd(1)->SetLogy();
-    if(energy == 0)h_mGRefMult[i_cut][9]->Draw("hE");
+    if(energy == 0)h_mRefMult[i_cut][9]->Draw("hE");
     if(energy != 0)h_mRefMult[i_cut][9]->Draw("hE");
 
     c_EventQA[i_cut]->cd(2);
     c_EventQA[i_cut]->cd(2)->SetLogz();
     if(energy == 0)
     {
-      h_mTofMatchGRefMult[i_cut][9]->GetXaxis()->SetRangeUser(0.0,800.0);
-      h_mTofMatchGRefMult[i_cut][9]->GetYaxis()->SetRangeUser(0.0,800.0);
-      h_mTofMatchGRefMult[i_cut][9]->Draw("colz");
+      h_mTofMatchRefMult[i_cut][9]->GetXaxis()->SetRangeUser(0.0,800.0);
+      h_mTofMatchRefMult[i_cut][9]->GetYaxis()->SetRangeUser(0.0,800.0);
+      h_mTofMatchRefMult[i_cut][9]->Draw("colz");
     }
     if(energy != 0)
     {
@@ -138,8 +138,8 @@ void plotQA_Event(int energy = 0)
     c_EventQA[i_cut]->cd(3)->SetLogz();
     if(energy == 0)
     {
-      h_mTofHitsGRefMult[i_cut][9]->GetYaxis()->SetRangeUser(0.0,800.0);
-      h_mTofHitsGRefMult[i_cut][9]->Draw("colz");
+      h_mTofHitsRefMult[i_cut][9]->GetYaxis()->SetRangeUser(0.0,800.0);
+      h_mTofHitsRefMult[i_cut][9]->Draw("colz");
     }
     if(energy != 0)
     {
@@ -167,7 +167,7 @@ void plotQA_Event(int energy = 0)
     // c_EventQA[i_cut]->cd(8)->SetLogy();
     h_mDiffVzVzVpd[i_cut][9]->Draw();
 
-    string FigName = Form("c_EventQA_%s_%s_%s.png",mCutsQA[i_cut].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
+    string FigName = Form("./figures/c_EventQA_%s_%s_%s.png",mCutsQA[i_cut].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
     c_EventQA[i_cut]->SaveAs(FigName.c_str());
   }
 }

@@ -62,5 +62,5 @@ int genRunIndex(int energy = 0)
   }
   file_runIndex.close();
 
-  return true;
+  return 1;
 }

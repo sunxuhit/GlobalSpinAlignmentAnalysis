@@ -1,7 +1,4 @@
-#include <iostream>
-#include <fstream>
 #include <string>
-
 #include "TFile.h"
 #include "TGraphAsymmErrors.h"
 #include "TCanvas.h"
@@ -9,19 +6,13 @@
 #include "TH2F.h"
 #include "TF1.h"
 #include "TLegend.h"
-
 #include "../StRoot/StRunQAMaker/StRunQACons.h"
-#include "./draw.h"
 
 using namespace std;
 
 static const string mCutsQA[2] = {"Before","After"};
 
-void findMean(TProfile *p_runQA, double &mean, double &sigma);
-bool isBadRun(double val, double mean, double sigma);
-void plotGoodRunRange(double runIndexStart, double runIndexStop, double mean, double sigma);
-
-int findBadRunList(int energy = 0)
+void plotQA_RunbyRun(int energy = 0)
 {
   string JobId = "EEE0479FEE171BB7ACDE3FBF146413E7";
   // string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/merged_file/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
@@ -88,27 +79,13 @@ int findBadRunList(int energy = 0)
     }
   }
 
-  string outputfile = Form("../StRoot/StRunQAUtility/RunIndex/badRunIndex_%s.txt",runQA::mBeamEnergy[energy].c_str());
-  ofstream file_badRunIndex;
-  file_badRunIndex.open(outputfile.c_str());
-  if (!file_badRunIndex.is_open()) 
-  {
-    std::cout << "failed to open " << outputfile << '\n';
-    return -1;
-  } 
-
-  const double runIndexStart = -0.5;
-  const double runIndexStop  = 3999.5;
-
   const int numOfTriggers = 5;
   const int triggerID[numOfTriggers] = {450005,450015,450025,450050,450060};
   const int MarkerColor[numOfTriggers] = {7,6,4,2,16};
 
-  //-------------refMult----------------
-  double meanRefMult = 0.0;
-  double sigmaRefMult = 0.0;
-  findMean(p_mRefMult[1][9],meanRefMult,sigmaRefMult);
+  TLegend *leg = new TLegend(0.7,0.6,0.9,0.9);
 
+  //---------------------
   TCanvas *c_RunQA_RefMult = new TCanvas("c_RunQA_RefMult","c_RunQA_RefMult",10,10,800,400);
   c_RunQA_RefMult->cd()->SetLeftMargin(0.1);
   c_RunQA_RefMult->cd()->SetRightMargin(0.1);
@@ -126,26 +103,21 @@ int findBadRunList(int energy = 0)
   p_mRefMult[1][9]->GetYaxis()->SetTitle("<refMult>");
   p_mRefMult[1][9]->GetYaxis()->SetRangeUser(0,400);
   p_mRefMult[1][9]->Draw("pE");
+  leg->AddEntry(p_mRefMult[1][9],"All Triggers","P");
 
-  plotGoodRunRange(runIndexStart,runIndexStop,meanRefMult,sigmaRefMult);
-
-  c_RunQA_RefMult->SaveAs("./figures/c_RunQA_RefMult_badRunIndex.eps");
-
-  for(int i_run = 0; i_run < p_mRefMult[1][9]->GetNbinsX(); ++i_run)
+  for(int i_trig = 0; i_trig < numOfTriggers; ++i_trig)
   {
-    if(p_mRefMult[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mRefMult[1][9]->GetBinContent(i_run+1),meanRefMult,sigmaRefMult))
-    {
-      cout << "bad runIndex from refMult: " << p_mRefMult[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mRefMult[1][9]->GetBinCenter(i_run+1) << std::endl;
-    }
+    p_mRefMult[1][i_trig]->SetMarkerColor(MarkerColor[i_trig]);
+    p_mRefMult[1][i_trig]->SetMarkerStyle(24);
+    p_mRefMult[1][i_trig]->SetMarkerSize(0.8);
+    p_mRefMult[1][i_trig]->SetLineColor(MarkerColor[i_trig]);
+    if(p_mRefMult[1][i_trig]->GetEntries() > 0) p_mRefMult[1][i_trig]->Draw("pE same");
+    leg->AddEntry(p_mRefMult[1][i_trig],to_string(triggerID[i_trig]).c_str(),"P");
   }
-  //-------------refMult----------------
 
-  //-------------grefMult----------------
-  double meanGRefMult = 0.0;
-  double sigmaGRefMult = 0.0;
-  findMean(p_mGRefMult[1][9],meanGRefMult,sigmaGRefMult);
-
+  leg->Draw("same");
+  c_RunQA_RefMult->SaveAs("./figures/c_RunQA_RefMult.eps");
+  //---------------------
   TCanvas *c_RunQA_gRefMult = new TCanvas("c_RunQA_gRefMult","c_RunQA_gRefMult",10,10,800,400);
   c_RunQA_gRefMult->cd()->SetLeftMargin(0.1);
   c_RunQA_gRefMult->cd()->SetRightMargin(0.1);
@@ -164,25 +136,18 @@ int findBadRunList(int energy = 0)
   p_mGRefMult[1][9]->GetYaxis()->SetRangeUser(0,400);
   p_mGRefMult[1][9]->Draw("pE");
 
-  plotGoodRunRange(runIndexStart,runIndexStop,meanGRefMult,sigmaGRefMult);
-
-  c_RunQA_gRefMult->SaveAs("./figures/c_RunQA_gRefMult_badRunIndex.eps");
-
-  for(int i_run = 0; i_run < p_mGRefMult[1][9]->GetNbinsX(); ++i_run)
+  for(int i_trig = 0; i_trig < numOfTriggers; ++i_trig)
   {
-    if(p_mGRefMult[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mGRefMult[1][9]->GetBinContent(i_run+1),meanGRefMult,sigmaGRefMult))
-    {
-      cout << "bad runIndex from grefMult: " << p_mGRefMult[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mGRefMult[1][9]->GetBinCenter(i_run+1) << std::endl;
-    }
+    p_mGRefMult[1][i_trig]->SetMarkerColor(MarkerColor[i_trig]);
+    p_mGRefMult[1][i_trig]->SetMarkerStyle(24);
+    p_mGRefMult[1][i_trig]->SetMarkerSize(0.8);
+    p_mGRefMult[1][i_trig]->SetLineColor(MarkerColor[i_trig]);
+    if(p_mGRefMult[1][i_trig]->GetEntries() > 0) p_mGRefMult[1][i_trig]->Draw("pE same");
   }
-  //-------------grefMult----------------
 
-  //-------------ZdcX----------------
-  double meanZdcX = 0.0;
-  double sigmaZdcX = 0.0;
-  findMean(p_mZdcX[1][9],meanZdcX,sigmaZdcX);
-
+  leg->Draw("same");
+  c_RunQA_gRefMult->SaveAs("./figures/c_RunQA_gRefMult.eps");
+  //---------------------
   TCanvas *c_RunQA_ZdcX = new TCanvas("c_RunQA_ZdcX","c_RunQA_ZdcX",10,10,800,400);
   c_RunQA_ZdcX->cd()->SetLeftMargin(0.1);
   c_RunQA_ZdcX->cd()->SetRightMargin(0.1);
@@ -198,28 +163,21 @@ int findBadRunList(int energy = 0)
   p_mZdcX[1][9]->SetLineColor(1);
   p_mZdcX[1][9]->GetXaxis()->SetTitle("runIndex");
   p_mZdcX[1][9]->GetYaxis()->SetTitle("<ZdcX>");
-  p_mZdcX[1][9]->GetYaxis()->SetRangeUser(0,60000);
+  // p_mZdcX[1][9]->GetYaxis()->SetRangeUser(0,400);
   p_mZdcX[1][9]->Draw("pE");
 
-  plotGoodRunRange(runIndexStart,runIndexStop,meanZdcX,sigmaZdcX);
-
-  c_RunQA_ZdcX->SaveAs("./figures/c_RunQA_ZdcX_badRunIndex.eps");
-
-  for(int i_run = 0; i_run < p_mZdcX[1][9]->GetNbinsX(); ++i_run)
+  for(int i_trig = 0; i_trig < numOfTriggers; ++i_trig)
   {
-    if(p_mZdcX[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mZdcX[1][9]->GetBinContent(i_run+1),meanZdcX,sigmaZdcX))
-    {
-      cout << "bad runIndex from ZdcX: " << p_mZdcX[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mZdcX[1][9]->GetBinCenter(i_run+1) << std::endl;
-    }
+    p_mZdcX[1][i_trig]->SetMarkerColor(MarkerColor[i_trig]);
+    p_mZdcX[1][i_trig]->SetMarkerStyle(24);
+    p_mZdcX[1][i_trig]->SetMarkerSize(0.8);
+    p_mZdcX[1][i_trig]->SetLineColor(MarkerColor[i_trig]);
+    if(p_mZdcX[1][i_trig]->GetEntries() > 0) p_mZdcX[1][i_trig]->Draw("pE same");
   }
-  //-------------ZdcX----------------
 
-  //-------------Vz----------------
-  double meanVz = 0.0;
-  double sigmaVz = 0.0;
-  findMean(p_mVz[1][9],meanVz,sigmaVz);
-
+  leg->Draw("same");
+  c_RunQA_ZdcX->SaveAs("./figures/c_RunQA_ZdcX.eps");
+  //---------------------
   TCanvas *c_RunQA_Vz = new TCanvas("c_RunQA_Vz","c_RunQA_Vz",10,10,800,400);
   c_RunQA_Vz->cd()->SetLeftMargin(0.1);
   c_RunQA_Vz->cd()->SetRightMargin(0.1);
@@ -238,25 +196,18 @@ int findBadRunList(int energy = 0)
   p_mVz[1][9]->GetYaxis()->SetRangeUser(-3.0,3.0);
   p_mVz[1][9]->Draw("pE");
 
-  plotGoodRunRange(runIndexStart,runIndexStop,meanVz,sigmaVz);
-
-  c_RunQA_Vz->SaveAs("./figures/c_RunQA_Vz_badRunIndex.eps");
-
-  for(int i_run = 0; i_run < p_mVz[1][9]->GetNbinsX(); ++i_run)
+  for(int i_trig = 0; i_trig < numOfTriggers; ++i_trig)
   {
-    if(p_mVz[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mVz[1][9]->GetBinContent(i_run+1),meanVz,sigmaVz))
-    {
-      cout << "bad runIndex from Vz: " << p_mVz[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mVz[1][9]->GetBinCenter(i_run+1) << std::endl;
-    }
+    p_mVz[1][i_trig]->SetMarkerColor(MarkerColor[i_trig]);
+    p_mVz[1][i_trig]->SetMarkerStyle(24);
+    p_mVz[1][i_trig]->SetMarkerSize(0.8);
+    p_mVz[1][i_trig]->SetLineColor(MarkerColor[i_trig]);
+    if(p_mVz[1][i_trig]->GetEntries() > 0) p_mVz[1][i_trig]->Draw("pE same");
   }
-  //-------------Vz----------------
 
-  //-------------Vr----------------
-  double meanVr = 0.0;
-  double sigmaVr = 0.0;
-  findMean(p_mVr[1][9],meanVr,sigmaVr);
-
+  leg->Draw("same");
+  c_RunQA_Vz->SaveAs("./figures/c_RunQA_Vz.eps");
+  //---------------------
   TCanvas *c_RunQA_Vr = new TCanvas("c_RunQA_Vr","c_RunQA_Vr",10,10,800,400);
   c_RunQA_Vr->cd()->SetLeftMargin(0.1);
   c_RunQA_Vr->cd()->SetRightMargin(0.1);
@@ -275,25 +226,18 @@ int findBadRunList(int energy = 0)
   p_mVr[1][9]->GetYaxis()->SetRangeUser(0.1,0.5);
   p_mVr[1][9]->Draw("pE");
 
-  plotGoodRunRange(runIndexStart,runIndexStop,meanVr,sigmaVr);
-
-  c_RunQA_Vr->SaveAs("./figures/c_RunQA_Vr_badRunIndex.eps");
-
-  for(int i_run = 0; i_run < p_mVr[1][9]->GetNbinsX(); ++i_run)
+  for(int i_trig = 0; i_trig < numOfTriggers; ++i_trig)
   {
-    if(p_mVr[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mVr[1][9]->GetBinContent(i_run+1),meanVr,sigmaVr))
-    {
-      cout << "bad runIndex from Vr: " << p_mVr[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mVr[1][9]->GetBinCenter(i_run+1) << std::endl;
-    }
+    p_mVr[1][i_trig]->SetMarkerColor(MarkerColor[i_trig]);
+    p_mVr[1][i_trig]->SetMarkerStyle(24);
+    p_mVr[1][i_trig]->SetMarkerSize(0.8);
+    p_mVr[1][i_trig]->SetLineColor(MarkerColor[i_trig]);
+    if(p_mVr[1][i_trig]->GetEntries() > 0) p_mVr[1][i_trig]->Draw("pE same");
   }
-  //-------------Vr----------------
 
-  //-------------gDca----------------
-  double meanGDca = 0.0;
-  double sigmaGDca = 0.0;
-  findMean(p_mGDca[1][9],meanGDca,sigmaGDca);
-
+  leg->Draw("same");
+  c_RunQA_Vr->SaveAs("./figures/c_RunQA_Vr.eps");
+  //---------------------
   TCanvas *c_RunQA_gDca = new TCanvas("c_RunQA_gDca","c_RunQA_gDca",10,10,800,400);
   c_RunQA_gDca->cd()->SetLeftMargin(0.1);
   c_RunQA_gDca->cd()->SetRightMargin(0.1);
@@ -309,28 +253,21 @@ int findBadRunList(int energy = 0)
   p_mGDca[1][9]->SetLineColor(1);
   p_mGDca[1][9]->GetXaxis()->SetTitle("runIndex");
   p_mGDca[1][9]->GetYaxis()->SetTitle("<gDca>");
-  p_mGDca[1][9]->GetYaxis()->SetRangeUser(0.1,0.7);
+  p_mGDca[1][9]->GetYaxis()->SetRangeUser(0.2,0.6);
   p_mGDca[1][9]->Draw("pE");
 
-  plotGoodRunRange(runIndexStart,runIndexStop,meanGDca,sigmaGDca);
-
-  c_RunQA_gDca->SaveAs("./figures/c_RunQA_gDca_badRunIndex.eps");
-
-  for(int i_run = 0; i_run < p_mGDca[1][9]->GetNbinsX(); ++i_run)
+  for(int i_trig = 0; i_trig < numOfTriggers; ++i_trig)
   {
-    if(p_mGDca[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mGDca[1][9]->GetBinContent(i_run+1),meanGDca,sigmaGDca))
-    {
-      cout << "bad runIndex from GDca: " << p_mGDca[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mGDca[1][9]->GetBinCenter(i_run+1) << std::endl;
-    }
+    p_mGDca[1][i_trig]->SetMarkerColor(MarkerColor[i_trig]);
+    p_mGDca[1][i_trig]->SetMarkerStyle(24);
+    p_mGDca[1][i_trig]->SetMarkerSize(0.8);
+    p_mGDca[1][i_trig]->SetLineColor(MarkerColor[i_trig]);
+    if(p_mGDca[1][i_trig]->GetEntries() > 0) p_mGDca[1][i_trig]->Draw("pE same");
   }
-  //-------------gDca----------------
 
-  //-------------nHitsFit----------------
-  double meanNHitsFit = 0.0;
-  double sigmaNHitsFit = 0.0;
-  findMean(p_mNHitsFit[1][9],meanNHitsFit,sigmaNHitsFit);
-
+  leg->Draw("same");
+  c_RunQA_gDca->SaveAs("./figures/c_RunQA_gDca.eps");
+  //---------------------
   TCanvas *c_RunQA_nHitsFit = new TCanvas("c_RunQA_nHitsFit","c_RunQA_nHitsFit",10,10,800,400);
   c_RunQA_nHitsFit->cd()->SetLeftMargin(0.1);
   c_RunQA_nHitsFit->cd()->SetRightMargin(0.1);
@@ -349,25 +286,18 @@ int findBadRunList(int energy = 0)
   p_mNHitsFit[1][9]->GetYaxis()->SetRangeUser(25,40);
   p_mNHitsFit[1][9]->Draw("pE");
 
-  plotGoodRunRange(runIndexStart,runIndexStop,meanNHitsFit,sigmaNHitsFit);
-
-  c_RunQA_nHitsFit->SaveAs("./figures/c_RunQA_nHitsFit_badRunIndex.eps");
-
-  for(int i_run = 0; i_run < p_mNHitsFit[1][9]->GetNbinsX(); ++i_run)
+  for(int i_trig = 0; i_trig < numOfTriggers; ++i_trig)
   {
-    if(p_mNHitsFit[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mNHitsFit[1][9]->GetBinContent(i_run+1),meanNHitsFit,sigmaNHitsFit))
-    {
-      cout << "bad runIndex from NHitsFit: " << p_mNHitsFit[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mNHitsFit[1][9]->GetBinCenter(i_run+1) << std::endl;
-    }
+    p_mNHitsFit[1][i_trig]->SetMarkerColor(MarkerColor[i_trig]);
+    p_mNHitsFit[1][i_trig]->SetMarkerStyle(24);
+    p_mNHitsFit[1][i_trig]->SetMarkerSize(0.8);
+    p_mNHitsFit[1][i_trig]->SetLineColor(MarkerColor[i_trig]);
+    if(p_mNHitsFit[1][i_trig]->GetEntries() > 0) p_mNHitsFit[1][i_trig]->Draw("pE same");
   }
-  //-------------nHitsFit----------------
 
-  //-------------primPt----------------
-  double meanPrimPt = 0.0;
-  double sigmaPrimPt = 0.0;
-  findMean(p_mPrimPt[1][9],meanPrimPt,sigmaPrimPt);
-
+  leg->Draw("same");
+  c_RunQA_nHitsFit->SaveAs("./figures/c_RunQA_nHitsFit.eps");
+  //---------------------
   TCanvas *c_RunQA_primPt = new TCanvas("c_RunQA_primPt","c_RunQA_primPt",10,10,800,400);
   c_RunQA_primPt->cd()->SetLeftMargin(0.1);
   c_RunQA_primPt->cd()->SetRightMargin(0.1);
@@ -386,25 +316,18 @@ int findBadRunList(int energy = 0)
   p_mPrimPt[1][9]->GetYaxis()->SetRangeUser(0.4,0.8);
   p_mPrimPt[1][9]->Draw("pE");
 
-  plotGoodRunRange(runIndexStart,runIndexStop,meanPrimPt,sigmaPrimPt);
-
-  c_RunQA_primPt->SaveAs("./figures/c_RunQA_primPt_badRunIndex.eps");
-
-  for(int i_run = 0; i_run < p_mPrimPt[1][9]->GetNbinsX(); ++i_run)
+  for(int i_trig = 0; i_trig < numOfTriggers; ++i_trig)
   {
-    if(p_mPrimPt[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mPrimPt[1][9]->GetBinContent(i_run+1),meanPrimPt,sigmaPrimPt))
-    {
-      cout << "bad runIndex from PrimPt: " << p_mPrimPt[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mPrimPt[1][9]->GetBinCenter(i_run+1) << std::endl;
-    }
+    p_mPrimPt[1][i_trig]->SetMarkerColor(MarkerColor[i_trig]);
+    p_mPrimPt[1][i_trig]->SetMarkerStyle(24);
+    p_mPrimPt[1][i_trig]->SetMarkerSize(0.8);
+    p_mPrimPt[1][i_trig]->SetLineColor(MarkerColor[i_trig]);
+    if(p_mPrimPt[1][i_trig]->GetEntries() > 0) p_mPrimPt[1][i_trig]->Draw("pE same");
   }
-  //-------------primPt----------------
 
-  //-------------primEta----------------
-  double meanPrimEta = 0.0;
-  double sigmaPrimEta = 0.0;
-  findMean(p_mPrimEta[1][9],meanPrimEta,sigmaPrimEta);
-
+  leg->Draw("same");
+  c_RunQA_primPt->SaveAs("./figures/c_RunQA_primPt.eps");
+  //---------------------
   TCanvas *c_RunQA_primEta = new TCanvas("c_RunQA_primEta","c_RunQA_primEta",10,10,800,400);
   c_RunQA_primEta->cd()->SetLeftMargin(0.1);
   c_RunQA_primEta->cd()->SetRightMargin(0.1);
@@ -423,25 +346,18 @@ int findBadRunList(int energy = 0)
   p_mPrimEta[1][9]->GetYaxis()->SetRangeUser(-0.05,0.10);
   p_mPrimEta[1][9]->Draw("pE");
 
-  plotGoodRunRange(runIndexStart,runIndexStop,meanPrimEta,sigmaPrimEta);
-
-  c_RunQA_primEta->SaveAs("./figures/c_RunQA_primEta_badRunIndex.eps");
-
-  for(int i_run = 0; i_run < p_mPrimEta[1][9]->GetNbinsX(); ++i_run)
+  for(int i_trig = 0; i_trig < numOfTriggers; ++i_trig)
   {
-    if(p_mPrimEta[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mPrimEta[1][9]->GetBinContent(i_run+1),meanPrimEta,sigmaPrimEta))
-    {
-      cout << "bad runIndex from PrimEta: " << p_mPrimEta[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mPrimEta[1][9]->GetBinCenter(i_run+1) << std::endl;
-    }
+    p_mPrimEta[1][i_trig]->SetMarkerColor(MarkerColor[i_trig]);
+    p_mPrimEta[1][i_trig]->SetMarkerStyle(24);
+    p_mPrimEta[1][i_trig]->SetMarkerSize(0.8);
+    p_mPrimEta[1][i_trig]->SetLineColor(MarkerColor[i_trig]);
+    if(p_mPrimEta[1][i_trig]->GetEntries() > 0) p_mPrimEta[1][i_trig]->Draw("pE same");
   }
-  //-------------primEta----------------
 
-  //-------------primPhi----------------
-  double meanPrimPhi = 0.0;
-  double sigmaPrimPhi = 0.0;
-  findMean(p_mPrimPhi[1][9],meanPrimPhi,sigmaPrimPhi);
-
+  leg->Draw("same");
+  c_RunQA_primEta->SaveAs("./figures/c_RunQA_primEta.eps");
+  //---------------------
   TCanvas *c_RunQA_primPhi = new TCanvas("c_RunQA_primPhi","c_RunQA_primPhi",10,10,800,400);
   c_RunQA_primPhi->cd()->SetLeftMargin(0.1);
   c_RunQA_primPhi->cd()->SetRightMargin(0.1);
@@ -460,25 +376,18 @@ int findBadRunList(int energy = 0)
   p_mPrimPhi[1][9]->GetYaxis()->SetRangeUser(-0.1,0.50);
   p_mPrimPhi[1][9]->Draw("pE");
 
-  plotGoodRunRange(runIndexStart,runIndexStop,meanPrimPhi,sigmaPrimPhi);
-
-  c_RunQA_primPhi->SaveAs("./figures/c_RunQA_primPhi_badRunIndex.eps");
-
-  for(int i_run = 0; i_run < p_mPrimPhi[1][9]->GetNbinsX(); ++i_run)
+  for(int i_trig = 0; i_trig < numOfTriggers; ++i_trig)
   {
-    if(p_mPrimPhi[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mPrimPhi[1][9]->GetBinContent(i_run+1),meanPrimPhi,sigmaPrimPhi))
-    {
-      cout << "bad runIndex from PrimPhi: " << p_mPrimPhi[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mPrimPhi[1][9]->GetBinCenter(i_run+1) << std::endl;
-    }
+    p_mPrimPhi[1][i_trig]->SetMarkerColor(MarkerColor[i_trig]);
+    p_mPrimPhi[1][i_trig]->SetMarkerStyle(24);
+    p_mPrimPhi[1][i_trig]->SetMarkerSize(0.8);
+    p_mPrimPhi[1][i_trig]->SetLineColor(MarkerColor[i_trig]);
+    if(p_mPrimPhi[1][i_trig]->GetEntries() > 0) p_mPrimPhi[1][i_trig]->Draw("pE same");
   }
-  //-------------primPhi----------------
 
-  //-------------globPt----------------
-  double meanGlobPt = 0.0;
-  double sigmaGlobPt = 0.0;
-  findMean(p_mGlobPt[1][9],meanGlobPt,sigmaGlobPt);
-
+  leg->Draw("same");
+  c_RunQA_primPhi->SaveAs("./figures/c_RunQA_primPhi.eps");
+  //---------------------
   TCanvas *c_RunQA_globPt = new TCanvas("c_RunQA_globPt","c_RunQA_globPt",10,10,800,400);
   c_RunQA_globPt->cd()->SetLeftMargin(0.1);
   c_RunQA_globPt->cd()->SetRightMargin(0.1);
@@ -497,25 +406,18 @@ int findBadRunList(int energy = 0)
   p_mGlobPt[1][9]->GetYaxis()->SetRangeUser(0.4,0.8);
   p_mGlobPt[1][9]->Draw("pE");
 
-  plotGoodRunRange(runIndexStart,runIndexStop,meanGlobPt,sigmaGlobPt);
-
-  c_RunQA_globPt->SaveAs("./figures/c_RunQA_globPt_badRunIndex.eps");
-
-  for(int i_run = 0; i_run < p_mGlobPt[1][9]->GetNbinsX(); ++i_run)
+  for(int i_trig = 0; i_trig < numOfTriggers; ++i_trig)
   {
-    if(p_mGlobPt[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mGlobPt[1][9]->GetBinContent(i_run+1),meanGlobPt,sigmaGlobPt))
-    {
-      cout << "bad runIndex from GlobPt: " << p_mGlobPt[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mGlobPt[1][9]->GetBinCenter(i_run+1) << std::endl;
-    }
+    p_mGlobPt[1][i_trig]->SetMarkerColor(MarkerColor[i_trig]);
+    p_mGlobPt[1][i_trig]->SetMarkerStyle(24);
+    p_mGlobPt[1][i_trig]->SetMarkerSize(0.8);
+    p_mGlobPt[1][i_trig]->SetLineColor(MarkerColor[i_trig]);
+    if(p_mGlobPt[1][i_trig]->GetEntries() > 0) p_mGlobPt[1][i_trig]->Draw("pE same");
   }
-  //-------------globPt----------------
 
-  //-------------globEta----------------
-  double meanGlobEta = 0.0;
-  double sigmaGlobEta = 0.0;
-  findMean(p_mGlobEta[1][9],meanGlobEta,sigmaGlobEta);
-
+  leg->Draw("same");
+  c_RunQA_globPt->SaveAs("./figures/c_RunQA_globPt.eps");
+  //---------------------
   TCanvas *c_RunQA_globEta = new TCanvas("c_RunQA_globEta","c_RunQA_globEta",10,10,800,400);
   c_RunQA_globEta->cd()->SetLeftMargin(0.1);
   c_RunQA_globEta->cd()->SetRightMargin(0.1);
@@ -534,25 +436,18 @@ int findBadRunList(int energy = 0)
   p_mGlobEta[1][9]->GetYaxis()->SetRangeUser(-0.05,0.10);
   p_mGlobEta[1][9]->Draw("pE");
 
-  plotGoodRunRange(runIndexStart,runIndexStop,meanGlobEta,sigmaGlobEta);
-
-  c_RunQA_globEta->SaveAs("./figures/c_RunQA_globEta_badRunIndex.eps");
-
-  for(int i_run = 0; i_run < p_mGlobEta[1][9]->GetNbinsX(); ++i_run)
+  for(int i_trig = 0; i_trig < numOfTriggers; ++i_trig)
   {
-    if(p_mGlobEta[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mGlobEta[1][9]->GetBinContent(i_run+1),meanGlobEta,sigmaGlobEta))
-    {
-      cout << "bad runIndex from GlobEta: " << p_mGlobEta[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mGlobEta[1][9]->GetBinCenter(i_run+1) << std::endl;
-    }
+    p_mGlobEta[1][i_trig]->SetMarkerColor(MarkerColor[i_trig]);
+    p_mGlobEta[1][i_trig]->SetMarkerStyle(24);
+    p_mGlobEta[1][i_trig]->SetMarkerSize(0.8);
+    p_mGlobEta[1][i_trig]->SetLineColor(MarkerColor[i_trig]);
+    if(p_mGlobEta[1][i_trig]->GetEntries() > 0) p_mGlobEta[1][i_trig]->Draw("pE same");
   }
-  //-------------globEta----------------
 
-  //-------------globPhi----------------
-  double meanGlobPhi = 0.0;
-  double sigmaGlobPhi = 0.0;
-  findMean(p_mGlobPhi[1][9],meanGlobPhi,sigmaGlobPhi);
-
+  leg->Draw("same");
+  c_RunQA_globEta->SaveAs("./figures/c_RunQA_globEta.eps");
+  //---------------------
   TCanvas *c_RunQA_globPhi = new TCanvas("c_RunQA_globPhi","c_RunQA_globPhi",10,10,800,400);
   c_RunQA_globPhi->cd()->SetLeftMargin(0.1);
   c_RunQA_globPhi->cd()->SetRightMargin(0.1);
@@ -571,54 +466,15 @@ int findBadRunList(int energy = 0)
   p_mGlobPhi[1][9]->GetYaxis()->SetRangeUser(-0.1,0.50);
   p_mGlobPhi[1][9]->Draw("pE");
 
-  plotGoodRunRange(runIndexStart,runIndexStop,meanGlobPhi,sigmaGlobPhi);
-
-  c_RunQA_globPhi->SaveAs("./figures/c_RunQA_globPhi_badRunIndex.eps");
-
-  for(int i_run = 0; i_run < p_mGlobPhi[1][9]->GetNbinsX(); ++i_run)
+  for(int i_trig = 0; i_trig < numOfTriggers; ++i_trig)
   {
-    if(p_mGlobPhi[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mGlobPhi[1][9]->GetBinContent(i_run+1),meanGlobPhi,sigmaGlobPhi))
-    {
-      cout << "bad runIndex from GlobPhi: " << p_mGlobPhi[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mGlobPhi[1][9]->GetBinCenter(i_run+1) << std::endl;
-    }
-  }
-  //-------------globPhi----------------
-
-  file_badRunIndex.close();
-  return 1;
-}
-
-void findMean(TProfile *p_runQA, double &mean, double &sigma)
-{
-  double sum = 0.0;
-  double sumSquared = 0.0;
-  int counter = 0;
-
-  for(int i_run = 0; i_run < p_runQA->GetNbinsX(); ++i_run)
-  {
-    if(p_runQA->GetBinError(i_run+1) > 0)
-    {
-      sum += p_runQA->GetBinContent(i_run+1);
-      sumSquared += p_runQA->GetBinContent(i_run+1)*p_runQA->GetBinContent(i_run+1);
-      counter++;
-    }
+    p_mGlobPhi[1][i_trig]->SetMarkerColor(MarkerColor[i_trig]);
+    p_mGlobPhi[1][i_trig]->SetMarkerStyle(24);
+    p_mGlobPhi[1][i_trig]->SetMarkerSize(0.8);
+    p_mGlobPhi[1][i_trig]->SetLineColor(MarkerColor[i_trig]);
+    if(p_mGlobPhi[1][i_trig]->GetEntries() > 0) p_mGlobPhi[1][i_trig]->Draw("pE same");
   }
 
-  mean = sum/counter;
-  sigma = sqrt((sumSquared-(double)counter*mean*mean)/(double)(counter-1));
-}
-
-bool isBadRun(double val, double mean, double sigma)
-{
-  if( val >= mean-3.0*sigma && val <= mean+3.0*sigma) return false;
-
-  return true;
-}
-
-void plotGoodRunRange(double runIndexStart, double runIndexStop, double mean, double sigma)
-{
-  PlotLine(runIndexStart, runIndexStop, mean, mean, 2, 2, 2);
-  PlotLine(runIndexStart, runIndexStop, mean+3.0*sigma, mean+3.0*sigma, 4, 2, 1);
-  PlotLine(runIndexStart, runIndexStop, mean-3.0*sigma, mean-3.0*sigma, 4, 2, 1);
+  leg->Draw("same");
+  c_RunQA_globPhi->SaveAs("./figures/c_RunQA_globPhi.eps");
 }
