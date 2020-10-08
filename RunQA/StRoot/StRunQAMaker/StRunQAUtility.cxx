@@ -55,6 +55,12 @@ bool StRunQAUtility::read_in_runIndex()
   }
   file_runIndex.close();
 
+  // print map_runIndex content:
+  // for (std::map<int,int>::iterator it=map_runIndex.begin(); it!=map_runIndex.end(); ++it)
+  // {
+  //   std::cout << it->first << " => " << it->second << '\n';
+  // }
+
   return true;
 }
 
@@ -103,6 +109,12 @@ bool StRunQAUtility::read_in_badRunList()
   }
   file_badRunList.close();
 
+  // print vec_badRunId content:
+  // for (std::vector<int>::iterator it=vec_badRunId.begin(); it!=vec_badRunId.end(); ++it)
+  // {
+  //   std::cout << (*it) << std::endl;;
+  // }
+
   return true;
 }
 
@@ -114,7 +126,7 @@ bool StRunQAUtility::isBadRun(int runId)
   //   std::cout << (*it) << std::endl;;
   // }
 
-  std::vector<int>::iterator it_runId = vec_badRunId.find(vec_badRunId.begin(), vec_badRunId.end(), runId);
+  std::vector<int>::iterator it_runId = std::find(vec_badRunId.begin(), vec_badRunId.end(), runId);
 
   return ( it_runId != vec_badRunId.end() ); // true if can be found in bad run list
 }
