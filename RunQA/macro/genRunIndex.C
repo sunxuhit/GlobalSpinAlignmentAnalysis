@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <iterator>
-#include "../StRoot/StVecMesonMaker/StVecMesonCons.h"
+#include "../StRoot/StRunQAMaker/StRunQACons.h"
 
 int genRunIndex(int energy = 0)
 {
@@ -17,7 +17,7 @@ int genRunIndex(int energy = 0)
     runIndex[i_run] = -999;
   }
 
-  string inputfile = Form("/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/%s/runNumber.list",vmsa::mBeamEnergy[energy].c_str());
+  string inputfile = Form("/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/%s/runNumber.list",runQA::mBeamEnergy[energy].c_str());
   std::cout << "inputfile = " << inputfile.c_str() << std::endl;
   std::ifstream file_runList ( inputfile.c_str() );
   if ( !file_runList.is_open() )
@@ -40,7 +40,7 @@ int genRunIndex(int energy = 0)
   }
   file_runList.close();
 
-  std::string outputfile = Form("/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/TreeProduction/StRoot/StVecMesonUtility/RunIndex/runIndex_%s.txt",vmsa::mBeamEnergy[energy].c_str());
+  std::string outputfile = Form("/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/RunQA/StRoot/StRunQAUtility/RunIndex/runIndex_%s.txt",runQA::mBeamEnergy[energy].c_str());
   std::ofstream file_runIndex;
   file_runIndex.open(outputfile.c_str());
   if (!file_runIndex.is_open()) 

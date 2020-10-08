@@ -23,6 +23,7 @@ FileList/*/*.list
 */*.root
 */StRoot/CVS/
 */StRoot/StRefMultCorr/CVS/
+*/StRoot/*Utility/RunIndex/badRunIndexUnSorted*.txt
 */submit/*/JOBS/
 */submit/*/Log/
 */submit/*/sched*
