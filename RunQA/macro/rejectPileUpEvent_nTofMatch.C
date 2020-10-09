@@ -41,7 +41,7 @@ void rejectPileUpEvent_nTofMatch(int energy = 0)
   string JobId = "low";
   // string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/merged_file/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
   // string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/test/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
-  string inputfile = Form("/Users/xusun/WorkSpace/STAR/Data/SpinAlignment/AuAu%s/RunQA/merged_file/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
+  string inputfile = Form("/Users/xusun/WorkSpace/STAR/Data/SpinAlignment/AuAu%s/RunQA/merged_file/nTofMatchCut/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
   TH1F *h_mRefMult[2][10]; // 0: before cuts | 1: after cuts
   TH1F *h_mGRefMult[2][10]; // 0-8 for different triggerID | 9 for all triggers
@@ -122,46 +122,13 @@ void rejectPileUpEvent_nTofMatch(int energy = 0)
     }
   }
 
-  /*
-  TCanvas *c_EventQA = new TCanvas("c_EventQA","c_EventQA",10,10,1500,600);
-  c_EventQA->Divide(5,2);
-  for(int i_pad = 0; i_pad < 10; ++i_pad)
-  {
-    c_EventQA->cd(i_pad+1);
-    c_EventQA->cd(i_pad+1)->SetLeftMargin(0.1);
-    c_EventQA->cd(i_pad+1)->SetRightMargin(0.1);
-    c_EventQA->cd(i_pad+1)->SetBottomMargin(0.1);
-    c_EventQA->cd(i_pad+1)->SetGrid(0,0);
-    c_EventQA->cd(i_pad+1)->SetTicks(1,1);
-    c_EventQA->cd(i_pad+1)->SetLogz(1);
-  }
-
-  for(int i_cut = 0; i_cut < 2; ++i_cut)
-  {
-    c_EventQA->cd(i_cut*5+1);
-    h_mRefMultGRefMult[i_cut][9]->Draw("colz");
-
-    c_EventQA->cd(i_cut*5+2);
-    h_mTofMatchRefMult[i_cut][9]->Draw("colz");
-
-    c_EventQA->cd(i_cut*5+3);
-    h_mTofHitsRefMult[i_cut][9]->Draw("colz");
-
-    c_EventQA->cd(i_cut*5+4);
-    h_mTofMatchGRefMult[i_cut][9]->Draw("colz");
-
-    c_EventQA->cd(i_cut*5+5);
-    h_mTofHitsGRefMult[i_cut][9]->Draw("colz");
-  }
-  */
-
   TGraphAsymmErrors *g_UpperBand = new TGraphAsymmErrors();
   TGraphAsymmErrors *g_LowerBand = new TGraphAsymmErrors();
   TH1D *h_projTofMatch[100];
   int numTofMatch = 0;
   int count = 0;
 
-  string outputname = Form("./projTofMatch.pdf");
+  string outputname = Form("./figures/projTofMatch.pdf");
   TCanvas *c_projTofMatch= new TCanvas("c_projTofMatch","c_projTofMatch",10,10,900,900);
   c_projTofMatch->Divide(3,3);
   for(int i_pad = 0; i_pad < 9; ++i_pad)
@@ -175,7 +142,7 @@ void rejectPileUpEvent_nTofMatch(int energy = 0)
     c_projTofMatch->cd(i_pad+1)->SetLogy(1);
   }
 
-  string output_start = Form("./projTofMatch.pdf[");
+  string output_start = Form("./figures/projTofMatch.pdf[");
   c_projTofMatch->Print(output_start.c_str());
 
   while(numTofMatch < 800)
@@ -272,7 +239,7 @@ void rejectPileUpEvent_nTofMatch(int energy = 0)
   c_projTofMatch->Update();
   c_projTofMatch->Print(outputname.c_str());
 
-  string output_stop = Form("./projTofMatch.pdf]");
+  string output_stop = Form("./figures/projTofMatch.pdf]");
   c_projTofMatch->Print(output_stop.c_str());
 
   cout << "count = " << count << endl;
@@ -366,6 +333,6 @@ void rejectPileUpEvent_nTofMatch(int energy = 0)
   cout << "p0LowerExt = " << f_LowerExt->GetParameter(0) << endl;
   cout << "p1LowerExt = " << f_LowerExt->GetParameter(1) << endl;
 
-  // c_PileUp->SaveAs("c_PileUp_nTofMatch.eps");
-  c_PileUp->SaveAs("c_PileUp_nTofMatch.png");
+  // c_PileUp->SaveAs("./figures/c_PileUp_nTofMatch.eps");
+  c_PileUp->SaveAs("./figures/c_PileUp_nTofMatch.png");
 }
