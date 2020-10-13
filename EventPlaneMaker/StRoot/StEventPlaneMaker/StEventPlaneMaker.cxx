@@ -34,9 +34,13 @@ StEventPlaneMaker::StEventPlaneMaker(const char* name, StPicoDstMaker *picoMaker
   mMode = Mode;
   mEnergy = energy;
 
-  if(mMode == 0)
+  if(mMode == 0) // Gain Correction for ZDC-SMD
   {
     mOutPut_GainCorr = Form("./file_%s_GainCorr_%s.root",recoEP::mBeamEnergy[energy].c_str(),jobId.c_str());
+  }
+  if(mMode == 1) // Re-Center Correction for ZDC-SMD & TPC
+  {
+    mOutPut_ReCenterPar = Form("./file_%s_ReCenterParameter_%s.root",recoEP::mBeamEnergy[energy].c_str(),jobId.c_str());
   }
 }
 
@@ -61,10 +65,16 @@ int StEventPlaneMaker::Init()
   }
 
   if(mMode == 0)
-  { // fill Gain Correction Factors for BBC & ZDC
-    mFile_GainCorr= new TFile(mOutPut_GainCorr.c_str(),"RECREATE");
+  { // fill Gain Correction Factors for ZDC-SMD
+    mFile_GainCorr = new TFile(mOutPut_GainCorr.c_str(),"RECREATE");
     mEventPlaneHistoManager->initZdcGainCorr();
-    // mEventPlaneProManager->InitReCenter();
+  }
+  if(mMode == 1)
+  { // fill ReCenter Correction Parameters for ZDC-SMD & TPC
+    mFile_ReCenterPar = new TFile(mOutPut_ReCenterPar.c_str(),"RECREATE");
+    mEventPlaneProManager->initZdcReCenter();
+    mEventPlaneHistoManager->initZdcRawEP();
+    mZdcEpManager->readGainCorr();
   }
 
   return kStOK;
@@ -79,6 +89,16 @@ int StEventPlaneMaker::Finish()
     {
       mFile_GainCorr->cd();
       mEventPlaneHistoManager->writeZdcGainCorr();
+      mFile_GainCorr->Close();
+    }
+  }
+  if(mMode == 1)
+  {
+    if(mOutPut_ReCenterPar != "")
+    {
+      mFile_ReCenterPar->cd();
+      mEventPlaneProManager->writeZdcReCenter();
+      mEventPlaneHistoManager->writeZdcRawEP();
       mFile_GainCorr->Close();
     }
   }
@@ -168,10 +188,12 @@ int StEventPlaneMaker::Make()
     bool isPileUpEvent = isPileUpEventStEventPlaneCut || isPileUpEventStRefMultCorr;
     // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpEventStEventPlaneCut = " << isPileUpEventStEventPlaneCut << ", isPileUpEventStRefMultCorr = " << isPileUpEventStRefMultCorr << endl;
 
-    if(mMode == 0)
-    { // fill Gain Correction Factors for BBC & ZDC
-      if(mEventPlaneCut->passEventCut(mPicoDst) && !isPileUpEvent)
-      { // apply Event Cuts for anlaysis 
+    if(mEventPlaneCut->passEventCut(mPicoDst) && !isPileUpEvent)
+    { // apply Event Cuts for anlaysis 
+      // ZDC-SMD EP
+      mZdcEpManager->initZdcEp(cent9,runIndex);
+      if(mMode == 0)
+      { // fill Gain Correction Factors for BBC & ZDC
 	for(int i_slat = 0; i_slat < 8; ++i_slat) // read in raw ADC value from ZDC-SMD
 	{
 	  mZdcEpManager->setZdcSmd(0,0,i_slat,mPicoEvent->ZdcSmdEastVertical(i_slat));
@@ -188,6 +210,29 @@ int StEventPlaneMaker::Make()
 	      mEventPlaneHistoManager->fillZdcGainCorr(i_eastwest,i_verthori,i_slat,runIndex,mZdcEpManager->getZdcSmd(i_eastwest,i_verthori,i_slat));
 	      // cout << "i_eastwest = " << i_eastwest << ", i_verthori = " << i_verthori << ", i_slat = " << i_slat << ", zdc = " << mZdcSmdCorrection->getZdcSmd(i_eastwest,i_verthori,i_slat) << endl;
 	    }
+	  }
+	}
+      }
+      if(mMode > 0)
+      {
+	for(int i_slat = 0; i_slat < 8; ++i_slat) // read in raw ADC value from ZDC-SMD
+	{
+	  mZdcEpManager->setZdcSmdGainCorr(0,0,i_slat,mPicoEvent->ZdcSmdEastVertical(i_slat));
+	  mZdcEpManager->setZdcSmdGainCorr(0,1,i_slat,mPicoEvent->ZdcSmdEastHorizontal(i_slat));
+	  mZdcEpManager->setZdcSmdGainCorr(1,0,i_slat,mPicoEvent->ZdcSmdWestVertical(i_slat));
+	  mZdcEpManager->setZdcSmdGainCorr(1,1,i_slat,mPicoEvent->ZdcSmdWestHorizontal(i_slat));
+	}
+
+	if(mMode == 1) // apply gain correction and fill recenter correction parameter
+	{
+	  TVector2 QEast = mZdcEpManager->getQEast(mMode);
+	  TVector2 QWest = mZdcEpManager->getQWest(mMode);
+	  TVector2 QFull = QWest-QEast;
+	  if( !(QEast.Mod() < 1e-10 || QWest.Mod() < 1e-10 || QFull.Mod() < 1e-10) )
+	  {
+	    mEventPlaneProManager->fillZdcReCenterEast(QEast,cent9,runIndex);
+	    mEventPlaneProManager->fillZdcReCenterWest(QWest,cent9,runIndex);
+	    mEventPlaneHistoManager->fillZdcRawEP(QEast,QWest,QFull,cent9,runIndex);
 	  }
 	}
       }

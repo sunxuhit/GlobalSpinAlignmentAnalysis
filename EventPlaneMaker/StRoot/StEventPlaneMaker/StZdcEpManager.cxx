@@ -55,6 +55,7 @@ void StZdcEpManager::clearZdcEp()
       for(int i_slat = 0; i_slat < 8; ++i_slat)
       {
 	mZdcSmd[i_eastwest][i_verthori][i_slat] = 0.0;
+	mGainCorrFactor[i_eastwest][i_verthori][i_slat] = -999.9;
       }
     }
   }

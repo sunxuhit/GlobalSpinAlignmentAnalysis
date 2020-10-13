@@ -9,7 +9,7 @@ class StPicoEvent;
 
 StChain *chain;
 
-void recoEventPlane(const Char_t *inputFile="../FileList/200GeV_2014/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 0, const Int_t energy = 0)
+void recoEventPlane(const Char_t *inputFile="../FileList/200GeV_2014/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 1, const Int_t energy = 0)
 {
   // mBeamEnergy[NumBeamEnergy] = {"200GeV","54GeV","27GeV"};
   // Mode: 0 for QA, 1 for re-center correction, 2 for shift correction, 3 for resolution calculation, 4 for phi meson
@@ -29,8 +29,8 @@ void recoEventPlane(const Char_t *inputFile="../FileList/200GeV_2014/pico_xrootd
     exit(1);
   }
 
-  Int_t nEvents = 10000000;
-  // Int_t nEvents = 10000;
+  // Int_t nEvents = 10000000;
+  Int_t nEvents = 10000;
 
   gROOT->LoadMacro("$STAR/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");
   loadSharedLibraries();

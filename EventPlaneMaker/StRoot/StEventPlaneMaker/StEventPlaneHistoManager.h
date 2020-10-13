@@ -2,7 +2,7 @@
 #define StEventPlaneHistoManager_h
 
 #include "StMessMgr.h"
-#include "TVector3.h"
+#include "TVector2.h"
 
 class TH1F;
 class TH2F;
@@ -17,18 +17,19 @@ class StEventPlaneHistoManager
     void initZdcGainCorr();
     void fillZdcGainCorr(int i_eastwest, int i_verthori, int i_slat, int runIndex, float zdcsmd);
     void writeZdcGainCorr();
-    //--------------ZDC EP---------------
 
-    /*
-    void InitEP();
-    void FillEP_Sub(Float_t Psi2East_ReCenter, Float_t Psi2East_Shift, Float_t Psi2West_ReCenter, Float_t Psi2West_Shift);
-    void FillEP_Ran(Float_t Psi2RanA_ReCenter, Float_t Psi2RanA_Shift, Float_t Psi2RanB_ReCenter, Float_t Psi2RanB_Shift, Float_t Psi2Full_ReCenter, Float_t Psi2Full_Shift);
-    void WriteEP();
-    */
+    void initZdcRawEP(); // raw EP
+    void fillZdcRawEP(TVector2 QEast, TVector2 QWest, TVector2 QFull, int Cent9, int runIndex);
+    void writeZdcRawEP();
+    //--------------ZDC EP---------------
     
   private:
     //--------------ZDC EP---------------
     TH2F *h_mZdcGainCorr[2][2][8]; // 0: east/west | 1: vertical(x)/horizontal(y) | 2: 7 slats(x)/8 slats(y); | x-axis: runIndex | y-axis: ADC
+
+    TH2F *h_mZdcRawEast[9]; // raw EP
+    TH2F *h_mZdcRawWest[9];
+    TH2F *h_mZdcRawFull[9]; // Qwest-QEast
     //--------------ZDC EP---------------
 
   ClassDef(StEventPlaneHistoManager,1)
