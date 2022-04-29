@@ -1,6 +1,8 @@
 # a comment - this is ignored
 # ignore share lib
-*/.sl*
+.sl*
+.consign
+
 # ignore .consign, *.d, *.so, *.eps, *.swp, all the log file and script in StRoot
 *.swp
 temp_gccflags.c
