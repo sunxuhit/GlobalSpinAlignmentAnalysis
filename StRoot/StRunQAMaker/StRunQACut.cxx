@@ -16,9 +16,9 @@ ClassImp(StRunQACut)
 
 //---------------------------------------------------------------------------------
 
-StRunQACut::StRunQACut(int energy)
+StRunQACut::StRunQACut(int beamType)
 {
-  mEnergy = energy;
+  mType = beamType;
 }
 
 //---------------------------------------------------------------------------------
@@ -36,23 +36,24 @@ bool StRunQACut::isMinBias(StPicoEvent *picoEvent)
   // std::cout << "year: " << picoEvent->year() << std::endl;
   // std::cout << "day: " << picoEvent->day() << std::endl;
   // std::cout << "triggerIds: " << picoEvent->triggerIds()[0] << std::endl;
-  if(mEnergy == 0 && runQA::mBeamYear[mEnergy] == picoEvent->year() && !( picoEvent->isTrigger(450005) || picoEvent->isTrigger(450015) || picoEvent->isTrigger(450025) || picoEvent->isTrigger(450050) || picoEvent->isTrigger(450060) )) return false; // 200GeV_2014
-  if(mEnergy == 1 && runQA::mBeamYear[mEnergy] == picoEvent->year() && !( picoEvent->isTrigger(580001) || picoEvent->isTrigger(580021) )) return false; // 54GeV_2017 | 580011 ?
-  if(mEnergy == 2 && runQA::mBeamYear[mEnergy] == picoEvent->year() && !( picoEvent->isTrigger(610001) || picoEvent->isTrigger(610011) || picoEvent->isTrigger(610021) || picoEvent->isTrigger(610031) || picoEvent->isTrigger(610041) || picoEvent->isTrigger(610051) )) return false; // 27GeV_2018
+  // if(mType == 0 && runQA::mBeamYear[mType] == picoEvent->year() && !( picoEvent->isTrigger(450005) || picoEvent->isTrigger(450015) || picoEvent->isTrigger(450025) || picoEvent->isTrigger(450050) || picoEvent->isTrigger(450060) )) return false; // 200GeV_2014
+  // if(mType == 1 && runQA::mBeamYear[mType] == picoEvent->year() && !( picoEvent->isTrigger(580001) || picoEvent->isTrigger(580021) )) return false; // 54GeV_2017 | 580011 ?
+  // if(mType == 2 && runQA::mBeamYear[mType] == picoEvent->year() && !( picoEvent->isTrigger(610001) || picoEvent->isTrigger(610011) || picoEvent->isTrigger(610021) || picoEvent->isTrigger(610031) || picoEvent->isTrigger(610041) || picoEvent->isTrigger(610051) )) return false; // 27GeV_2018
 
   return true;
 }
 
 bool StRunQACut::isBES()
 {
-  if(mEnergy == 0) return false; // 200 GeV
+  if(mType == 0) return false; // 200 GeV
 
   return true; // BES
 }
 
 bool StRunQACut::isPileUpEvent(int refMult, int numOfBTofMatch, int numOfBTofHits)
 {
-  if(mEnergy == 0)
+  /*
+  if(mType == 0)
   {
     // numOfBTofHits Cuts
     const double h0Lower = -10.6691; // Lower Band
@@ -112,23 +113,25 @@ bool StRunQACut::isPileUpEvent(int refMult, int numOfBTofMatch, int numOfBTofHit
     }
 
     // good events: numOfBTofMatch > 2 && refMult within numOfBTofHits Cuts && refMult within numOfBTofMatch Cuts
-    if( (numOfBTofMatch > runQA::mMatchedToFMin[mEnergy]) && (refMult >= refmultTofHitsLower && refMult <= refmultTofHitsUpper) && (refMult >= refmultTofMatchLower && refMult <= refmultTofMatchUpper) ) return kFALSE;
+    if( (numOfBTofMatch > runQA::mMatchedToFMin[mType]) && (refMult >= refmultTofHitsLower && refMult <= refmultTofHitsUpper) && (refMult >= refmultTofMatchLower && refMult <= refmultTofMatchUpper) ) return kFALSE;
   }
 
-  if(mEnergy == 1) // ToF Hits vs RefMult cut for 54 GeV
+  if(mType == 1) // ToF Hits vs RefMult cut for 54 GeV
   { // from Shaowei Lan
     double tofHits_low = (double)refMult*2.88 - 155.0;
 
     // good events: numOfBTofMatch > 2 && refMult within numOfBTofHits Cuts
-    if( (numOfBTofMatch > runQA::mMatchedToFMin[mEnergy]) && (numOfBTofHits >= tofHits_low) ) return kFALSE;
+    if( (numOfBTofMatch > runQA::mMatchedToFMin[mType]) && (numOfBTofHits >= tofHits_low) ) return kFALSE;
   }
 
-  if(mEnergy == 2)
+  if(mType == 2)
   { // will use StRefMultCorr
     return kFALSE;
   }
 
   return kTRUE;
+  */
+    return kFALSE;
 }
 
 bool StRunQACut::passEventCut(StPicoDst *picoDst)
@@ -138,6 +141,8 @@ bool StRunQACut::passEventCut(StPicoDst *picoDst)
   {
     return kFALSE;
   }
+
+  /*
 
   // const int runId   = picoEvent->runId();
   // const int refMult = picoEvent->refMult();
@@ -150,20 +155,21 @@ bool StRunQACut::passEventCut(StPicoDst *picoDst)
   // const float zdcX  = picoEvent->ZDCx();
   const float vzVpd = picoEvent->vzVpd();
   // vz cut
-  if(fabs(vz) > runQA::mVzMaxMap[mEnergy])
+  if(fabs(vz) > runQA::mVzMaxMap[mType])
   {
     return kFALSE;
   }
   // vr cut
-  if(sqrt(vx*vx+vy*vy) > runQA::mVrMax[mEnergy])
+  if(sqrt(vx*vx+vy*vy) > runQA::mVrMax[mType])
   {
     return kFALSE;
   }
   // vz-vzVpd cut only for 200 GeV
-  if(!isBES() && fabs(vz-vzVpd) > runQA::mVzVpdDiffMax[mEnergy])
+  if(!isBES() && fabs(vz-vzVpd) > runQA::mVzVpdDiffMax[mType])
   {
     return kFALSE;
   }
+  */
 
   return kTRUE;
 }
@@ -301,10 +307,11 @@ float StRunQACut::getGlobalMass2(StPicoDst *picoDst, int i_track)
 
 int StRunQACut::getTriggerBin(StPicoEvent *picoEvent)
 {
+  /*
   // std::cout << "year: " << picoEvent->year() << std::endl;
   // std::cout << "day: " << picoEvent->day() << std::endl;
   // std::cout << "triggerIds: " << picoEvent->triggerIds()[0] << std::endl;
-  if( mEnergy == 0 && runQA::mBeamYear[mEnergy] == picoEvent->year() )
+  if( mType == 0 && globCons::mBeamYear[mType] == picoEvent->year() )
   { // 200GeV_2014
     if( picoEvent->isTrigger(450005) ) return 0; // VPDMB-5-p-nobsmd
     if( picoEvent->isTrigger(450015) ) return 1; // VPDMB-5-p-nobsmd
@@ -312,12 +319,12 @@ int StRunQACut::getTriggerBin(StPicoEvent *picoEvent)
     if( picoEvent->isTrigger(450050) ) return 3; // VPDMB-5-p-nobsmd-hlt
     if( picoEvent->isTrigger(450060) ) return 4; // VPDMB-5-p-nobsmd-hlt
   }
-  if( mEnergy == 1 && runQA::mBeamYear[mEnergy] == picoEvent->year() )
+  if( mType == 1 && globCons::mBeamYear[mType] == picoEvent->year() )
   { // 54GeV_2017
     if( picoEvent->isTrigger(580001) ) return 0; // minBias
     if( picoEvent->isTrigger(580021) ) return 1; // minBias
   }
-  if( mEnergy == 2 && runQA::mBeamYear[mEnergy] == picoEvent->year() )
+  if( mType == 2 && globCons::mBeamYear[mType] == picoEvent->year() )
   { // 27GeV_2018
     if( picoEvent->isTrigger(610001) ) return 0; // mb
     if( picoEvent->isTrigger(610011) ) return 1; // mb
@@ -328,5 +335,7 @@ int StRunQACut::getTriggerBin(StPicoEvent *picoEvent)
   }
 
   return -1;
+  */
+  return 0;
 }
 //---------------------------------------------------------------------------------

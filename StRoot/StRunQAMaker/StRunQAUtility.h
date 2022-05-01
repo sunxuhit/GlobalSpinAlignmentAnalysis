@@ -8,7 +8,7 @@
 class StRunQAUtility
 {
   public:
-    StRunQAUtility(int energy);
+    StRunQAUtility(int beamType);
     virtual ~StRunQAUtility();
 
     void initRunIndex();
@@ -20,7 +20,7 @@ class StRunQAUtility
     bool isBadRun(int runId);
 
   private:
-    int mEnergy;
+    int mType;
     std::map<int,int> map_runIndex;
     std::vector<int> vec_badRunId;
 

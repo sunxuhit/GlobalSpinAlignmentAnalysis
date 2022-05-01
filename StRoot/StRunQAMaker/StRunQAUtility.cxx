@@ -1,16 +1,19 @@
+#include "Utility/include/StSpinAlignmentCons.h"
 #include "StRoot/StRunQAMaker/StRunQAUtility.h"
 #include "StRoot/StRunQAMaker/StRunQACons.h"
+
 #include "TProfile2D.h"
 #include "TProfile.h"
 #include "TMath.h"
+#include "TString.h"
 
 ClassImp(StRunQAUtility)
 
 //---------------------------------------------------------------------------------
 
-StRunQAUtility::StRunQAUtility(int energy)
+StRunQAUtility::StRunQAUtility(int beamType)
 {
-  mEnergy = energy;
+  mType = beamType;
 }
 
 //---------------------------------------------------------------------------------
@@ -28,16 +31,15 @@ void StRunQAUtility::initRunIndex()
   bool isOpen_runIndex = read_in_runIndex(); // read in runId vs. runIndex
   if(isOpen_runIndex) std::cout << "Run Index read in!" << std::endl;
 
-  bool isOpen_badRunList = read_in_badRunList(); // read in Bad Run List
-  if(isOpen_badRunList) std::cout << "Bad Run List read in!" << std::endl;
+  // bool isOpen_badRunList = read_in_badRunList(); // read in Bad Run List
+  // if(isOpen_badRunList) std::cout << "Bad Run List read in!" << std::endl;
 }
 
 bool StRunQAUtility::read_in_runIndex()
 {
   map_runIndex.clear();
 
-  // std::string inputfile = Form("StRoot/StRunQAMaker/runIndex_%s.txt",runQA::mBeamEnergy[mEnergy].c_str());
-  std::string inputfile = Form("StRoot/StRunQAUtility/RunIndex/runIndex_%s.txt",runQA::mBeamEnergy[mEnergy].c_str());
+  std::string inputfile = Form("Utility/RunIndex/runIndex_%s.txt",globCons::mBeamType[mType].c_str());
   std::cout << "inputfile = " << inputfile.c_str() << std::endl;
   std::ifstream file_runIndex ( inputfile.c_str() );
   if ( !file_runIndex.is_open() )
@@ -91,8 +93,7 @@ bool StRunQAUtility::read_in_badRunList()
 {
   vec_badRunId.clear();
 
-  // std::string inputfile = Form("StRoot/StRunQAMaker/runIndex_%s.txt",runQA::mBeamEnergy[mEnergy].c_str());
-  std::string inputfile = Form("StRoot/StRunQAUtility/RunIndex/badRunList_%s.txt",runQA::mBeamEnergy[mEnergy].c_str());
+  std::string inputfile = Form("Utility/RunIndex/badRunList_%s.txt",globCons::mBeamType[mType].c_str());
   std::cout << "inputfile = " << inputfile.c_str() << std::endl;
   std::ifstream file_badRunList ( inputfile.c_str() );
   if ( !file_badRunList.is_open() )

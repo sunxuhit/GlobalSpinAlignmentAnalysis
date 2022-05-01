@@ -9,9 +9,9 @@ class StPicoEvent;
 
 StChain *chain;
 
-void RunQA(const Char_t *inputFile="../FileList/200GeV_2014/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 0, const Int_t energy = 0)
-// void RunQA(const Char_t *inputFile="../FileList/54GeV_2017/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 0, const Int_t energy = 1)
-// void RunQA(const Char_t *inputFile="../FileList/27GeV_2018/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 0, const Int_t energy = 2)
+void RunQA(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 0, const Int_t beamType = 0)
+// void RunQA(const Char_t *inputFile="../FileList/54GeV_2017/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 0, const Int_t beamType = 1)
+// void RunQA(const Char_t *inputFile="../FileList/27GeV_2018/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 0, const Int_t beamType = 2)
 {
   // mBeamEnergy[NumBeamEnergy] = {"200GeV","54GeV","27GeV"};
   // Mode: 0 for QA, 1 for re-center correction, 2 for shift correction, 3 for resolution calculation, 4 for phi meson
@@ -20,9 +20,9 @@ void RunQA(const Char_t *inputFile="../FileList/200GeV_2014/pico_xrootd_local.li
   stopWatch->Start();
 
   string SL_version = "pro";
-  if(energy == 0) SL_version = "SL20a"; // 200GeV_2014
-  if(energy == 1) SL_version = "SL18c"; // 54GeV_2017
-  if(energy == 2) SL_version = "SL19b"; // 27GeV_2018
+  if(beamType == 0) SL_version = "SL20c"; // 200GeV_2014
+  // if(beamType == 1) SL_version = "SL18c"; // 54GeV_2017
+  // if(beamType == 2) SL_version = "SL19b"; // 27GeV_2018
   string env_SL = getenv ("STAR");
   if (env_SL.find(SL_version)==string::npos) 
   {
@@ -44,7 +44,7 @@ void RunQA(const Char_t *inputFile="../FileList/200GeV_2014/pico_xrootd_local.li
   chain = new StChain();
   StPicoDstMaker *picoMaker = new StPicoDstMaker(2,inputFile,"picoDst");
 
-  StRunQAMaker *RunQAMaker = new StRunQAMaker("RunQA",picoMaker,jobId,Mode,energy);
+  StRunQAMaker *RunQAMaker = new StRunQAMaker("RunQA",picoMaker,jobId,Mode,beamType);
 
   if( chain->Init()==kStErr ){ 
     cout<<"chain->Init();"<<endl;

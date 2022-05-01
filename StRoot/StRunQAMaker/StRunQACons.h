@@ -10,9 +10,9 @@ namespace runQA
   //--------------------------------------------------
   // used in RunQA
   int const NumBeamEnergy = 3;
-  std::string const mBeamEnergy[NumBeamEnergy] = {"200GeV_2014","54GeV_2017","27GeV_2018"};
-  float const mEnergyValue[NumBeamEnergy] = {200.0,54.0,27.0};
-  int const mBeamYear[NumBeamEnergy] = {2014,2017,2018};
+  // std::string const mBeamEnergy[NumBeamEnergy] = {"200GeV_2014","54GeV_2017","27GeV_2018"};
+  // float const mEnergyValue[NumBeamEnergy] = {200.0,54.0,27.0};
+  // int const mBeamYear[NumBeamEnergy] = {2014,2017,2018};
 
   // event cut
   float const mVzMaxMap[NumBeamEnergy] = {6.0,40.0,70.0}; // 0: 200GeV_2014 | 1: 54GeV_2017 | 2: 27GeV_2018 

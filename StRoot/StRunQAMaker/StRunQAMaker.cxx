@@ -7,6 +7,7 @@
 #include "StThreeVectorF.hh"
 #include "StMessMgr.h"
 
+#include "Utility/include/StSpinAlignmentCons.h"
 #include "StRoot/StRunQAMaker/StRunQAMaker.h"
 #include "StRoot/StRunQAMaker/StRunQACut.h"
 #include "StRoot/StRunQAMaker/StRunQAHistoManager.h"
@@ -25,18 +26,17 @@
 ClassImp(StRunQAMaker)
 
 //-----------------------------------------------------------------------------
-StRunQAMaker::StRunQAMaker(const char* name, StPicoDstMaker *picoMaker, const string jobId, const int Mode, const int energy) : StMaker(name)
+StRunQAMaker::StRunQAMaker(const char* name, StPicoDstMaker *picoMaker, const string jobId, const int Mode, const int beamType) : StMaker(name)
 {
   mPicoDstMaker = picoMaker;
   mPicoDst = NULL;
   mRefMultCorr = NULL;
   mMode = Mode;
-  mEnergy = energy;
+  mType = beamType;
 
   if(mMode == 0)
   {
-    // mOutPut_RunQA = Form("/star/data01/pwg/sunxuhit/AuAu%s/SpinAlignment/QA/file_%s_QA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),jobId.c_str());
-    mOutPut_RunQA = Form("./file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),jobId.c_str());
+    mOutPut_RunQA = Form("./file_%s_RunQA_%s.root",globCons::mBeamType[mType].c_str(),jobId.c_str());
   }
 }
 
@@ -47,16 +47,16 @@ StRunQAMaker::~StRunQAMaker()
 //----------------------------------------------------------------------------- 
 int StRunQAMaker::Init() 
 {
-  mRunQACut = new StRunQACut(mEnergy);
   mRunQAHistoManager = new StRunQAHistoManager();
-  mRunQAUtility = new StRunQAUtility(mEnergy);
+  mRunQAProManager   = new StRunQAProManager();
+  mRunQACut          = new StRunQACut(mType);
+  mRunQAUtility      = new StRunQAUtility(mType);
   mRunQAUtility->initRunIndex(); // initialize std::map for run index
-  mRunQAProManager = new StRunQAProManager();
 
   if(!mRefMultCorr)
   {
-    if(!mRunQACut->isBES()) mRefMultCorr = CentralityMaker::instance()->getgRefMultCorr_Run14_AuAu200_VpdMB5_P16id(); // 200GeV_2014
-    if(mRunQACut->isBES()) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr(); // BESII
+    // if(!mRunQACut->isBES()) mRefMultCorr = CentralityMaker::instance()->getgRefMultCorr_Run14_AuAu200_VpdMB5_P16id(); // 200GeV_2014
+    mRefMultCorr = CentralityMaker::instance()->getRefMultCorr(); // BESII
   }
 
   if(mMode == 0)
@@ -141,8 +141,9 @@ int StRunQAMaker::Make()
     }
 
     mRefMultCorr->init(runId);
-    if(!mRunQACut->isBES()) mRefMultCorr->initEvent(grefMult,vz,zdcX); // 200GeV_2014
-    if(mRunQACut->isBES()) mRefMultCorr->initEvent(refMult,vz,zdcX); // BES-II might need Luminosity corrections
+    mRefMultCorr->initEvent(refMult,vz,zdcX); // BES-II might need Luminosity corrections
+    // if(!mRunQACut->isBES()) mRefMultCorr->initEvent(grefMult,vz,zdcX); // 200GeV_2014
+    // if(mRunQACut->isBES()) mRefMultCorr->initEvent(refMult,vz,zdcX); // BES-II might need Luminosity corrections
 
     /*
     if(mRefMultCorr->isBadRun(runId))
@@ -167,11 +168,14 @@ int StRunQAMaker::Make()
       return kStErr;
     }
 
+    /*
     bool isPileUpEventStRunQACut = mRunQACut->isPileUpEvent(grefMult,numOfBTofMatch,numOfBTofHits); // 200GeV
     if(mRunQACut->isBES()) isPileUpEventStRunQACut = mRunQACut->isPileUpEvent(refMult,numOfBTofMatch,numOfBTofHits); // 54 GeV | always return false for 27 GeV
     bool isPileUpEventStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut(1.0*refMult, 1.0*numOfBTofMatch); // 27 GeV | always return !true for other energies
     bool isPileUpEvent = isPileUpEventStRunQACut || isPileUpEventStRefMultCorr;
     // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpEventStRunQACut = " << isPileUpEventStRunQACut << ", isPileUpEventStRefMultCorr = " << isPileUpEventStRefMultCorr << endl;
+    */
+    bool isPileUpEvent = false;
 
     if(mMode == 0)
     { // fill QA before event cuts

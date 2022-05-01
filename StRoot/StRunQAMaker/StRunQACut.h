@@ -11,7 +11,7 @@ class StPicoTrack;
 class StRunQACut : public TObject
 {
   public:
-    StRunQACut(int energy);
+    StRunQACut(int beamType);
     virtual ~StRunQACut();
 
     bool isMinBias(StPicoEvent*);
@@ -30,7 +30,7 @@ class StRunQACut : public TObject
     // int mMatchedToF;
     // int mN_prim;
     // int mN_non_prim;
-    int mEnergy;
+    int mType;
 
     ClassDef(StRunQACut,1)
 };

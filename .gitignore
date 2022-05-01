@@ -5,7 +5,9 @@
 
 # ignore .consign, *.d, *.so, *.eps, *.swp, all the log file and script in StRoot
 *.swp
+*.root
 temp_gccflags.c
+
 StRoot/**/.consign
 StRoot/**/*.d
 StRoot/**/*.so
@@ -24,7 +26,6 @@ utility/FileList/*/*.list
 !utility/FileList/*/runNumber.list
 utility/RunIndex/badRunIndexUnSorted_200GeV_2014.txt
 
-./*.root
 submit/**/JOBS/
 submit/**/Log/
 submit/**/sched*

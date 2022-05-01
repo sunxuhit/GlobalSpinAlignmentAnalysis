@@ -35,7 +35,7 @@ class StRunQAMaker : public StMaker {
     StRunQAProManager *mRunQAProManager;
     
     int mMode;
-    int mEnergy;
+    int mType;
 
     string mInPut_Corr_ReCenter;
 
