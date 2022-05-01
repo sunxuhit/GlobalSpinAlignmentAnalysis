@@ -22,9 +22,8 @@ StRoot/StRefMultCorr/CVS/
 */temp_gccflags.c
 */*_C.*
 
-utility/FileList/*/*.list
-!utility/FileList/*/runNumber.list
-utility/RunIndex/badRunIndexUnSorted_200GeV_2014.txt
+Utility/FileList/*/*.list
+!Utility/FileList/*/runNumber.list
 
 submit/**/JOBS/
 submit/**/Log/
