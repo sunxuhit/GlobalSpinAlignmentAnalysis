@@ -16,7 +16,7 @@
 #include "TRandom3.h"
 #include "TF1.h"
 
-Double_t Resolution_Full(Double_t *x_val, Double_t *par)
+Double_t Resolution_FullZdc(Double_t *x_val, Double_t *par)
 {
   Double_t y;
   Double_t chi = x_val[0];
@@ -383,7 +383,7 @@ void StZdcEpManager::readResolution()
 
 void StZdcEpManager::calResolution()
 {
-  TF1 *f_Res_Full = new TF1("f_Res_Full",Resolution_Full,0,10,0);
+  TF1 *f_Res_Full = new TF1("f_Res_Full",Resolution_FullZdc,0,10,0);
   for(Int_t i_cent = 0; i_cent < 9; i_cent++)
   {
     float val_res_full, err_res_full;

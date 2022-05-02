@@ -42,7 +42,7 @@ class StEventPlaneMaker : public StMaker {
     // StEventPlaneTpcEpManager *mEventPlaneTpcEpManager;
     
     int mMode;
-    int mEnergy;
+    int mType;
 
     string mOutPut_GainCorr;
     string mOutPut_ReCenterPar;

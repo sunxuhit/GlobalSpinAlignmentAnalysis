@@ -16,9 +16,9 @@ ClassImp(StEventPlaneCut)
 
 //---------------------------------------------------------------------------------
 
-StEventPlaneCut::StEventPlaneCut(int energy)
+StEventPlaneCut::StEventPlaneCut(int beamType)
 {
-  mEnergy = energy;
+  mType = beamType;
 }
 
 //---------------------------------------------------------------------------------
@@ -36,22 +36,23 @@ bool StEventPlaneCut::isMinBias(StPicoEvent *picoEvent)
   // std::cout << "year: " << picoEvent->year() << std::endl;
   // std::cout << "day: " << picoEvent->day() << std::endl;
   // std::cout << "triggerIds: " << picoEvent->triggerIds()[0] << std::endl;
-  if(mEnergy == 0 && recoEP::mBeamYear[mEnergy] == picoEvent->year() && !( picoEvent->isTrigger(450005) || picoEvent->isTrigger(450015) || picoEvent->isTrigger(450025) || picoEvent->isTrigger(450050) || picoEvent->isTrigger(450060) )) return false; // 200GeV_2014
-  if(mEnergy == 1 && recoEP::mBeamYear[mEnergy] == picoEvent->year() && !( picoEvent->isTrigger(580001) || picoEvent->isTrigger(580021) )) return false; // 54GeV_2017 | 580011 ?
-  if(mEnergy == 2 && recoEP::mBeamYear[mEnergy] == picoEvent->year() && !( picoEvent->isTrigger(610001) || picoEvent->isTrigger(610011) || picoEvent->isTrigger(610021) || picoEvent->isTrigger(610031) || picoEvent->isTrigger(610041) || picoEvent->isTrigger(610051) )) return false; // 27GeV_2018
+  // if(mEnergy == 0 && recoEP::mBeamYear[mEnergy] == picoEvent->year() && !( picoEvent->isTrigger(450005) || picoEvent->isTrigger(450015) || picoEvent->isTrigger(450025) || picoEvent->isTrigger(450050) || picoEvent->isTrigger(450060) )) return false; // 200GeV_2014
+  // if(mEnergy == 1 && recoEP::mBeamYear[mEnergy] == picoEvent->year() && !( picoEvent->isTrigger(580001) || picoEvent->isTrigger(580021) )) return false; // 54GeV_2017 | 580011 ?
+  // if(mEnergy == 2 && recoEP::mBeamYear[mEnergy] == picoEvent->year() && !( picoEvent->isTrigger(610001) || picoEvent->isTrigger(610011) || picoEvent->isTrigger(610021) || picoEvent->isTrigger(610031) || picoEvent->isTrigger(610041) || picoEvent->isTrigger(610051) )) return false; // 27GeV_2018
 
   return true;
 }
 
 bool StEventPlaneCut::isBES()
 {
-  if(mEnergy == 0) return false; // 200 GeV
+  // if(mEnergy == 0) return false; // 200 GeV
 
   return true; // BES
 }
 
 bool StEventPlaneCut::isPileUpEvent(int refMult, int numOfBTofMatch, int numOfBTofHits)
 {
+  /*
   if(mEnergy == 0)
   {
     // numOfBTofHits Cuts
@@ -127,6 +128,7 @@ bool StEventPlaneCut::isPileUpEvent(int refMult, int numOfBTofMatch, int numOfBT
   { // will use StRefMultCorr
     return kFALSE;
   }
+  */
 
   return kTRUE;
 }
@@ -139,6 +141,7 @@ bool StEventPlaneCut::passEventCut(StPicoDst *picoDst)
     return kFALSE;
   }
 
+  /*
   // const int runId   = picoEvent->runId();
   // const int refMult = picoEvent->refMult();
   // cout << "runId = " << runId << ", refMult = " << refMult << endl;
@@ -164,6 +167,7 @@ bool StEventPlaneCut::passEventCut(StPicoDst *picoDst)
   {
     return kFALSE;
   }
+  */
 
   return kTRUE;
 }
@@ -301,6 +305,7 @@ float StEventPlaneCut::getGlobalMass2(StPicoDst *picoDst, int i_track)
 
 int StEventPlaneCut::getTriggerBin(StPicoEvent *picoEvent)
 {
+  /*
   // std::cout << "year: " << picoEvent->year() << std::endl;
   // std::cout << "day: " << picoEvent->day() << std::endl;
   // std::cout << "triggerIds: " << picoEvent->triggerIds()[0] << std::endl;
@@ -326,7 +331,8 @@ int StEventPlaneCut::getTriggerBin(StPicoEvent *picoEvent)
     if( picoEvent->isTrigger(610041) ) return 4; // mb
     if( picoEvent->isTrigger(610051) ) return 5; // mb
   }
+  */
 
-  return -1;
+  return 0;
 }
 //---------------------------------------------------------------------------------

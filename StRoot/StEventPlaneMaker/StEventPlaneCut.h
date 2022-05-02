@@ -11,7 +11,7 @@ class StPicoTrack;
 class StEventPlaneCut : public TObject
 {
   public:
-    StEventPlaneCut(int energy);
+    StEventPlaneCut(int beamType);
     virtual ~StEventPlaneCut();
 
     bool isMinBias(StPicoEvent*);
@@ -29,7 +29,7 @@ class StEventPlaneCut : public TObject
     // int mMatchedToF;
     // int mN_prim;
     // int mN_non_prim;
-    int mEnergy;
+    int mType;
 
     ClassDef(StEventPlaneCut,1)
 };

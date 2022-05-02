@@ -247,12 +247,14 @@ bool StVecMesonCut::passTrackBasic(StPicoTrack *picoTrack)
 
 bool StVecMesonCut::passTrackQA(StPicoTrack *picoTrack)
 {
+  /*
   if(!passTrackBasic(picoTrack)) return kFALSE;
 
-  if(track->dca() > vmsa::mDcaTrQAMax)
+  if(picoTrack->dca() > vmsa::mDcaTrQAMax)
   {
     return kFALSE;
   }
+  */
 
   return kTRUE;
 }

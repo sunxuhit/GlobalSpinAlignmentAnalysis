@@ -7,7 +7,7 @@
 class StEventPlaneUtility
 {
   public:
-    StEventPlaneUtility(int energy);
+    StEventPlaneUtility(int beamType);
     virtual ~StEventPlaneUtility();
 
     void initRunIndex();
@@ -15,7 +15,7 @@ class StEventPlaneUtility
     int findRunIndex(int runId);
 
   private:
-    int mEnergy;
+    int mType;
     std::map<int,int> map_runIndex;
 
     ClassDef(StEventPlaneUtility,1)

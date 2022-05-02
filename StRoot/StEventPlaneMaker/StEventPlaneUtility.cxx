@@ -1,5 +1,7 @@
+#include "Utility/include/StSpinAlignmentCons.h"
 #include "StRoot/StEventPlaneMaker/StEventPlaneUtility.h"
 #include "StRoot/StEventPlaneMaker/StEventPlaneCons.h"
+
 #include "TProfile2D.h"
 #include "TProfile.h"
 #include "TMath.h"
@@ -8,9 +10,9 @@ ClassImp(StEventPlaneUtility)
 
 //---------------------------------------------------------------------------------
 
-StEventPlaneUtility::StEventPlaneUtility(int energy)
+StEventPlaneUtility::StEventPlaneUtility(int beamType)
 {
-  mEnergy = energy;
+  mType = beamType;
 }
 
 //---------------------------------------------------------------------------------
@@ -57,8 +59,7 @@ int StEventPlaneUtility::findRunIndex(int runId)
 
 bool StEventPlaneUtility::read_in_runIndex()
 {
-  // std::string inputfile = Form("StRoot/StEventPlaneMaker/runIndex_%s.txt",recoEP::mBeamEnergy[mEnergy].c_str());
-  std::string inputfile = Form("StRoot/StEventPlaneUtility/RunIndex/runIndex_%s.txt",recoEP::mBeamEnergy[mEnergy].c_str());
+  std::string inputfile = Form("Utility/RunIndex/runIndex_%s.txt",globCons::mBeamType[mType].c_str());
   std::cout << "inputfile = " << inputfile.c_str() << std::endl;
   std::ifstream file_runIndex ( inputfile.c_str() );
   if ( !file_runIndex.is_open() )
