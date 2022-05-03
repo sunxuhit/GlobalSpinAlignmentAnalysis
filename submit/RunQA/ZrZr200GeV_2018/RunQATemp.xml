@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<job minFilesPerProcess="100" filesPerHour="25" maxFilesPerProcess="150" fileListSyntax="xrootd" simulateSubmission="false">
+
+  <command>
+    starver &library;
+    root4star -l -b -q RunQA.C\(\"$FILELIST\",\"$JOBID\",&mode;,&energy;\)&gt;&amp; ${JOBID}.log
+  </command>
+
+  <SandBox installer="ZIP">
+    <Package>
+      <File>file:&codePath;/RunQA.C</File>
+      <File>file:&codePath;/.sl73_gcc485/</File>
+      <File>file:&codePath;/StRoot/</File>
+    </Package>
+  </SandBox>
+
+  <!-- <input URL="filelist:&#38;listPath;/pico_xrootd_production.list" /> -->
+  <!-- <stdout URL="file:&#38;outPath;/Log/&#38;outDir;/$JOBID.out"/> -->
+  <input URL="catalog:star.bnl.gov?production=P19ib,filetype=daq_reco_picoDst,trgsetupname=27GeV_production_2018,storage!=hpss,filename~st_physics" preferStorage="local" singleCopy="true" nFiles="all"/>
+
+  <stdout discard="true"/>
+  <stderr URL="file:&outPath;/Log/&outDir;/$JOBID.err"/>
+
+  <Generator>
+    <ReportLocation>./JOBS/report/</ReportLocation>
+    <ScriptLocation>./JOBS/csh/</ScriptLocation>
+    <ListLocation>./JOBS/list/</ListLocation>
+  </Generator>
+
+  <output fromScratch="*.root" toURL="file:&outPath;/SpinAlignment/&outDir;/" />
+  <output fromScratch="*.log" toURL="file:&outPath;/Log/&outDir;/" />
+</job>
+

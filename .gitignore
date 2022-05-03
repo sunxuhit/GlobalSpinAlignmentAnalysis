@@ -30,8 +30,8 @@ submit/**/Log/
 submit/**/sched*
 submit/**/*.session.xml
 submit/**/Submitted/
+
 macro/**/*.eps
 macro/**/*.png
 macro/**/*.pdf
 macro/**/*_C.*
-
