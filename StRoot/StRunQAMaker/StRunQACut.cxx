@@ -1,8 +1,7 @@
-#include "StPicoDstMaker/StPicoDstMaker.h"
-#include "StPicoEvent/StPicoDst.h"
-#include "StPicoEvent/StPicoEvent.h"
-#include "StPicoEvent/StPicoTrack.h"
-#include "StPicoEvent/StPicoBTofPidTraits.h"
+#include "StRoot/StPicoEvent/StPicoDst.h"
+#include "StRoot/StPicoEvent/StPicoEvent.h"
+#include "StRoot/StPicoEvent/StPicoTrack.h"
+#include "StRoot/StPicoEvent/StPicoBTofPidTraits.h"
 // #include "StRefMultCorr/StRefMultCorr.h"
 // #include "StRefMultCorr/CentralityMaker.h"
 #include "StMessMgr.h"
@@ -237,6 +236,7 @@ bool StRunQACut::passTrackQA(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
 }
 
 //---------------------------------------------------------------------------------
+#if 0
 float StRunQACut::getBeta(StPicoDst *picoDst, int i_track)
 {
   float Beta = -999.9;
@@ -338,4 +338,5 @@ int StRunQACut::getTriggerBin(StPicoEvent *picoEvent)
   */
   return 0;
 }
+#endif
 //---------------------------------------------------------------------------------

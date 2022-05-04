@@ -1,3 +1,8 @@
+#include "StRoot/StPicoEvent/StPicoDst.h"
+#include "StRoot/StPicoEvent/StPicoEvent.h"
+#include "StRoot/StPicoEvent/StPicoTrack.h"
+#include "StRoot/StPicoEvent/StPicoBTofPidTraits.h"
+
 #include "Utility/include/StSpinAlignmentCons.h"
 #include "StRoot/StRunQAMaker/StRunQAUtility.h"
 #include "StRoot/StRunQAMaker/StRunQACons.h"
@@ -25,14 +30,13 @@ StRunQAUtility::~StRunQAUtility()
 
 //---------------------------------------------------------------------------------
 
-
 void StRunQAUtility::initRunIndex()
 {
   bool isOpen_runIndex = read_in_runIndex(); // read in runId vs. runIndex
   if(isOpen_runIndex) std::cout << "Run Index read in!" << std::endl;
 
-  // bool isOpen_badRunList = read_in_badRunList(); // read in Bad Run List
-  // if(isOpen_badRunList) std::cout << "Bad Run List read in!" << std::endl;
+  bool isOpen_badRunList = read_in_badRunList(); // read in Bad Run List
+  if(isOpen_badRunList) std::cout << "Bad Run List read in!" << std::endl;
 }
 
 bool StRunQAUtility::read_in_runIndex()
@@ -130,4 +134,93 @@ bool StRunQAUtility::isBadRun(int runId)
   std::vector<int>::iterator it_runId = std::find(vec_badRunId.begin(), vec_badRunId.end(), runId);
 
   return ( it_runId != vec_badRunId.end() ); // true if can be found in bad run list
+}
+
+//---------------------------------------------------------------------------------
+float StRunQACut::getBeta(StPicoDst *picoDst, int i_track)
+{
+  float beta = -999.9;
+  StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(i_track); // return ith track
+  int tofIndex = picoTrack->bTofPidTraitsIndex(); // return ToF PID traits
+  if(tofIndex >= 0)
+  {
+    StPicoBTofPidTraits *tofTrack = picoDst->btofPidTraits(tofIndex);
+    beta = tofTrack->btofBeta();
+  }
+
+  return beta;
+}
+
+float StRunQACut::getPrimaryMass2(StPicoDst *picoDst, int i_track)
+{
+  float Mass2 = -999.9;
+  StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(i_track); // return ith track
+  int tofIndex = picoTrack->bTofPidTraitsIndex(); // return ToF PID traits
+  if(tofIndex >= 0)
+  {
+    StPicoBTofPidTraits *tofTrack = picoDst->btofPidTraits(tofIndex);
+    float beta = tofTrack->btofBeta();
+    // float Momentum = picoTrack->pMom().mag(); // primary momentum for 54GeV_2017
+    // float Momentum = picoTrack->pMom().Mag(); // primary momentum for 27GeV_2018
+    TVector3 primMom; // temp fix for StThreeVectorF & TVector3
+    float primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
+    float primPy    = picoTrack->pMom().y();
+    float primPz    = picoTrack->pMom().z();
+    primMom.SetXYZ(primPx,primPy,primPz);
+    float Momentum = primMom.Mag(); // primary momentum
+
+    if(tofTrack->btofMatchFlag() > 0 && tofTrack->btof() != 0 && beta != 0)
+    {
+      Mass2 = Momentum*Momentum*(1.0/(beta*beta) - 1.0);
+    }
+  }
+
+  return Mass2;
+}
+
+float StRunQACut::getGlobalMass2(StPicoDst *picoDst, int i_track)
+{
+  float Mass2 = -999.9;
+  StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(i_track); // return ith track
+  int tofIndex = picoTrack->bTofPidTraitsIndex(); // return ToF PID traits
+  if(tofIndex >= 0)
+  {
+    StPicoBTofPidTraits *tofTrack = picoDst->btofPidTraits(tofIndex);
+    float beta = tofTrack->btofBeta();
+    // float Momentum = picoTrack->gMom().mag(); // global momentum for 54GeV_2017
+    // float Momentum = picoTrack->gMom().Mag(); // global momentum for 27GeV_2018
+    TVector3 globMom; // temp fix for StThreeVectorF & TVector3
+    float globPx     = picoTrack->gMom().x(); // x works for both TVector3 and StThreeVectorF
+    float globPy     = picoTrack->gMom().y();
+    float globPz     = picoTrack->gMom().z();
+    globMom.SetXYZ(globPx,globPy,globPz);
+    float Momentum = globMom.Mag(); // global momentum
+
+    if(tofTrack->btofMatchFlag() > 0 && tofTrack->btof() != 0 && beta != 0)
+    {
+      Mass2 = Momentum*Momentum*(1.0/(beta*beta) - 1.0);
+    }
+  }
+
+  return Mass2;
+}
+
+int StRunQACut::getTriggerBin(StPicoEvent *picoEvent)
+{
+  // std::cout << "year: " << picoEvent->year() << std::endl;
+  // std::cout << "day: " << picoEvent->day() << std::endl;
+  // std::cout << "triggerIds: " << picoEvent->triggerIds()[0] << std::endl;
+  /*
+  if( (mType == 0 || mType == 1)&& globCons::mBeamYear[mType] == picoEvent->year() )
+  { // ZrZr200GeV_2018 || RuRu200GeV_2018
+    if( picoEvent->isTrigger(450005) ) return 0; // VPDMB-5-p-nobsmd
+    if( picoEvent->isTrigger(450015) ) return 1; // VPDMB-5-p-nobsmd
+    if( picoEvent->isTrigger(450025) ) return 2; // VPDMB-5-p-nobsmd
+    if( picoEvent->isTrigger(450050) ) return 3; // VPDMB-5-p-nobsmd-hlt
+    if( picoEvent->isTrigger(450060) ) return 4; // VPDMB-5-p-nobsmd-hlt
+  }
+
+  return -1;
+  */
+  return 0;
 }
