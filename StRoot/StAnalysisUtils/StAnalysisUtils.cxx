@@ -1,36 +1,33 @@
-#include "StRoot/StPicoEvent/StPicoDst.h"
-#include "StRoot/StPicoEvent/StPicoEvent.h"
-#include "StRoot/StPicoEvent/StPicoTrack.h"
-#include "StRoot/StPicoEvent/StPicoBTofPidTraits.h"
+#include <iostream>
+
+#include "StPicoEvent/StPicoDst.h"
+#include "StPicoEvent/StPicoEvent.h"
+#include "StPicoEvent/StPicoTrack.h"
+#include "StPicoEvent/StPicoBTofPidTraits.h"
+#include "StMessMgr.h"
 
 #include "Utility/include/StSpinAlignmentCons.h"
-#include "StRoot/StRunQAMaker/StRunQAUtility.h"
-#include "StRoot/StRunQAMaker/StRunQACons.h"
+#include "StRoot/StAnalysisUtils/StAnalysisUtils.h"
 
-#include "TProfile2D.h"
-#include "TProfile.h"
-#include "TMath.h"
-#include "TString.h"
-
-ClassImp(StRunQAUtility)
+ClassImp(StAnalysisUtils)
 
 //---------------------------------------------------------------------------------
 
-StRunQAUtility::StRunQAUtility(int beamType)
+StAnalysisUtils::StAnalysisUtils(int beamType)
 {
   mType = beamType;
 }
 
 //---------------------------------------------------------------------------------
 
-StRunQAUtility::~StRunQAUtility()
+StAnalysisUtils::~StAnalysisUtils()
 {
   /* */
 }
 
 //---------------------------------------------------------------------------------
 
-void StRunQAUtility::initRunIndex()
+void StAnalysisUtils::initRunIndex()
 {
   bool isOpen_runIndex = read_in_runIndex(); // read in runId vs. runIndex
   if(isOpen_runIndex) std::cout << "Run Index read in!" << std::endl;
@@ -39,7 +36,7 @@ void StRunQAUtility::initRunIndex()
   if(isOpen_badRunList) std::cout << "Bad Run List read in!" << std::endl;
 }
 
-bool StRunQAUtility::read_in_runIndex()
+bool StAnalysisUtils::read_in_runIndex()
 {
   map_runIndex.clear();
 
@@ -70,7 +67,7 @@ bool StRunQAUtility::read_in_runIndex()
   return true;
 }
 
-int StRunQAUtility::findRunIndex(int runId)
+int StAnalysisUtils::findRunIndex(int runId)
 {
   // print map_runIndex content:
   // for (std::map<int,int>::iterator it=map_runIndex.begin(); it!=map_runIndex.end(); ++it)
@@ -81,19 +78,19 @@ int StRunQAUtility::findRunIndex(int runId)
   std::map<int,int>::iterator it_runId = map_runIndex.find(runId);
   if(it_runId == map_runIndex.end())
   {
-    // std::cout << "StRunQAUtility -> could not find in full run list! & send signal to kill the run!" << std::endl;
+    // std::cout << "StAnalysisUtils -> could not find in full run list! & send signal to kill the run!" << std::endl;
     return -999;
   }
   else
   {
-    // std::cout << "StRunQAUtility -> runId: " << it_runId->first << " => runIndex: " << it_runId->second << std::endl;
+    // std::cout << "StAnalysisUtils -> runId: " << it_runId->first << " => runIndex: " << it_runId->second << std::endl;
     return it_runId->second;
   }
 
   return -999;
 }
 
-bool StRunQAUtility::read_in_badRunList()
+bool StAnalysisUtils::read_in_badRunList()
 {
   vec_badRunId.clear();
 
@@ -123,7 +120,7 @@ bool StRunQAUtility::read_in_badRunList()
   return true;
 }
 
-bool StRunQAUtility::isBadRun(int runId)
+bool StAnalysisUtils::isBadRun(int runId)
 {
   // print vec_badRunId content:
   // for (std::vector<int>::iterator it=vec_badRunId.begin(); it!=vec_badRunId.end(); ++it)
@@ -137,7 +134,7 @@ bool StRunQAUtility::isBadRun(int runId)
 }
 
 //---------------------------------------------------------------------------------
-float StRunQACut::getBeta(StPicoDst *picoDst, int i_track)
+float StAnalysisUtils::getBeta(StPicoDst *picoDst, int i_track)
 {
   float beta = -999.9;
   StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(i_track); // return ith track
@@ -151,7 +148,7 @@ float StRunQACut::getBeta(StPicoDst *picoDst, int i_track)
   return beta;
 }
 
-float StRunQACut::getPrimaryMass2(StPicoDst *picoDst, int i_track)
+float StAnalysisUtils::getPrimaryMass2(StPicoDst *picoDst, int i_track)
 {
   float Mass2 = -999.9;
   StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(i_track); // return ith track
@@ -178,7 +175,7 @@ float StRunQACut::getPrimaryMass2(StPicoDst *picoDst, int i_track)
   return Mass2;
 }
 
-float StRunQACut::getGlobalMass2(StPicoDst *picoDst, int i_track)
+float StAnalysisUtils::getGlobalMass2(StPicoDst *picoDst, int i_track)
 {
   float Mass2 = -999.9;
   StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(i_track); // return ith track
@@ -205,7 +202,7 @@ float StRunQACut::getGlobalMass2(StPicoDst *picoDst, int i_track)
   return Mass2;
 }
 
-int StRunQACut::getTriggerBin(StPicoEvent *picoEvent)
+int StAnalysisUtils::getTriggerBin(StPicoEvent *picoEvent)
 {
   // std::cout << "year: " << picoEvent->year() << std::endl;
   // std::cout << "day: " << picoEvent->day() << std::endl;

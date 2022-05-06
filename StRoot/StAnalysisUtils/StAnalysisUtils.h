@@ -1,7 +1,6 @@
-#ifndef StRunQAUtility_h
-#define StRunQAUtility_h
+#ifndef StAnalysisUtils_h
+#define StAnalysisUtils_h
 
-#include "StMessMgr.h"
 #include <map>
 #include <vector>
 
@@ -9,11 +8,11 @@ class StPicoDst;
 class StPicoEvent;
 class StPicoTrack;
 
-class StRunQAUtility
+class StAnalysisUtils
 {
   public:
-    StRunQAUtility(int beamType);
-    virtual ~StRunQAUtility();
+    StAnalysisUtils(int beamType);
+    virtual ~StAnalysisUtils();
 
     void initRunIndex();
 
@@ -33,7 +32,7 @@ class StRunQAUtility
     std::map<int,int> map_runIndex;
     std::vector<int> vec_badRunId;
 
-    ClassDef(StRunQAUtility,1)
+    ClassDef(StAnalysisUtils,1)
 };
 
 #endif

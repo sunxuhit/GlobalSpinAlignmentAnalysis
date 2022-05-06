@@ -5,18 +5,19 @@
 // #include "TString.h"
 #include <string>
 
-class StPicoDst;
 class StPicoDstMaker;
+class StPicoDst;
 class StPicoEvent;
 class StRefMultCorr;
-class StRunQACut;
+
+class StAnalysisUtils;
+class StAnalysisCut;
 class StRunQAHistoManager;
-class StRunQAUtility;
 class StRunQAProManager;
 
 class StRunQAMaker : public StMaker {
   public:
-    StRunQAMaker(const char *name, StPicoDstMaker *picoMaker, const string jobId, const int Mode, const int Energy);
+    StRunQAMaker(const char *name, StPicoDstMaker *picoMaker, const string jobId, const int beamType);
     virtual ~StRunQAMaker();
     
     virtual int Init();
@@ -29,21 +30,16 @@ class StRunQAMaker : public StMaker {
     StPicoDst      *mPicoDst;
     StPicoEvent    *mPicoEvent;
     StRefMultCorr  *mRefMultCorr;
-    StRunQACut  *mRunQACut;
+
+    StAnalysisUtils     *mAnaUtils;
+    StAnalysisCut       *mAnaCut;
     StRunQAHistoManager *mRunQAHistoManager;
-    StRunQAUtility *mRunQAUtility;
-    StRunQAProManager *mRunQAProManager;
+    StRunQAProManager   *mRunQAProManager;
     
-    int mMode;
     int mType;
 
-    string mInPut_Corr_ReCenter;
-
     string mOutPut_RunQA;
-
     TFile *mFile_QA;
-
-    int mUsedTrackCounter;
 
     ClassDef(StRunQAMaker, 1)
 };

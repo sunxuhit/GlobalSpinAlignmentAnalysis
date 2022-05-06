@@ -1,8 +1,8 @@
 #ifndef StRunQAHistoManager_h
 #define StRunQAHistoManager_h
 
-#include "StMessMgr.h"
 #include "TVector3.h"
+// #include "StMessMgr.h"
 
 class TH1F;
 class TH2F;

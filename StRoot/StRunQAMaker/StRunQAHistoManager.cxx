@@ -1,10 +1,11 @@
-#include "StRoot/StRunQAMaker/StRunQAHistoManager.h"
-#include "StRoot/StRunQAMaker/StRunQACons.h"
+#include <iostream>
 
-#include <TH2F.h>
-#include <TH1F.h>
-#include <TMath.h>
-#include <TString.h>
+#include "TH2F.h"
+#include "TH1F.h"
+#include "TMath.h"
+#include "TString.h"
+
+#include "StRoot/StRunQAMaker/StRunQAHistoManager.h"
 
 ClassImp(StRunQAHistoManager)
 

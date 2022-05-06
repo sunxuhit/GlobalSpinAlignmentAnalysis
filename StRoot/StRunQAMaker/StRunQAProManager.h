@@ -2,8 +2,7 @@
 #define StRunQAProManager_h
 
 #include <TVector3.h>
-#include <TString.h>
-#include "StMessMgr.h"
+// #include "StMessMgr.h"
 
 class TProfile;
 
