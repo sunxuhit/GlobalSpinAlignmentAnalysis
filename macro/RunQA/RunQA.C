@@ -29,8 +29,8 @@ void RunQA(const char *inputFile="Utility/FileList/ZrZr200GeV_2018/pico_xrootd_l
   }
   */
 
-  // Int_t nEvents = 10000000000;
-  Int_t nEvents = 10000;
+  Int_t nEvents = 10000000000;
+  // Int_t nEvents = 10000;
 
   gROOT->LoadMacro("$STAR/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");
   loadSharedLibraries();

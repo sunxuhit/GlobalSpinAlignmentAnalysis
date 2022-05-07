@@ -50,7 +50,7 @@ bool StAnalysisCut::isMinBias(StPicoEvent *picoEvent)
   // std::cout << "year: " << picoEvent->year() << std::endl;
   // std::cout << "day: " << picoEvent->day() << std::endl;
   // std::cout << "triggerIds: " << picoEvent->triggerIds()[0] << std::endl;
-  // if(mType == 0 && globCons::mBeamYear[mType] == picoEvent->year() && !( picoEvent->isTrigger(450005) || picoEvent->isTrigger(450015) || picoEvent->isTrigger(450025) || picoEvent->isTrigger(450050) || picoEvent->isTrigger(450060) )) return false; // 200GeV_2014
+  if((mType == 0 || mType == 1) && (globCons::mBeamYear[mType] == picoEvent->year()) && !( picoEvent->isTrigger(600001) || picoEvent->isTrigger(600011) || picoEvent->isTrigger(600021) || picoEvent->isTrigger(600031) )) return false; // ZrZr200GeV_2018 || RuRu200GeV_2018
 
   return true;
 }
@@ -91,7 +91,7 @@ bool StAnalysisCut::passEventCut(StPicoDst *picoDst)
     return false;
   }
   // vz-vzVpd cut only for 200 GeV
-  if(!isBES() && fabs(vz-vzVpd) > anaUtils::mVzVpdDiffMax[mType])
+  if(this-isIsobar() && fabs(vz-vzVpd) > anaUtils::mVzVpdDiffMax[mType])
   {
     return false;
   }
@@ -139,7 +139,7 @@ bool StAnalysisCut::passTrackQA(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
   const float vz    = picoEvent->primaryVertex().z();
 
   // dca cut
-  if(picoTrack->gDCA(vx,vy,vz) > anaUtils::mDcaTrQAMax)
+  if(picoTrack->gDCA(vx,vy,vz) > anaUtils::mDcaQaMax)
   {
     return false;
   }
@@ -152,12 +152,12 @@ bool StAnalysisCut::passTrackQA(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
   // primMom.SetXYZ(primPx,primPy,primPz);
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const float eta = primMom.PseudoRapidity();
-  if(fabs(eta) > anaUtils::mEtaMax)
+  if(fabs(eta) > anaUtils::mEtaQaMax)
   {
     return false;
   }
 
-  if(primMom.Pt() < anaUtils::mGlobPtMin) // minimum pT cuts
+  if(primMom.Pt() < anaUtils::mPrimPtQaMin) // minimum pT cuts
   {
     return false;
   }

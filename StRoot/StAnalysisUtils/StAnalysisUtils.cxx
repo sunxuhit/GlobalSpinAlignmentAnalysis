@@ -207,17 +207,13 @@ int StAnalysisUtils::getTriggerBin(StPicoEvent *picoEvent)
   // std::cout << "year: " << picoEvent->year() << std::endl;
   // std::cout << "day: " << picoEvent->day() << std::endl;
   // std::cout << "triggerIds: " << picoEvent->triggerIds()[0] << std::endl;
-  /*
   if( (mType == 0 || mType == 1)&& globCons::mBeamYear[mType] == picoEvent->year() )
   { // ZrZr200GeV_2018 || RuRu200GeV_2018
-    if( picoEvent->isTrigger(450005) ) return 0; // VPDMB-5-p-nobsmd
-    if( picoEvent->isTrigger(450015) ) return 1; // VPDMB-5-p-nobsmd
-    if( picoEvent->isTrigger(450025) ) return 2; // VPDMB-5-p-nobsmd
-    if( picoEvent->isTrigger(450050) ) return 3; // VPDMB-5-p-nobsmd-hlt
-    if( picoEvent->isTrigger(450060) ) return 4; // VPDMB-5-p-nobsmd-hlt
+    if( picoEvent->isTrigger(600001) ) return 0; //vpdmb-30 
+    if( picoEvent->isTrigger(600011) ) return 1; //vpdmb-30 
+    if( picoEvent->isTrigger(600021) ) return 2; //vpdmb-30 
+    if( picoEvent->isTrigger(600031) ) return 3; //vpdmb-30 
   }
 
   return -1;
-  */
-  return 0;
 }

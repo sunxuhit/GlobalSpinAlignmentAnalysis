@@ -11,27 +11,35 @@ namespace anaUtils
   // used in StAnalysisUtils
   const int mNumBeamType = 2; // 0 for ZrZr200GeV_2018, 1 for RuRu200GeV_2018
 
-  // event cut
-  const float mVzMax[mNumBeamType]        = {70.0,70.0};
-  const float mVzMin[mNumBeamType]        = {-70.0,-70.0};
+  // event cut | copied from Isobar Blind Analysis
+  const float mVzMax[mNumBeamType]        = {25.0,25.0};
+  const float mVzMin[mNumBeamType]        = {-35.0,-35.0};
   const float mVrMax[mNumBeamType]        = {2.0,2.0};
-  const float mVzVpdDiffMax[mNumBeamType] = {3.0,3.0};
+  const float mVzVpdDiffMax[mNumBeamType] = {5.0,5.0};
   const unsigned short mMatchedToFMin     = 2;
 
   // track cut
-  // float const mSigScaleMap[mNumBeamType] = {1.0,1.0};
-  const float mDcaTrQAMax      = 3.0; // use primary tracks run-by-run QA
-  const int   mHitsDedxMin     = 5;
   const int   mHitsFitTPCMin   = 15;
   const int   mHitsMaxTPCMin   = 0;
   const float mHitsRatioTPCMin = 0.51;
-  const float mEtaMax          = 1.0;
+  // const int   mHitsDedxMin     = 5; // basic track cuts
 
-  const float mPrimPtMin[mNumBeamType] = {0.2,0.2}; // for event plane reconstruction and for pion, kaon, proton: 0.2 for BES
-  const float mPrimPtMax = 2.0;
-  const float mPrimPtWeight = 2.0;
-  const float mPrimMomMax = 10.0; // also use for gMom
-  const float mGlobPtMin = 0.1; // for phi, Lambda, K0s
+  const float mPrimPtQaMin = 0.1; // cuts for track QA
+  const float mDcaQaMax    = 3.0;
+  const float mEtaQaMax    = 1.5;
+
+  // const float mPrimPtEpMin    = 0.2; // for event plane reconstruction
+  // const float mPrimPtEpMax    = 2.0;
+  // const float mPrimPtEpWeight = 2.0;
+  // const float mPrimMomEpMax   = 10.0;
+  // const float mDcaEpMax       = 3.0;
+  // const float mEtaEpMax       = 1.5;
+  // const float mEtaEpGap       = 0.05;
+
+  // const float mPrimPtDauMin  = 0.1; // for phi decay daughter K+ and K-
+  // const float mPrimMomDauMax = 10.0;
+  // const float mDcaDauMax     = 3.0;
+  // const float mEtaDauMax     = 1.0;
 }
 
 #endif

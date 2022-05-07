@@ -5,18 +5,17 @@ date
 
 if [ $# -eq 0 ]
 then
-  Energy=200GeV_2014
 
-  OutPutList="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/${Energy}/pico_xrootd_production.list"
+  OutPutList="./pico_xrootd_production.list"
   rm $OutPutList
   touch $OutPutList
 
-  FullPicoList="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/${Energy}/pico_xrootd_full.list"
+  FullPicoList="./pico_xrootd_full.list"
 
-  BadRunIdList="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/${Energy}/badRunStRefMultCorr.txt"
-  BadPicoList="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/${Energy}/badPico.txt"
+  BadRunIdList="./badRunStRefMultCorr.list"
+  BadPicoList="./badPico.list"
 
-  BadRunTempList="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/${Energy}/pico_xrootd_badRun_temp.list"
+  BadRunTempList="./pico_xrootd_badRun_temp.list"
   rm $BadRunTempList
   touch $BadRunTempList
   for item in `cat $BadRunIdList` # get picos with bad run Id
@@ -25,7 +24,7 @@ then
   done
   cat $BadPicoList >> $BadRunTempList # get bad picos identfied through the QA test
 
-  BadRunPicoList="/star/u/sunxuhit/WorkSpace/VecMesonSpinAlignment_BESII/FileList/${Energy}/pico_xrootd_badRun.list"
+  BadRunPicoList="./pico_xrootd_badRun.list"
   rm $BadRunPicoList
   touch $BadRunPicoList
   sort -t '/' -k 16 $BadRunTempList | uniq > $BadRunPicoList
