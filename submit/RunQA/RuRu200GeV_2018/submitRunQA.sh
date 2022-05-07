@@ -3,10 +3,10 @@
 codePath=/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis
 
 ##########Beam Type Selection##########
-beamType=0  # ZrZr200GeV_2018
+beamType=1  # RuRu200GeV_2018
 library=SL20c
-listPath=/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/ZrZr200GeV_2018
-outPath=/star/data01/pwg/sunxuhit/ZrZr200GeV_2018/SpinAlignment/RunQA
+listPath=/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/RuRu200GeV_2018
+outPath=/star/data01/pwg/sunxuhit/RuRu200GeV_2018/SpinAlignment/RunQA
 ##########Beam Type Selection##########
 
 mkdir -p JOBS/report

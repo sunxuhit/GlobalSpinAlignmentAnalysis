@@ -4,11 +4,11 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <iterator>
-#include "../StRoot/StRunQAMaker/StRunQACons.h"
+#include "../Utility/include/StSpinAlignmentCons.h"
 
-int genRunIndex(int beamSpec = 0)
+int genRunIndex(int beamSpec = 1)
 {
-  const int numOfRuns = 4000;
+  const int numOfRuns = globCons::mMaxRunIndex;
   int runId[numOfRuns];
   int runIndex[numOfRuns];
   for(int i_run = 0; i_run < numOfRuns; ++i_run)
@@ -19,7 +19,7 @@ int genRunIndex(int beamSpec = 0)
 
   const string mBeamSpec[2] = {"ZrZr200GeV_2018","RuRu200GeV_2018"};
 
-  string inputfile = Form("/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/utility/FileList/%s/runNumber.list",mBeamSpec[beamSpec].c_str());
+  string inputfile = Form("../FileList/%s/runNumberRunLog.list",mBeamSpec[beamSpec].c_str());
   
   std::cout << "inputfile = " << inputfile.c_str() << std::endl;
   std::ifstream file_runList ( inputfile.c_str() );
@@ -43,7 +43,7 @@ int genRunIndex(int beamSpec = 0)
   }
   file_runList.close();
 
-  string outputfile = Form("/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/utility/RunIndex/runIndex_%s.txt",mBeamSpec[beamSpec].c_str());
+  string outputfile = Form("./runIndex_%s.txt",mBeamSpec[beamSpec].c_str());
   std::ofstream file_runIndex;
   file_runIndex.open(outputfile.c_str());
   if (!file_runIndex.is_open()) 

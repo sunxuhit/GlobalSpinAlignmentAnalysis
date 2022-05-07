@@ -23,7 +23,7 @@ StRoot/StRefMultCorr/CVS/
 */*_C.*
 
 Utility/FileList/*/*.list
-!Utility/FileList/*/runNumber.list
+!Utility/FileList/*/runNumber*.list
 !Utility/FileList/*/allIsobarRun.list
 
 submit/**/JOBS/

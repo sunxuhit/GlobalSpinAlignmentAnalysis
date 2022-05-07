@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<!-- <job minFilesPerProcess="100" filesPerHour="25" maxFilesPerProcess="200" fileListSyntax="xrootd" simulateSubmission="false"> -->
 <job minFilesPerProcess="10" filesPerHour="5" maxFilesPerProcess="15" fileListSyntax="xrootd" simulateSubmission="false">
 
   <command>
-    starver &library;
-    root4star -l -b -q RunQA.C\(\"$FILELIST\",\"$JOBID\",&mode;,&beamType;\)&gt;&amp; ${JOBID}.log
+    <!-- starver &#38;library; -->
+    root4star -l -b -q RunQA.C\(\"$FILELIST\",\"$JOBID\",&beamType;\)&gt;&amp; ${JOBID}.log
   </command>
 
   <SandBox installer="ZIP">
@@ -13,15 +12,16 @@
       <File>file:&codePath;/macro/RunQA/RunQA.C</File>
       <File>file:&codePath;/.sl73_gcc485/</File>
       <File>file:&codePath;/StRoot/</File>
+      <File>file:&codePath;/Utility/</File>
     </Package>
   </SandBox>
 
   <!-- <input URL="filelist:&#38;listPath;/pico_xrootd_test.list" /> -->
-  <!-- <stdout URL="file:&#38;outPath;/Log/&#38;outDir;/$JOBID.out"/> -->
   <input URL="catalog:star.bnl.gov?production=P20ic,library=SL20c,trgsetupname=production_isobar_2018,collision=ZrZr200,filetype=daq_reco_picoDst,storage!=hpss,filename~st_physics" preferStorage="local" singleCopy="true" nFiles="124"/>
 
   <stdout discard="true"/>
-  <stderr URL="file:&outPath;/&outDir;/Log/$JOBID.err"/>
+  <!-- <stdout URL="file:&#38;outPath;/Log/$JOBID.out"/> -->
+  <stderr URL="file:&outPath;/Log/$JOBID.err"/>
 
   <Generator>
     <ReportLocation>./JOBS/report/</ReportLocation>
@@ -29,7 +29,7 @@
     <ListLocation>./JOBS/list/</ListLocation>
   </Generator>
 
-  <output fromScratch="*.root" toURL="file:&outPath;/&outDir;/Data/" />
-  <output fromScratch="*.log" toURL="file:&outPath;/&outDir;/Log/" />
+  <output fromScratch="*.root" toURL="file:&outPath;/Data/" />
+  <output fromScratch="*.log" toURL="file:&outPath;/Log/" />
 </job>
 

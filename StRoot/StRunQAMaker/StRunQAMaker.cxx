@@ -107,18 +107,18 @@ int StRunQAMaker::Make()
   if( mAnaCut->isMinBias(mPicoEvent) )
   {
     // Event Information
-    const int runId = mPicoEvent->runId();
-    const int refMult = mPicoEvent->refMult();
+    const int runId    = mPicoEvent->runId();
+    const int refMult  = mPicoEvent->refMult();
     const int grefMult = mPicoEvent->grefMult();
-    const float vx    = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
-    const float vy    = mPicoEvent->primaryVertex().y();
-    const float vz    = mPicoEvent->primaryVertex().z();
-    const float vzVpd = mPicoEvent->vzVpd();
-    const float zdcX  = mPicoEvent->ZDCx();
-    const unsigned int numOfBTofHits = mPicoDst->numberOfBTofHits(); // get number of tof hits
-    // const unsigned short numOfBTofHits = mPicoEvent->btofTrayMultiplicity();
+    const float vx     = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
+    const float vy     = mPicoEvent->primaryVertex().y();
+    const float vz     = mPicoEvent->primaryVertex().z();
+    const float vzVpd  = mPicoEvent->vzVpd();
+    const float zdcX   = mPicoEvent->ZDCx();
+    const unsigned int nTracks          = mPicoDst->numberOfTracks(); // get number of tracks
+    const unsigned int numOfBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
+    // const unsigned short numOfBTofHits  = mPicoEvent->btofTrayMultiplicity();
     const unsigned short numOfBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
-    const unsigned int nTracks = mPicoDst->numberOfTracks(); // get number of tracks
 
     // StRefMultCorr Cut & centrality
     if(!mRefMultCorr)
@@ -137,11 +137,11 @@ int StRunQAMaker::Make()
     }
     */
     const int cent9 = mRefMultCorr->getCentralityBin9(); // get Centrality9
-    const double reweight = mRefMultCorr->getWeight(); // get Centrality9
+    const double reweight = mRefMultCorr->getWeight(); // get reweight
 
     // vz sign
-    int vzSign = 0; // 0 for -vz || 1 for vz
-    vz > 0.0 ? vzSign = 1 : vzSign = 0;
+    // int vzSign = 0; // 0 for -vz || 1 for vz
+    // vz > 0.0 ? vzSign = 1 : vzSign = 0;
 
     const int runIndex = mAnaUtils->findRunIndex(runId); // find run index for a specific run
     const int triggerBin = mAnaUtils->getTriggerBin(mPicoEvent);

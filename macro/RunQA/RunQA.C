@@ -10,6 +10,7 @@ class StPicoEvent;
 StChain *chain;
 
 void RunQA(const char *inputFile="Utility/FileList/ZrZr200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int beamType = 0)
+// void RunQA(const char *inputFile="Utility/FileList/RuRu200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int beamType = 1)
 {
   // mBeamType[NumBeamType] = {"ZrZr200GeV_2018","RuRu200GeV_2018"};
 
