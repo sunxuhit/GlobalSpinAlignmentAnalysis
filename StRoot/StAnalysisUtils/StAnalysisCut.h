@@ -14,11 +14,16 @@ class StAnalysisCut : public TObject
     StAnalysisCut(int beamType);
     virtual ~StAnalysisCut();
 
-    bool isBES();
+    // Run Cuts
+    bool isFixedTarget();
     bool isIsobar();
+
+    // Event Cuts
     bool isMinBias(StPicoEvent*);
     bool isPileUpEvent(double, double, double); // refmult & nTofMatch & vz
     bool passEventCut(StPicoDst*);
+
+    // Track Cuts
     bool passTrackBasic(StPicoTrack*);
     bool passTrackQA(StPicoTrack*, StPicoEvent*);
 

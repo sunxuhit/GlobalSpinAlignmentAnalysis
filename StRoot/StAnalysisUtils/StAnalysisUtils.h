@@ -16,10 +16,10 @@ class StAnalysisUtils
 
     void initRunIndex();
 
-    bool read_in_runIndex();
+    bool readRunIndex();
     int findRunIndex(int runId);
 
-    bool read_in_badRunList();
+    bool readBadRunList();
     bool isBadRun(int runId);
 
     float getBeta(StPicoDst*, int); // return beta of i-th track (tof || -999)

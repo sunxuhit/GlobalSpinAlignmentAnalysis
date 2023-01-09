@@ -28,37 +28,39 @@ class StRunQAHistoManager
     //--------------QA---------------
 
   private:
+    const int mNumCuts = 2;
+    const int mNumTriggerBins = 10;
+    const std::string mCutStatus[mNumCuts] = {"Bf","Af"};
+
     // QA Histograms
     // Event Level:
-    TH1F *h_mTriggerID[2];
-    TH1F *h_mRefMult[2][10]; // 0: before cuts | 1: after cuts
-    TH1F *h_mGRefMult[2][10]; // 0-8 for different triggerID | 9 for all triggers
-    TH2F *h_mRefMultGRefMult[2][10];
-    TH1F *h_mCentrality9[2][10];
-    TH2F *h_mTofMatchRefMult[2][10];
-    TH2F *h_mTofHitsRefMult[2][10];
-    TH2F *h_mTofMatchGRefMult[2][10];
-    TH2F *h_mTofHitsGRefMult[2][10];
-    TH2F *h_mVzVzVpd[2][10];
-    TH1F *h_mDiffVzVzVpd[2][10];
-    TH1F *h_mVertexZ[2][10];
-    TH2F *h_mVertexXY[2][10];
+    TH1F *h_mTriggerId[mNumCuts];
+    TH1F *h_mRefMult[mNumCuts][mNumTriggerBins]; // 0: before cuts | 1: after cuts
+    TH1F *h_mGRefMult[mNumCuts][mNumTriggerBins]; // 0-8 for different triggerID | 9 for all triggers
+    TH2F *h_mRefMultGRefMult[mNumCuts][mNumTriggerBins];
+    TH1F *h_mCentrality9[mNumCuts][mNumTriggerBins];
+    TH2F *h_mTofMatchRefMult[mNumCuts][mNumTriggerBins];
+    TH2F *h_mTofHitsRefMult[mNumCuts][mNumTriggerBins];
+    TH2F *h_mTofMatchGRefMult[mNumCuts][mNumTriggerBins];
+    TH2F *h_mTofHitsGRefMult[mNumCuts][mNumTriggerBins];
+    TH2F *h_mVzVzVpd[mNumCuts][mNumTriggerBins];
+    TH1F *h_mDiffVzVzVpd[mNumCuts][mNumTriggerBins];
+    TH1F *h_mVertexZ[mNumCuts][mNumTriggerBins];
+    TH2F *h_mVertexXY[mNumCuts][mNumTriggerBins];
     // Track Level:
-    TH1F *h_mPrimPt[2][10];
-    TH1F *h_mPrimEta[2][10];
-    TH1F *h_mPrimPhi[2][10];
-    TH1F *h_mGlobPt[2][10];
-    TH1F *h_mGlobEta[2][10];
-    TH1F *h_mGlobPhi[2][10];
-    TH1F *h_mDca[2][10];
-    TH1F *h_mNHitsFit[2][10];
-    TH1F *h_mNHitsRatio[2][10];
-    TH1F *h_mNHitsDEdx[2][10];
-    TH2F *h_mDEdxMom[2][10];
-    TH2F *h_mBetaMom[2][10];
-    TH2F *h_mMass2Mom[2][10];
-
-    std::string mCutsQA[2] = {"Before","After"};
+    TH1F *h_mPrimPt[mNumCuts][mNumTriggerBins];
+    TH1F *h_mPrimEta[mNumCuts][mNumTriggerBins];
+    TH1F *h_mPrimPhi[mNumCuts][mNumTriggerBins];
+    TH1F *h_mGlobPt[mNumCuts][mNumTriggerBins];
+    TH1F *h_mGlobEta[mNumCuts][mNumTriggerBins];
+    TH1F *h_mGlobPhi[mNumCuts][mNumTriggerBins];
+    TH1F *h_mDca[mNumCuts][mNumTriggerBins];
+    TH1F *h_mNHitsFit[mNumCuts][mNumTriggerBins];
+    TH1F *h_mNHitsRatio[mNumCuts][mNumTriggerBins];
+    TH1F *h_mNHitsDEdx[mNumCuts][mNumTriggerBins];
+    TH2F *h_mMomDEdx[mNumCuts][mNumTriggerBins];
+    TH2F *h_mMomMass2[mNumCuts][mNumTriggerBins];
+    TH2F *h_mMomBeta[mNumCuts][mNumTriggerBins];
 
   ClassDef(StRunQAHistoManager,1)
 };

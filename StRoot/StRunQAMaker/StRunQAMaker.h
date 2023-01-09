@@ -2,6 +2,7 @@
 #define StRunQAMaker_h
 
 #include "StMaker.h"
+// #include "TString.h"
 #include <string>
 
 class StPicoDstMaker;
@@ -25,20 +26,20 @@ class StRunQAMaker : public StMaker {
     virtual int Finish();
     
   private:
-    StPicoDstMaker *mPicoDstMaker;
+    StPicoDstMaker *mPicoDstMaker; // STAR Lib
     StPicoDst      *mPicoDst;
     StPicoEvent    *mPicoEvent;
     StRefMultCorr  *mRefMultCorr;
 
-    StAnalysisUtils     *mAnaUtils;
+    StAnalysisUtils     *mAnaUtils; // Analysis Module
     StAnalysisCut       *mAnaCut;
     StRunQAHistoManager *mRunQAHistoManager;
     StRunQAProManager   *mRunQAProManager;
     
     int mType;
 
-    string mOutPut_RunQA;
-    TFile *mFile_QA;
+    std::string str_mOutPutRunQA;
+    TFile *file_mOutPutRunQA;
 
     ClassDef(StRunQAMaker, 1)
 };

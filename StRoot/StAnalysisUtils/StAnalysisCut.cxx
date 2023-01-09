@@ -29,28 +29,31 @@ StAnalysisCut::~StAnalysisCut()
 }
 
 //---------------------------------------------------------------------------------
-
-// Event Cuts
-bool StAnalysisCut::isBES()
+// Run Cuts
+bool StAnalysisCut::isFixedTarget()
 {
   if(mType == 0 || mType == 1) return false; // Isobar
 
-  return true; // BES
+  return true; // Fixed Target
 }
 
 bool StAnalysisCut::isIsobar()
 {
   if(mType == 0 || mType == 1) return true; // Isobar
 
-  return false; // BES
+  return false; // Fixed Target
 }
+//---------------------------------------------------------------------------------
 
+//---------------------------------------------------------------------------------
+// Event Cuts
 bool StAnalysisCut::isMinBias(StPicoEvent *picoEvent)
 {
   // std::cout << "year: " << picoEvent->year() << std::endl;
   // std::cout << "day: " << picoEvent->day() << std::endl;
   // std::cout << "triggerIds: " << picoEvent->triggerIds()[0] << std::endl;
-  if((mType == 0 || mType == 1) && (globCons::mBeamYear[mType] == picoEvent->year()) && !( picoEvent->isTrigger(600001) || picoEvent->isTrigger(600011) || picoEvent->isTrigger(600021) || picoEvent->isTrigger(600031) )) return false; // ZrZr200GeV_2018 || RuRu200GeV_2018
+  if( (mType == 0 || mType == 1) && globCons::mBeamYear[mType] == picoEvent->year() && !(picoEvent->isTrigger(600001) || picoEvent->isTrigger(600011) || picoEvent->isTrigger(600021) || picoEvent->isTrigger(600031)) ) return false; // ZrZr200GeV_2018 || RuRu200GeV_2018
+  // if( mType == 2 && globCons::mBeamYear[mType] == picoEvent->year() && !(picoEvent->isTrigger(600001) || picoEvent->isTrigger(600011) || picoEvent->isTrigger(600021) || picoEvent->isTrigger(600031)) ) return false; // Fixed Target
 
   return true;
 }
@@ -91,37 +94,37 @@ bool StAnalysisCut::passEventCut(StPicoDst *picoDst)
     return false;
   }
   // vz-vzVpd cut only for 200 GeV
-  if(this-isIsobar() && fabs(vz-vzVpd) > anaUtils::mVzVpdDiffMax[mType])
+  if(!isFixedTarget() && fabs(vz-vzVpd) > anaUtils::mVzVpdDiffMax[mType])
   {
     return false;
   }
 
   // nTofMatch > 2
   const unsigned short numOfBTofMatch = picoEvent->nBTOFMatch(); // get number of tof match points
-  if(numOfBTofMatch <= anaUtils::mMatchedToFMin) return false;
+  if(numOfBTofMatch <= anaUtils::mMatchedToFMin[mType]) return false;
 
   return true;
 }
-
 //---------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------
+// Track Cuts
 bool StAnalysisCut::passTrackBasic(StPicoTrack *picoTrack)
 {
   if(!picoTrack) return false;
 
   // nHitsFit cut
-  if(picoTrack->nHitsFit() < anaUtils::mHitsFitTPCMin)
+  if(picoTrack->nHitsFit() < anaUtils::mHitsFitTpcMin)
   {
     return false;
   }
 
   // nHitsRatio cut
-  if(picoTrack->nHitsMax() <= anaUtils::mHitsMaxTPCMin)
+  if(picoTrack->nHitsMax() <= anaUtils::mHitsMaxTpcMin)
   {
     return false;
   }
-  if((float)picoTrack->nHitsFit()/(float)picoTrack->nHitsMax() < anaUtils::mHitsRatioTPCMin)
+  if((float)picoTrack->nHitsFit()/(float)picoTrack->nHitsMax() < anaUtils::mHitsRatioTpcMin)
   {
     return false;
   }
@@ -164,5 +167,4 @@ bool StAnalysisCut::passTrackQA(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
 
   return true;
 }
-
 //---------------------------------------------------------------------------------

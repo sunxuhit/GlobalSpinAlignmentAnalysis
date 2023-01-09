@@ -19,22 +19,24 @@ class StRunQAProManager
     void writeRunQA();
 
   private:
-    // Run-by-Run QA | x axis is RunIndex
-    TProfile *p_mRefMult[2][10]; // 0: before cuts | 1: after cuts
-    TProfile *p_mGRefMult[2][10]; // 0-8 for different triggerID | 9 for all triggers
-    TProfile *p_mZdcX[2][10];
-    TProfile *p_mVz[2][10];
-    TProfile *p_mVr[2][10];
-    TProfile *p_mGDca[2][10];
-    TProfile *p_mNHitsFit[2][10];
-    TProfile *p_mPrimPt[2][10];
-    TProfile *p_mPrimEta[2][10];
-    TProfile *p_mPrimPhi[2][10];
-    TProfile *p_mGlobPt[2][10];
-    TProfile *p_mGlobEta[2][10];
-    TProfile *p_mGlobPhi[2][10];
+    const int mNumCuts = 2;
+    const int mNumTriggerBins = 10;
+    const std::string mCutStatus[mNumCuts] = {"Bf","Af"};
 
-    std::string mCutsQA[2] = {"Before","After"};
+    // Run-by-Run QA | x axis is RunIndex
+    TProfile *p_mRefMult[mNumCuts][mNumTriggerBins]; // 0: before cuts | 1: after cuts
+    TProfile *p_mGRefMult[mNumCuts][mNumTriggerBins]; // 0-8 for different triggerID | 9 for all triggers
+    TProfile *p_mZdcX[mNumCuts][mNumTriggerBins];
+    TProfile *p_mVz[mNumCuts][mNumTriggerBins];
+    TProfile *p_mVr[mNumCuts][mNumTriggerBins];
+    TProfile *p_mGDca[mNumCuts][mNumTriggerBins];
+    TProfile *p_mNHitsFit[mNumCuts][mNumTriggerBins];
+    TProfile *p_mPrimPt[mNumCuts][mNumTriggerBins];
+    TProfile *p_mPrimEta[mNumCuts][mNumTriggerBins];
+    TProfile *p_mPrimPhi[mNumCuts][mNumTriggerBins];
+    TProfile *p_mGlobPt[mNumCuts][mNumTriggerBins];
+    TProfile *p_mGlobEta[mNumCuts][mNumTriggerBins];
+    TProfile *p_mGlobPhi[mNumCuts][mNumTriggerBins];
 
     ClassDef(StRunQAProManager,1)
 };

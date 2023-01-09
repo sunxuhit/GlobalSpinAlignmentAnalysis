@@ -31,7 +31,7 @@ StRunQAMaker::StRunQAMaker(const char* name, StPicoDstMaker *picoMaker, const st
   mRefMultCorr = NULL;
 
   mType = beamType;
-  mOutPut_RunQA = Form("./file_%s_RunQA_%s.root",globCons::mBeamType[mType].c_str(),jobId.c_str());
+  str_mOutPutRunQA = Form("./file_%s_RunQA_%s.root",globCons::mBeamType[mType].c_str(),jobId.c_str());
 }
 
 //----------------------------------------------------------------------------- 
@@ -52,8 +52,8 @@ int StRunQAMaker::Init()
     if( mAnaCut->isIsobar() ) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr_Isobar();
   }
 
-  mFile_QA= new TFile(mOutPut_RunQA.c_str(),"RECREATE");
-  mFile_QA->cd();
+  file_mOutPutRunQA= new TFile(str_mOutPutRunQA.c_str(),"RECREATE");
+  file_mOutPutRunQA->cd();
   mRunQAHistoManager->initEventQA();
   mRunQAHistoManager->initTrackQA();
   mRunQAProManager->initRunQA();
@@ -64,13 +64,13 @@ int StRunQAMaker::Init()
 //----------------------------------------------------------------------------- 
 int StRunQAMaker::Finish() 
 {
-  if(mOutPut_RunQA != "")
+  if(str_mOutPutRunQA != "")
   {
-    mFile_QA->cd();
+    file_mOutPutRunQA->cd();
     mRunQAHistoManager->writeEventQA();
     mRunQAHistoManager->writeTrackQA();
     mRunQAProManager->writeRunQA();
-    mFile_QA->Close();
+    file_mOutPutRunQA->Close();
   }
 
   return kStOK;
@@ -115,10 +115,10 @@ int StRunQAMaker::Make()
     const float vz     = mPicoEvent->primaryVertex().z();
     const float vzVpd  = mPicoEvent->vzVpd();
     const float zdcX   = mPicoEvent->ZDCx();
-    const unsigned int nTracks          = mPicoDst->numberOfTracks(); // get number of tracks
-    const unsigned int numOfBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
-    // const unsigned short numOfBTofHits  = mPicoEvent->btofTrayMultiplicity();
-    const unsigned short numOfBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
+    // const unsigned short nBTofHits  = mPicoEvent->btofTrayMultiplicity();
+    const unsigned int nBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
+    const unsigned short nBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
+    const unsigned int nTracks      = mPicoDst->numberOfTracks(); // get number of tracks
 
     // StRefMultCorr Cut & centrality
     if(!mRefMultCorr)
@@ -137,11 +137,11 @@ int StRunQAMaker::Make()
     }
     */
     const int cent9 = mRefMultCorr->getCentralityBin9(); // get Centrality9
-    const double reweight = mRefMultCorr->getWeight(); // get reweight
+    const double reweight = mRefMultCorr->getWeight(); // get Centrality reweight
 
     // vz sign
-    // int vzSign = 0; // 0 for -vz || 1 for vz
-    // vz > 0.0 ? vzSign = 1 : vzSign = 0;
+    int vzSign = 0; // 0 for -vz || 1 for +vz
+    vz > 0.0 ? vzSign = 1 : vzSign = 0;
 
     const int runIndex = mAnaUtils->findRunIndex(runId); // find run index for a specific run
     const int triggerBin = mAnaUtils->getTriggerBin(mPicoEvent);
@@ -152,21 +152,21 @@ int StRunQAMaker::Make()
       return kStErr;
     }
 
-    bool isPileUpEventStAnalysisCut = mAnaCut->isPileUpEvent(1.0*refMult, 1.0*numOfBTofMatch,vz); // alway return false for Isobar
-    bool isPileUpEventStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut(1.0*refMult, 1.0*numOfBTofMatch,vz); // valid for Isobar
+    bool isPileUpEventStAnalysisCut = mAnaCut->isPileUpEvent(1.0*refMult, 1.0*nBTofMatch,vz); // alway return false for Isobar
+    bool isPileUpEventStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut(1.0*refMult, 1.0*nBTofMatch,vz); // valid for Isobar
     bool isPileUpEvent = isPileUpEventStAnalysisCut || isPileUpEventStRefMultCorr;
     // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpEventStAnalysisCut = " << isPileUpEventStAnalysisCut << ", isPileUpEventStRefMultCorr = " << isPileUpEventStRefMultCorr << endl;
 
     // fill QA before event cuts
     mRunQAProManager->fillRunQA_Event(triggerBin,runIndex,refMult,grefMult,zdcX,vx,vy,vz,0);
-    mRunQAHistoManager->fillEventQA_RefMult(triggerBin,refMult,grefMult,cent9,reweight,numOfBTofHits,numOfBTofMatch,0); // wo event cut
+    mRunQAHistoManager->fillEventQA_RefMult(triggerBin,refMult,grefMult,cent9,reweight,nBTofHits,nBTofMatch,0); // wo event cut
     mRunQAHistoManager->fillEventQA_Vertex(triggerBin,vx,vy,vz,vzVpd,0);
     mRunQAHistoManager->fillEventQA_Trigger(triggerBin,0);
 
-    if(mAnaCut->passEventCut(mPicoDst) && !isPileUpEvent)
+    if(!isPileUpEvent && mAnaCut->passEventCut(mPicoDst))
     { // apply Event Cuts for anlaysis 
       mRunQAProManager->fillRunQA_Event(triggerBin,runIndex,refMult,grefMult,zdcX,vx,vy,vz,1);
-      mRunQAHistoManager->fillEventQA_RefMult(triggerBin,refMult,grefMult,cent9,reweight,numOfBTofHits,numOfBTofMatch,1); // with event cut
+      mRunQAHistoManager->fillEventQA_RefMult(triggerBin,refMult,grefMult,cent9,reweight,nBTofHits,nBTofMatch,1); // with event cut
       mRunQAHistoManager->fillEventQA_Vertex(triggerBin,vx,vy,vz,vzVpd,1);
       mRunQAHistoManager->fillEventQA_Trigger(triggerBin,1);
 
@@ -179,8 +179,6 @@ int StRunQAMaker::Make()
 	}
 
 	// get pico track info
-	const TVector3 primMom = picoTrack->pMom();
-	const TVector3 globMom = picoTrack->gMom();
 	// TVector3 primMom;
 	// float primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
 	// float primPy    = picoTrack->pMom().y();
@@ -192,6 +190,9 @@ int StRunQAMaker::Make()
 	// float globPy     = picoTrack->gMom().y();
 	// float globPz     = picoTrack->gMom().z();
 	// globMom.SetXYZ(globPx,globPy,globPz);
+
+	const TVector3 primMom = picoTrack->pMom();
+	const TVector3 globMom = picoTrack->gMom();
 
 	const float gDCA    = picoTrack->gDCA(vx,vy,vz);
 	const int nHitsFit  = picoTrack->nHitsFit();

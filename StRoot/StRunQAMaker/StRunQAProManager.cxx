@@ -27,48 +27,48 @@ StRunQAProManager::~StRunQAProManager()
 
 void StRunQAProManager::initRunQA()
 {
-  for(int i_cut = 0; i_cut < 2; ++i_cut)
+  for(int iCut = 0; iCut < mNumCuts; ++iCut)
   {
-    for(int i_trig = 0; i_trig < 10; ++i_trig)
+    for(int iTrig = 0; iTrig < mNumTriggerBins; ++iTrig)
     {
-      std::string ProName = Form("p_mRefMult%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mRefMult[i_cut][i_trig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5); 
+      std::string ProName = Form("p_mRefMult%sTrigger%d",mCutStatus[iCut].c_str(),iTrig);
+      p_mRefMult[iCut][iTrig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5); 
 
-      ProName = Form("p_mGRefMult%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mGRefMult[i_cut][i_trig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5); 
+      ProName = Form("p_mGRefMult%sTrigger%d",mCutStatus[iCut].c_str(),iTrig);
+      p_mGRefMult[iCut][iTrig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5); 
 
-      ProName = Form("p_mZdcX%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mZdcX[i_cut][i_trig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
+      ProName = Form("p_mZdcX%sTrigger%d",mCutStatus[iCut].c_str(),iTrig);
+      p_mZdcX[iCut][iTrig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
 
-      ProName = Form("p_mVz%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mVz[i_cut][i_trig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
+      ProName = Form("p_mVz%sTrigger%d",mCutStatus[iCut].c_str(),iTrig);
+      p_mVz[iCut][iTrig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
 
-      ProName = Form("p_mVr%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mVr[i_cut][i_trig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
+      ProName = Form("p_mVr%sTrigger%d",mCutStatus[iCut].c_str(),iTrig);
+      p_mVr[iCut][iTrig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
 
-      ProName = Form("p_mGDca%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mGDca[i_cut][i_trig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
+      ProName = Form("p_mGDca%sTrigger%d",mCutStatus[iCut].c_str(),iTrig);
+      p_mGDca[iCut][iTrig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
 
-      ProName = Form("p_mNHitsFit%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mNHitsFit[i_cut][i_trig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
+      ProName = Form("p_mNHitsFit%sTrigger%d",mCutStatus[iCut].c_str(),iTrig);
+      p_mNHitsFit[iCut][iTrig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
 
-      ProName = Form("p_mPrimPt%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mPrimPt[i_cut][i_trig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
+      ProName = Form("p_mPrimPt%sTrigger%d",mCutStatus[iCut].c_str(),iTrig);
+      p_mPrimPt[iCut][iTrig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
 
-      ProName = Form("p_mPrimEta%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mPrimEta[i_cut][i_trig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
+      ProName = Form("p_mPrimEta%sTrigger%d",mCutStatus[iCut].c_str(),iTrig);
+      p_mPrimEta[iCut][iTrig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
 
-      ProName = Form("p_mPrimPhi%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mPrimPhi[i_cut][i_trig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
+      ProName = Form("p_mPrimPhi%sTrigger%d",mCutStatus[iCut].c_str(),iTrig);
+      p_mPrimPhi[iCut][iTrig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
 
-      ProName = Form("p_mGlobPt%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mGlobPt[i_cut][i_trig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
+      ProName = Form("p_mGlobPt%sTrigger%d",mCutStatus[iCut].c_str(),iTrig);
+      p_mGlobPt[iCut][iTrig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
 
-      ProName = Form("p_mGlobEta%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mGlobEta[i_cut][i_trig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
+      ProName = Form("p_mGlobEta%sTrigger%d",mCutStatus[iCut].c_str(),iTrig);
+      p_mGlobEta[iCut][iTrig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
 
-      ProName = Form("p_mGlobPhi%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mGlobPhi[i_cut][i_trig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
+      ProName = Form("p_mGlobPhi%sTrigger%d",mCutStatus[iCut].c_str(),iTrig);
+      p_mGlobPhi[iCut][iTrig] = new TProfile(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex,-0.5,(float)globCons::mMaxRunIndex-0.5);
     }
   }
 }
@@ -83,11 +83,11 @@ void StRunQAProManager::fillRunQA_Event(int triggerBin, int runIdenx, float refM
   p_mVr[cutSelection][triggerBin]->Fill(runIdenx, TMath::Sqrt(vx*vx+vy*vy));
 
   // for all triggers
-  p_mRefMult[cutSelection][9]->Fill(runIdenx, refMult);
-  p_mGRefMult[cutSelection][9]->Fill(runIdenx, grefMult);
-  p_mZdcX[cutSelection][9]->Fill(runIdenx, zdcX);
-  p_mVz[cutSelection][9]->Fill(runIdenx, vz);
-  p_mVr[cutSelection][9]->Fill(runIdenx, TMath::Sqrt(vx*vx+vy*vy));
+  p_mRefMult[cutSelection][mNumTriggerBins-1]->Fill(runIdenx, refMult);
+  p_mGRefMult[cutSelection][mNumTriggerBins-1]->Fill(runIdenx, grefMult);
+  p_mZdcX[cutSelection][mNumTriggerBins-1]->Fill(runIdenx, zdcX);
+  p_mVz[cutSelection][mNumTriggerBins-1]->Fill(runIdenx, vz);
+  p_mVr[cutSelection][mNumTriggerBins-1]->Fill(runIdenx, TMath::Sqrt(vx*vx+vy*vy));
 }
 
 void StRunQAProManager::fillRunQA_Track(int triggerBin, int runIdenx, float gDca, int nHitsFit, TVector3 pMom, TVector3 gMom, int cutSelection)
@@ -103,35 +103,35 @@ void StRunQAProManager::fillRunQA_Track(int triggerBin, int runIdenx, float gDca
   p_mGlobPhi[cutSelection][triggerBin]->Fill(runIdenx, gMom.Phi());
 
   // for all triggers
-  p_mGDca[cutSelection][9]->Fill(runIdenx, gDca);
-  p_mNHitsFit[cutSelection][9]->Fill(runIdenx, nHitsFit);
-  p_mPrimPt[cutSelection][9]->Fill(runIdenx, pMom.Pt());
-  p_mPrimEta[cutSelection][9]->Fill(runIdenx, pMom.Eta());
-  p_mPrimPhi[cutSelection][9]->Fill(runIdenx, pMom.Phi());
-  p_mGlobPt[cutSelection][9]->Fill(runIdenx, gMom.Pt());
-  p_mGlobEta[cutSelection][9]->Fill(runIdenx, gMom.Eta());
-  p_mGlobPhi[cutSelection][9]->Fill(runIdenx, gMom.Phi());
+  p_mGDca[cutSelection][mNumTriggerBins-1]->Fill(runIdenx, gDca);
+  p_mNHitsFit[cutSelection][mNumTriggerBins-1]->Fill(runIdenx, nHitsFit);
+  p_mPrimPt[cutSelection][mNumTriggerBins-1]->Fill(runIdenx, pMom.Pt());
+  p_mPrimEta[cutSelection][mNumTriggerBins-1]->Fill(runIdenx, pMom.Eta());
+  p_mPrimPhi[cutSelection][mNumTriggerBins-1]->Fill(runIdenx, pMom.Phi());
+  p_mGlobPt[cutSelection][mNumTriggerBins-1]->Fill(runIdenx, gMom.Pt());
+  p_mGlobEta[cutSelection][mNumTriggerBins-1]->Fill(runIdenx, gMom.Eta());
+  p_mGlobPhi[cutSelection][mNumTriggerBins-1]->Fill(runIdenx, gMom.Phi());
 }
 
 void StRunQAProManager::writeRunQA()
 {
-  for(int i_cut = 0; i_cut < 2; ++i_cut)
+  for(int iCut = 0; iCut < mNumCuts; ++iCut)
   {
-    for(int i_trig = 0; i_trig < 10; ++i_trig)
+    for(int iTrig = 0; iTrig < mNumTriggerBins; ++iTrig)
     {
-      p_mRefMult[i_cut][i_trig]->Write();
-      p_mGRefMult[i_cut][i_trig]->Write();
-      p_mZdcX[i_cut][i_trig]->Write();
-      p_mVz[i_cut][i_trig]->Write();
-      p_mVr[i_cut][i_trig]->Write();
-      p_mGDca[i_cut][i_trig]->Write();
-      p_mNHitsFit[i_cut][i_trig]->Write();
-      p_mPrimPt[i_cut][i_trig]->Write();
-      p_mPrimEta[i_cut][i_trig]->Write();
-      p_mPrimPhi[i_cut][i_trig]->Write();
-      p_mGlobPt[i_cut][i_trig]->Write();
-      p_mGlobEta[i_cut][i_trig]->Write();
-      p_mGlobPhi[i_cut][i_trig]->Write();
+      p_mRefMult[iCut][iTrig]->Write();
+      p_mGRefMult[iCut][iTrig]->Write();
+      p_mZdcX[iCut][iTrig]->Write();
+      p_mVz[iCut][iTrig]->Write();
+      p_mVr[iCut][iTrig]->Write();
+      p_mGDca[iCut][iTrig]->Write();
+      p_mNHitsFit[iCut][iTrig]->Write();
+      p_mPrimPt[iCut][iTrig]->Write();
+      p_mPrimEta[iCut][iTrig]->Write();
+      p_mPrimPhi[iCut][iTrig]->Write();
+      p_mGlobPt[iCut][iTrig]->Write();
+      p_mGlobEta[iCut][iTrig]->Write();
+      p_mGlobPhi[iCut][iTrig]->Write();
     }
   }
 }

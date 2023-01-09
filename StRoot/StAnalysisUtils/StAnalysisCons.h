@@ -9,24 +9,25 @@ namespace anaUtils
 {
   //--------------------------------------------------
   // used in StAnalysisUtils
-  const int mNumBeamType = 2; // 0 for ZrZr200GeV_2018, 1 for RuRu200GeV_2018
+  const int mNumBeamUtils = 2; // 0 for ZrZr200GeV_2018, 1 for RuRu200GeV_2018, 2 for Fixed Target?
 
-  // event cut | copied from Isobar Blind Analysis
-  const float mVzMax[mNumBeamType]        = {25.0,25.0};
-  const float mVzMin[mNumBeamType]        = {-35.0,-35.0};
-  const float mVrMax[mNumBeamType]        = {2.0,2.0};
-  const float mVzVpdDiffMax[mNumBeamType] = {5.0,5.0};
-  const unsigned short mMatchedToFMin     = 2;
+  // event cuts
+  const float mVzMax[mNumBeamUtils]                  = {25.0, 25.0};
+  const float mVzMin[mNumBeamUtils]                  = {-35.0, -35.0};
+  const float mVrMax[mNumBeamUtils]                  = {2.0, 2.0};
+  const float mVzVpdDiffMax[mNumBeamUtils]           = {5.0, 5.0};
+  const unsigned short mMatchedToFMin[mNumBeamUtils] = {2, 2};
 
-  // track cut
-  const int   mHitsFitTPCMin   = 15;
-  const int   mHitsMaxTPCMin   = 0;
-  const float mHitsRatioTPCMin = 0.51;
-  // const int   mHitsDedxMin     = 5; // basic track cuts
+  // track cuts: Basic 
+  const int   mHitsDedxMin     = 5;
+  const int   mHitsFitTpcMin   = 15;
+  const int   mHitsMaxTpcMin   = 0;
+  const float mHitsRatioTpcMin = 0.51;
 
-  const float mPrimPtQaMin = 0.1; // cuts for track QA
-  const float mDcaQaMax    = 3.0;
-  const float mEtaQaMax    = 1.5;
+  // track cuts: RunQA
+  const float mDcaQaMax    = 3.0; // use primary tracks run-by-run QA
+  const float mEtaQaMax    = 1.0;
+  const float mPrimPtQaMin = 0.1; 
 
   // const float mPrimPtEpMin    = 0.2; // for event plane reconstruction
   // const float mPrimPtEpMax    = 2.0;

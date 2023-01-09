@@ -9,7 +9,7 @@ namespace globCons
   const std::string mBeamType[mNumBeamType] = {"ZrZr200GeV_2018", "RuRu200GeV_2018"};
   const float mBeamEnergy[mNumBeamType]     = {200.0, 200.0};
   const int mBeamYear[mNumBeamType]         = {2018, 2018};
-  const int mMaxRunIndex                    = 4000; // maximum number of runIndex
+  const int mMaxRunIndex                    = 5000; // maximum number of runIndex
 
   // event cut
   float const mVzMaxMap[mNumBeamType] = {40.0,70.0}; // 0: ZrZr200GeV_2018, 1: RuRu200GeV_2018
