@@ -13,7 +13,7 @@ then
   FullPicoList="./pico_xrootd_full.list"
 
   BadRunIdList="./badRunStRefMultCorr.list"
-  BadPicoList="./badPico.list"
+  BadRunQaList="./badRunStRunQAMaker.list"
 
   BadRunTempList="./pico_xrootd_badRun_temp.list"
   rm $BadRunTempList
@@ -22,7 +22,7 @@ then
   do
     cat $FullPicoList | grep $item >> $BadRunTempList
   done
-  cat $BadPicoList >> $BadRunTempList # get bad picos identfied through the QA test
+  cat $BadRunQaList >> $BadRunTempList # get picos with bad run identfied through the QA test
 
   BadRunPicoList="./pico_xrootd_badRun.list"
   rm $BadRunPicoList
