@@ -11,7 +11,7 @@ namespace anaUtils
   // used in StAnalysisUtils
   const int mNumBeamUtils = 2; // 0 for ZrZr200GeV_2018, 1 for RuRu200GeV_2018, 2 for Fixed Target?
 
-  // event cuts
+  // event cuts | copied from Isobar CME analysis
   const float mVzMax[mNumBeamUtils]                  = {25.0, 25.0};
   const float mVzMin[mNumBeamUtils]                  = {-35.0, -35.0};
   const float mVrMax[mNumBeamUtils]                  = {2.0, 2.0};
@@ -19,10 +19,10 @@ namespace anaUtils
   const unsigned short mMatchedToFMin[mNumBeamUtils] = {2, 2};
 
   // track cuts: Basic 
-  const int   mHitsDedxMin     = 5;
   const int   mHitsFitTpcMin   = 15;
   const int   mHitsMaxTpcMin   = 0;
   const float mHitsRatioTpcMin = 0.51;
+  // const int   mHitsDedxMin     = 5; // not used
 
   // track cuts: RunQA
   const float mDcaQaMax    = 3.0; // use primary tracks run-by-run QA

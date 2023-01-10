@@ -40,7 +40,7 @@ bool StAnalysisUtils::readRunIndex()
 {
   map_runIndex.clear();
 
-  std::string inputfile = Form("Utility/RunIndex/runIndex_%s.txt",globCons::mBeamType[mType].c_str());
+  std::string inputfile = Form("Utility/RunIndex/%s/runIndex_%s.txt",globCons::mBeamType[mType].c_str(),globCons::mBeamType[mType].c_str());
   std::cout << "inputfile = " << inputfile.c_str() << std::endl;
   std::ifstream file_runIndex ( inputfile.c_str() );
   if ( !file_runIndex.is_open() )
@@ -94,7 +94,7 @@ bool StAnalysisUtils::readBadRunList()
 {
   vec_badRunId.clear();
 
-  std::string inputfile = Form("Utility/RunIndex/badRunList_%s.txt",globCons::mBeamType[mType].c_str());
+  std::string inputfile = Form("Utility/RunIndex/%s/badRunList_%s.txt",globCons::mBeamType[mType].c_str(),globCons::mBeamType[mType].c_str());
   std::cout << "inputfile = " << inputfile.c_str() << std::endl;
   std::ifstream file_badRunList ( inputfile.c_str() );
   if ( !file_badRunList.is_open() )
