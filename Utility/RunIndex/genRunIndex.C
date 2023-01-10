@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <iterator>
-#include "../Utility/include/StSpinAlignmentCons.h"
+#include "../include/StSpinAlignmentCons.h"
 
-int genRunIndex(int beamSpec = 1)
+int genRunIndex(int beamType = 0)
 {
   const int numOfRuns = globCons::mMaxRunIndex;
   int runId[numOfRuns];
@@ -17,9 +17,9 @@ int genRunIndex(int beamSpec = 1)
     runIndex[i_run] = -999;
   }
 
-  const string mBeamSpec[2] = {"ZrZr200GeV_2018","RuRu200GeV_2018"};
+  // const string mBeamSpec[2] = {"ZrZr200GeV_2018","RuRu200GeV_2018"};
 
-  string inputfile = Form("../FileList/%s/runNumberRunLog.list",mBeamSpec[beamSpec].c_str());
+  string inputfile = Form("../FileList/%s/runNumberRunLog.list",globCons::mBeamType[beamType].c_str());
   
   std::cout << "inputfile = " << inputfile.c_str() << std::endl;
   std::ifstream file_runList ( inputfile.c_str() );
@@ -37,13 +37,14 @@ int genRunIndex(int beamSpec = 1)
     std::cout << "temp_runId: " << temp_runId << ", temp_runIndex: " << temp_runIndex << endl;
     runId[temp_runIndex] = temp_runId;
     runIndex[temp_runIndex] = temp_runIndex;
+    if(beamType == 1) runIndex[temp_runIndex] = temp_runIndex + 2500;
     std::cout << "runId: " << runId[temp_runIndex] << ", runIndex: " << runIndex[temp_runIndex] << endl;
     temp_runIndex++;
     std::cout << endl;
   }
   file_runList.close();
 
-  string outputfile = Form("./runIndex_%s.txt",mBeamSpec[beamSpec].c_str());
+  string outputfile = Form("./%s/runIndex_%s.txt",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
   std::ofstream file_runIndex;
   file_runIndex.open(outputfile.c_str());
   if (!file_runIndex.is_open()) 
