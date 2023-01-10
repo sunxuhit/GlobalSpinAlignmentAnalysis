@@ -16,9 +16,9 @@ ClassImp(StAnalysisCut)
 
 //---------------------------------------------------------------------------------
 
-StAnalysisCut::StAnalysisCut(int beamType)
+StAnalysisCut::StAnalysisCut(int beamType) : mType(beamType)
 {
-  mType = beamType;
+  // mType = beamType;
 }
 
 //---------------------------------------------------------------------------------

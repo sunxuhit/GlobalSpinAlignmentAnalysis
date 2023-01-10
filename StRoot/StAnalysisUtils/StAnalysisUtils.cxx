@@ -13,9 +13,9 @@ ClassImp(StAnalysisUtils)
 
 //---------------------------------------------------------------------------------
 
-StAnalysisUtils::StAnalysisUtils(int beamType)
+StAnalysisUtils::StAnalysisUtils(int beamType) : mType(beamType)
 {
-  mType = beamType;
+  // mType = beamType;
 }
 
 //---------------------------------------------------------------------------------

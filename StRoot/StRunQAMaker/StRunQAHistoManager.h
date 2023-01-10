@@ -28,15 +28,14 @@ class StRunQAHistoManager
     //--------------QA---------------
 
   private:
-    const int mNumCuts = 2;
-    const int mNumTriggerBins = 10;
-    const std::string mCutStatus[mNumCuts] = {"Bf","Af"};
+    static const int mNumCuts = 2; // 0: before cuts | 1: after cuts
+    static const int mNumTriggerBins = 10; // 0-8 for different triggerID | 9 for all triggers
 
     // QA Histograms
     // Event Level:
     TH1F *h_mTriggerId[mNumCuts];
-    TH1F *h_mRefMult[mNumCuts][mNumTriggerBins]; // 0: before cuts | 1: after cuts
-    TH1F *h_mGRefMult[mNumCuts][mNumTriggerBins]; // 0-8 for different triggerID | 9 for all triggers
+    TH1F *h_mRefMult[mNumCuts][mNumTriggerBins];
+    TH1F *h_mGRefMult[mNumCuts][mNumTriggerBins];
     TH2F *h_mRefMultGRefMult[mNumCuts][mNumTriggerBins];
     TH1F *h_mCentrality9[mNumCuts][mNumTriggerBins];
     TH2F *h_mTofMatchRefMult[mNumCuts][mNumTriggerBins];
@@ -61,6 +60,9 @@ class StRunQAHistoManager
     TH2F *h_mMomDEdx[mNumCuts][mNumTriggerBins];
     TH2F *h_mMomMass2[mNumCuts][mNumTriggerBins];
     TH2F *h_mMomBeta[mNumCuts][mNumTriggerBins];
+
+    std::string mCutStatus[mNumCuts] = {"Bf","Af"};
+
 
   ClassDef(StRunQAHistoManager,1)
 };

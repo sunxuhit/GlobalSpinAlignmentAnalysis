@@ -28,7 +28,7 @@ class StAnalysisCut : public TObject
     bool passTrackQA(StPicoTrack*, StPicoEvent*);
 
   private:
-    int mType;
+    const int mType;
 
     ClassDef(StAnalysisCut,1)
 };

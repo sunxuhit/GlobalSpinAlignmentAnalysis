@@ -28,7 +28,7 @@ class StAnalysisUtils
     int getTriggerBin(StPicoEvent*); // return trigger bin for event QA
 
   private:
-    int mType;
+    const int mType;
     std::map<int,int> map_runIndex;
     std::vector<int> vec_badRunId;
 

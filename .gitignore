@@ -24,6 +24,7 @@ StRoot/StRefMultCorr/CVS/
 
 Utility/FileList/*/*.list
 !Utility/FileList/*/runNumber*.list
+!Utility/FileList/*/badRun*.list
 !Utility/FileList/*/allIsobarRun.list
 
 submit/**/JOBS/

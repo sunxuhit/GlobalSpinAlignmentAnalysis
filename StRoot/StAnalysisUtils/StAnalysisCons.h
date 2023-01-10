@@ -1,5 +1,5 @@
-#ifndef StRunQACons_h
-#define StRunQACons_h
+#ifndef StAnalysisCons_h
+#define StAnalysisCons_h
 
 #include <string>
 #include "TString.h"

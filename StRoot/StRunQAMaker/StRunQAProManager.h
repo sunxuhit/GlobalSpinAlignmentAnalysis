@@ -19,13 +19,12 @@ class StRunQAProManager
     void writeRunQA();
 
   private:
-    const int mNumCuts = 2;
-    const int mNumTriggerBins = 10;
-    const std::string mCutStatus[mNumCuts] = {"Bf","Af"};
+    static const int mNumCuts = 2; // 0: before cuts | 1: after cuts
+    static const int mNumTriggerBins = 10; // 0-8 for different triggerID | 9 for all triggers
 
     // Run-by-Run QA | x axis is RunIndex
-    TProfile *p_mRefMult[mNumCuts][mNumTriggerBins]; // 0: before cuts | 1: after cuts
-    TProfile *p_mGRefMult[mNumCuts][mNumTriggerBins]; // 0-8 for different triggerID | 9 for all triggers
+    TProfile *p_mRefMult[mNumCuts][mNumTriggerBins];
+    TProfile *p_mGRefMult[mNumCuts][mNumTriggerBins];
     TProfile *p_mZdcX[mNumCuts][mNumTriggerBins];
     TProfile *p_mVz[mNumCuts][mNumTriggerBins];
     TProfile *p_mVr[mNumCuts][mNumTriggerBins];
@@ -37,6 +36,8 @@ class StRunQAProManager
     TProfile *p_mGlobPt[mNumCuts][mNumTriggerBins];
     TProfile *p_mGlobEta[mNumCuts][mNumTriggerBins];
     TProfile *p_mGlobPhi[mNumCuts][mNumTriggerBins];
+
+    std::string mCutStatus[mNumCuts] = {"Bf","Af"};
 
     ClassDef(StRunQAProManager,1)
 };
