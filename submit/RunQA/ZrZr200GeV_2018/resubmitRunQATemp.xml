@@ -16,10 +16,10 @@
     </Package>
   </SandBox>
 
-  <input URL="filelist:&listPath;/pico_xrootd_resubmit.list" />
+  <input URL="filelist:&listPath;/pico_xrootd_resubmit_RunQA_2B5E9214220039C2392A095F346625F4.list" />
 
   <stdout discard="true"/>
-  <!-- <stdout URL="file:&#38;outPath;/Log/$JOBID.out"/> -->
+  <stdout URL="file:&outPath;/Log/$JOBID.out"/>
   <stderr URL="file:&outPath;/Log/$JOBID.err"/>
 
   <Generator>
