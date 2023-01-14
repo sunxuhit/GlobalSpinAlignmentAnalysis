@@ -5,9 +5,10 @@ date
 
 if [ $# -eq 0 ]
 then
-  Energy=200GeV_2014
-  InPutList="../StRoot/StRunQAUtility/RunIndex/badRunIndexUnSorted_${Energy}.txt"
-  OutPutList="../StRoot/StRunQAUtility/RunIndex/badRunIndex_${Energy}.txt"
+  BeamType=ZrZr200GeV_2018
+  # BeamType=RuRu200GeV_2018
+  InPutList="./${BeamType}/badRunIndexUnSorted_${BeamType}.txt"
+  OutPutList="./${BeamType}/badRunIndex_${BeamType}.txt"
 
   rm $OutPutList
   touch $OutPutList

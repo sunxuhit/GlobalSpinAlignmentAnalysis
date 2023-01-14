@@ -10,85 +10,86 @@
 #include "TF1.h"
 #include "TLegend.h"
 
-#include "../StRoot/StRunQAMaker/StRunQACons.h"
-#include "./draw.h"
+#include "../../Utility/include/StSpinAlignmentCons.h"
+#include "../Plot/draw.h"
 
 using namespace std;
 
-static const string mCutsQA[2] = {"Before","After"};
+static const string CutStatus[2] = {"Bf","Af"};
+static const int numCuts = 2; // 0: before cuts | 1: after cuts
+static const int numTriggerBins = 10; // 0-8 for different triggerID | 9 for all triggers
 
 void findMean(TProfile *p_runQA, double &mean, double &sigma);
 bool isBadRun(double val, double mean, double sigma);
 void plotGoodRunRange(double runIndexStart, double runIndexStop, double mean, double sigma);
 
-int findBadRunIndex(int energy = 0)
+int findBadRunIndex(int beamType = 0)
 {
-  string JobId = "EEE0479FEE171BB7ACDE3FBF146413E7";
-  // string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/merged_file/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
-  // string inputfile = Form("/star/u/sunxuhit/AuAu%s/SpinAlignment/RunQA/test/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
-  string inputfile = Form("/Users/xusun/WorkSpace/STAR/Data/SpinAlignment/AuAu%s/RunQA/merged_file/file_%s_RunQA_%s.root",runQA::mBeamEnergy[energy].c_str(),runQA::mBeamEnergy[energy].c_str(),JobId.c_str());
+  string inputfile = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/%s/RunQA/file_%s_RunQA.root",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
-  TProfile *p_mRefMult[2][10]; // 0: before cuts | 1: after cuts
-  TProfile *p_mGRefMult[2][10]; // 0-8 for different triggerID | 9 for all triggers
-  TProfile *p_mZdcX[2][10];
-  TProfile *p_mVz[2][10];
-  TProfile *p_mVr[2][10];
 
-  TProfile *p_mGDca[2][10];
-  TProfile *p_mNHitsFit[2][10];
-  TProfile *p_mPrimPt[2][10];
-  TProfile *p_mPrimEta[2][10];
-  TProfile *p_mPrimPhi[2][10];
-  TProfile *p_mGlobPt[2][10];
-  TProfile *p_mGlobEta[2][10];
-  TProfile *p_mGlobPhi[2][10];
+  TProfile *p_mRefMult[numCuts][numTriggerBins];
+  TProfile *p_mGRefMult[numCuts][numTriggerBins];
+  TProfile *p_mZdcX[numCuts][numTriggerBins];
+  TProfile *p_mVz[numCuts][numTriggerBins];
+  TProfile *p_mVr[numCuts][numTriggerBins];
 
-  for(int i_cut = 0; i_cut < 2; ++i_cut)
+  TProfile *p_mGDca[numCuts][numTriggerBins];
+  TProfile *p_mNHitsFit[numCuts][numTriggerBins];
+  TProfile *p_mPrimPt[numCuts][numTriggerBins];
+  TProfile *p_mPrimEta[numCuts][numTriggerBins];
+  TProfile *p_mPrimPhi[numCuts][numTriggerBins];
+  TProfile *p_mGlobPt[numCuts][numTriggerBins];
+  TProfile *p_mGlobEta[numCuts][numTriggerBins];
+  TProfile *p_mGlobPhi[numCuts][numTriggerBins];
+
+  for(int iCut = 0; iCut < numCuts; ++iCut)
   {
-    for(int i_trig = 0; i_trig < 10; ++i_trig)
+    for(int iTrig = 0; iTrig < numTriggerBins; ++iTrig)
     {
-      std::string ProName = Form("p_mRefMult%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mRefMult[i_cut][i_trig] = (TProfile*)File_InPut->Get(ProName.c_str());
+      std::string ProName = Form("p_mRefMult%sTrigger%d",CutStatus[iCut].c_str(),iTrig);
+      p_mRefMult[iCut][iTrig] = (TProfile*)File_InPut->Get(ProName.c_str());
 
-      ProName = Form("p_mGRefMult%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mGRefMult[i_cut][i_trig] = (TProfile*)File_InPut->Get(ProName.c_str());
+      ProName = Form("p_mGRefMult%sTrigger%d",CutStatus[iCut].c_str(),iTrig);
+      p_mGRefMult[iCut][iTrig] = (TProfile*)File_InPut->Get(ProName.c_str());
 
-      ProName = Form("p_mZdcX%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mZdcX[i_cut][i_trig] = (TProfile*)File_InPut->Get(ProName.c_str());
+      ProName = Form("p_mZdcX%sTrigger%d",CutStatus[iCut].c_str(),iTrig);
+      p_mZdcX[iCut][iTrig] = (TProfile*)File_InPut->Get(ProName.c_str());
 
-      ProName = Form("p_mVz%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mVz[i_cut][i_trig] = (TProfile*)File_InPut->Get(ProName.c_str());
+      ProName = Form("p_mVz%sTrigger%d",CutStatus[iCut].c_str(),iTrig);
+      p_mVz[iCut][iTrig] = (TProfile*)File_InPut->Get(ProName.c_str());
 
-      ProName = Form("p_mVr%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mVr[i_cut][i_trig] = (TProfile*)File_InPut->Get(ProName.c_str());
+      ProName = Form("p_mVr%sTrigger%d",CutStatus[iCut].c_str(),iTrig);
+      p_mVr[iCut][iTrig] = (TProfile*)File_InPut->Get(ProName.c_str());
 
-      ProName = Form("p_mGDca%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mGDca[i_cut][i_trig] = (TProfile*)File_InPut->Get(ProName.c_str());
+      ProName = Form("p_mGDca%sTrigger%d",CutStatus[iCut].c_str(),iTrig);
+      p_mGDca[iCut][iTrig] = (TProfile*)File_InPut->Get(ProName.c_str());
 
-      ProName = Form("p_mNHitsFit%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mNHitsFit[i_cut][i_trig] = (TProfile*)File_InPut->Get(ProName.c_str());
+      ProName = Form("p_mNHitsFit%sTrigger%d",CutStatus[iCut].c_str(),iTrig);
+      p_mNHitsFit[iCut][iTrig] = (TProfile*)File_InPut->Get(ProName.c_str());
 
-      ProName = Form("p_mPrimPt%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mPrimPt[i_cut][i_trig] = (TProfile*)File_InPut->Get(ProName.c_str());
+      ProName = Form("p_mPrimPt%sTrigger%d",CutStatus[iCut].c_str(),iTrig);
+      p_mPrimPt[iCut][iTrig] = (TProfile*)File_InPut->Get(ProName.c_str());
 
-      ProName = Form("p_mPrimEta%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mPrimEta[i_cut][i_trig] = (TProfile*)File_InPut->Get(ProName.c_str());
+      ProName = Form("p_mPrimEta%sTrigger%d",CutStatus[iCut].c_str(),iTrig);
+      p_mPrimEta[iCut][iTrig] = (TProfile*)File_InPut->Get(ProName.c_str());
 
-      ProName = Form("p_mPrimPhi%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mPrimPhi[i_cut][i_trig] = (TProfile*)File_InPut->Get(ProName.c_str());
+      ProName = Form("p_mPrimPhi%sTrigger%d",CutStatus[iCut].c_str(),iTrig);
+      p_mPrimPhi[iCut][iTrig] = (TProfile*)File_InPut->Get(ProName.c_str());
 
-      ProName = Form("p_mGlobPt%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mGlobPt[i_cut][i_trig] = (TProfile*)File_InPut->Get(ProName.c_str());
+      ProName = Form("p_mGlobPt%sTrigger%d",CutStatus[iCut].c_str(),iTrig);
+      p_mGlobPt[iCut][iTrig] = (TProfile*)File_InPut->Get(ProName.c_str());
 
-      ProName = Form("p_mGlobEta%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mGlobEta[i_cut][i_trig] = (TProfile*)File_InPut->Get(ProName.c_str());
+      ProName = Form("p_mGlobEta%sTrigger%d",CutStatus[iCut].c_str(),iTrig);
+      p_mGlobEta[iCut][iTrig] = (TProfile*)File_InPut->Get(ProName.c_str());
 
-      ProName = Form("p_mGlobPhi%s_trigger%d",mCutsQA[i_cut].c_str(),i_trig);
-      p_mGlobPhi[i_cut][i_trig] = (TProfile*)File_InPut->Get(ProName.c_str());
+      ProName = Form("p_mGlobPhi%sTrigger%d",CutStatus[iCut].c_str(),iTrig);
+      p_mGlobPhi[iCut][iTrig] = (TProfile*)File_InPut->Get(ProName.c_str());
     }
   }
 
-  string outputfile = Form("../StRoot/StRunQAUtility/RunIndex/badRunIndexUnSorted_%s.txt",runQA::mBeamEnergy[energy].c_str());
+
+  string outputfile = Form("../../Utility/RunIndex/%s/badRunIndexUnSorted_%s.txt",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
   ofstream file_badRunIndex;
   file_badRunIndex.open(outputfile.c_str());
   if (!file_badRunIndex.is_open()) 
@@ -98,11 +99,12 @@ int findBadRunIndex(int energy = 0)
   } 
 
   const double runIndexStart = -0.5;
-  const double runIndexStop  = 3999.5;
+  const double runIndexStop  = 4999.5;
 
-  const int numOfTriggers = 5;
-  const int triggerID[numOfTriggers] = {450005,450015,450025,450050,450060};
-  const int MarkerColor[numOfTriggers] = {7,6,4,2,16};
+  const int numOfTriggers = 4;
+  const int triggerID[numOfTriggers] = {600001,600011,600021,600031};
+  const int MarkerColor[numOfTriggers] = {7,6,4,2};
+  string FigName;
 
   //-------------refMult----------------
   double meanRefMult = 0.0;
@@ -129,7 +131,8 @@ int findBadRunIndex(int energy = 0)
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanRefMult,sigmaRefMult);
 
-  c_RunQA_RefMult->SaveAs("./figures/c_RunQA_RefMult_badRunIndex.eps");
+  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_RefMult_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  c_RunQA_RefMult->SaveAs(FigName.c_str());
 
   for(int i_run = 0; i_run < p_mRefMult[1][9]->GetNbinsX(); ++i_run)
   {
@@ -166,7 +169,8 @@ int findBadRunIndex(int energy = 0)
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanGRefMult,sigmaGRefMult);
 
-  c_RunQA_gRefMult->SaveAs("./figures/c_RunQA_gRefMult_badRunIndex.eps");
+  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_gRefMult_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  c_RunQA_gRefMult->SaveAs(FigName.c_str());
 
   for(int i_run = 0; i_run < p_mGRefMult[1][9]->GetNbinsX(); ++i_run)
   {
@@ -203,7 +207,8 @@ int findBadRunIndex(int energy = 0)
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanZdcX,sigmaZdcX);
 
-  c_RunQA_ZdcX->SaveAs("./figures/c_RunQA_ZdcX_badRunIndex.eps");
+  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_ZdcX_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  c_RunQA_ZdcX->SaveAs(FigName.c_str());
 
   for(int i_run = 0; i_run < p_mZdcX[1][9]->GetNbinsX(); ++i_run)
   {
@@ -240,7 +245,8 @@ int findBadRunIndex(int energy = 0)
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanVz,sigmaVz);
 
-  c_RunQA_Vz->SaveAs("./figures/c_RunQA_Vz_badRunIndex.eps");
+  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_Vz_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  c_RunQA_Vz->SaveAs(FigName.c_str());
 
   for(int i_run = 0; i_run < p_mVz[1][9]->GetNbinsX(); ++i_run)
   {
@@ -277,7 +283,8 @@ int findBadRunIndex(int energy = 0)
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanVr,sigmaVr);
 
-  c_RunQA_Vr->SaveAs("./figures/c_RunQA_Vr_badRunIndex.eps");
+  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_Vr_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  c_RunQA_Vr->SaveAs(FigName.c_str());
 
   for(int i_run = 0; i_run < p_mVr[1][9]->GetNbinsX(); ++i_run)
   {
@@ -314,7 +321,8 @@ int findBadRunIndex(int energy = 0)
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanGDca,sigmaGDca);
 
-  c_RunQA_gDca->SaveAs("./figures/c_RunQA_gDca_badRunIndex.eps");
+  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_gDca_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  c_RunQA_gDca->SaveAs(FigName.c_str());
 
   for(int i_run = 0; i_run < p_mGDca[1][9]->GetNbinsX(); ++i_run)
   {
@@ -351,7 +359,8 @@ int findBadRunIndex(int energy = 0)
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanNHitsFit,sigmaNHitsFit);
 
-  c_RunQA_nHitsFit->SaveAs("./figures/c_RunQA_nHitsFit_badRunIndex.eps");
+  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_nHitsFit_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  c_RunQA_nHitsFit->SaveAs(FigName.c_str());
 
   for(int i_run = 0; i_run < p_mNHitsFit[1][9]->GetNbinsX(); ++i_run)
   {
@@ -388,7 +397,8 @@ int findBadRunIndex(int energy = 0)
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanPrimPt,sigmaPrimPt);
 
-  c_RunQA_primPt->SaveAs("./figures/c_RunQA_primPt_badRunIndex.eps");
+  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_primPt_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  c_RunQA_primPt->SaveAs(FigName.c_str());
 
   for(int i_run = 0; i_run < p_mPrimPt[1][9]->GetNbinsX(); ++i_run)
   {
@@ -425,7 +435,8 @@ int findBadRunIndex(int energy = 0)
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanPrimEta,sigmaPrimEta);
 
-  c_RunQA_primEta->SaveAs("./figures/c_RunQA_primEta_badRunIndex.eps");
+  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_primEta_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  c_RunQA_primEta->SaveAs(FigName.c_str());
 
   for(int i_run = 0; i_run < p_mPrimEta[1][9]->GetNbinsX(); ++i_run)
   {
@@ -462,7 +473,8 @@ int findBadRunIndex(int energy = 0)
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanPrimPhi,sigmaPrimPhi);
 
-  c_RunQA_primPhi->SaveAs("./figures/c_RunQA_primPhi_badRunIndex.eps");
+  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_primPhi_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  c_RunQA_primPhi->SaveAs(FigName.c_str());
 
   for(int i_run = 0; i_run < p_mPrimPhi[1][9]->GetNbinsX(); ++i_run)
   {
@@ -499,7 +511,8 @@ int findBadRunIndex(int energy = 0)
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanGlobPt,sigmaGlobPt);
 
-  c_RunQA_globPt->SaveAs("./figures/c_RunQA_globPt_badRunIndex.eps");
+  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_globPt_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  c_RunQA_globPt->SaveAs(FigName.c_str());
 
   for(int i_run = 0; i_run < p_mGlobPt[1][9]->GetNbinsX(); ++i_run)
   {
@@ -536,7 +549,8 @@ int findBadRunIndex(int energy = 0)
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanGlobEta,sigmaGlobEta);
 
-  c_RunQA_globEta->SaveAs("./figures/c_RunQA_globEta_badRunIndex.eps");
+  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_globEta_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  c_RunQA_globEta->SaveAs(FigName.c_str());
 
   for(int i_run = 0; i_run < p_mGlobEta[1][9]->GetNbinsX(); ++i_run)
   {
@@ -573,7 +587,8 @@ int findBadRunIndex(int energy = 0)
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanGlobPhi,sigmaGlobPhi);
 
-  c_RunQA_globPhi->SaveAs("./figures/c_RunQA_globPhi_badRunIndex.eps");
+  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_globPhi_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  c_RunQA_globPhi->SaveAs(FigName.c_str());
 
   for(int i_run = 0; i_run < p_mGlobPhi[1][9]->GetNbinsX(); ++i_run)
   {
