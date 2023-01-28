@@ -29,8 +29,8 @@ class StAnalysisUtils
 
   private:
     const int mType;
-    std::map<int,int> map_runIndex;
-    std::vector<int> vec_badRunId;
+    std::map<int,int> map_mRunIndex;
+    std::vector<int> vec_mBadRunId;
 
     ClassDef(StAnalysisUtils,1)
 };

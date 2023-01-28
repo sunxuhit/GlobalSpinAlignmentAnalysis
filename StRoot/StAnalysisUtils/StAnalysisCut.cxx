@@ -114,17 +114,17 @@ bool StAnalysisCut::passTrackBasic(StPicoTrack *picoTrack)
   if(!picoTrack) return false;
 
   // nHitsFit cut
-  if(picoTrack->nHitsFit() < anaUtils::mHitsFitTpcMin)
+  if(picoTrack->nHitsFit() < anaUtils::mHitsFitTpcMin[mType])
   {
     return false;
   }
 
   // nHitsRatio cut
-  if(picoTrack->nHitsMax() <= anaUtils::mHitsMaxTpcMin)
+  if(picoTrack->nHitsMax() <= anaUtils::mHitsMaxTpcMin[mType])
   {
     return false;
   }
-  if((float)picoTrack->nHitsFit()/(float)picoTrack->nHitsMax() < anaUtils::mHitsRatioTpcMin)
+  if((float)picoTrack->nHitsFit()/(float)picoTrack->nHitsMax() < anaUtils::mHitsRatioTpcMin[mType])
   {
     return false;
   }
@@ -142,7 +142,7 @@ bool StAnalysisCut::passTrackQA(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
   const float vz    = picoEvent->primaryVertex().z();
 
   // dca cut
-  if(picoTrack->gDCA(vx,vy,vz) > anaUtils::mDcaQaMax)
+  if(picoTrack->gDCA(vx,vy,vz) > anaUtils::mDcaQaMax[mType])
   {
     return false;
   }
@@ -155,12 +155,49 @@ bool StAnalysisCut::passTrackQA(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
   // primMom.SetXYZ(primPx,primPy,primPz);
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const float eta = primMom.PseudoRapidity();
-  if(fabs(eta) > anaUtils::mEtaQaMax)
+  if(fabs(eta) > anaUtils::mEtaQaMax[mType])
   {
     return false;
   }
 
-  if(primMom.Pt() < anaUtils::mPrimPtQaMin) // minimum pT cuts
+  if(primMom.Pt() < anaUtils::mPrimPtQaMin[mType]) // minimum pT cuts
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool StAnalysisCut::passTrackEP(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
+{
+  if(!picoEvent) return false;
+  if(!passTrackBasic(picoTrack)) return false;
+
+  const float vx    = picoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
+  const float vy    = picoEvent->primaryVertex().y();
+  const float vz    = picoEvent->primaryVertex().z();
+
+  // dca cut
+  if(picoTrack->gDCA(vx,vy,vz) > anaUtils::mDcaEpMax[mType])
+  {
+    return false;
+  }
+
+  // TVector3 primMom; // temp fix for StThreeVectorF & TVector3
+  // float primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
+  // float primPy    = picoTrack->pMom().y();
+  // float primPz    = picoTrack->pMom().z();
+  // primMom.SetXYZ(primPx,primPy,primPz);
+  // eta cut: -1.0 <= eta <= 1.0
+  const TVector3 primMom = picoTrack->pMom(); // primary Momentum
+  const float eta = primMom.PseudoRapidity();
+  if(fabs(eta) > anaUtils::mEtaEpMax[mType])
+  {
+    return false;
+  }
+
+  // momentum cut: 0.2 <= pT <= 2.0 && p <= 10.0 GeV/c
+  if(primMom.Pt() < anaUtils::mPrimPtEpMin[mType] || primMom.Pt() > anaUtils::mPrimPtEpMax[mType] || primMom.Mag() > anaUtils::mPrimMomEpMax[mType]))
   {
     return false;
   }

@@ -4,11 +4,11 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <iterator>
-#include "../include/StSpinAlignmentCons.h"
+#include "../../Utility/include/StSpinAlignmentCons.h"
 
 int genRunIndex(int beamType = 0)
 {
-  const int numOfRuns = globCons::mMaxRunIndex;
+  const int numOfRuns = globCons::mMaxRunIndex[beamType];
   int runId[numOfRuns];
   int runIndex[numOfRuns];
   for(int i_run = 0; i_run < numOfRuns; ++i_run)
@@ -19,7 +19,7 @@ int genRunIndex(int beamType = 0)
 
   // const string mBeamSpec[2] = {"ZrZr200GeV_2018","RuRu200GeV_2018"};
 
-  string inputfile = Form("../FileList/%s/runNumberRunLog.list",globCons::mBeamType[beamType].c_str());
+  string inputfile = Form("../../Utility/FileList/%s/runNumberRunLog.list",globCons::mBeamType[beamType].c_str());
   
   std::cout << "inputfile = " << inputfile.c_str() << std::endl;
   std::ifstream file_runList ( inputfile.c_str() );
@@ -44,7 +44,7 @@ int genRunIndex(int beamType = 0)
   }
   file_runList.close();
 
-  string outputfile = Form("./%s/runIndex_%s.txt",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  string outputfile = Form("../../Utility/RunIndex/%s/runIndex_%s.txt",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
   std::ofstream file_runIndex;
   file_runIndex.open(outputfile.c_str());
   if (!file_runIndex.is_open()) 

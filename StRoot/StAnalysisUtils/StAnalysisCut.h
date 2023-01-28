@@ -26,6 +26,7 @@ class StAnalysisCut : public TObject
     // Track Cuts
     bool passTrackBasic(StPicoTrack*);
     bool passTrackQA(StPicoTrack*, StPicoEvent*);
+    bool passTrackEP(StPicoTrack*, StPicoEvent*);
 
   private:
     const int mType;

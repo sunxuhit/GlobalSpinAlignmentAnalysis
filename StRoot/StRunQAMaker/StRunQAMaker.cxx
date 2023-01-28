@@ -24,13 +24,13 @@
 ClassImp(StRunQAMaker)
 
 //-----------------------------------------------------------------------------
-StRunQAMaker::StRunQAMaker(const char* name, StPicoDstMaker *picoMaker, const string jobId, const int beamType) : StMaker(name)
+StRunQAMaker::StRunQAMaker(const char* name, StPicoDstMaker *picoMaker, string jobId, int beamType) : StMaker(name), mType(beamType)
 {
   mPicoDstMaker = picoMaker;
   mPicoDst = NULL;
   mRefMultCorr = NULL;
 
-  mType = beamType;
+  // mType = beamType;
   str_mOutPutRunQA = Form("./file_%s_RunQA_%s.root",globCons::mBeamType[mType].c_str(),jobId.c_str());
 }
 
@@ -41,8 +41,8 @@ StRunQAMaker::~StRunQAMaker()
 //----------------------------------------------------------------------------- 
 int StRunQAMaker::Init() 
 {
-  mRunQAHistoManager = new StRunQAHistoManager();
-  mRunQAProManager   = new StRunQAProManager();
+  mRunQAHistoManager = new StRunQAHistoManager(mType);
+  mRunQAProManager   = new StRunQAProManager(mType);
   mAnaCut            = new StAnalysisCut(mType);
   mAnaUtils          = new StAnalysisUtils(mType);
   mAnaUtils->initRunIndex(); // initialize std::map for run index

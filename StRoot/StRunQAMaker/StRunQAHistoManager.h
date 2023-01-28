@@ -10,7 +10,7 @@ class TH2F;
 class StRunQAHistoManager
 {
   public:
-    StRunQAHistoManager();
+    StRunQAHistoManager(int beamType);
     virtual ~StRunQAHistoManager();
 
     //--------------QA---------------
@@ -62,6 +62,8 @@ class StRunQAHistoManager
     TH2F *h_mMomBeta[mNumCuts][mNumTriggerBins];
 
     std::string mCutStatus[mNumCuts] = {"Bf","Af"};
+
+    const int mType;
 
 
   ClassDef(StRunQAHistoManager,1)

@@ -11,7 +11,7 @@ ClassImp(StRunQAHistoManager)
 
 //-------------------------------------------------------------------------------------------
 
-StRunQAHistoManager::StRunQAHistoManager()
+StRunQAHistoManager::StRunQAHistoManager(int beamType) : mType(beamType)
 {
 }
 

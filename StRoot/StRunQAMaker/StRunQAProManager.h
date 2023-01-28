@@ -9,7 +9,7 @@ class TProfile;
 class StRunQAProManager
 {
   public:
-    StRunQAProManager();
+    StRunQAProManager(int beamType);
     virtual ~StRunQAProManager();
 
     // Run-by-Run QA
@@ -38,6 +38,8 @@ class StRunQAProManager
     TProfile *p_mGlobPhi[mNumCuts][mNumTriggerBins];
 
     std::string mCutStatus[mNumCuts] = {"Bf","Af"};
+
+    const int mType;
 
     ClassDef(StRunQAProManager,1)
 };

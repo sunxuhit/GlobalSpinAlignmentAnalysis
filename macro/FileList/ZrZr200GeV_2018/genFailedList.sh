@@ -67,10 +67,6 @@ then
   sort $TempList | uniq > $ResubmitList
   rm $TempList
 
-  #generate failed ROOT output list
-  # sed -i "s/sched/file_"$BeamType"_"$Mode"_/g" $FailedList
-  # sed -i "s/list/root/g" $FailedList
-
 else
   echo "Wrong number of parameters"
 fi

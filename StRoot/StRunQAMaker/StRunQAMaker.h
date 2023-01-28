@@ -17,7 +17,7 @@ class StRunQAProManager;
 
 class StRunQAMaker : public StMaker {
   public:
-    StRunQAMaker(const char *name, StPicoDstMaker *picoMaker, const string jobId, const int beamType);
+    StRunQAMaker(const char *name, StPicoDstMaker *picoMaker, string jobId, int beamType);
     virtual ~StRunQAMaker();
     
     virtual int Init();
@@ -36,7 +36,7 @@ class StRunQAMaker : public StMaker {
     StRunQAHistoManager *mRunQAHistoManager;
     StRunQAProManager   *mRunQAProManager;
     
-    int mType;
+    const int mType;
 
     std::string str_mOutPutRunQA;
     TFile *file_mOutPutRunQA;
