@@ -197,7 +197,7 @@ bool StAnalysisCut::passTrackEP(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
   }
 
   // momentum cut: 0.2 <= pT <= 2.0 && p <= 10.0 GeV/c
-  if(primMom.Pt() < anaUtils::mPrimPtEpMin[mType] || primMom.Pt() > anaUtils::mPrimPtEpMax[mType] || primMom.Mag() > anaUtils::mPrimMomEpMax[mType]))
+  if(primMom.Pt() < anaUtils::mPrimPtEpMin[mType] || primMom.Pt() > anaUtils::mPrimPtEpMax[mType] || primMom.Mag() > anaUtils::mPrimMomEpMax[mType])
   {
     return false;
   }
