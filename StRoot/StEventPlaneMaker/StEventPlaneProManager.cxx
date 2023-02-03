@@ -30,14 +30,14 @@ void StEventPlaneProManager::initZdcReCenter()
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)
   {
     std::string ProName = Form("p_mZdcQEastVertVz%d",iVz);
-    p_mZdcQEastVertical[iVz] = new TProfile2D(ProName.c_str(),ProName.c_str(),globCons::mNumOfRunIndex[mType],-0.5,(double)globCons::mNumOfRunIndex[mType]-0.5,9,-0.5,8.5);
+    p_mZdcQEastVertical[iVz] = new TProfile2D(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
     ProName = Form("p_mZdcQEastHoriVz%d",iVz);
-    p_mZdcQEastHorizontal[iVz] = new TProfile2D(ProName.c_str(),ProName.c_str(),globCons::mNumOfRunIndex[mType],-0.5,(double)globCons::mNumOfRunIndex[mType]-0.5,9,-0.5,8.5);
+    p_mZdcQEastHorizontal[iVz] = new TProfile2D(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
 
     ProName = Form("p_mZdcQWestVertVz%d",iVz);
-    p_mZdcQWestVertical[iVz] = new TProfile2D(ProName.c_str(),ProName.c_str(),globCons::mNumOfRunIndex[mType],-0.5,(double)globCons::mNumOfRunIndex[mType]-0.5,9,-0.5,8.5);
+    p_mZdcQWestVertical[iVz] = new TProfile2D(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
     ProName = Form("p_mZdcQWestHoriVz%d",iVz);
-    p_mZdcQWestHorizontal[iVz] = new TProfile2D(ProName.c_str(),ProName.c_str(),globCons::mNumOfRunIndex[mType],-0.5,(double)globCons::mNumOfRunIndex[mType]-0.5,9,-0.5,8.5);
+    p_mZdcQWestHorizontal[iVz] = new TProfile2D(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
   }
 }
 

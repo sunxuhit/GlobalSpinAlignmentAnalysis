@@ -52,7 +52,7 @@ StTpcEpManager::~StTpcEpManager()
 
 void StTpcEpManager::InitReCenterCorrection()
 {
-  TString InPutFile = Form("/global/project/projectdirs/starprod/rnc/xusun/OutPut/AuAu%s/SpinAlignment/ReCenterParameter/file_%s_ReCenterPar.root",globCons::mBeamType[mEnergy].c_str(),globCons::mBeamType[mEnergy].c_str());
+  TString InPutFile = Form("/global/project/projectdirs/starprod/rnc/xusun/OutPut/AuAu%s/SpinAlignment/ReCenterParameter/file_%s_ReCenterPar.root",globCons::str_mBeamType[mEnergy].c_str(),globCons::str_mBeamType[mEnergy].c_str());
 
   mInPutFile = TFile::Open(InPutFile.Data());
 
@@ -78,7 +78,7 @@ void StTpcEpManager::InitReCenterCorrection()
 
 void StTpcEpManager::InitShiftCorrection()
 {
-  TString InPutFile_Shift = Form("/global/project/projectdirs/starprod/rnc/xusun/OutPut/AuAu%s/SpinAlignment/ShiftParameter/file_%s_ShiftPar.root",globCons::mBeamType[mEnergy].c_str(),globCons::mBeamType[mEnergy].c_str());
+  TString InPutFile_Shift = Form("/global/project/projectdirs/starprod/rnc/xusun/OutPut/AuAu%s/SpinAlignment/ShiftParameter/file_%s_ShiftPar.root",globCons::str_mBeamType[mEnergy].c_str(),globCons::str_mBeamType[mEnergy].c_str());
   mInPutFile_Shift = TFile::Open(InPutFile_Shift.Data());
 }
 
@@ -654,7 +654,7 @@ Float_t StTpcEpManager::calShiftAngle2Full_EP(Int_t runIndex, Int_t Cent9, Int_t
 
 void StTpcEpManager::InitResolutionCorr()
 {
-  TString InPutFile_Res = Form("/global/project/projectdirs/starprod/rnc/xusun/OutPut/AuAu%s/SpinAlignment/Resolution/file_%s_Resolution.root",globCons::mBeamType[mEnergy].c_str(),globCons::mBeamType[mEnergy].c_str());
+  TString InPutFile_Res = Form("/global/project/projectdirs/starprod/rnc/xusun/OutPut/AuAu%s/SpinAlignment/Resolution/file_%s_Resolution.root",globCons::str_mBeamType[mEnergy].c_str(),globCons::str_mBeamType[mEnergy].c_str());
   mInPutFile_Res = TFile::Open(InPutFile_Res.Data());
 }
 

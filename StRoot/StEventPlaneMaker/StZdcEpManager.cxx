@@ -1,10 +1,3 @@
-// #include "StPicoDstMaker/StPicoDstMaker.h"
-// #include "StPicoEvent/StPicoDst.h"
-// #include "StPicoEvent/StPicoEvent.h"
-// #include "StPicoEvent/StPicoTrack.h"
-// #include "StPicoEvent/StPicoBTofPidTraits.h"
-// #include "StMessMgr.h"
-
 #include "TMath.h"
 #include "TString.h"
 #include "TFile.h"
@@ -79,7 +72,7 @@ double StZdcEpManager::getZdcSmd(int eastwest, int verthori, int slat)
 
 void StZdcEpManager::readGainCorr()
 {
-  string inputFile = Form("Utility/EventPlaneMaker/%s/GainCorrPar/file_%s_ZdcGainCorrFac.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+  std::string inputFile = Form("Utility/EventPlaneMaker/%s/GainCorrPar/file_%s_ZdcGainCorrFac.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   file_mGainCorrPar = TFile::Open(inputFile.c_str());
   for(int iEastWest = 0; iEastWest < 2; ++iEastWest)
   {
@@ -87,7 +80,7 @@ void StZdcEpManager::readGainCorr()
     {
       for(int iSlat = 0; iSlat < 8; ++iSlat)
       {
-	string histName = Form("h_mZdcGainCorrFactor%s%sSlat%d",str_mEastWest[iEastWest].c_str(),str_mVertHori[iVertHori].c_str(),iSlat);
+	std::string histName = Form("h_mZdcGainCorrFactor%s%sSlat%d",str_mEastWest[iEastWest].c_str(),str_mVertHori[iVertHori].c_str(),iSlat);
 	TH1F *h_GainCorrFac = (TH1F*)file_mGainCorrPar->Get(histName.c_str());
 	mGainCorrFactor[iEastWest][iVertHori][iSlat] = h_GainCorrFac->GetBinContent(1);
 	// cout << "iEastWest = " << iEastWest << ", iVertHori = " << iVertHori << ", iSlat = " << iSlat << ", mGainCorrFactor = " << mGainCorrFactor[iEastWest][iVertHori][iSlat] << endl;
@@ -118,7 +111,7 @@ double StZdcEpManager::getPosition(int eastwest, int verthori, int slat, int mod
     setZdcSmdCenter();
     if(mCenterEastVertical < -100.0 || mCenterEastHorizontal < -100.0 || mCenterWestVertical < -100.0 || mCenterWestHorizontal < -100.0) 
     {
-      cout << "Forgot Re-Center!!!!" << endl;
+      std::cout << "Forgot Re-Center!!!!" << std::endl;
       return 0;
     }
     if(eastwest == 0 && verthori == 0) return zdcsmdVert[slat]-mCenterEastVertical;
@@ -155,7 +148,7 @@ TVector2 StZdcEpManager::getQEast(int mode)
   }
 
   if(qXwgt > 0.0 && qYwgt > 0.0) qVector.Set(qXsum/qXwgt,qYsum/qYwgt);
-  if(mode > 2)  qVector = ApplyZdcSmdShiftCorrEast(qVector);
+  // if(mode > 2)  qVector = ApplyZdcSmdShiftCorrEast(qVector);
 
   return qVector;
 }
@@ -178,7 +171,7 @@ TVector2 StZdcEpManager::getQWest(int mode)
   }
 
   if(qXwgt > 0.0 && qYwgt > 0.0) qVector.Set(qXsum/qXwgt,qYsum/qYwgt);
-  if(mode > 2) qVector = ApplyZdcSmdShiftCorrWest(qVector);
+  // if(mode > 2) qVector = ApplyZdcSmdShiftCorrWest(qVector);
 
   return qVector;
 }
@@ -187,7 +180,7 @@ TVector2 StZdcEpManager::getQWest(int mode)
 
 void StZdcEpManager::readReCenterCorr()
 {
-  string inputFile = Form("Utility/EventPlaneMaker/%s/ReCenterPar/file_%s_ZdcReCenterPar.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ReCenterPar/file_%s_ZdcReCenterPar.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   file_mReCenterPar = TFile::Open(inputFile.c_str());
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)
   {
@@ -211,11 +204,11 @@ void StZdcEpManager::setZdcSmdCenter()
   const int binEastHorizontal = p_mZdcQEastHorizontal[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
   mCenterEastHorizontal       = p_mZdcQEastHorizontal[mVzBin]->GetBinContent(binEastHorizontal);
 
-  const int binWestVertical = p_mQZdcWestVertical[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
+  const int binWestVertical = p_mZdcQWestVertical[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
   mCenterWestVertical       = -1.0*p_mZdcQWestVertical[mVzBin]->GetBinContent(binWestVertical);
 
-  const int binWestHorizontal = p_mQZdcWestHorizontal[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
-  mCenterWestHorizontal       = p_mQZdcWestHorizontal[mVzBin]->GetBinContent(binWestHorizontal);
+  const int binWestHorizontal = p_mZdcQWestHorizontal[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
+  mCenterWestHorizontal       = p_mZdcQWestHorizontal[mVzBin]->GetBinContent(binWestHorizontal);
   // cout << "mCenterEastVertical = " << mCenterEastVertical << ", mCenterEastHorizontal = " << mCenterEastHorizontal << ", mCenterWestVertical = " << mCenterWestVertical << ", mCenterWestHorizontal = " << mCenterWestHorizontal << endl;
 }
 

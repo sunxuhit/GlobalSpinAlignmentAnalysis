@@ -3,7 +3,6 @@
 
 #include "TObject.h"
 #include "TVector2.h"
-// #include "TString.h"
 
 class TProfile2D;
 class TProfile;
@@ -71,11 +70,11 @@ class StZdcEpManager : public TObject
     // Shift Correction for East/West
     TProfile2D *p_mQFullCos[[mNumVzBin]mNumShiftCorr]; // 0 = vertex neg/pos | 1 = shift correction harmonics
     TProfile2D *p_mQFullSin[mNumVzBin][mNumShiftCorr];
+#endif
 
     // charged hadron v1 calculation
-    TProfile *p_mResolution;
+    // TProfile *p_mResolution;
     double mResolution[9];
-#endif
 
     TFile *file_mGainCorrPar;
     TFile *file_mReCenterPar;

@@ -32,7 +32,7 @@ void StEventPlaneHistoManager::initZdcGainCorr()
       for(int iSlat = 0; iSlat < 8; ++iSlat)
       {
 	string HistName = Form("h_mZdcGainCorr%s%sSlat%d",str_mEastWest[iEastWest].c_str(),str_mVertHori[iVertHori].c_str(),iSlat);
-	h_mZdcGainCorr[iEastWest][iVertHori][iSlat] = new TH2F(HistName.c_str(),HistName.c_str(),globCons::mNumOfRunIndex,-0.5,(double)globCons::mNumOfRunIndex-0.5,5000,-4.5,4995.5);
+	h_mZdcGainCorr[iEastWest][iVertHori][iSlat] = new TH2F(HistName.c_str(),HistName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,5000,-4.5,4995.5);
       }
     }
   }
@@ -63,11 +63,11 @@ void StEventPlaneHistoManager::initZdcRawEP()
   for(int iCent = 0; iCent < 9; ++iCent)
   {
     string HistName = Form("h_mZdcRawEastCent%d",iCent);
-    h_mZdcRawEast[iCent] = new TH2F(HistName.c_str(),HistName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mNumOfRunIndex[mType],-0.5,(double)globCons::mNumOfRunIndex[mType]-0.5);
+    h_mZdcRawEast[iCent] = new TH2F(HistName.c_str(),HistName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5);
     HistName = Form("h_mZdcRawWestCent%d",iCent);
-    h_mZdcRawWest[iCent] = new TH2F(HistName.c_str(),HistName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mNumOfRunIndex[mType],-0.5,(double)globCons::mNumOfRunIndex[mType]-0.5);
+    h_mZdcRawWest[iCent] = new TH2F(HistName.c_str(),HistName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5);
     HistName = Form("h_mZdcRawFullCent%d",iCent);
-    h_mZdcRawFull[iCent] = new TH2F(HistName.c_str(),HistName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mNumOfRunIndex[mType],-0.5,(double)globCons::mNumOfRunIndex[mType]-0.5);
+    h_mZdcRawFull[iCent] = new TH2F(HistName.c_str(),HistName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5);
   }
 }
 

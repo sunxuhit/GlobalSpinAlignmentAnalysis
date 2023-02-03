@@ -59,7 +59,7 @@ int StEventPlaneUtility::findRunIndex(int runId)
 
 bool StEventPlaneUtility::read_in_runIndex()
 {
-  std::string inputfile = Form("Utility/RunIndex/runIndex_%s.txt",globCons::mBeamType[mType].c_str());
+  std::string inputfile = Form("Utility/RunIndex/runIndex_%s.txt",globCons::str_mBeamType[mType].c_str());
   std::cout << "inputfile = " << inputfile.c_str() << std::endl;
   std::ifstream file_runIndex ( inputfile.c_str() );
   if ( !file_runIndex.is_open() )
