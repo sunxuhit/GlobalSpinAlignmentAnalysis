@@ -14,8 +14,8 @@ class StRunQAProManager
 
     // Run-by-Run QA
     void initRunQA();
-    void fillRunQA_Event(int triggerBin, int runIdenx, float refMult, float grefMult, float zdcX, float vx, float vy, float vz, int cutSelection);
-    void fillRunQA_Track(int triggerBin, int runIdenx, float gDca, int nHitsFit, TVector3 pMom, TVector3 gMom, int cutSelection);
+    void fillRunQA_Event(int triggerBin, int runIdenx, double refMult, double grefMult, double zdcX, double vx, double vy, double vz, int cutSelection);
+    void fillRunQA_Track(int triggerBin, int runIdenx, double gDca, int nHitsFit, TVector3 pMom, TVector3 gMom, int cutSelection);
     void writeRunQA();
 
   private:
@@ -37,7 +37,7 @@ class StRunQAProManager
     TProfile *p_mGlobEta[mNumCuts][mNumTriggerBins];
     TProfile *p_mGlobPhi[mNumCuts][mNumTriggerBins];
 
-    std::string mCutStatus[mNumCuts] = {"Bf","Af"};
+    std::string str_mCutStatus[mNumCuts] = {"Bf","Af"};
 
     const int mType;
 

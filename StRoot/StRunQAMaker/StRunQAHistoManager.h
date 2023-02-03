@@ -16,14 +16,14 @@ class StRunQAHistoManager
     //--------------QA---------------
     void initEventQA();
     void fillEventQA_RefMult(int triggerBin, int refMult, int grefMult, int cent9, double reweight, int tofHits, int tofMatch, int cutSelection);
-    void fillEventQA_Vertex(int triggerBin, float vx, float vy, float vz, float vzVpd, int cutSelection);
+    void fillEventQA_Vertex(int triggerBin, double vx, double vy, double vz, double vzVpd, int cutSelection);
     void fillEventQA_Trigger(int triggerBin, int cutSelection);
     void writeEventQA();
 
     void initTrackQA();
     void fillTrackQA_Kinematics(int triggerBin, TVector3 pMom, TVector3 gMom, int cutSelection);
-    void fillTrackQA_Quliaty(int triggerBin, float gDca, int nHitsFit, int nHitsMax, int nHitsDEdx, int cutSelection);
-    void fillTrackQA_PID(int triggerBin, float mom, short charge, float dEdx, float beta, float mass2, int cutSelection);
+    void fillTrackQA_Quliaty(int triggerBin, double gDca, int nHitsFit, int nHitsMax, int nHitsDEdx, int cutSelection);
+    void fillTrackQA_PID(int triggerBin, double mom, short charge, double dEdx, double beta, double mass2, int cutSelection);
     void writeTrackQA();
     //--------------QA---------------
 
@@ -61,7 +61,7 @@ class StRunQAHistoManager
     TH2F *h_mMomMass2[mNumCuts][mNumTriggerBins];
     TH2F *h_mMomBeta[mNumCuts][mNumTriggerBins];
 
-    std::string mCutStatus[mNumCuts] = {"Bf","Af"};
+    std::string str_mCutStatus[mNumCuts] = {"Bf","Af"};
 
     const int mType;
 

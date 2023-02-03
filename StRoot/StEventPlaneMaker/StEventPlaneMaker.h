@@ -18,7 +18,7 @@ class StZdcEpManager;
 
 class StEventPlaneMaker : public StMaker {
   public:
-    StEventPlaneMaker(const char *name, StPicoDstMaker *picoMaker, const string jobId, const int Mode, const int Energy);
+    StEventPlaneMaker(const char *name, StPicoDstMaker *picoMaker, const string jobId, const int mode, const int beamType);
     virtual ~StEventPlaneMaker();
     
     virtual int Init();
@@ -33,7 +33,7 @@ class StEventPlaneMaker : public StMaker {
     StRefMultCorr  *mRefMultCorr;
 
     StEventPlaneUtility *mEventPlaneUtility;
-    StEventPlaneCut  *mEventPlaneCut;
+    StEventPlaneCut *mEventPlaneCut;
     StEventPlaneHistoManager *mEventPlaneHistoManager;
     StEventPlaneProManager *mEventPlaneProManager;
     StZdcEpManager *mZdcEpManager;
@@ -41,18 +41,18 @@ class StEventPlaneMaker : public StMaker {
     // StEventPlaneEpdEpManager *mEventPlaneEpdEpManager;
     // StEventPlaneTpcEpManager *mEventPlaneTpcEpManager;
     
-    int mMode;
-    int mType;
+    const int mMode;
+    const int mType;
 
-    string mOutPut_GainCorr;
-    string mOutPut_ReCenterPar;
-    // string mOutPut_ShiftPar;
-    // string mOutPut_Resolution;
+    string str_mOutPutGainCorr;
+    string str_mOutPutReCenterPar;
+    // string str_mOutPutShiftPar;
+    // string str_mOutPutResolution;
 
-    TFile *mFile_GainCorr;
-    TFile *mFile_ReCenterPar;
-    // TFile *mFile_ShiftPar;
-    // TFile *mFile_Resolution;
+    TFile *file_mOutPutGainCorr;
+    TFile *file_mOutPutReCenterPar;
+    // TFile *file_mOutPutShiftPar;
+    // TFile *file_mOutPutResolution;
 
     int mUsedTrackCounter;
 

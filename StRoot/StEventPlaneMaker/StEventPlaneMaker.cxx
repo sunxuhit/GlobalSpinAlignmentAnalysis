@@ -27,21 +27,21 @@
 ClassImp(StEventPlaneMaker)
 
 //-----------------------------------------------------------------------------
-StEventPlaneMaker::StEventPlaneMaker(const char* name, StPicoDstMaker *picoMaker, const string jobId, const int Mode, const int beamType) : StMaker(name)
+StEventPlaneMaker::StEventPlaneMaker(const char* name, StPicoDstMaker *picoMaker, const string jobId, const int mode, const int beamType) : StMaker(name), mMode(Mode), mType(beamType)
 {
   mPicoDstMaker = picoMaker;
   mPicoDst = NULL;
   mRefMultCorr = NULL;
-  mMode = Mode;
-  mType = beamType;
+  // mMode = Mode;
+  // mType = beamType;
 
   if(mMode == 0) // Gain Correction for ZDC-SMD
   {
-    mOutPut_GainCorr = Form("./file_%s_GainCorr_%s.root",globCons::mBeamType[mType].c_str(),jobId.c_str());
+    str_mOutPutGainCorr = Form("./file_%s_GainCorr_%s.root",globCons::mBeamType[mType].c_str(),jobId.c_str());
   }
   if(mMode == 1) // Re-Center Correction for ZDC-SMD & TPC
   {
-    mOutPut_ReCenterPar = Form("./file_%s_ReCenterParameter_%s.root",globCons::mBeamType[mType].c_str(),jobId.c_str());
+    str_mOutPutReCenterPar = Form("./file_%s_ReCenterParameter_%s.root",globCons::mBeamType[mType].c_str(),jobId.c_str());
   }
 }
 
@@ -68,12 +68,12 @@ int StEventPlaneMaker::Init()
 
   if(mMode == 0)
   { // fill Gain Correction Factors for ZDC-SMD
-    mFile_GainCorr = new TFile(mOutPut_GainCorr.c_str(),"RECREATE");
+    file_mOutPutGainCorr = new TFile(str_mOutPutGainCorr.c_str(),"RECREATE");
     mEventPlaneHistoManager->initZdcGainCorr();
   }
   if(mMode == 1)
   { // fill ReCenter Correction Parameters for ZDC-SMD & TPC
-    mFile_ReCenterPar = new TFile(mOutPut_ReCenterPar.c_str(),"RECREATE");
+    file_mOutPutReCenterPar = new TFile(str_mOutPutReCenterPar.c_str(),"RECREATE");
     mEventPlaneProManager->initZdcReCenter();
     mEventPlaneHistoManager->initZdcRawEP();
     mZdcEpManager->readGainCorr();
@@ -87,21 +87,21 @@ int StEventPlaneMaker::Finish()
 {
   if(mMode == 0)
   {
-    if(mOutPut_GainCorr != "")
+    if(str_mOutPutGainCorr != "")
     {
-      mFile_GainCorr->cd();
+      file_mOutPutGainCorr->cd();
       mEventPlaneHistoManager->writeZdcGainCorr();
-      mFile_GainCorr->Close();
+      file_mOutPutGainCorr->Close();
     }
   }
   if(mMode == 1)
   {
-    if(mOutPut_ReCenterPar != "")
+    if(str_mOutPutReCenterPar != "")
     {
-      mFile_ReCenterPar->cd();
+      file_mOutPutReCenterPar->cd();
       mEventPlaneProManager->writeZdcReCenter();
       mEventPlaneHistoManager->writeZdcRawEP();
-      mFile_GainCorr->Close();
+      file_mOutPutGainCorr->Close();
     }
   }
 
@@ -139,14 +139,14 @@ int StEventPlaneMaker::Make()
   if( mEventPlaneCut->isMinBias(mPicoEvent) )
   {
     // Event Information
-    const int runId = mPicoEvent->runId();
-    const int refMult = mPicoEvent->refMult();
+    const int runId    = mPicoEvent->runId();
+    const int refMult  = mPicoEvent->refMult();
     const int grefMult = mPicoEvent->grefMult();
-    const float vx    = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
-    const float vy    = mPicoEvent->primaryVertex().y();
-    const float vz    = mPicoEvent->primaryVertex().z();
-    const float vzVpd = mPicoEvent->vzVpd();
-    const float zdcX  = mPicoEvent->ZDCx();
+    const double vx    = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
+    const double vy    = mPicoEvent->primaryVertex().y();
+    const double vz    = mPicoEvent->primaryVertex().z();
+    const double vzVpd = mPicoEvent->vzVpd();
+    const double zdcX  = mPicoEvent->ZDCx();
     const unsigned int numOfBTofHits = mPicoDst->numberOfBTofHits(); // get number of tof hits
     // const unsigned short numOfBTofHits = mPicoEvent->btofTrayMultiplicity();
     const unsigned short numOfBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points

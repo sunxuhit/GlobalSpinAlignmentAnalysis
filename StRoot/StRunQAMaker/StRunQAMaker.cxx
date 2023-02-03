@@ -31,7 +31,7 @@ StRunQAMaker::StRunQAMaker(const char* name, StPicoDstMaker *picoMaker, string j
   mRefMultCorr = NULL;
 
   // mType = beamType;
-  str_mOutPutRunQA = Form("./file_%s_RunQA_%s.root",globCons::mBeamType[mType].c_str(),jobId.c_str());
+  str_mOutPutRunQA = Form("./file_%s_RunQA_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
 }
 
 //----------------------------------------------------------------------------- 
@@ -110,11 +110,11 @@ int StRunQAMaker::Make()
     const int runId    = mPicoEvent->runId();
     const int refMult  = mPicoEvent->refMult();
     const int grefMult = mPicoEvent->grefMult();
-    const float vx     = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
-    const float vy     = mPicoEvent->primaryVertex().y();
-    const float vz     = mPicoEvent->primaryVertex().z();
-    const float vzVpd  = mPicoEvent->vzVpd();
-    const float zdcX   = mPicoEvent->ZDCx();
+    const double vx    = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
+    const double vy    = mPicoEvent->primaryVertex().y();
+    const double vz    = mPicoEvent->primaryVertex().z();
+    const double vzVpd = mPicoEvent->vzVpd();
+    const double zdcX  = mPicoEvent->ZDCx();
     // const unsigned short nBTofHits  = mPicoEvent->btofTrayMultiplicity();
     const unsigned int nBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
     const unsigned short nBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
@@ -180,28 +180,28 @@ int StRunQAMaker::Make()
 
 	// get pico track info
 	// TVector3 primMom;
-	// float primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
-	// float primPy    = picoTrack->pMom().y();
-	// float primPz    = picoTrack->pMom().z();
+	// double primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
+	// double primPy    = picoTrack->pMom().y();
+	// double primPz    = picoTrack->pMom().z();
 	// primMom.SetXYZ(primPx,primPy,primPz);
 
 	// TVector3 globMom;
-	// float globPx     = picoTrack->gMom().x(); // x works for both TVector3 and StThreeVectorF
-	// float globPy     = picoTrack->gMom().y();
-	// float globPz     = picoTrack->gMom().z();
+	// double globPx     = picoTrack->gMom().x(); // x works for both TVector3 and StThreeVectorF
+	// double globPy     = picoTrack->gMom().y();
+	// double globPz     = picoTrack->gMom().z();
 	// globMom.SetXYZ(globPx,globPy,globPz);
 
 	const TVector3 primMom = picoTrack->pMom();
 	const TVector3 globMom = picoTrack->gMom();
 
-	const float gDCA    = picoTrack->gDCA(vx,vy,vz);
-	const int nHitsFit  = picoTrack->nHitsFit();
-	const int nHitsMax  = picoTrack->nHitsMax();
-	const int nHitsDEdx = picoTrack->nHitsDedx();
-	const float dEdx    = picoTrack->dEdx();
-	const short charge  = picoTrack->charge();
-	const float beta    = mAnaUtils->getBeta(mPicoDst,i_track);
-	const float mass2   = mAnaUtils->getPrimaryMass2(mPicoDst,i_track);
+	const double gDCA    = picoTrack->gDCA(vx,vy,vz);
+	const int nHitsFit   = picoTrack->nHitsFit();
+	const int nHitsMax   = picoTrack->nHitsMax();
+	const int nHitsDEdx  = picoTrack->nHitsDedx();
+	const double dEdx    = picoTrack->dEdx();
+	const short charge   = picoTrack->charge();
+	const double beta    = mAnaUtils->getBeta(mPicoDst,i_track);
+	const double mass2   = mAnaUtils->getPrimaryMass2(mPicoDst,i_track);
 
 	mRunQAHistoManager->fillTrackQA_Kinematics(triggerBin,primMom,globMom, 0); // wo track cut
 	mRunQAHistoManager->fillTrackQA_Quliaty(triggerBin,gDCA,nHitsFit,nHitsMax,nHitsDEdx,0);

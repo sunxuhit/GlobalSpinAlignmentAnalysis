@@ -10,12 +10,12 @@ class TH2F;
 class StEventPlaneHistoManager
 {
   public:
-    StEventPlaneHistoManager();
+    StEventPlaneHistoManager(int beamType);
     virtual ~StEventPlaneHistoManager();
 
     //--------------ZDC EP---------------
     void initZdcGainCorr();
-    void fillZdcGainCorr(int i_eastwest, int i_verthori, int i_slat, int runIndex, float zdcsmd);
+    void fillZdcGainCorr(int i_eastwest, int i_verthori, int i_slat, int runIndex, double zdcsmd);
     void writeZdcGainCorr();
 
     void initZdcRawEP(); // raw EP
@@ -30,7 +30,12 @@ class StEventPlaneHistoManager
     TH2F *h_mZdcRawEast[9]; // raw EP
     TH2F *h_mZdcRawWest[9];
     TH2F *h_mZdcRawFull[9]; // Qwest-QEast
+
+    std::string str_mEastWest[2] = {"East","West"};
+    std::string str_mVertHori[2] = {"Vert","Hori"};
     //--------------ZDC EP---------------
+
+    const int mType;
 
   ClassDef(StEventPlaneHistoManager,1)
 };

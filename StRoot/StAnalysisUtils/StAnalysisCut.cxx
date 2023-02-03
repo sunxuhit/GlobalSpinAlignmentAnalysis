@@ -78,11 +78,11 @@ bool StAnalysisCut::passEventCut(StPicoDst *picoDst)
   // cout << "runId = " << runId << ", refMult = " << refMult << endl;
 
   // event vertex cut
-  const float vx    = picoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
-  const float vy    = picoEvent->primaryVertex().y();
-  const float vz    = picoEvent->primaryVertex().z();
-  // const float zdcX  = picoEvent->ZDCx();
-  const float vzVpd = picoEvent->vzVpd();
+  const double vx    = picoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
+  const double vy    = picoEvent->primaryVertex().y();
+  const double vz    = picoEvent->primaryVertex().z();
+  // const double zdcX  = picoEvent->ZDCx();
+  const double vzVpd = picoEvent->vzVpd();
   // vz cut
   if(vz < anaUtils::mVzMin[mType] || vz > anaUtils::mVzMax[mType])
   {
@@ -124,7 +124,7 @@ bool StAnalysisCut::passTrackBasic(StPicoTrack *picoTrack)
   {
     return false;
   }
-  if((float)picoTrack->nHitsFit()/(float)picoTrack->nHitsMax() < anaUtils::mHitsRatioTpcMin[mType])
+  if((double)picoTrack->nHitsFit()/(double)picoTrack->nHitsMax() < anaUtils::mHitsRatioTpcMin[mType])
   {
     return false;
   }
@@ -137,9 +137,9 @@ bool StAnalysisCut::passTrackQA(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
   if(!picoEvent) return false;
   if(!passTrackBasic(picoTrack)) return false;
 
-  const float vx    = picoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
-  const float vy    = picoEvent->primaryVertex().y();
-  const float vz    = picoEvent->primaryVertex().z();
+  const double vx = picoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
+  const double vy = picoEvent->primaryVertex().y();
+  const double vz = picoEvent->primaryVertex().z();
 
   // dca cut
   if(picoTrack->gDCA(vx,vy,vz) > anaUtils::mDcaQaMax[mType])
@@ -149,12 +149,12 @@ bool StAnalysisCut::passTrackQA(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
 
   // eta cut
   // TVector3 primMom; // temp fix for StThreeVectorF & TVector3
-  // float primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
-  // float primPy    = picoTrack->pMom().y();
-  // float primPz    = picoTrack->pMom().z();
+  // double primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
+  // double primPy    = picoTrack->pMom().y();
+  // double primPz    = picoTrack->pMom().z();
   // primMom.SetXYZ(primPx,primPy,primPz);
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
-  const float eta = primMom.PseudoRapidity();
+  const double eta = primMom.PseudoRapidity();
   if(fabs(eta) > anaUtils::mEtaQaMax[mType])
   {
     return false;
@@ -173,9 +173,9 @@ bool StAnalysisCut::passTrackEP(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
   if(!picoEvent) return false;
   if(!passTrackBasic(picoTrack)) return false;
 
-  const float vx    = picoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
-  const float vy    = picoEvent->primaryVertex().y();
-  const float vz    = picoEvent->primaryVertex().z();
+  const double vx = picoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
+  const double vy = picoEvent->primaryVertex().y();
+  const double vz = picoEvent->primaryVertex().z();
 
   // dca cut
   if(picoTrack->gDCA(vx,vy,vz) > anaUtils::mDcaEpMax[mType])
@@ -184,13 +184,13 @@ bool StAnalysisCut::passTrackEP(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
   }
 
   // TVector3 primMom; // temp fix for StThreeVectorF & TVector3
-  // float primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
-  // float primPy    = picoTrack->pMom().y();
-  // float primPz    = picoTrack->pMom().z();
+  // double primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
+  // double primPy    = picoTrack->pMom().y();
+  // double primPz    = picoTrack->pMom().z();
   // primMom.SetXYZ(primPx,primPy,primPz);
   // eta cut: -1.0 <= eta <= 1.0
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
-  const float eta = primMom.PseudoRapidity();
+  const double eta = primMom.PseudoRapidity();
   if(fabs(eta) > anaUtils::mEtaEpMax[mType])
   {
     return false;

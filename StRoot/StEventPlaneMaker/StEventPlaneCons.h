@@ -37,8 +37,6 @@ namespace recoEP
   int const mNumOfRunIndex = 4000;
 
   // ZDC-SMD Event Plane
-  std::string const mEastWest[2] = {"East","West"};
-  std::string const mVertHori[2] = {"Vertical","Horizontal"};
 }
 
 #endif

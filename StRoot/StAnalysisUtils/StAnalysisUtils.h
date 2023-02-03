@@ -22,10 +22,11 @@ class StAnalysisUtils
     bool readBadRunList();
     bool isBadRun(int runId);
 
-    float getBeta(StPicoDst*, int); // return beta of i-th track (tof || -999)
-    float getPrimaryMass2(StPicoDst*, int); // return m^2 of i-th track (primary || -999)
-    float getGlobalMass2(StPicoDst*, int); // return m^2 of i-th track (global || -999)
+    double getBeta(StPicoDst*, int); // return beta of i-th track (tof || -999)
+    double getPrimaryMass2(StPicoDst*, int); // return m^2 of i-th track (primary || -999)
+    double getGlobalMass2(StPicoDst*, int); // return m^2 of i-th track (global || -999)
     int getTriggerBin(StPicoEvent*); // return trigger bin for event QA
+    int getVzBin(double); // return vz bin
 
   private:
     const int mType;

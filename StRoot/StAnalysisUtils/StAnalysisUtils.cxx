@@ -40,7 +40,7 @@ bool StAnalysisUtils::readRunIndex()
 {
   map_mRunIndex.clear();
 
-  std::string inputfile = Form("Utility/RunIndex/%s/runIndex_%s.txt",globCons::mBeamType[mType].c_str(),globCons::mBeamType[mType].c_str());
+  std::string inputfile = Form("Utility/RunIndex/%s/runIndex_%s.txt",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   std::cout << "inputfile = " << inputfile.c_str() << std::endl;
   std::ifstream file_runIndex ( inputfile.c_str() );
   if ( !file_runIndex.is_open() )
@@ -94,7 +94,7 @@ bool StAnalysisUtils::readBadRunList()
 {
   vec_mBadRunId.clear();
 
-  std::string inputfile = Form("Utility/RunIndex/%s/badRunList_%s.txt",globCons::mBeamType[mType].c_str(),globCons::mBeamType[mType].c_str());
+  std::string inputfile = Form("Utility/RunIndex/%s/badRunList_%s.txt",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   std::cout << "inputfile = " << inputfile.c_str() << std::endl;
   std::ifstream file_badRunList ( inputfile.c_str() );
   if ( !file_badRunList.is_open() )
@@ -134,9 +134,9 @@ bool StAnalysisUtils::isBadRun(int runId)
 }
 
 //---------------------------------------------------------------------------------
-float StAnalysisUtils::getBeta(StPicoDst *picoDst, int i_track)
+double StAnalysisUtils::getBeta(StPicoDst *picoDst, int i_track)
 {
-  float beta = -999.9;
+  double beta = -999.9;
   StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(i_track); // return ith track
   int tofIndex = picoTrack->bTofPidTraitsIndex(); // return ToF PID traits
   if(tofIndex >= 0)
@@ -148,58 +148,56 @@ float StAnalysisUtils::getBeta(StPicoDst *picoDst, int i_track)
   return beta;
 }
 
-float StAnalysisUtils::getPrimaryMass2(StPicoDst *picoDst, int i_track)
+double StAnalysisUtils::getPrimaryMass2(StPicoDst *picoDst, int i_track)
 {
-  float Mass2 = -999.9;
+  double mass2 = -999.9;
   StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(i_track); // return ith track
   int tofIndex = picoTrack->bTofPidTraitsIndex(); // return ToF PID traits
   if(tofIndex >= 0)
   {
     StPicoBTofPidTraits *tofTrack = picoDst->btofPidTraits(tofIndex);
-    float beta = tofTrack->btofBeta();
-    // float Momentum = picoTrack->pMom().mag(); // primary momentum for 54GeV_2017
-    // float Momentum = picoTrack->pMom().Mag(); // primary momentum for 27GeV_2018
-    TVector3 primMom; // temp fix for StThreeVectorF & TVector3
-    float primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
-    float primPy    = picoTrack->pMom().y();
-    float primPz    = picoTrack->pMom().z();
-    primMom.SetXYZ(primPx,primPy,primPz);
-    float Momentum = primMom.Mag(); // primary momentum
+    double beta = tofTrack->btofBeta();
+    // TVector3 primMom; // temp fix for StThreeVectorF & TVector3
+    // double primPx = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
+    // double primPy = picoTrack->pMom().y();
+    // double primPz = picoTrack->pMom().z();
+    // primMom.SetXYZ(primPx,primPy,primPz);
+    const TVector3 primMom = picoTrack->pMom(); // primary Momentum
+    double primMomMag = primMom.Mag(); // primary momentum magnitude
 
     if(tofTrack->btofMatchFlag() > 0 && tofTrack->btof() != 0 && beta != 0)
     {
-      Mass2 = Momentum*Momentum*(1.0/(beta*beta) - 1.0);
+      mass2 = primMomMag*primMomMag*(1.0/(beta*beta) - 1.0);
     }
   }
 
-  return Mass2;
+  return mass2;
 }
 
-float StAnalysisUtils::getGlobalMass2(StPicoDst *picoDst, int i_track)
+double StAnalysisUtils::getGlobalMass2(StPicoDst *picoDst, int i_track)
 {
-  float Mass2 = -999.9;
+  double mass2 = -999.9;
   StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(i_track); // return ith track
   int tofIndex = picoTrack->bTofPidTraitsIndex(); // return ToF PID traits
   if(tofIndex >= 0)
   {
     StPicoBTofPidTraits *tofTrack = picoDst->btofPidTraits(tofIndex);
-    float beta = tofTrack->btofBeta();
-    // float Momentum = picoTrack->gMom().mag(); // global momentum for 54GeV_2017
-    // float Momentum = picoTrack->gMom().Mag(); // global momentum for 27GeV_2018
-    TVector3 globMom; // temp fix for StThreeVectorF & TVector3
-    float globPx     = picoTrack->gMom().x(); // x works for both TVector3 and StThreeVectorF
-    float globPy     = picoTrack->gMom().y();
-    float globPz     = picoTrack->gMom().z();
-    globMom.SetXYZ(globPx,globPy,globPz);
-    float Momentum = globMom.Mag(); // global momentum
+    double beta = tofTrack->btofBeta();
+    // TVector3 globMom; // temp fix for StThreeVectorF & TVector3
+    // double globPx = picoTrack->gMom().x(); // x works for both TVector3 and StThreeVectorF
+    // double globPy = picoTrack->gMom().y();
+    // double globPz = picoTrack->gMom().z();
+    // globMom.SetXYZ(globPx,globPy,globPz);
+    const TVector3 globMom = picoTrack->gMom(); // global Momentum
+    double globMomMag = globMom.Mag(); // global momentum magnitude
 
     if(tofTrack->btofMatchFlag() > 0 && tofTrack->btof() != 0 && beta != 0)
     {
-      Mass2 = Momentum*Momentum*(1.0/(beta*beta) - 1.0);
+      mass2 = globMomMag*globMomMag*(1.0/(beta*beta) - 1.0);
     }
   }
 
-  return Mass2;
+  return mass2;
 }
 
 int StAnalysisUtils::getTriggerBin(StPicoEvent *picoEvent)
@@ -213,6 +211,17 @@ int StAnalysisUtils::getTriggerBin(StPicoEvent *picoEvent)
     if( picoEvent->isTrigger(600011) ) return 1; // VPDMB-30
     if( picoEvent->isTrigger(600021) ) return 2; // VPDMB-30
     if( picoEvent->isTrigger(600031) ) return 3; // VPDMB-30
+  }
+
+  return -1;
+}
+
+int StAnalysisUtils::getVzBin(double vz)
+{
+  if( mType == 0 || mType == 1 )
+  { // ZrZr200GeV_2018 || RuRu200GeV_2018
+    if(vz >= -35.0 && vz < 0.0) return 0;
+    if(vz >= 0.0 && vz <= 25.0) return 1;
   }
 
   return -1;
