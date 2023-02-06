@@ -29,20 +29,18 @@ class StZdcEpManager : public TObject
     void readReCenterCorr();
     void setZdcSmdCenter();
 
-#if 0
     void readShiftCorr();
-    TVector2 ApplyZdcSmdShiftCorrEast(TVector2 qVector);
-    TVector2 ApplyZdcSmdShiftCorrWest(TVector2 qVector);
-    double AngleShift(double Psi_shifted);
+    TVector2 applyZdcSmdShiftCorrEast(TVector2 qVector);
+    TVector2 applyZdcSmdShiftCorrWest(TVector2 qVector);
+    double angleShift(double Psi_shifted);
 
     void readShiftCorrFull();
-    TVector2 ApplyZdcSmdShiftCorrFull(TVector2 qVector);
+    TVector2 applyZdcSmdShiftCorrFull(TVector2 qVector);
     TVector2 getQFull(TVector2 QEast, TVector2 QWest);
 
     void readResolution();
     void calResolution();
     double getResolution(int Cent9);
-#endif
 
   private:
     int mCent9;
@@ -59,28 +57,26 @@ class StZdcEpManager : public TObject
     TProfile2D *p_mZdcQWestHorizontal[mNumVzBin];
     double mCenterEastVertical, mCenterEastHorizontal, mCenterWestVertical, mCenterWestHorizontal;
 
-#if 0
     static const int mNumShiftCorr = 20;
     // Shift Correction for East/West
-    TProfile2D *p_mQEastCos[mNumVzBin][mNumShiftCorr]; // 0 = vertex neg/pos | 1 = shift correction harmonics
-    TProfile2D *p_mQEastSin[mNumVzBin][mNumShiftCorr];
-    TProfile2D *p_mQWestCos[mNumVzBin][mNumShiftCorr];
-    TProfile2D *p_mQWestSin[mNumVzBin][mNumShiftCorr];
+    TProfile2D *p_mZdcQEastCos[mNumVzBin][mNumShiftCorr]; // 0 = vertex neg/pos | 1 = shift correction harmonics
+    TProfile2D *p_mZdcQEastSin[mNumVzBin][mNumShiftCorr];
+    TProfile2D *p_mZdcQWestCos[mNumVzBin][mNumShiftCorr];
+    TProfile2D *p_mZdcQWestSin[mNumVzBin][mNumShiftCorr];
 
     // Shift Correction for East/West
-    TProfile2D *p_mQFullCos[[mNumVzBin]mNumShiftCorr]; // 0 = vertex neg/pos | 1 = shift correction harmonics
-    TProfile2D *p_mQFullSin[mNumVzBin][mNumShiftCorr];
-#endif
+    TProfile2D *p_mZdcQFullCos[mNumVzBin][mNumShiftCorr]; // 0 = vertex neg/pos | 1 = shift correction harmonics
+    TProfile2D *p_mZdcQFullSin[mNumVzBin][mNumShiftCorr];
 
     // charged hadron v1 calculation
-    // TProfile *p_mResolution;
+    TProfile *p_mZdcEpResolution;
     double mResolution[9];
 
     TFile *file_mGainCorrPar;
     TFile *file_mReCenterPar;
-    // TFile *file_mShiftPar;
-    // TFile *file_mShiftParFull;
-    // TFile *file_mResolution;
+    TFile *file_mShiftPar;
+    TFile *file_mShiftParFull;
+    TFile *file_mResolution;
 
     std::string str_mEastWest[2] = {"East","West"};
     std::string str_mVertHori[2] = {"Vert","Hori"};

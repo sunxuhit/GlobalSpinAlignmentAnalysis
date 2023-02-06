@@ -1,1 +1,1 @@
-> This folder stores gain correction factors used by StEventPlaneMaker
+> This folder stores gain correction factors generated & used by StEventPlaneMaker

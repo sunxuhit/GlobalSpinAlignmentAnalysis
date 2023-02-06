@@ -1,1 +1,1 @@
-> This folder stores re-center correction parameters used by StEventPlaneMaker
+> This folder stores re-center correction parameters generated & used by StEventPlaneMaker
