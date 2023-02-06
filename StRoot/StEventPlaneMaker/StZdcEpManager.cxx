@@ -38,7 +38,7 @@ void StZdcEpManager::clearZdcEp()
       for(int iSlat = 0; iSlat < 8; ++iSlat)
       {
 	mZdcSmd[iEastWest][iVertHori][iSlat] = 0.0;
-	mGainCorrFactor[iEastWest][iVertHori][iSlat] = -999.9;
+	mGainFactor[iEastWest][iVertHori][iSlat] = -999.9;
       }
     }
   }
@@ -69,6 +69,40 @@ double StZdcEpManager::getZdcSmd(int eastwest, int verthori, int slat)
 }
 
 //---------------------------------------------------------------------------------
+// Gain Correction
+void StZdcEpManager::initZdcGainCorr()
+{
+  for(int iEastWest = 0; iEastWest < 2; ++iEastWest)
+  {
+    for(int iVertHori = 0; iVertHori < 2; ++iVertHori)
+    {
+      for(int iSlat = 0; iSlat < 8; ++iSlat)
+      {
+	std::string histName = Form("h_mZdcGainCorr%s%sSlat%d",str_mEastWest[iEastWest].c_str(),str_mVertHori[iVertHori].c_str(),iSlat);
+	h_mZdcGainCorr[iEastWest][iVertHori][iSlat] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,5000,-4.5,4995.5);
+      }
+    }
+  }
+}
+
+void StZdcEpManager::fillZdcGainCorr(int iEastWest, int iVertHori, int iSlat, int runIndex, double zdcsmd)
+{
+  h_mZdcGainCorr[iEastWest][iVertHori][iSlat]->Fill((double)runIndex,zdcsmd);
+}
+
+void StZdcEpManager::writeZdcGainCorr()
+{
+  for(int iEastWest = 0; iEastWest < 2; ++iEastWest)
+  {
+    for(int iVertHori = 0; iVertHori < 2; ++iVertHori)
+    {
+      for(int iSlat = 0; iSlat < 8; ++iSlat)
+      {
+	h_mZdcGainCorr[iEastWest][iVertHori][iSlat]->Write();
+      }
+    }
+  }
+}
 
 void StZdcEpManager::readGainCorr()
 {
@@ -80,10 +114,10 @@ void StZdcEpManager::readGainCorr()
     {
       for(int iSlat = 0; iSlat < 8; ++iSlat)
       {
-	std::string histName = Form("h_mZdcGainCorrFactor%s%sSlat%d",str_mEastWest[iEastWest].c_str(),str_mVertHori[iVertHori].c_str(),iSlat);
-	TH1F *h_GainCorrFac = (TH1F*)file_mGainCorrPar->Get(histName.c_str());
-	mGainCorrFactor[iEastWest][iVertHori][iSlat] = h_GainCorrFac->GetBinContent(1);
-	// cout << "iEastWest = " << iEastWest << ", iVertHori = " << iVertHori << ", iSlat = " << iSlat << ", mGainCorrFactor = " << mGainCorrFactor[iEastWest][iVertHori][iSlat] << endl;
+	std::string histName = Form("h_mZdcGainFactor%s%sSlat%d",str_mEastWest[iEastWest].c_str(),str_mVertHori[iVertHori].c_str(),iSlat);
+	TH1F *h_GainFac = (TH1F*)file_mGainCorrPar->Get(histName.c_str());
+	mGainFactor[iEastWest][iVertHori][iSlat] = h_GainFac->GetBinContent(1);
+	// cout << "iEastWest = " << iEastWest << ", iVertHori = " << iVertHori << ", iSlat = " << iSlat << ", mGainFactor = " << mGainFactor[iEastWest][iVertHori][iSlat] << endl;
       }
     }
   }
@@ -92,8 +126,8 @@ void StZdcEpManager::readGainCorr()
 
 void StZdcEpManager::setZdcSmdGainCorr(int eastwest, int verthori, int slat, const double zdcsmd)
 {
-  mZdcSmd[eastwest][verthori][slat] = (zdcsmd > 0. && mGainCorrFactor[eastwest][verthori][slat] > 0.) ? zdcsmd/mGainCorrFactor[eastwest][verthori][slat] : 0.;
-  // cout << "input zdc = " << zdcsmd << ", mGainCorrFactor = " << mGainCorrFactor[eastwest][verthori][slat] << ", GainCorred = " << mZdcSmd[eastwest][verthori][slat] << endl;
+  mZdcSmd[eastwest][verthori][slat] = (zdcsmd > 0. && mGainFactor[eastwest][verthori][slat] > 0.) ? zdcsmd/mGainFactor[eastwest][verthori][slat] : 0.;
+  // cout << "input zdc = " << zdcsmd << ", mGainFactor = " << mGainFactor[eastwest][verthori][slat] << ", GainCorred = " << mZdcSmd[eastwest][verthori][slat] << endl;
 }
 
 double StZdcEpManager::getZdcSmdGainCorr(int eastwest, int verthori, int slat)
@@ -176,8 +210,82 @@ TVector2 StZdcEpManager::getQWest(int mode)
   return qVector;
 }
 
-//---------------------------------------------------------------------------------
+// raw EP
+void StZdcEpManager::initZdcRawEP()
+{
+  for(int iCent = 0; iCent < 9; ++iCent)
+  {
+    std::string histName = Form("h_mZdcRawEpEastCent%d",iCent);
+    h_mZdcRawEpEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5);
+    histName = Form("h_mZdcRawEpWestCent%d",iCent);
+    h_mZdcRawEpWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5);
+    histName = Form("h_mZdcRawEpFullCent%d",iCent);
+    h_mZdcRawEpFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5);
+  }
+}
 
+void StZdcEpManager::fillZdcRawEP(TVector2 QEast, TVector2 QWest, TVector2 QFull, int Cent9, int runIndex)
+{
+  double PsiEast = TMath::ATan2(QEast.Y(),QEast.X()); h_mZdcRawEpEast[Cent9]->Fill(PsiEast,runIndex);
+  double PsiWest = TMath::ATan2(QWest.Y(),QWest.X()); h_mZdcRawEpWest[Cent9]->Fill(PsiWest,runIndex);
+  double PsiFull = TMath::ATan2(QFull.Y(),QFull.X()); h_mZdcRawEpFull[Cent9]->Fill(PsiFull,runIndex);
+}
+
+void StZdcEpManager::writeZdcRawEP()
+{
+  for(int iCent = 0; iCent < 9; ++iCent)
+  {
+    h_mZdcRawEpEast[iCent]->Write();
+    h_mZdcRawEpWest[iCent]->Write();
+    h_mZdcRawEpFull[iCent]->Write();
+  }
+}
+//---------------------------------------------------------------------------------
+// ReCenter Correction
+void StZdcEpManager::initZdcReCenter()
+{
+  for(int iVz = 0; iVz < mNumVzBin; ++iVz)
+  {
+    std::string ProName = Form("p_mZdcQEastVertVz%d",iVz);
+    p_mZdcQEastVertical[iVz] = new TProfile2D(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+    ProName = Form("p_mZdcQEastHoriVz%d",iVz);
+    p_mZdcQEastHorizontal[iVz] = new TProfile2D(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+
+    ProName = Form("p_mZdcQWestVertVz%d",iVz);
+    p_mZdcQWestVertical[iVz] = new TProfile2D(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+    ProName = Form("p_mZdcQWestHoriVz%d",iVz);
+    p_mZdcQWestHorizontal[iVz] = new TProfile2D(ProName.c_str(),ProName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+  }
+}
+
+void StZdcEpManager::fillZdcReCenterEast(TVector2 qVector, int Cent9, int RunIndex, int vzBin)
+{
+  const double qx = qVector.X();
+  const double qy = qVector.Y();
+
+  p_mZdcQEastVertical[vzBin]->Fill((double)RunIndex,(double)Cent9,(double)qx);
+  p_mZdcQEastHorizontal[vzBin]->Fill((double)RunIndex,(double)Cent9,(double)qy);
+}
+
+void StZdcEpManager::fillZdcReCenterWest(TVector2 qVector, int Cent9, int RunIndex, int vzBin)
+{
+  const double qx = qVector.X();
+  const double qy = qVector.Y();
+
+  p_mZdcQWestVertical[vzBin]->Fill((double)RunIndex,(double)Cent9,(double)qx);
+  p_mZdcQWestHorizontal[vzBin]->Fill((double)RunIndex,(double)Cent9,(double)qy);
+}
+
+void StZdcEpManager::writeZdcReCenter()
+{
+  for(int iVz = 0; iVz < mNumVzBin; ++iVz)
+  {
+    p_mZdcQEastVertical[iVz]->Write();
+    p_mZdcQEastHorizontal[iVz]->Write();
+    p_mZdcQWestVertical[iVz]->Write();
+    p_mZdcQWestHorizontal[iVz]->Write();
+  }
+}
 void StZdcEpManager::readReCenterCorr()
 {
   std::string inputFile = Form("Utility/EventPlaneMaker/%s/ReCenterPar/file_%s_ZdcReCenterPar.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
@@ -294,7 +402,7 @@ double StZdcEpManager::angleShift(double PsiRaw)
   {
     PsiCorr = PsiRaw - TMath::TwoPi();
   }
-  if(Psi_raw < -1.0*TMath::Pi())
+  if(PsiRaw < -1.0*TMath::Pi())
   {
     PsiCorr = PsiRaw + TMath::TwoPi();
   }

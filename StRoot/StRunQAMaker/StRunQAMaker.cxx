@@ -136,15 +136,12 @@ int StRunQAMaker::Make()
       return kStErr;
     }
     */
-    const int cent9 = mRefMultCorr->getCentralityBin9(); // get Centrality9
+
+    const int cent9       = mRefMultCorr->getCentralityBin9(); // get Centrality9
     const double reweight = mRefMultCorr->getWeight(); // get Centrality reweight
-
-    // vz sign
-    int vzSign = 0; // 0 for -vz || 1 for +vz
-    vz > 0.0 ? vzSign = 1 : vzSign = 0;
-
-    const int runIndex = mAnaUtils->findRunIndex(runId); // find run index for a specific run
-    const int triggerBin = mAnaUtils->getTriggerBin(mPicoEvent);
+    const int runIndex    = mAnaUtils->findRunIndex(runId); // find run index for a specific run
+    const int triggerBin  = mAnaUtils->getTriggerBin(mPicoEvent);
+    const int vzBin       = mAnaUtils->getVzBin(vz); // 0 for -vz || 1 for +vz
     // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
     if(runIndex < 0)
     {

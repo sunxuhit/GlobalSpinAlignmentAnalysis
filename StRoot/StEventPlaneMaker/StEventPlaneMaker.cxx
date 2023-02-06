@@ -1,3 +1,11 @@
+#include <algorithm>
+
+#include <TH1F.h>
+#include <TH2F.h>
+#include <TFile.h>
+#include <TVector3.h>
+#include <TMath.h>
+
 #include "StPicoDstMaker/StPicoDstMaker.h"
 #include "StPicoEvent/StPicoDst.h"
 #include "StPicoEvent/StPicoEvent.h"
@@ -8,21 +16,10 @@
 #include "StMessMgr.h"
 
 #include "Utility/include/StSpinAlignmentCons.h"
+#include "StRoot/StAnalysisUtils/StAnalysisUtils.h"
+#include "StRoot/StAnalysisUtils/StAnalysisCut.h"
 #include "StRoot/StEventPlaneMaker/StEventPlaneMaker.h"
-#include "StRoot/StEventPlaneMaker/StEventPlaneCons.h"
-#include "StRoot/StEventPlaneMaker/StEventPlaneUtility.h"
-#include "StRoot/StEventPlaneMaker/StEventPlaneCut.h"
-#include "StRoot/StEventPlaneMaker/StEventPlaneHistoManager.h"
-#include "StRoot/StEventPlaneMaker/StEventPlaneProManager.h"
 #include "StRoot/StEventPlaneMaker/StZdcEpManager.h"
-
-#include <algorithm>
-
-#include <TH1F.h>
-#include <TH2F.h>
-#include <TFile.h>
-#include <TVector3.h>
-#include <TMath.h>
 
 ClassImp(StEventPlaneMaker)
 
@@ -52,30 +49,26 @@ StEventPlaneMaker::~StEventPlaneMaker()
 //----------------------------------------------------------------------------- 
 int StEventPlaneMaker::Init() 
 {
-  mEventPlaneCut = new StEventPlaneCut(mType);
-  mEventPlaneHistoManager = new StEventPlaneHistoManager(mType);
-  mEventPlaneUtility = new StEventPlaneUtility(mType);
-  mEventPlaneUtility->initRunIndex(); // initialize std::map for run index
-  mEventPlaneProManager = new StEventPlaneProManager(mType);
   mZdcEpManager = new StZdcEpManager(mType); // initialize ZDC EP Manager
+  mAnaCut       = new StAnalysisCut(mType);
+  mAnaUtils     = new StAnalysisUtils(mType);
+  mAnaUtils->initRunIndex(); // initialize std::map for run index
 
   if(!mRefMultCorr)
   {
-    // if(!mEventPlaneCut->isBES()) mRefMultCorr = CentralityMaker::instance()->getgRefMultCorr_Run14_AuAu200_VpdMB5_P16id(); // 200GeV_2014
-    // if(mEventPlaneCut->isBES()) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr(); // BESII
-    mRefMultCorr = CentralityMaker::instance()->getRefMultCorr(); // BESII
+    if( mAnaCut->isIsobar() ) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr_Isobar();
   }
 
   if(mMode == 0)
   { // fill Gain Correction Factors for ZDC-SMD
     file_mOutPutGainCorr = new TFile(str_mOutPutGainCorr.c_str(),"RECREATE");
-    mEventPlaneHistoManager->initZdcGainCorr();
+    mZdcEpManager->initZdcGainCorr();
   }
   if(mMode == 1)
   { // fill ReCenter Correction Parameters for ZDC-SMD & TPC
     file_mOutPutReCenterPar = new TFile(str_mOutPutReCenterPar.c_str(),"RECREATE");
-    mEventPlaneProManager->initZdcReCenter();
-    mEventPlaneHistoManager->initZdcRawEP();
+    mZdcEpManager->initZdcReCenter();
+    mZdcEpManager->initZdcRawEP();
     mZdcEpManager->readGainCorr();
   }
 
@@ -90,7 +83,7 @@ int StEventPlaneMaker::Finish()
     if(str_mOutPutGainCorr != "")
     {
       file_mOutPutGainCorr->cd();
-      mEventPlaneHistoManager->writeZdcGainCorr();
+      mZdcEpManager->writeZdcGainCorr();
       file_mOutPutGainCorr->Close();
     }
   }
@@ -99,8 +92,8 @@ int StEventPlaneMaker::Finish()
     if(str_mOutPutReCenterPar != "")
     {
       file_mOutPutReCenterPar->cd();
-      mEventPlaneProManager->writeZdcReCenter();
-      mEventPlaneHistoManager->writeZdcRawEP();
+      mZdcEpManager->writeZdcReCenter();
+      mZdcEpManager->writeZdcRawEP();
       file_mOutPutGainCorr->Close();
     }
   }
@@ -136,7 +129,7 @@ int StEventPlaneMaker::Make()
   }
 
   // MinBias trigger
-  if( mEventPlaneCut->isMinBias(mPicoEvent) )
+  if( mAnaCut->isMinBias(mPicoEvent) )
   {
     // Event Information
     const int runId    = mPicoEvent->runId();
@@ -147,10 +140,10 @@ int StEventPlaneMaker::Make()
     const double vz    = mPicoEvent->primaryVertex().z();
     const double vzVpd = mPicoEvent->vzVpd();
     const double zdcX  = mPicoEvent->ZDCx();
-    const unsigned int numOfBTofHits = mPicoDst->numberOfBTofHits(); // get number of tof hits
-    // const unsigned short numOfBTofHits = mPicoEvent->btofTrayMultiplicity();
-    const unsigned short numOfBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
-    const unsigned int nTracks = mPicoDst->numberOfTracks(); // get number of tracks
+    // const unsigned short nBTofHits  = mPicoEvent->btofTrayMultiplicity();
+    const unsigned int nBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
+    const unsigned short nBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
+    const unsigned int nTracks      = mPicoDst->numberOfTracks(); // get number of tracks
 
     // StRefMultCorr Cut & centrality
     if(!mRefMultCorr)
@@ -160,24 +153,18 @@ int StEventPlaneMaker::Make()
     }
 
     mRefMultCorr->init(runId);
-    // if(!mEventPlaneCut->isBES()) mRefMultCorr->initEvent(grefMult,vz,zdcX); // 200GeV_2014
-    // if(mEventPlaneCut->isBES()) mRefMultCorr->initEvent(refMult,vz,zdcX); // BES-II might need Luminosity corrections
-    mRefMultCorr->initEvent(refMult,vz,zdcX); // BES-II might need Luminosity corrections
-
+    mRefMultCorr->initEvent(refMult,vz,zdcX);
     // if(mRefMultCorr->isBadRun(runId))
     // {
     //   LOG_ERROR << "Bad Run from StRefMultCorr! Skip!" << endm;
     //   return kStErr;
     // }
 
-    // vz sign
-    int vz_sign = 0; // 0 for -vz || 1 for vz
-    vz > 0.0 ? vz_sign = 1 : vz_sign = 0;
-
-    const int cent9 = mRefMultCorr->getCentralityBin9(); // get Centrality9
+    const int cent9       = mRefMultCorr->getCentralityBin9(); // get Centrality9
     const double reweight = mRefMultCorr->getWeight(); // get weight
-    const int runIndex = mEventPlaneUtility->findRunIndex(runId); // find run index for a specific run
-    const int triggerBin = mEventPlaneCut->getTriggerBin(mPicoEvent);
+    const int runIndex    = mAnaUtils->findRunIndex(runId); // find run index for a specific run
+    const int triggerBin  = mAnaUtils->getTriggerBin(mPicoEvent);
+    const int vzBin       = mAnaUtils->getVzBin(vz); // 0 for -vz || 1 for +vz
     // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
     if(runIndex < 0)
     {
@@ -185,46 +172,44 @@ int StEventPlaneMaker::Make()
       return kStErr;
     }
 
-    // bool isPileUpEventStEventPlaneCut = mEventPlaneCut->isPileUpEvent(grefMult,numOfBTofMatch,numOfBTofHits); // 200GeV
-    // if(mEventPlaneCut->isBES()) isPileUpEventStEventPlaneCut = mEventPlaneCut->isPileUpEvent(refMult,numOfBTofMatch,numOfBTofHits); // 54 GeV | always return false for 27 GeV
-    // bool isPileUpEventStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut(1.0*refMult, 1.0*numOfBTofMatch); // 27 GeV | always return !true for other energies
-    // bool isPileUpEvent = isPileUpEventStEventPlaneCut || isPileUpEventStRefMultCorr;
-    // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpEventStEventPlaneCut = " << isPileUpEventStEventPlaneCut << ", isPileUpEventStRefMultCorr = " << isPileUpEventStRefMultCorr << endl;
-    bool isPileUpEvent = false;
+    bool isPileUpEventStAnalysisCut = mAnaCut->isPileUpEvent(1.0*refMult, 1.0*nBTofMatch,vz); // alway return false for Isobar
+    bool isPileUpEventStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut(1.0*refMult, 1.0*nBTofMatch,vz); // valid for Isobar
+    bool isPileUpEvent = isPileUpEventStAnalysisCut || isPileUpEventStRefMultCorr;
+    // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpEventStAnalysisCut = " << isPileUpEventStAnalysisCut << ", isPileUpEventStRefMultCorr = " << isPileUpEventStRefMultCorr << endl;
 
-    if(mEventPlaneCut->passEventCut(mPicoDst) && !isPileUpEvent)
+    if(!isPileUpEvent && mAnaCut->passEventCut(mPicoDst))
     { // apply Event Cuts for anlaysis 
       // ZDC-SMD EP
-      mZdcEpManager->initZdcEp(cent9,runIndex,vz_sign);
+      mZdcEpManager->initZdcEp(cent9,runIndex,vzBin);
       if(mMode == 0)
       { // fill Gain Correction Factors for BBC & ZDC
-	for(int i_slat = 0; i_slat < 8; ++i_slat) // read in raw ADC value from ZDC-SMD
+	for(int iSlat = 0; iSlat < 8; ++iSlat) // read in raw ADC value from ZDC-SMD
 	{
-	  mZdcEpManager->setZdcSmd(0,0,i_slat,mPicoEvent->ZdcSmdEastVertical(i_slat));
-	  mZdcEpManager->setZdcSmd(0,1,i_slat,mPicoEvent->ZdcSmdEastHorizontal(i_slat));
-	  mZdcEpManager->setZdcSmd(1,0,i_slat,mPicoEvent->ZdcSmdWestVertical(i_slat));
-	  mZdcEpManager->setZdcSmd(1,1,i_slat,mPicoEvent->ZdcSmdWestHorizontal(i_slat));
+	  mZdcEpManager->setZdcSmd(0,0,iSlat,mPicoEvent->ZdcSmdEastVertical(iSlat));
+	  mZdcEpManager->setZdcSmd(0,1,iSlat,mPicoEvent->ZdcSmdEastHorizontal(iSlat));
+	  mZdcEpManager->setZdcSmd(1,0,iSlat,mPicoEvent->ZdcSmdWestVertical(iSlat));
+	  mZdcEpManager->setZdcSmd(1,1,iSlat,mPicoEvent->ZdcSmdWestHorizontal(iSlat));
 	}
-	for(int i_eastwest = 0; i_eastwest < 2; ++i_eastwest) // fill ZDC Gain Correction Histograms
+	for(int iEastWest = 0; iEastWest < 2; ++iEastWest) // fill ZDC Gain Correction Histograms
 	{
-	  for(int i_verthori = 0; i_verthori < 2; ++i_verthori)
+	  for(int iVertHori = 0; iVertHori < 2; ++iVertHori)
 	  {
-	    for(int i_slat = 0; i_slat < 8; ++i_slat)
+	    for(int iSlat = 0; iSlat < 8; ++iSlat)
 	    {
-	      mEventPlaneHistoManager->fillZdcGainCorr(i_eastwest,i_verthori,i_slat,runIndex,mZdcEpManager->getZdcSmd(i_eastwest,i_verthori,i_slat));
-	      // cout << "i_eastwest = " << i_eastwest << ", i_verthori = " << i_verthori << ", i_slat = " << i_slat << ", zdc = " << mZdcSmdCorrection->getZdcSmd(i_eastwest,i_verthori,i_slat) << endl;
+	      mZdcEpManager->fillZdcGainCorr(iEastWest,iVertHori,iSlat,runIndex,mZdcEpManager->getZdcSmd(iEastWest,iVertHori,iSlat));
+	      // cout << "iEastWest = " << iEastWest << ", iVertHori = " << iVertHori << ", iSlat = " << iSlat << ", zdc = " << mZdcSmdCorrection->getZdcSmd(iEastWest,iVertHori,iSlat) << endl;
 	    }
 	  }
 	}
       }
       if(mMode > 0)
       {
-	for(int i_slat = 0; i_slat < 8; ++i_slat) // read in raw ADC value from ZDC-SMD
+	for(int iSlat = 0; iSlat < 8; ++iSlat) // read in raw ADC value from ZDC-SMD
 	{
-	  mZdcEpManager->setZdcSmdGainCorr(0,0,i_slat,mPicoEvent->ZdcSmdEastVertical(i_slat));
-	  mZdcEpManager->setZdcSmdGainCorr(0,1,i_slat,mPicoEvent->ZdcSmdEastHorizontal(i_slat));
-	  mZdcEpManager->setZdcSmdGainCorr(1,0,i_slat,mPicoEvent->ZdcSmdWestVertical(i_slat));
-	  mZdcEpManager->setZdcSmdGainCorr(1,1,i_slat,mPicoEvent->ZdcSmdWestHorizontal(i_slat));
+	  mZdcEpManager->setZdcSmdGainCorr(0,0,iSlat,mPicoEvent->ZdcSmdEastVertical(iSlat));
+	  mZdcEpManager->setZdcSmdGainCorr(0,1,iSlat,mPicoEvent->ZdcSmdEastHorizontal(iSlat));
+	  mZdcEpManager->setZdcSmdGainCorr(1,0,iSlat,mPicoEvent->ZdcSmdWestVertical(iSlat));
+	  mZdcEpManager->setZdcSmdGainCorr(1,1,iSlat,mPicoEvent->ZdcSmdWestHorizontal(iSlat));
 	}
 
 	if(mMode == 1) // apply gain correction and fill recenter correction parameter
@@ -234,9 +219,9 @@ int StEventPlaneMaker::Make()
 	  TVector2 QFull = QWest-QEast;
 	  if( !(QEast.Mod() < 1e-10 || QWest.Mod() < 1e-10 || QFull.Mod() < 1e-10) )
 	  {
-	    mEventPlaneProManager->fillZdcReCenterEast(QEast,cent9,runIndex,vz_sign);
-	    mEventPlaneProManager->fillZdcReCenterWest(QWest,cent9,runIndex,vz_sign);
-	    mEventPlaneHistoManager->fillZdcRawEP(QEast,QWest,QFull,cent9,runIndex);
+	    mZdcEpManager->fillZdcReCenterEast(QEast,cent9,runIndex,vzBin);
+	    mZdcEpManager->fillZdcReCenterWest(QWest,cent9,runIndex,vzBin);
+	    mZdcEpManager->fillZdcRawEP(QEast,QWest,QFull,cent9,runIndex);
 	  }
 	}
       }

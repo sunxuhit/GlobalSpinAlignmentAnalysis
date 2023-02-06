@@ -2,7 +2,6 @@
 #define StEventPlaneMaker_h
 
 #include "StMaker.h"
-// #include "TString.h"
 #include <string>
 
 class StPicoDst;
@@ -10,10 +9,8 @@ class StPicoDstMaker;
 class StPicoEvent;
 class StRefMultCorr;
 
-class StEventPlaneUtility;
-class StEventPlaneCut;
-class StEventPlaneHistoManager;
-class StEventPlaneProManager;
+class StAnalysisUtils;
+class StAnalysisCut;
 class StZdcEpManager;
 
 class StEventPlaneMaker : public StMaker {
@@ -32,14 +29,12 @@ class StEventPlaneMaker : public StMaker {
     StPicoEvent    *mPicoEvent;
     StRefMultCorr  *mRefMultCorr;
 
-    StEventPlaneUtility *mEventPlaneUtility;
-    StEventPlaneCut *mEventPlaneCut;
-    StEventPlaneHistoManager *mEventPlaneHistoManager;
-    StEventPlaneProManager *mEventPlaneProManager;
-    StZdcEpManager *mZdcEpManager;
-    // StEventPlaneBbcEpManager *mEventPlaneBbcEpManager;
-    // StEventPlaneEpdEpManager *mEventPlaneEpdEpManager;
-    // StEventPlaneTpcEpManager *mEventPlaneTpcEpManager;
+    StAnalysisUtils *mAnaUtils; // Analysis Utilities
+    StAnalysisCut   *mAnaCut; // Analysis Cuts
+    StZdcEpManager  *mZdcEpManager;
+    // StEventPlaneTpcEpManager *mTpcEpManager;
+    // StEventPlaneBbcEpManager *mBbcEpManager;
+    // StEventPlaneEpdEpManager *mEpdEpManager;
     
     const int mMode;
     const int mType;
