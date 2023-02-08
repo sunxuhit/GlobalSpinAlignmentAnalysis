@@ -12,8 +12,8 @@
 #include "StPicoEvent/StPicoTrack.h"
 #include "StRefMultCorr/StRefMultCorr.h"
 #include "StRefMultCorr/CentralityMaker.h"
-#include "StThreeVectorF.hh"
-#include "StMessMgr.h"
+// #include "StThreeVectorF.hh"
+// #include "StMessMgr.h"
 
 #include "Utility/include/StSpinAlignmentCons.h"
 #include "StRoot/StAnalysisUtils/StAnalysisUtils.h"
@@ -196,7 +196,7 @@ int StEventPlaneMaker::Make()
 	  {
 	    for(int iSlat = 0; iSlat < 8; ++iSlat)
 	    {
-	      mZdcEpManager->fillZdcGainCorr(iEastWest,iVertHori,iSlat,runIndex,mZdcEpManager->getZdcSmd(iEastWest,iVertHori,iSlat));
+	      mZdcEpManager->fillZdcGainCorr(iEastWest,iVertHori,iSlat,mZdcEpManager->getZdcSmd(iEastWest,iVertHori,iSlat));
 	      // cout << "iEastWest = " << iEastWest << ", iVertHori = " << iVertHori << ", iSlat = " << iSlat << ", zdc = " << mZdcSmdCorrection->getZdcSmd(iEastWest,iVertHori,iSlat) << endl;
 	    }
 	  }
@@ -219,12 +219,13 @@ int StEventPlaneMaker::Make()
 	  TVector2 QFull = QWest-QEast;
 	  if( !(QEast.Mod() < 1e-10 || QWest.Mod() < 1e-10 || QFull.Mod() < 1e-10) )
 	  {
-	    mZdcEpManager->fillZdcReCenterEast(QEast,cent9,runIndex,vzBin);
-	    mZdcEpManager->fillZdcReCenterWest(QWest,cent9,runIndex,vzBin);
-	    mZdcEpManager->fillZdcRawEP(QEast,QWest,QFull,cent9,runIndex);
+	    mZdcEpManager->fillZdcReCenterEast(QEast);
+	    mZdcEpManager->fillZdcReCenterWest(QWest);
+	    mZdcEpManager->fillZdcRawEP(QEast,QWest,QFull);
 	  }
 	}
       }
+      mZdcEpManager->clearZdcEp();
     }
   }
 

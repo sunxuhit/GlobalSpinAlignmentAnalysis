@@ -37,6 +37,7 @@ namespace anaUtils
   const double mPrimPtEpWeight[mNumBeamUtils] = {2.0, 2.0};
   const double mPrimMomEpMax[mNumBeamUtils]   = {10.0, 10.0};
   const double mEtaEpGap[mNumBeamUtils]       = {0.05, 0.05}; // eta gap between Tracks and EP is 0.05 && eta gap between East and West TPC EP is 0.1
+  const int mNumTrackEpMin[mNumBeamUtils]     = {2, 2};
 
   // track cuts: phi Meson Maker
   // const double mDcaDauMax     = 3.0;

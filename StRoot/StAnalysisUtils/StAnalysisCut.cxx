@@ -148,11 +148,6 @@ bool StAnalysisCut::passTrackQA(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
   }
 
   // eta cut
-  // TVector3 primMom; // temp fix for StThreeVectorF & TVector3
-  // double primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
-  // double primPy    = picoTrack->pMom().y();
-  // double primPz    = picoTrack->pMom().z();
-  // primMom.SetXYZ(primPx,primPy,primPz);
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
   if(fabs(eta) > anaUtils::mEtaQaMax[mType])
@@ -167,8 +162,11 @@ bool StAnalysisCut::passTrackQA(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
 
   return true;
 }
+//---------------------------------------------------------------------------------
 
-bool StAnalysisCut::passTrackEP(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
+//---------------------------------------------------------------------------------
+// Track Cuts for TPC EP
+bool StAnalysisCut::passTrackTpcEp(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
 {
   if(!picoEvent) return false;
   if(!passTrackBasic(picoTrack)) return false;
@@ -183,12 +181,7 @@ bool StAnalysisCut::passTrackEP(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
     return false;
   }
 
-  // TVector3 primMom; // temp fix for StThreeVectorF & TVector3
-  // double primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
-  // double primPy    = picoTrack->pMom().y();
-  // double primPz    = picoTrack->pMom().z();
-  // primMom.SetXYZ(primPx,primPy,primPz);
-  // eta cut: -1.0 <= eta <= 1.0
+  // eta cut
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
   if(fabs(eta) > anaUtils::mEtaEpMax[mType])
@@ -204,4 +197,57 @@ bool StAnalysisCut::passTrackEP(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
 
   return true;
 }
+
+bool StAnalysisCut::passTrackTpcEpEast(StPicoTrack *picoTrack, StPicoEvent *picoEvent) // neg
+{
+  if(!passTrackTpcEp(picoTrack, picoEvent)) return false;
+
+  const TVector3 primMom = picoTrack->pMom(); // primary Momentum
+  const double eta = primMom.PseudoRapidity();
+
+  // eta cut: [-anaUtils::mEtaEpMax[mType], -anaUtils::mEtaEpGap[mType]]
+  if(eta < -1.0*anaUtils::mEtaEpMax[mType] || eta > -1.0*anaUtils::mEtaEpGap[mType])
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool StAnalysisCut::passTrackTpcEpWest(StPicoTrack *picoTrack, StPicoEvent *picoEvent) // pos
+{
+  if(!passTrackTpcEp(picoTrack, picoEvent)) return false;
+
+  const TVector3 primMom = picoTrack->pMom(); // primary Momentum
+  const double eta = primMom.PseudoRapidity();
+
+  // eta cut: [anaUtils::mEtaEpGap[mType], anaUtils::mEtaEpMax[mType]]
+  if(eta < anaUtils::mEtaEpGap[mType] || eta > anaUtils::mEtaEpMax[mType])
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool StAnalysisCut::passNumTrackTpcEpRaw(int numTrackEast, int numTrackWest)
+{
+  if(numTrackEast < anaUtils::mNumTrackEpMin[mType] || numTrackWest < anaUtils::mNumTrackEpMin[mType])
+  {
+    return kFALSE;
+  }
+
+  return kTRUE;
+}
+
+bool StAnalysisCut::passNumTrackTpcEp(int numTrackEast, int numTrackWest)
+{
+  if(numTrackEast < anaUtils::mNumTrackEpMin[mType] || numTrackWest < anaUtils::mNumTrackEpMin[mType])
+  {
+    return kFALSE;
+  }
+
+  return kTRUE;
+}
+
 //---------------------------------------------------------------------------------
