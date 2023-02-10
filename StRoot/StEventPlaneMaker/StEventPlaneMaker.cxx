@@ -12,14 +12,13 @@
 #include "StPicoEvent/StPicoTrack.h"
 #include "StRefMultCorr/StRefMultCorr.h"
 #include "StRefMultCorr/CentralityMaker.h"
-// #include "StThreeVectorF.hh"
-// #include "StMessMgr.h"
 
 #include "Utility/include/StSpinAlignmentCons.h"
 #include "StRoot/StAnalysisUtils/StAnalysisUtils.h"
 #include "StRoot/StAnalysisUtils/StAnalysisCut.h"
-#include "StRoot/StEventPlaneMaker/StEventPlaneMaker.h"
 #include "StRoot/StEventPlaneMaker/StZdcEpManager.h"
+#include "StRoot/StEventPlaneMaker/StTpcEpManager.h"
+#include "StRoot/StEventPlaneMaker/StEventPlaneMaker.h"
 
 ClassImp(StEventPlaneMaker)
 
@@ -42,7 +41,6 @@ StEventPlaneMaker::StEventPlaneMaker(const char* name, StPicoDstMaker *picoMaker
   }
 }
 
-//----------------------------------------------------------------------------- 
 StEventPlaneMaker::~StEventPlaneMaker()
 { /*  */ }
 
@@ -69,13 +67,12 @@ int StEventPlaneMaker::Init()
     file_mOutPutReCenterPar = new TFile(str_mOutPutReCenterPar.c_str(),"RECREATE");
     mZdcEpManager->initZdcReCenter();
     mZdcEpManager->initZdcRawEP();
-    mZdcEpManager->readGainCorr();
+    mZdcEpManager->readZdcGainCorr();
   }
 
   return kStOK;
 }
 
-//----------------------------------------------------------------------------- 
 int StEventPlaneMaker::Finish() 
 {
   if(mMode == 0)
@@ -101,10 +98,8 @@ int StEventPlaneMaker::Finish()
   return kStOK;
 }
 
-//----------------------------------------------------------------------------- 
 void StEventPlaneMaker::Clear(Option_t *opt) {
 }
-
 //----------------------------------------------------------------------------- 
 int StEventPlaneMaker::Make() 
 {
@@ -168,7 +163,7 @@ int StEventPlaneMaker::Make()
     // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
     if(runIndex < 0)
     {
-      LOG_ERROR << "Could not find this run Index from StEventPlaneUtility! Skip!" << endm;
+      LOG_ERROR << "Could not find this run Index from StAnalysisUtils! Skip!" << endm;
       return kStErr;
     }
 
@@ -180,9 +175,9 @@ int StEventPlaneMaker::Make()
     if(!isPileUpEvent && mAnaCut->passEventCut(mPicoDst))
     { // apply Event Cuts for anlaysis 
       // ZDC-SMD EP
-      mZdcEpManager->initZdcEp(cent9,runIndex,vzBin);
+      mZdcEpManager->initZdcEpManager(cent9,runIndex,vzBin);
       if(mMode == 0)
-      { // fill Gain Correction Factors for BBC & ZDC
+      { // fill Gain Correction Factors for ZDC-SMD & EPD(TODO)
 	for(int iSlat = 0; iSlat < 8; ++iSlat) // read in raw ADC value from ZDC-SMD
 	{
 	  mZdcEpManager->setZdcSmd(0,0,iSlat,mPicoEvent->ZdcSmdEastVertical(iSlat));
@@ -204,7 +199,7 @@ int StEventPlaneMaker::Make()
       }
       if(mMode > 0)
       {
-	for(int iSlat = 0; iSlat < 8; ++iSlat) // read in raw ADC value from ZDC-SMD
+	for(int iSlat = 0; iSlat < 8; ++iSlat) // read in raw ADC value from ZDC-SMD & EPD and apply gain correction
 	{
 	  mZdcEpManager->setZdcSmdGainCorr(0,0,iSlat,mPicoEvent->ZdcSmdEastVertical(iSlat));
 	  mZdcEpManager->setZdcSmdGainCorr(0,1,iSlat,mPicoEvent->ZdcSmdEastHorizontal(iSlat));
@@ -212,11 +207,12 @@ int StEventPlaneMaker::Make()
 	  mZdcEpManager->setZdcSmdGainCorr(1,1,iSlat,mPicoEvent->ZdcSmdWestHorizontal(iSlat));
 	}
 
-	if(mMode == 1) // apply gain correction and fill recenter correction parameter
+	if(mMode == 1) // fill recenter correction parameter for ZDC-SMD
 	{
 	  TVector2 QEast = mZdcEpManager->getQEast(mMode);
 	  TVector2 QWest = mZdcEpManager->getQWest(mMode);
-	  TVector2 QFull = QWest-QEast;
+	  // TVector2 QFull = QWest-QEast;
+	  TVector2 QFull = mZdcEpManager->getQFull(QEast,QWest,mMode);
 	  if( !(QEast.Mod() < 1e-10 || QWest.Mod() < 1e-10 || QFull.Mod() < 1e-10) )
 	  {
 	    mZdcEpManager->fillZdcReCenterEast(QEast);
@@ -225,7 +221,7 @@ int StEventPlaneMaker::Make()
 	  }
 	}
       }
-      mZdcEpManager->clearZdcEp();
+      mZdcEpManager->clearZdcEpManager();
     }
   }
 

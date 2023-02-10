@@ -12,6 +12,7 @@ class StRefMultCorr;
 class StAnalysisUtils;
 class StAnalysisCut;
 class StZdcEpManager;
+class StTpcEpManager;
 
 class StEventPlaneMaker : public StMaker {
   public:
@@ -32,9 +33,8 @@ class StEventPlaneMaker : public StMaker {
     StAnalysisUtils *mAnaUtils; // Analysis Utilities
     StAnalysisCut   *mAnaCut; // Analysis Cuts
     StZdcEpManager  *mZdcEpManager;
-    // StEventPlaneTpcEpManager *mTpcEpManager;
-    // StEventPlaneBbcEpManager *mBbcEpManager;
-    // StEventPlaneEpdEpManager *mEpdEpManager;
+    StTpcEpManager *mTpcEpManager;
+    // StEpdEpManager *mEpdEpManager;
     
     const int mMode;
     const int mType;
@@ -49,7 +49,7 @@ class StEventPlaneMaker : public StMaker {
     // TFile *file_mOutPutShiftPar;
     // TFile *file_mOutPutResolution;
 
-    int mUsedTrackCounter;
+    // int mUsedTrackCounter;
 
     ClassDef(StEventPlaneMaker, 1)
 };
