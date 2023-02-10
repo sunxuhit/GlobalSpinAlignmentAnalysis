@@ -7,9 +7,18 @@
 #include "TF1.h"
 
 #include "Utility/include/StSpinAlignmentCons.h"
-#include "Utility/include/StSpinAlignmentFunctions.h"
 #include "StRoot/StEventPlaneMaker/StZdcEpManager.h"
-// #include "StRoot/StEventPlaneMaker/StEventPlaneCons.h"
+
+double funcZdcEpResFull(double *x_val, double *par)
+{
+  double chi = x_val[0];
+  double arg = chi*chi/4.0;
+  double norm = TMath::Sqrt(TMath::Pi()/2.0)/2.0;
+
+  double resFull = norm*chi*TMath::Exp(-1.0*arg)*(TMath::BesselI0(arg)+TMath::BesselI1(arg));
+
+  return resFull;
+}
 
 ClassImp(StZdcEpManager)
 
@@ -542,7 +551,7 @@ void StZdcEpManager::readZdcResolution()
 
 void StZdcEpManager::calZdcResolution()
 {
-  TF1 *f_ResFull = new TF1("f_ResFull",ResolutionFull,0,10,0);
+  TF1 *f_ZdcEpResFull = new TF1("f_ZdcEpResFull",funcZdcEpResFull,0,10,0);
   for(Int_t iCent = 0; iCent < 9; iCent++)
   {
     double valResFull, errResFull;
@@ -560,12 +569,12 @@ void StZdcEpManager::calZdcResolution()
       double errResSub = errResRaw/(2*valResSub);
 
       // calculate full event plane resolution
-      double chiSub = f_ResFull->GetX(valResSub);
+      double chiSub = f_ZdcEpResFull->GetX(valResSub);
       double chiFull = chiSub*TMath::Sqrt(2.0);
-      valResFull = f_ResFull->Eval(chiFull);
+      valResFull = f_ZdcEpResFull->Eval(chiFull);
       // error propagation
-      double errChiSub = errResSub/f_ResFull->Derivative(chiSub);
-      errResFull = f_ResFull->Derivative(chiFull)*errChiSub*TMath::Sqrt(2.0);
+      double errChiSub = errResSub/f_ZdcEpResFull->Derivative(chiSub);
+      errResFull = f_ZdcEpResFull->Derivative(chiFull)*errChiSub*TMath::Sqrt(2.0);
     }
     mZdcResFullVal[iCent] = valResFull;
     mZdcResFullErr[iCent] = errResFull;

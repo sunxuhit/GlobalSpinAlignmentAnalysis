@@ -15,10 +15,8 @@
 #include "StRoot/StRefMultCorr/CentralityMaker.h"
 
 #include "Utility/include/StSpinAlignmentCons.h"
-#include "Utility/include/StSpinAlignmentFunctions.h"
 #include "StRoot/StAnalysisUtils/StAnalysisCons.h"
 #include "StRoot/StEventPlaneMaker/StTpcEpManager.h"
-// #include "StRoot/StEventPlaneMaker/StEventPlaneCons.h"
 
 ClassImp(StTpcEpManager)
 
@@ -276,20 +274,20 @@ void StTpcEpManager::readTpcShiftCorr()
 {
   std::string inputFile = Form("Utility/EventPlaneMaker/%s/ShiftParameter/file_%s_TpcShiftPar.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
 
-  file_mShiftPar = TFile::Open(InPutFile_Shift.Data());
+  file_mShiftPar = TFile::Open(inputFile.c_str());
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)
   {
     for(int iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order
     {
       std::string proName = Form("p_mTpcQShiftCos%dEastVz%d",iShift,iVz);
-      p_mTpcQShiftCosEast[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName);
+      p_mTpcQShiftCosEast[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
       proName = Form("p_mTpcQShiftSin%dEastVz%d",iShift,iVz);
-      p_mTpcQShiftSinEast[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName);
+      p_mTpcQShiftSinEast[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
 
       proName = Form("p_mTpcQShiftCos%dWestVz%d",iShift,iVz);
-      p_mTpcQShiftCosWest[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName);
+      p_mTpcQShiftCosWest[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
       proName = Form("p_mTpcQShiftSin%dWestVz%d",iShift,iVz);
-      p_mTpcQShiftSinWest[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName);
+      p_mTpcQShiftSinWest[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
     }
   }
 }
@@ -358,8 +356,8 @@ double StTpcEpManager::angleShift(double PsiRaw)
 // Sub Event Plane Resolution
 void StTpcEpManager::readTpcResolution()
 {
-  std::string inputFile = Form("Utility/EventPlaneMaker/%s/Resolution/file_%s_TpcEpResolution.root",globCons::str_mBeamType[mType].c_str(),g  lobCons::str_mBeamType[mType].c_str());
-  file_mResolution = TFile::Open(inputFile.Data());
+  std::string inputFile = Form("Utility/EventPlaneMaker/%s/Resolution/file_%s_TpcEpResolution.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+  file_mResolution = TFile::Open(inputFile.c_str());
   p_mTpcEpResolutionSub = (TProfile*)file_mResolution->Get("p_mRes2_Sub");
 
   for(int iCent = 0; iCent < 9; ++iCent)

@@ -7,6 +7,7 @@
 
 class StPicoTrack;
 class TProfile2D;
+class TProfile;
 class TFile;
 
 class StTpcEpManager : public TObject
