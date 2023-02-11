@@ -45,7 +45,7 @@ class StZdcEpManager : public TObject
     void readZdcShiftCorr();
     TVector2 applyZdcSmdShiftCorrEast(TVector2 QVector);
     TVector2 applyZdcSmdShiftCorrWest(TVector2 QVector);
-    double angleShift(double Psi_shifted);
+    double angleShift(double Psi);
 
     void initZdcShiftFull(); // Full
     void fillZdcShiftFull(TVector2 QVector);
@@ -53,22 +53,37 @@ class StZdcEpManager : public TObject
     void readZdcShiftCorrFull();
     TVector2 applyZdcSmdShiftCorrFull(TVector2 QVector);
 
+    // Event Plane Resolution
+    void initZdcResolution(); // Full
+    void fillZdcResolution();
+    void writeZdcResolution();
+    void readZdcResolution();
+    void calZdcFullEpRes();
+    double getZdcFullEpResVal(int cent9);
+    double getZdcFullEpResErr(int cent9);
+
     // QVector
     double getPosition(int eastwest,int verthori,int strip, int mode);
     TVector2 getQEast(int mode);
     TVector2 getQWest(int mode);
     TVector2 getQFull(TVector2 QEast, TVector2 QWest, int mode);
 
-    // Event Plane Resolution
-    void readZdcResolution();
-    void calZdcResolution();
-    double getZdcResFullVal(int cent9);
-    double getZdcResFullErr(int cent9);
-
     // Event Plane Distribution
-    void initZdcRawEP(); // raw EP
-    void fillZdcRawEP(TVector2 QEast, TVector2 QWest, TVector2 QFull);
-    void writeZdcRawEP();
+    void initZdcSubEpRaw(); // raw Sub EP
+    void fillZdcSubEpRaw(TVector2 QEast, TVector2 QWest, TVector2 QFull);
+    void writeZdcSubEpRaw();
+
+    void initZdcSubEpReCenter(); // recenter Sub EP
+    void fillZdcSubEpReCenter(TVector2 QEast, TVector2 QWest, TVector2 QFull);
+    void writeZdcSubEpReCenter();
+
+    void initZdcSubEpShift(); // shift Sub EP
+    void fillZdcSubEpShift(TVector2 QEast, TVector2 QWest, TVector2 QFull);
+    void writeZdcSubEpShift();
+
+    void initZdcFullEpShift(); // shift Full EP
+    void fillZdcFullEpShift(TVector2 QFull);
+    void writeZdcFullEpShift();
 
   private:
     static const int mNumVzBin = 2; // 0: vz < 0 | 1: vz >= 0
@@ -100,15 +115,28 @@ class StZdcEpManager : public TObject
     TProfile2D *p_mZdcQShiftCosFull[mNumVzBin][mNumShiftCorr]; // 0 = vertex neg/pos | 1 = shift correction harmonics
     TProfile2D *p_mZdcQShiftSinFull[mNumVzBin][mNumShiftCorr];
 
-    // charged hadron v1 calculation
-    TProfile *p_mZdcEpResolution;
-    double mZdcResFullVal[9];
-    double mZdcResFullErr[9];
+    // Event Plane Resolution
+    TProfile *p_mZdcSubEpRes;
+    double mZdcFullEpResVal[9];
+    double mZdcFullEpResErr[9];
 
     // Event Plane Distribution
-    TH2F *h_mZdcRawEpEast[9]; // raw EP
-    TH2F *h_mZdcRawEpWest[9];
-    TH2F *h_mZdcRawEpFull[9]; // Qwest-QEast
+    TH2F *h_mZdcEpRawEast[9]; // raw EP
+    TH2F *h_mZdcEpRawWest[9];
+    TH2F *h_mZdcEpRawCorr[9]; // Psi1East vs Psi1West
+    TH2F *h_mZdcEpRawFull[9]; // Qwest-QEast
+
+    TH2F *h_mZdcEpReCenterEast[9]; // recenter EP
+    TH2F *h_mZdcEpReCenterWest[9];
+    TH2F *h_mZdcEpReCenterCorr[9]; // Psi1East vs Psi1West
+    TH2F *h_mZdcEpReCenterFull[9]; // Qwest-QEast
+
+    TH2F *h_mZdcEpShiftEast[9]; // shift EP
+    TH2F *h_mZdcEpShiftWest[9];
+    TH2F *h_mZdcEpShiftCorr[9]; // Psi1East vs Psi1West
+    TH2F *h_mZdcEpShiftFull[9]; // Qwest-QEast
+
+    TH2F *h_mZdcEpShiftFullCorr[9]; // Qwest-QEast
 
     TFile *file_mGainCorrPar;
     TFile *file_mReCenterPar;

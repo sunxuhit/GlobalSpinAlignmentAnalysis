@@ -352,7 +352,7 @@ TVector2 StZdcEpManager::applyZdcSmdShiftCorrWest(TVector2 QVector)
   return QVecShift;
 }
 
-double StZdcEpManager::angleShift(double PsiRaw)
+double StZdcEpManager::angleShift(double Psi)
 {
   double PsiCorr = PsiRaw;
   if(PsiRaw > 1.0*TMath::Pi())
@@ -538,25 +538,25 @@ void StZdcEpManager::readZdcResolution()
 {
   std::string inputFile = Form("Utility/EventPlaneMaker/%s/Resolution/file_%s_ZdcEpResolution.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   file_mResolution = TFile::Open(inputFile.c_str());
-  p_mZdcEpResolution = (TProfile*)file_mResolution->Get("p_mZdcEpResolution");
+  p_mZdcSubEpRes = (TProfile*)file_mResolution->Get("p_mZdcSubEpRes");
 
   // for(int iCent = 0; iCent < 9; ++iCent) 
   // {
-  //   mZdcResFullVal[iCent] = 0.0;
-  //   mZdcResFullErr[iCent] = 0.0;
+  //   mZdcFullEpResVal[iCent] = 0.0;
+  //   mZdcFullEpResErr[iCent] = 0.0;
   // }
 
-  calZdcResolution();
+  calZdcFullEpRes();
 }
 
-void StZdcEpManager::calZdcResolution()
+void StZdcEpManager::calZdcFullEpRes()
 {
   TF1 *f_ZdcEpResFull = new TF1("f_ZdcEpResFull",funcZdcEpResFull,0,10,0);
   for(Int_t iCent = 0; iCent < 9; iCent++)
   {
     double valResFull, errResFull;
-    double valResRaw = p_mZdcEpResolution->GetBinContent(iCent+1);
-    double errResRaw = p_mZdcEpResolution->GetBinError(iCent+1);
+    double valResRaw = p_mZdcSubEpRes->GetBinContent(iCent+1);
+    double errResRaw = p_mZdcSubEpRes->GetBinError(iCent+1);
     //    cout << "valResRaw = " << valResRaw << ", errResRaw = " << errResRaw << endl;
     if(valResRaw <= 0)
     {
@@ -576,49 +576,49 @@ void StZdcEpManager::calZdcResolution()
       double errChiSub = errResSub/f_ZdcEpResFull->Derivative(chiSub);
       errResFull = f_ZdcEpResFull->Derivative(chiFull)*errChiSub*TMath::Sqrt(2.0);
     }
-    mZdcResFullVal[iCent] = valResFull;
-    mZdcResFullErr[iCent] = errResFull;
+    mZdcFullEpResVal[iCent] = valResFull;
+    mZdcFullEpResErr[iCent] = errResFull;
   }
 }
 
-double StZdcEpManager::getZdcResFullVal(int cent9)
+double StZdcEpManager::getZdcFullEpResVal(int cent9)
 {
-  return mZdcResFullVal[cent9];
+  return mZdcFullEpResVal[cent9];
 }
 
-double StZdcEpManager::getZdcResFullErr(int cent9)
+double StZdcEpManager::getZdcFullEpResErr(int cent9)
 {
-  return mZdcResFullErr[cent9];
+  return mZdcFullEpResErr[cent9];
 }
 //---------------------------------------------------------------------------------
 // raw EP
-void StZdcEpManager::initZdcRawEP()
+void StZdcEpManager::initZdcSubEpRaw()
 {
   for(int iCent = 0; iCent < 9; ++iCent)
   {
-    std::string histName = Form("h_mZdcRawEpEastCent%d",iCent);
-    h_mZdcRawEpEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5);
-    histName = Form("h_mZdcRawEpWestCent%d",iCent);
-    h_mZdcRawEpWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5);
-    histName = Form("h_mZdcRawEpFullCent%d",iCent);
-    h_mZdcRawEpFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5);
+    std::string histName = Form("h_mZdcEpRawEastCent%d",iCent);
+    h_mZdcEpRawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5);
+    histName = Form("h_mZdcEpRawWestCent%d",iCent);
+    h_mZdcEpRawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5);
+    histName = Form("h_mZdcEpRawFullCent%d",iCent);
+    h_mZdcEpRawFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5);
   }
 }
 
-void StZdcEpManager::fillZdcRawEP(TVector2 QEast, TVector2 QWest, TVector2 QFull)
+void StZdcEpManager::fillZdcSubEpRaw(TVector2 QEast, TVector2 QWest, TVector2 QFull)
 {
-  double PsiEast = TMath::ATan2(QEast.Y(),QEast.X()); h_mZdcRawEpEast[mCent9]->Fill(PsiEast,mRunIndex);
-  double PsiWest = TMath::ATan2(QWest.Y(),QWest.X()); h_mZdcRawEpWest[mCent9]->Fill(PsiWest,mRunIndex);
-  double PsiFull = TMath::ATan2(QFull.Y(),QFull.X()); h_mZdcRawEpFull[mCent9]->Fill(PsiFull,mRunIndex);
+  double PsiEast = TMath::ATan2(QEast.Y(),QEast.X()); h_mZdcEpRawEast[mCent9]->Fill(PsiEast,mRunIndex);
+  double PsiWest = TMath::ATan2(QWest.Y(),QWest.X()); h_mZdcEpRawWest[mCent9]->Fill(PsiWest,mRunIndex);
+  double PsiFull = TMath::ATan2(QFull.Y(),QFull.X()); h_mZdcEpRawFull[mCent9]->Fill(PsiFull,mRunIndex);
 }
 
-void StZdcEpManager::writeZdcRawEP()
+void StZdcEpManager::writeZdcSubEpRaw()
 {
   for(int iCent = 0; iCent < 9; ++iCent)
   {
-    h_mZdcRawEpEast[iCent]->Write();
-    h_mZdcRawEpWest[iCent]->Write();
-    h_mZdcRawEpFull[iCent]->Write();
+    h_mZdcEpRawEast[iCent]->Write();
+    h_mZdcEpRawWest[iCent]->Write();
+    h_mZdcEpRawFull[iCent]->Write();
   }
 }
 //---------------------------------------------------------------------------------
