@@ -147,14 +147,14 @@ void StZdcEpManager::initZdcReCenter()
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)
   {
     std::string proName = Form("p_mZdcQReCenterVertEastVz%d",iVz);
-    p_mZdcQReCenterVertEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+    p_mZdcQReCenterVertEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
     proName = Form("p_mZdcQReCenterHoriEastVz%d",iVz);
-    p_mZdcQReCenterHoriEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+    p_mZdcQReCenterHoriEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
     proName = Form("p_mZdcQReCenterVertWestVz%d",iVz);
-    p_mZdcQReCenterVertWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+    p_mZdcQReCenterVertWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
     proName = Form("p_mZdcQReCenterHoriWestVz%d",iVz);
-    p_mZdcQReCenterHoriWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+    p_mZdcQReCenterHoriWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
   }
 }
 
@@ -230,14 +230,14 @@ void StZdcEpManager::initZdcShift()
     for(int iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order
     {
       std::string proName = Form("p_mZdcQShiftCos%dEastVz%d",iShift,iVz);
-      p_mZdcQShiftCosEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+      p_mZdcQShiftCosEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
       proName = Form("p_mZdcQShiftSin%dEastVz%d",iShift,iVz);
-      p_mZdcQShiftSinEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+      p_mZdcQShiftSinEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
       proName = Form("p_mZdcQShiftCos%dWestVz%d",iShift,iVz);
-      p_mZdcQShiftCosWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+      p_mZdcQShiftCosWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
       proName = Form("p_mZdcQShiftSin%dWestVz%d",iShift,iVz);
-      p_mZdcQShiftSinWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+      p_mZdcQShiftSinWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
     }
   }
 }
@@ -375,9 +375,9 @@ void StZdcEpManager::initZdcShiftFull()
     for(int iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order
     {
       std::string proName = Form("p_mZdcQShiftCos%dFullVz%d",iShift,iVz);
-      p_mZdcQShiftCosFull[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+      p_mZdcQShiftCosFull[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
       proName = Form("p_mZdcQShiftSin%dFullVz%d",iShift,iVz);
-      p_mZdcQShiftSinFull[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+      p_mZdcQShiftSinFull[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
     }
   }
 }
@@ -534,25 +534,44 @@ TVector2 StZdcEpManager::getQFull(TVector2 QEast, TVector2 QWest, int mode)
 }
 //---------------------------------------------------------------------------------
 // Full Event Plane Resolution
+void StZdcEpManager::initZdcResolution()
+{
+  p_mZdcSubEpRes = new TProfile("p_mZdcSubEpRes","p_mZdcSubEpRes",mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+}
+
+void StZdcEpManager::fillZdcResolution(TVector2 QEast, TVector2 QWest)
+{
+  double PsiEast = TMath::ATan2(QEast.Y(),QEast.X());
+  double PsiWest = TMath::ATan2(QWest.Y(),QWest.X());
+  double res1Sub = TMath::Cos(PsiWest-PsiEast+TMath::Pi());
+  p_mZdcSubEpRes->Fill((double)mCent9,res1Sub);
+}
+
+void StZdcEpManager::writeZdcResolution()
+{
+  p_mZdcSubEpRes->Write();
+}
+
 void StZdcEpManager::readZdcResolution()
 {
   std::string inputFile = Form("Utility/EventPlaneMaker/%s/Resolution/file_%s_ZdcEpResolution.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   file_mResolution = TFile::Open(inputFile.c_str());
   p_mZdcSubEpRes = (TProfile*)file_mResolution->Get("p_mZdcSubEpRes");
 
-  // for(int iCent = 0; iCent < 9; ++iCent) 
-  // {
-  //   mZdcFullEpResVal[iCent] = 0.0;
-  //   mZdcFullEpResErr[iCent] = 0.0;
-  // }
+  for(int iCent = 0; iCent < 9; ++iCent) 
+  {
+    mZdcFullEpResVal[iCent] = 0.0;
+    mZdcFullEpResErr[iCent] = 0.0;
+  }
 
   calZdcFullEpRes();
+  file_mResolution->Close();
 }
 
 void StZdcEpManager::calZdcFullEpRes()
 {
   TF1 *f_ZdcEpResFull = new TF1("f_ZdcEpResFull",funcZdcEpResFull,0,10,0);
-  for(Int_t iCent = 0; iCent < 9; iCent++)
+  for(Int_t iCent = 0; iCent < mNumCentrality; iCent++)
   {
     double valResFull, errResFull;
     double valResRaw = p_mZdcSubEpRes->GetBinContent(iCent+1);
@@ -594,31 +613,129 @@ double StZdcEpManager::getZdcFullEpResErr(int cent9)
 // raw EP
 void StZdcEpManager::initZdcSubEpRaw()
 {
-  for(int iCent = 0; iCent < 9; ++iCent)
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     std::string histName = Form("h_mZdcEpRawEastCent%d",iCent);
-    h_mZdcEpRawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5);
+    h_mZdcEpRawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mZdcEpRawWestCent%d",iCent);
-    h_mZdcEpRawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5);
+    h_mZdcEpRawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mZdcEpRawFullCent%d",iCent);
-    h_mZdcEpRawFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5);
+    h_mZdcEpRawFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mZdcEpRawCorrCent%d",iCent);
+    h_mZdcEpRawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
   }
 }
 
 void StZdcEpManager::fillZdcSubEpRaw(TVector2 QEast, TVector2 QWest, TVector2 QFull)
 {
-  double PsiEast = TMath::ATan2(QEast.Y(),QEast.X()); h_mZdcEpRawEast[mCent9]->Fill(PsiEast,mRunIndex);
-  double PsiWest = TMath::ATan2(QWest.Y(),QWest.X()); h_mZdcEpRawWest[mCent9]->Fill(PsiWest,mRunIndex);
-  double PsiFull = TMath::ATan2(QFull.Y(),QFull.X()); h_mZdcEpRawFull[mCent9]->Fill(PsiFull,mRunIndex);
+  double PsiEast = TMath::ATan2(QEast.Y(),QEast.X()); h_mZdcEpRawEast[mCent9]->Fill(mRunIndex,PsiEast);
+  double PsiWest = TMath::ATan2(QWest.Y(),QWest.X()); h_mZdcEpRawWest[mCent9]->Fill(mRunIndex,PsiWest);
+  double PsiFull = TMath::ATan2(QFull.Y(),QFull.X()); h_mZdcEpRawFull[mCent9]->Fill(mRunIndex,PsiFull);
+  h_mZdcEpRawCorr[mCent9]->Fill(PsiEast,PsiWest);
 }
 
 void StZdcEpManager::writeZdcSubEpRaw()
 {
-  for(int iCent = 0; iCent < 9; ++iCent)
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     h_mZdcEpRawEast[iCent]->Write();
     h_mZdcEpRawWest[iCent]->Write();
     h_mZdcEpRawFull[iCent]->Write();
+    h_mZdcEpRawCorr[iCent]->Write();
+  }
+}
+
+// recenter EP
+void StZdcEpManager::initZdcSubEpReCenter()
+{
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    std::string histName = Form("h_mZdcEpReCenterEastCent%d",iCent);
+    h_mZdcEpReCenterEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mZdcEpReCenterWestCent%d",iCent);
+    h_mZdcEpReCenterWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mZdcEpReCenterFullCent%d",iCent);
+    h_mZdcEpReCenterFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mZdcEpReCenterCorrCent%d",iCent);
+    h_mZdcEpReCenterCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+  }
+}
+
+void StZdcEpManager::fillZdcSubEpReCenter(TVector2 QEast, TVector2 QWest, TVector2 QFull)
+{
+  double PsiEast = TMath::ATan2(QEast.Y(),QEast.X()); h_mZdcEpReCenterEast[mCent9]->Fill(mRunIndex,PsiEast);
+  double PsiWest = TMath::ATan2(QWest.Y(),QWest.X()); h_mZdcEpReCenterWest[mCent9]->Fill(mRunIndex,PsiWest);
+  double PsiFull = TMath::ATan2(QFull.Y(),QFull.X()); h_mZdcEpReCenterFull[mCent9]->Fill(mRunIndex,PsiFull);
+  h_mZdcEpReCenterCorr[mCent9]->Fill(PsiEast,PsiWest);
+}
+
+void StZdcEpManager::writeZdcSubEpReCenter()
+{
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    h_mZdcEpReCenterEast[iCent]->Write();
+    h_mZdcEpReCenterWest[iCent]->Write();
+    h_mZdcEpReCenterFull[iCent]->Write();
+    h_mZdcEpReCenterCorr[iCent]->Write();
+  }
+}
+
+// shift EP
+void StZdcEpManager::initZdcSubEpShift()
+{
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    std::string histName = Form("h_mZdcEpShiftEastCent%d",iCent);
+    h_mZdcEpShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mZdcEpShiftWestCent%d",iCent);
+    h_mZdcEpShiftWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mZdcEpShiftFullCent%d",iCent);
+    h_mZdcEpShiftFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mZdcEpShiftCorrCent%d",iCent);
+    h_mZdcEpShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+  }
+}
+
+void StZdcEpManager::fillZdcSubEpShift(TVector2 QEast, TVector2 QWest, TVector2 QFull)
+{
+  double PsiEast = TMath::ATan2(QEast.Y(),QEast.X()); h_mZdcEpShiftEast[mCent9]->Fill(mRunIndex,PsiEast);
+  double PsiWest = TMath::ATan2(QWest.Y(),QWest.X()); h_mZdcEpShiftWest[mCent9]->Fill(mRunIndex,PsiWest);
+  double PsiFull = TMath::ATan2(QFull.Y(),QFull.X()); h_mZdcEpShiftFull[mCent9]->Fill(mRunIndex,PsiFull);
+  h_mZdcEpShiftCorr[mCent9]->Fill(PsiEast,PsiWest);
+}
+
+void StZdcEpManager::writeZdcSubEpShift()
+{
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    h_mZdcEpShiftEast[iCent]->Write();
+    h_mZdcEpShiftWest[iCent]->Write();
+    h_mZdcEpShiftFull[iCent]->Write();
+    h_mZdcEpShiftCorr[iCent]->Write();
+  }
+}
+
+// shift Full EP
+void StZdcEpManager::initZdcFullEpShift()
+{
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    std::string histName = Form("h_mZdcEpShiftFullCorrCent%d",iCent);
+    h_mZdcEpShiftFullCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+  }
+}
+
+void StZdcEpManager::fillZdcFullEpShift(TVector2 QFull)
+{
+  double PsiFull = TMath::ATan2(QFull.Y(),QFull.X()); 
+  h_mZdcEpShiftFullCorr[mCent9]->Fill(mRunIndex,PsiFull);
+}
+
+void StZdcEpManager::writeZdcFullEpShift()
+{
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    h_mZdcEpShiftFullCorr[iCent]->Write();
   }
 }
 //---------------------------------------------------------------------------------

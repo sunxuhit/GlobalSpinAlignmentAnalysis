@@ -55,7 +55,7 @@ class StZdcEpManager : public TObject
 
     // Event Plane Resolution
     void initZdcResolution(); // Full
-    void fillZdcResolution();
+    void fillZdcResolution(TVector2 QEast, TVector2 QWest);
     void writeZdcResolution();
     void readZdcResolution();
     void calZdcFullEpRes();
@@ -88,6 +88,7 @@ class StZdcEpManager : public TObject
   private:
     static const int mNumVzBin = 2; // 0: vz < 0 | 1: vz >= 0
     static const int mNumShiftCorr = 20;
+    static const int mNumCentrality = 9; // 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%
 
     int mCent9;
     int mRunIndex;
@@ -117,26 +118,26 @@ class StZdcEpManager : public TObject
 
     // Event Plane Resolution
     TProfile *p_mZdcSubEpRes;
-    double mZdcFullEpResVal[9];
-    double mZdcFullEpResErr[9];
+    double mZdcFullEpResVal[mNumCentrality];
+    double mZdcFullEpResErr[mNumCentrality];
 
-    // Event Plane Distribution
-    TH2F *h_mZdcEpRawEast[9]; // raw EP
-    TH2F *h_mZdcEpRawWest[9];
-    TH2F *h_mZdcEpRawCorr[9]; // Psi1East vs Psi1West
-    TH2F *h_mZdcEpRawFull[9]; // Qwest-QEast
+    // Event Plane Distribution | x axis is runIndex, y axis is EP angle
+    TH2F *h_mZdcEpRawEast[mNumCentrality]; // raw EP
+    TH2F *h_mZdcEpRawWest[mNumCentrality];
+    TH2F *h_mZdcEpRawFull[mNumCentrality]; // Qwest-QEast
+    TH2F *h_mZdcEpRawCorr[mNumCentrality]; // Psi1East vs Psi1West
 
-    TH2F *h_mZdcEpReCenterEast[9]; // recenter EP
-    TH2F *h_mZdcEpReCenterWest[9];
-    TH2F *h_mZdcEpReCenterCorr[9]; // Psi1East vs Psi1West
-    TH2F *h_mZdcEpReCenterFull[9]; // Qwest-QEast
+    TH2F *h_mZdcEpReCenterEast[mNumCentrality]; // recenter EP
+    TH2F *h_mZdcEpReCenterWest[mNumCentrality];
+    TH2F *h_mZdcEpReCenterFull[mNumCentrality]; // Qwest-QEast
+    TH2F *h_mZdcEpReCenterCorr[mNumCentrality]; // Psi1East vs Psi1West
 
-    TH2F *h_mZdcEpShiftEast[9]; // shift EP
-    TH2F *h_mZdcEpShiftWest[9];
-    TH2F *h_mZdcEpShiftCorr[9]; // Psi1East vs Psi1West
-    TH2F *h_mZdcEpShiftFull[9]; // Qwest-QEast
+    TH2F *h_mZdcEpShiftEast[mNumCentrality]; // shift EP
+    TH2F *h_mZdcEpShiftWest[mNumCentrality];
+    TH2F *h_mZdcEpShiftFull[mNumCentrality]; // Qwest-QEast
+    TH2F *h_mZdcEpShiftCorr[mNumCentrality]; // Psi1East vs Psi1West
 
-    TH2F *h_mZdcEpShiftFullCorr[9]; // Qwest-QEast
+    TH2F *h_mZdcEpShiftFullCorr[mNumCentrality]; // Qwest-QEast
 
     TFile *file_mGainCorrPar;
     TFile *file_mReCenterPar;

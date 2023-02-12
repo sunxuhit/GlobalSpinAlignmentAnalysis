@@ -119,14 +119,14 @@ void StTpcEpManager::initTpcReCenter()
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)
   {
     std::string proName = Form("p_mTpcQ2ReCenterXEastVz%d",iVz);
-    p_mTpcQ2ReCenterXEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+    p_mTpcQ2ReCenterXEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
     proName = Form("p_mTpcQ2ReCenterYEastVz%d",iVz);
-    p_mTpcQ2ReCenterYEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+    p_mTpcQ2ReCenterYEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
     proName = Form("p_mTpcQ2ReCenterXWestVz%d",iVz);
-    p_mTpcQ2ReCenterXWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+    p_mTpcQ2ReCenterXWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
     proName = Form("p_mTpcQ2ReCenterYWestVz%d",iVz);
-    p_mTpcQ2ReCenterYWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+    p_mTpcQ2ReCenterYWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
   }
 }
 
@@ -218,14 +218,14 @@ void StTpcEpManager::initTpcShift()
     for(int iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order
     {
       std::string proName = Form("p_mTpcQShiftCos%dEastVz%d",iShift,iVz);
-      p_mTpcQ2ShiftCosEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+      p_mTpcQ2ShiftCosEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
       proName = Form("p_mTpcQShiftSin%dEastVz%d",iShift,iVz);
-      p_mTpcQ2ShiftSinEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+      p_mTpcQ2ShiftSinEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
       proName = Form("p_mTpcQShiftCos%dWestVz%d",iShift,iVz);
-      p_mTpcQ2ShiftCosWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+      p_mTpcQ2ShiftCosWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
       proName = Form("p_mTpcQShiftSin%dWestVz%d",iShift,iVz);
-      p_mTpcQ2ShiftSinWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,9,-0.5,8.5);
+      p_mTpcQ2ShiftSinWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
     }
   }
 }
@@ -354,13 +354,35 @@ double StTpcEpManager::angleShift(double Psi2Raw)
 }
 //---------------------------------------------------------------------------------
 // Sub Event Plane Resolution
+void StTpcEpManager::initTpcResolution()
+{
+  p_mTpcSubEp2Res = new TProfile("p_mTpcSubEp2Res","p_mTpcSubEp2Res",mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+}
+
+void StTpcEpManager::fillTpcResolution(double Psi2East, double Psi2West)
+{
+  double res2Sub = TMath::Cos(2.0*(Psi2East-Psi2West));
+  p_mTpcSubEp2Res->Fill((double)mCent9,res2Sub);
+}
+
+void StTpcEpManager::writeTpcResolution()
+{
+  p_mTpcSubEp2Res->Write();
+}
+
 void StTpcEpManager::readTpcResolution()
 {
   std::string inputFile = Form("Utility/EventPlaneMaker/%s/Resolution/file_%s_TpcEpResolution.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   file_mResolution = TFile::Open(inputFile.c_str());
-  p_mTpcSubEp2Res = (TProfile*)file_mResolution->Get("p_mRes2_Sub");
+  p_mTpcSubEp2Res = (TProfile*)file_mResolution->Get("p_mTpcSubEp2Res");
 
-  for(int iCent = 0; iCent < 9; ++iCent)
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    mTpcSubEp2ResVal[iCent] = 0.0;
+    mTpcSubEp2ResErr[iCent] = 0.0;
+  }
+
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     double valResSub, errResSub;
     double valResRaw = p_mTpcSubEp2Res->GetBinContent(iCent+1);
@@ -379,6 +401,7 @@ void StTpcEpManager::readTpcResolution()
     mTpcSubEp2ResVal[iCent] = valResSub;
     mTpcSubEp2ResErr[iCent] = errResSub;
   }
+  file_mResolution->Close();
 }
 
 double StTpcEpManager::getTpcSubEp2ResVal(int cent9)
@@ -466,5 +489,98 @@ int StTpcEpManager::getNumTrkReCenterEast()
 int StTpcEpManager::getNumTrkReCenterWest()
 {
   return mQCouReCenterWest;
+}
+//---------------------------------------------------------------------------------
+// raw EP
+void StTpcEpManager::initTpcSubEpRaw()
+{
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    std::string histName = Form("h_mTpcEp2RawEastCent%d",iCent);
+    h_mTpcEp2RawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mTpcEp2RawWestCent%d",iCent);
+    h_mTpcEp2RawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mTpcEp2RawCorrCent%d",iCent);
+    h_mTpcEp2RawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+  }
+}
+
+void StTpcEpManager::fillTpcSubEpRaw(double Psi2East, double Psi2West)
+{
+  h_mTpcEp2RawEast[mCent9]->Fill(mRunIndex,Psi2East);
+  h_mTpcEp2RawWest[mCent9]->Fill(mRunIndex,Psi2West);
+  h_mTpcEp2RawCorr[mCent9]->Fill(Psi2East,Psi2West);
+}
+
+void StTpcEpManager::writeTpcSubEpRaw()
+{
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    h_mTpcEp2RawEast[iCent]->Write();
+    h_mTpcEp2RawWest[iCent]->Write();
+    h_mTpcEp2RawCorr[iCent]->Write();
+  }
+}
+
+// recenter EP
+void StTpcEpManager::initTpcSubEpReCenter()
+{
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    std::string histName = Form("h_mTpcEp2ReCenterEastCent%d",iCent);
+    h_mTpcEp2ReCenterEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mTpcEp2ReCenterWestCent%d",iCent);
+    h_mTpcEp2ReCenterWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mTpcEp2ReCenterCorrCent%d",iCent);
+    h_mTpcEp2ReCenterCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+  }
+}
+
+void StTpcEpManager::fillTpcSubEpReCenter(double Psi2East, double Psi2West)
+{
+  h_mTpcEp2ReCenterEast[mCent9]->Fill(mRunIndex,Psi2East);
+  h_mTpcEp2ReCenterWest[mCent9]->Fill(mRunIndex,Psi2West);
+  h_mTpcEp2ReCenterCorr[mCent9]->Fill(Psi2East,Psi2West);
+}
+
+void StTpcEpManager::writeTpcSubEpReCenter()
+{
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    h_mTpcEp2ReCenterEast[iCent]->Write();
+    h_mTpcEp2ReCenterWest[iCent]->Write();
+    h_mTpcEp2ReCenterCorr[iCent]->Write();
+  }
+}
+
+// shift EP
+void StTpcEpManager::initTpcSubEpShift()
+{
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    std::string histName = Form("h_mTpcEp2ShiftEastCent%d",iCent);
+    h_mTpcEp2ShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mTpcEp2ShiftWestCent%d",iCent);
+    h_mTpcEp2ShiftWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mTpcEp2ShiftCorrCent%d",iCent);
+    h_mTpcEp2ShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+  }
+}
+
+void StTpcEpManager::fillTpcSubEpShift(double Psi2East, double Psi2West)
+{
+  h_mTpcEp2ShiftEast[mCent9]->Fill(mRunIndex,Psi2East);
+  h_mTpcEp2ShiftWest[mCent9]->Fill(mRunIndex,Psi2West);
+  h_mTpcEp2ShiftCorr[mCent9]->Fill(Psi2East,Psi2West);
+}
+
+void StTpcEpManager::writeTpcSubEpShift()
+{
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    h_mTpcEp2ShiftEast[iCent]->Write();
+    h_mTpcEp2ShiftWest[iCent]->Write();
+    h_mTpcEp2ShiftCorr[iCent]->Write();
+  }
 }
 //---------------------------------------------------------------------------------

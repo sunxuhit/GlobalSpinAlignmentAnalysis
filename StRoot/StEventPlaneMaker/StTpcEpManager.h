@@ -49,7 +49,7 @@ class StTpcEpManager : public TObject
 
     // Event Plane Resolution
     void initTpcResolution();
-    void fillTpcResolution();
+    void fillTpcResolution(double Psi2East, double Psi2West);
     void writeTpcResolution();
     void readTpcResolution();
     double getTpcSubEp2ResVal(int cent9);
@@ -85,6 +85,7 @@ class StTpcEpManager : public TObject
   private:
     static const int mNumVzBin = 2; // 0: vz < 0 | 1: vz >= 0
     static const int mNumShiftCorr = 20;
+    static const int mNumCentrality = 9; // 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%
 
     int mCent9;
     int mRunIndex;
@@ -110,21 +111,21 @@ class StTpcEpManager : public TObject
 
     // TPC EP Resolution
     TProfile *p_mTpcSubEp2Res;
-    double mTpcSubEp2ResVal[9];
-    double mTpcSubEp2ResErr[9];
+    double mTpcSubEp2ResVal[mNumCentrality];
+    double mTpcSubEp2ResErr[mNumCentrality];
 
     // Event Plane Distribution
-    TH2F *h_mTpcEp2RawEast[9]; // raw EP
-    TH2F *h_mTpcEp2RawWest[9];
-    TH2F *h_mTpcEp2RawCorr[9]; // Psi2East vs Psi2West
+    TH2F *h_mTpcEp2RawEast[mNumCentrality]; // raw EP
+    TH2F *h_mTpcEp2RawWest[mNumCentrality];
+    TH2F *h_mTpcEp2RawCorr[mNumCentrality]; // Psi2East vs Psi2West
 
-    TH2F *h_mTpcEp2ReCenterEast[9]; // recenter EP
-    TH2F *h_mTpcEp2ReCenterWest[9];
-    TH2F *h_mTpcEp2ReCenterCorr[9]; // Psi2East vs Psi2West
+    TH2F *h_mTpcEp2ReCenterEast[mNumCentrality]; // recenter EP
+    TH2F *h_mTpcEp2ReCenterWest[mNumCentrality];
+    TH2F *h_mTpcEp2ReCenterCorr[mNumCentrality]; // Psi2East vs Psi2West
 
-    TH2F *h_mTpcEp2ShiftEast[9]; // shift EP
-    TH2F *h_mTpcEp2ShiftWest[9];
-    TH2F *h_mTpcEp2ShiftCorr[9]; // Psi2East vs Psi2West
+    TH2F *h_mTpcEp2ShiftEast[mNumCentrality]; // shift EP
+    TH2F *h_mTpcEp2ShiftWest[mNumCentrality];
+    TH2F *h_mTpcEp2ShiftCorr[mNumCentrality]; // Psi2East vs Psi2West
 
     TFile *file_mReCenterPar;
     TFile *file_mShiftPar;
