@@ -564,12 +564,6 @@ void StZdcEpManager::readZdcResolution()
     mZdcFullEpResErr[iCent] = 0.0;
   }
 
-  calZdcFullEpRes();
-  file_mResolution->Close();
-}
-
-void StZdcEpManager::calZdcFullEpRes()
-{
   TF1 *f_ZdcEpResFull = new TF1("f_ZdcEpResFull",funcZdcEpResFull,0,10,0);
   for(Int_t iCent = 0; iCent < mNumCentrality; iCent++)
   {
@@ -598,6 +592,8 @@ void StZdcEpManager::calZdcFullEpRes()
     mZdcFullEpResVal[iCent] = valResFull;
     mZdcFullEpResErr[iCent] = errResFull;
   }
+
+  file_mResolution->Close();
 }
 
 double StZdcEpManager::getZdcFullEpResVal(int cent9)

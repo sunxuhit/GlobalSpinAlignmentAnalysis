@@ -58,7 +58,6 @@ class StZdcEpManager : public TObject
     void fillZdcResolution(TVector2 QEast, TVector2 QWest);
     void writeZdcResolution();
     void readZdcResolution();
-    void calZdcFullEpRes();
     double getZdcFullEpResVal(int cent9);
     double getZdcFullEpResErr(int cent9);
 
