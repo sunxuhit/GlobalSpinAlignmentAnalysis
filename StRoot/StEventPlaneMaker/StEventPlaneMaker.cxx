@@ -225,7 +225,7 @@ int StEventPlaneMaker::Make()
       LOG_ERROR << "Bad Run from StRefMultCorr! Skip!" << endm;
       return kStErr;
     }
-    if(mAnaCut->isBadRun(runId))
+    if(mAnaUtils->isBadRun(runId))
     {
       LOG_ERROR << "Bad Run from StAnalysisUtils! Skip!" << endm;
       return kStErr;
