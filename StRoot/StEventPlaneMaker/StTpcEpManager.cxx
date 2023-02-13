@@ -22,7 +22,7 @@ ClassImp(StTpcEpManager)
 StTpcEpManager::StTpcEpManager(int beamType) : mType(beamType)
 {
   // mEnergy = energy;
-  clearTpcEp();
+  clearTpcEpManager();
 }
 
 StTpcEpManager::~StTpcEpManager()
@@ -30,7 +30,7 @@ StTpcEpManager::~StTpcEpManager()
   /* */
 }
 //---------------------------------------------------------------------------------
-void StTpcEpManager::clearTpcEp()
+void StTpcEpManager::clearTpcEpManager()
 {
   mCent9 = -1;
   mRunIndex = -1;

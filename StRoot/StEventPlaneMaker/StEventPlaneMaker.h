@@ -31,10 +31,10 @@ class StEventPlaneMaker : public StMaker {
     StRefMultCorr  *mRefMultCorr;
 
     StAnalysisUtils *mAnaUtils; // Analysis Utilities
-    StAnalysisCut   *mAnaCut; // Analysis Cuts
+    StAnalysisCut   *mAnaCut;   // Analysis Cuts
     StZdcEpManager  *mZdcEpManager;
-    StTpcEpManager *mTpcEpManager;
-    // StEpdEpManager *mEpdEpManager;
+    StTpcEpManager  *mTpcEpManager;
+    // StEpdEpManager  *mEpdEpManager;
     
     const int mMode;
     const int mType;

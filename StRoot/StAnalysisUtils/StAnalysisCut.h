@@ -27,11 +27,11 @@ class StAnalysisCut : public TObject
     bool passTrackBasic(StPicoTrack*);
     bool passTrackQA(StPicoTrack*, StPicoEvent*);
     // TPC EP
-    bool passTrackTpcEp(StPicoTrack*, StPicoEvent*);
+    bool passTrackTpcEpFull(StPicoTrack*, StPicoEvent*);
     bool passTrackTpcEpEast(StPicoTrack*, StPicoEvent*);
     bool passTrackTpcEpWest(StPicoTrack*, StPicoEvent*);
-    bool passNumTrackTpcEpRaw(int numTrackEast, int numTrackWest);
-    bool passNumTrackTpcEp(int numTrackEast, int numTrackWest);
+    bool passNumTrackTpcSubEpRaw(int numTrackEast, int numTrackWest);
+    bool passNumTrackTpcSubEp(int numTrackEast, int numTrackWest);
 
   private:
     const int mType;

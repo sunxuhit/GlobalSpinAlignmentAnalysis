@@ -167,9 +167,9 @@ int StRunQAMaker::Make()
       mRunQAHistoManager->fillEventQA_Vertex(triggerBin,vx,vy,vz,vzVpd,1);
       mRunQAHistoManager->fillEventQA_Trigger(triggerBin,1);
 
-      for(unsigned int i_track = 0; i_track < nTracks; i_track++) // track loop
+      for(unsigned int iTrack = 0; iTrack < nTracks; iTrack++) // track loop
       {
-	StPicoTrack *picoTrack = (StPicoTrack*)mPicoDst->track(i_track);
+	StPicoTrack *picoTrack = (StPicoTrack*)mPicoDst->track(iTrack);
 	if(!picoTrack)
 	{
 	  continue;
@@ -197,8 +197,8 @@ int StRunQAMaker::Make()
 	const int nHitsDEdx  = picoTrack->nHitsDedx();
 	const double dEdx    = picoTrack->dEdx();
 	const short charge   = picoTrack->charge();
-	const double beta    = mAnaUtils->getBeta(mPicoDst,i_track);
-	const double mass2   = mAnaUtils->getPrimaryMass2(mPicoDst,i_track);
+	const double beta    = mAnaUtils->getBeta(mPicoDst,iTrack);
+	const double mass2   = mAnaUtils->getPrimaryMass2(mPicoDst,iTrack);
 
 	mRunQAHistoManager->fillTrackQA_Kinematics(triggerBin,primMom,globMom, 0); // wo track cut
 	mRunQAHistoManager->fillTrackQA_Quliaty(triggerBin,gDCA,nHitsFit,nHitsMax,nHitsDEdx,0);

@@ -166,7 +166,7 @@ bool StAnalysisCut::passTrackQA(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
 
 //---------------------------------------------------------------------------------
 // Track Cuts for TPC EP
-bool StAnalysisCut::passTrackTpcEp(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
+bool StAnalysisCut::passTrackTpcEpFull(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
 {
   if(!picoEvent) return false;
   if(!passTrackBasic(picoTrack)) return false;
@@ -200,7 +200,7 @@ bool StAnalysisCut::passTrackTpcEp(StPicoTrack *picoTrack, StPicoEvent *picoEven
 
 bool StAnalysisCut::passTrackTpcEpEast(StPicoTrack *picoTrack, StPicoEvent *picoEvent) // neg
 {
-  if(!passTrackTpcEp(picoTrack, picoEvent)) return false;
+  if(!passTrackTpcEpFull(picoTrack, picoEvent)) return false;
 
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
@@ -216,7 +216,7 @@ bool StAnalysisCut::passTrackTpcEpEast(StPicoTrack *picoTrack, StPicoEvent *pico
 
 bool StAnalysisCut::passTrackTpcEpWest(StPicoTrack *picoTrack, StPicoEvent *picoEvent) // pos
 {
-  if(!passTrackTpcEp(picoTrack, picoEvent)) return false;
+  if(!passTrackTpcEpFull(picoTrack, picoEvent)) return false;
 
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
@@ -230,7 +230,7 @@ bool StAnalysisCut::passTrackTpcEpWest(StPicoTrack *picoTrack, StPicoEvent *pico
   return true;
 }
 
-bool StAnalysisCut::passNumTrackTpcEpRaw(int numTrackEast, int numTrackWest)
+bool StAnalysisCut::passNumTrackTpcSubEpRaw(int numTrackEast, int numTrackWest)
 {
   if(numTrackEast < anaUtils::mNumTrackEpMin[mType] || numTrackWest < anaUtils::mNumTrackEpMin[mType])
   {
@@ -240,7 +240,7 @@ bool StAnalysisCut::passNumTrackTpcEpRaw(int numTrackEast, int numTrackWest)
   return kTRUE;
 }
 
-bool StAnalysisCut::passNumTrackTpcEp(int numTrackEast, int numTrackWest)
+bool StAnalysisCut::passNumTrackTpcSubEp(int numTrackEast, int numTrackWest)
 {
   if(numTrackEast < anaUtils::mNumTrackEpMin[mType] || numTrackWest < anaUtils::mNumTrackEpMin[mType])
   {
@@ -249,5 +249,4 @@ bool StAnalysisCut::passNumTrackTpcEp(int numTrackEast, int numTrackWest)
 
   return kTRUE;
 }
-
 //---------------------------------------------------------------------------------

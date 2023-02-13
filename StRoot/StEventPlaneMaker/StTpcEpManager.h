@@ -16,7 +16,7 @@ class StTpcEpManager : public TObject
   public:
     StTpcEpManager(int beamType);
     virtual ~StTpcEpManager();
-    void clearTpcEp();
+    void clearTpcEpManager();
     void initTpcEpManager(int cent9, int runIndex, int vzBin);
 
     // Utilities
