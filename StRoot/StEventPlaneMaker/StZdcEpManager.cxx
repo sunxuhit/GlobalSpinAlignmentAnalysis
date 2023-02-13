@@ -76,7 +76,7 @@ double StZdcEpManager::getZdcSmd(int eastwest, int verthori, int slat)
 }
 //---------------------------------------------------------------------------------
 // Gain Correction
-void StZdcEpManager::initZdcGainCorr()
+void StZdcEpManager::initZdcGain()
 {
   for(int iEastWest = 0; iEastWest < 2; ++iEastWest)
   {
@@ -91,12 +91,12 @@ void StZdcEpManager::initZdcGainCorr()
   }
 }
 
-void StZdcEpManager::fillZdcGainCorr(int iEastWest, int iVertHori, int iSlat, double zdcsmd)
+void StZdcEpManager::fillZdcGain(int iEastWest, int iVertHori, int iSlat, double zdcsmd)
 {
   h_mZdcGainCorr[iEastWest][iVertHori][iSlat]->Fill((double)mRunIndex,zdcsmd);
 }
 
-void StZdcEpManager::writeZdcGainCorr()
+void StZdcEpManager::writeZdcGain()
 {
   for(int iEastWest = 0; iEastWest < 2; ++iEastWest)
   {
@@ -110,7 +110,7 @@ void StZdcEpManager::writeZdcGainCorr()
   }
 }
 
-void StZdcEpManager::readZdcGainCorr()
+void StZdcEpManager::readZdcGain()
 {
   std::string inputFile = Form("Utility/EventPlaneMaker/%s/GainCorrPar/file_%s_ZdcGainCorrFac.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   file_mGainCorrPar = TFile::Open(inputFile.c_str());
@@ -187,7 +187,7 @@ void StZdcEpManager::writeZdcReCenter()
   }
 }
 
-void StZdcEpManager::readZdcReCenterCorr()
+void StZdcEpManager::readZdcReCenter()
 {
   std::string inputFile = Form("Utility/EventPlaneMaker/%s/ReCenterPar/file_%s_ZdcReCenterPar.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   file_mReCenterPar = TFile::Open(inputFile.c_str());
@@ -280,7 +280,7 @@ void StZdcEpManager::writeZdcShift()
   }
 }
 
-void StZdcEpManager::readZdcShiftCorr()
+void StZdcEpManager::readZdcShift()
 {
   std::string inputFile = Form("Utility/EventPlaneMaker/%s/ShiftParameter/file_%s_ZdcShiftPar.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   file_mShiftPar = TFile::Open(inputFile.c_str());
@@ -400,7 +400,7 @@ void StZdcEpManager::writeZdcShiftFull()
   }
 }
 
-void StZdcEpManager::readZdcShiftCorrFull()
+void StZdcEpManager::readZdcShiftFull()
 {
   std::string inputFile = Form("Utility/EventPlaneMaker/%s/ShiftParameter/file_%s_ZdcShiftParFull.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   file_mShiftPar = TFile::Open(inputFile.c_str());

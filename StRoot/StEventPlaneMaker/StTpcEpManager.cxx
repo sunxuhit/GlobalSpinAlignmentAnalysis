@@ -208,7 +208,7 @@ void StTpcEpManager::writeTpcReCenter()
   }
 }
 
-void StTpcEpManager::readTpcReCenterCorr()
+void StTpcEpManager::readTpcReCenter()
 {
   std::string inputFile = Form("Utility/EventPlaneMaker/%s/ReCenterPar/file_%s_TpcReCenterPar.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
 
@@ -388,7 +388,7 @@ void StTpcEpManager::writeTpcShift()
   }
 }
 
-void StTpcEpManager::readTpcShiftCorr()
+void StTpcEpManager::readTpcShift()
 {
   std::string inputFile = Form("Utility/EventPlaneMaker/%s/ShiftParameter/file_%s_TpcShiftPar.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
 

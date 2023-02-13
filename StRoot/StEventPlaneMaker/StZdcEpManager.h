@@ -22,10 +22,10 @@ class StZdcEpManager : public TObject
     double getZdcSmd(int eastwest,int verthori,int strip);
 
     // Gain Correction
-    void initZdcGainCorr();
-    void fillZdcGainCorr(int i_eastwest, int i_verthori, int i_slat, double zdcsmd);
-    void writeZdcGainCorr();
-    void readZdcGainCorr();
+    void initZdcGain();
+    void fillZdcGain(int i_eastwest, int i_verthori, int i_slat, double zdcsmd);
+    void writeZdcGain();
+    void readZdcGain();
     void setZdcSmdGainCorr(int eastwest,int verthori,int strip,const double zdcsmd);
     double getZdcSmdGainCorr(int eastwest,int verthori,int strip);
 
@@ -34,7 +34,7 @@ class StZdcEpManager : public TObject
     void fillZdcReCenterEast(TVector2 QVector);
     void fillZdcReCenterWest(TVector2 QVector);
     void writeZdcReCenter();
-    void readZdcReCenterCorr();
+    void readZdcReCenter();
     void setZdcSmdCenter();
 
     // Shift Correction
@@ -42,7 +42,7 @@ class StZdcEpManager : public TObject
     void fillZdcShiftEast(TVector2 QVector);
     void fillZdcShiftWest(TVector2 QVector);
     void writeZdcShift();
-    void readZdcShiftCorr();
+    void readZdcShift();
     TVector2 applyZdcSmdShiftCorrEast(TVector2 QVector);
     TVector2 applyZdcSmdShiftCorrWest(TVector2 QVector);
     double transPsi(double Psi);
@@ -50,7 +50,7 @@ class StZdcEpManager : public TObject
     void initZdcShiftFull(); // Full
     void fillZdcShiftFull(TVector2 QVector);
     void writeZdcShiftFull();
-    void readZdcShiftCorrFull();
+    void readZdcShiftFull();
     TVector2 applyZdcSmdShiftCorrFull(TVector2 QVector);
 
     // Event Plane Resolution

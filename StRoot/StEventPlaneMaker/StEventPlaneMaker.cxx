@@ -31,13 +31,25 @@ StEventPlaneMaker::StEventPlaneMaker(const char* name, StPicoDstMaker *picoMaker
   // mMode = Mode;
   // mType = beamType;
 
-  if(mMode == 0) // Gain Correction for ZDC-SMD
+  if(mMode == 0) // Gain Correction for ZDC-SMD & EPD
   {
     str_mOutPutGainCorr = Form("./file_%s_GainCorr_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
   }
-  if(mMode == 1) // Re-Center Correction for ZDC-SMD & TPC
+  if(mMode == 1) // Re-Center Correction for ZDC-SMD & EPD & TPC Sub EP
   {
-    str_mOutPutReCenterPar = Form("./file_%s_ReCenterParameter_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
+    str_mOutPutReCenterPar = Form("./file_%s_ReCenterPar_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
+  }
+  if(mMode == 2) // Shift Correction for ZDC-SMD & EPD & TPC Sub EP
+  {
+    str_mOutPutShiftPar = Form("./file_%s_ShiftPar_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
+  }
+  if(mMode == 3) // Shift Correction for ZDC-SMD & EPD Full EP
+  {
+    str_mOutPutShiftPar = Form("./file_%s_ShiftParFull_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
+  }
+  if(mMode == 4) // Event Plane Resolution for ZDC-SMD & EPD & TPC Sub EP
+  {
+    str_mOutPutResolution = Form("./file_%s_EpResolution_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
   }
 }
 
@@ -58,16 +70,44 @@ int StEventPlaneMaker::Init()
   }
 
   if(mMode == 0)
-  { // fill Gain Correction Factors for ZDC-SMD
+  { // fill Gain Correction Factors for ZDC-SMDa & EPD
     file_mOutPutGainCorr = new TFile(str_mOutPutGainCorr.c_str(),"RECREATE");
-    mZdcEpManager->initZdcGainCorr();
+    mZdcEpManager->initZdcGain();
   }
   if(mMode == 1)
-  { // fill ReCenter Correction Parameters for ZDC-SMD & TPC
+  { // fill ReCenter Correction Parameters for ZDC-SMD & EPD & TPC Sub EP
     file_mOutPutReCenterPar = new TFile(str_mOutPutReCenterPar.c_str(),"RECREATE");
-    mZdcEpManager->readZdcGainCorr();
+    mZdcEpManager->readZdcGain();
     mZdcEpManager->initZdcReCenter();
     mZdcEpManager->initZdcSubEpRaw();
+  }
+  if(mMode == 2)
+  { // fill Shift Correction Parameters for ZDC-SMD & EPD & TPC Sub EP
+    file_mOutPutShiftPar = new TFile(str_mOutPutShiftPar.c_str(),"RECREATE");
+    mZdcEpManager->readZdcGain();
+    mZdcEpManager->readZdcReCenter();
+    mZdcEpManager->initZdcShift();
+    mZdcEpManager->initZdcSubEpReCenter();
+  }
+  if(mMode == 3)
+  { // fill Shift Correction Parameters for ZDC-SMD & EPD Full EP
+    file_mOutPutShiftPar = new TFile(str_mOutPutShiftPar.c_str(),"RECREATE");
+    mZdcEpManager->readZdcGain();
+    mZdcEpManager->readZdcReCenter();
+    mZdcEpManager->readZdcShift();
+    mZdcEpManager->initZdcShiftFull();
+    mZdcEpManager->initZdcSubEpShift();
+  }
+  if(mMode == 4)
+  { // fill Event Plane Resolution for ZDC-SMD & EPD & TPC Sub EP
+    file_mOutPutResolution = new TFile(str_mOutPutResolution.c_str(),"RECREATE");
+    mZdcEpManager->readZdcGain();
+    mZdcEpManager->readZdcReCenter();
+    mZdcEpManager->readZdcShift();
+    mZdcEpManager->readZdcShiftFull();
+    mZdcEpManager->initZdcResolution();
+    mZdcEpManager->initZdcSubEpShift();
+    mZdcEpManager->initZdcFullEpShift();
   }
 
   return kStOK;
@@ -80,7 +120,7 @@ int StEventPlaneMaker::Finish()
     if(str_mOutPutGainCorr != "")
     {
       file_mOutPutGainCorr->cd();
-      mZdcEpManager->writeZdcGainCorr();
+      mZdcEpManager->writeZdcGain();
       file_mOutPutGainCorr->Close();
     }
   }
@@ -92,6 +132,37 @@ int StEventPlaneMaker::Finish()
       mZdcEpManager->writeZdcReCenter();
       mZdcEpManager->writeZdcSubEpRaw();
       file_mOutPutReCenterPar->Close();
+    }
+  }
+  if(mMode == 2)
+  {
+    if(str_mOutPutShiftPar != "")
+    {
+      file_mOutPutShiftPar->cd();
+      mZdcEpManager->writeZdcShift();
+      mZdcEpManager->writeZdcSubEpReCenter();
+      file_mOutPutShiftPar->Close();
+    }
+  }
+  if(mMode == 3)
+  {
+    if(str_mOutPutShiftPar != "")
+    {
+      file_mOutPutShiftPar->cd();
+      mZdcEpManager->writeZdcShiftFull();
+      mZdcEpManager->writeZdcSubEpShift();
+      file_mOutPutShiftPar->Close();
+    }
+  }
+  if(mMode == 4)
+  {
+    if(str_mOutPutResolution != "")
+    {
+      file_mOutPutResolution->cd();
+      mZdcEpManager->writeZdcResolution();
+      mZdcEpManager->writeZdcSubEpShift();
+      mZdcEpManager->writeZdcFullEpShift();
+      file_mOutPutResolution->Close();
     }
   }
 
@@ -149,11 +220,16 @@ int StEventPlaneMaker::Make()
 
     mRefMultCorr->init(runId);
     mRefMultCorr->initEvent(refMult,vz,zdcX);
-    // if(mRefMultCorr->isBadRun(runId))
-    // {
-    //   LOG_ERROR << "Bad Run from StRefMultCorr! Skip!" << endm;
-    //   return kStErr;
-    // }
+    if(mRefMultCorr->isBadRun(runId))
+    {
+      LOG_ERROR << "Bad Run from StRefMultCorr! Skip!" << endm;
+      return kStErr;
+    }
+    if(mAnaCut->isBadRun(runId))
+    {
+      LOG_ERROR << "Bad Run from StAnalysisUtils! Skip!" << endm;
+      return kStErr;
+    }
 
     const int cent9       = mRefMultCorr->getCentralityBin9(); // get Centrality9
     const double reweight = mRefMultCorr->getWeight(); // get weight
@@ -167,17 +243,16 @@ int StEventPlaneMaker::Make()
       return kStErr;
     }
 
-    bool isPileUpEventStAnalysisCut = mAnaCut->isPileUpEvent(1.0*refMult, 1.0*nBTofMatch,vz); // alway return false for Isobar
-    bool isPileUpEventStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut(1.0*refMult, 1.0*nBTofMatch,vz); // valid for Isobar
+    bool isPileUpEventStAnalysisCut = mAnaCut->isPileUpEvent((double)refMult, (double)nBTofMatch,vz); // alway return false for Isobar
+    bool isPileUpEventStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut((double)refMult, (double)nBTofMatch,vz); // valid for Isobar
     bool isPileUpEvent = isPileUpEventStAnalysisCut || isPileUpEventStRefMultCorr;
     // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpEventStAnalysisCut = " << isPileUpEventStAnalysisCut << ", isPileUpEventStRefMultCorr = " << isPileUpEventStRefMultCorr << endl;
 
     if(!isPileUpEvent && mAnaCut->passEventCut(mPicoDst))
     { // apply Event Cuts for anlaysis 
-      // ZDC-SMD EP
-      mZdcEpManager->initZdcEpManager(cent9,runIndex,vzBin);
+      mZdcEpManager->initZdcEpManager(cent9,runIndex,vzBin); // ZDC-SMD EP
       if(mMode == 0)
-      { // fill Gain Correction Factors for ZDC-SMD & EPD(TODO)
+      { // fill Gain Correction Factors for ZDC-SMD & EPD (TODO)
 	for(int iSlat = 0; iSlat < 8; ++iSlat) // read in raw ADC value from ZDC-SMD
 	{
 	  mZdcEpManager->setZdcSmd(0,0,iSlat,mPicoEvent->ZdcSmdEastVertical(iSlat));
@@ -191,7 +266,7 @@ int StEventPlaneMaker::Make()
 	  {
 	    for(int iSlat = 0; iSlat < 8; ++iSlat)
 	    {
-	      mZdcEpManager->fillZdcGainCorr(iEastWest,iVertHori,iSlat,mZdcEpManager->getZdcSmd(iEastWest,iVertHori,iSlat));
+	      mZdcEpManager->fillZdcGain(iEastWest,iVertHori,iSlat,mZdcEpManager->getZdcSmd(iEastWest,iVertHori,iSlat));
 	      // cout << "iEastWest = " << iEastWest << ", iVertHori = " << iVertHori << ", iSlat = " << iSlat << ", zdc = " << mZdcSmdCorrection->getZdcSmd(iEastWest,iVertHori,iSlat) << endl;
 	    }
 	  }
@@ -207,16 +282,42 @@ int StEventPlaneMaker::Make()
 	  mZdcEpManager->setZdcSmdGainCorr(1,1,iSlat,mPicoEvent->ZdcSmdWestHorizontal(iSlat));
 	}
 
-	if(mMode == 1) // fill recenter correction parameter for ZDC-SMD
+	TVector2 QEast = mZdcEpManager->getQEast(mMode);
+	TVector2 QWest = mZdcEpManager->getQWest(mMode);
+	TVector2 QFull = mZdcEpManager->getQFull(QEast,QWest,mMode); // TVector2 QFull = QWest-QEast;
+	if(mMode == 1) // fill recenter correction parameter for ZDC-SMD & EPD & TPC Sub EP
 	{
-	  TVector2 QEast = mZdcEpManager->getQEast(mMode);
-	  TVector2 QWest = mZdcEpManager->getQWest(mMode);
-	  TVector2 QFull = mZdcEpManager->getQFull(QEast,QWest,mMode); // TVector2 QFull = QWest-QEast;
 	  if( !(QEast.Mod() < 1e-10 || QWest.Mod() < 1e-10 || QFull.Mod() < 1e-10) )
 	  {
 	    mZdcEpManager->fillZdcReCenterEast(QEast);
 	    mZdcEpManager->fillZdcReCenterWest(QWest);
 	    mZdcEpManager->fillZdcSubEpRaw(QEast,QWest,QFull);
+	  }
+	}
+	if(mMode == 2) // fill shift correction parameter for ZDC-SMD & EPD & TPC Sub EP
+	{
+	  if( !(QEast.Mod() < 1e-10 || QWest.Mod() < 1e-10 || QFull.Mod() < 1e-10) )
+	  {
+	    mZdcEpManager->fillZdcShiftEast(QEast);
+	    mZdcEpManager->fillZdcShiftWest(QWest);
+	    mZdcEpManager->fillZdcSubEpReCenter(QEast,QWest,QFull);
+	  }
+	}
+	if(mMode == 3) // fill shift correction parameter for ZDC-SMD & EPD Full EP
+	{
+	  if( !(QEast.Mod() < 1e-10 || QWest.Mod() < 1e-10 || QFull.Mod() < 1e-10) )
+	  {
+	    mZdcEpManager->fillZdcShiftFull(QFull);
+	    mZdcEpManager->fillZdcSubEpShift(QEast,QWest,QFull);
+	  }
+	}
+	if(mMode == 4) // fill event plane resolution for ZDC-SMD & EPD & TPC Sub EP
+	{
+	  if( !(QEast.Mod() < 1e-10 || QWest.Mod() < 1e-10 || QFull.Mod() < 1e-10) )
+	  {
+	    mZdcEpManager->fillZdcResolution(QEast,QWest);
+	    mZdcEpManager->fillZdcSubEpShift(QEast,QWest,QFull);
+	    mZdcEpManager->fillZdcFullEpShift(QFull);
 	  }
 	}
       }

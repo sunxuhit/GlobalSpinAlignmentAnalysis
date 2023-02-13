@@ -33,7 +33,7 @@ class StTpcEpManager : public TObject
     void fillTpcReCenterEast(StPicoTrack* picoTrack);
     void fillTpcReCenterWest(StPicoTrack* picoTrack);
     void writeTpcReCenter();
-    void readTpcReCenterCorr();
+    void readTpcReCenter();
     TVector2 getq2VecReCenterEast(); // 2nd ReCenter Parameter
     TVector2 getq2VecReCenterWest();
     TVector2 getq3VecReCenterEast(); // 3rd ReCenter Parameter
@@ -44,7 +44,7 @@ class StTpcEpManager : public TObject
     void fillTpcShiftEast();
     void fillTpcShiftWest();
     void writeTpcShift();
-    void readTpcShiftCorr();
+    void readTpcShift();
     double getPsi2ShiftEast(); // 2nd shift Psi2
     double getPsi2ShiftWest();
     double transPsi2(double Psi2);
