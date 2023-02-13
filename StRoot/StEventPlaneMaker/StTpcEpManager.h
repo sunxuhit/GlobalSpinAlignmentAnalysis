@@ -6,9 +6,10 @@
 #include "TVector2.h"
 
 class StPicoTrack;
+class TFile;
 class TProfile2D;
 class TProfile;
-class TFile;
+class TH2F;
 
 class StTpcEpManager : public TObject
 {

@@ -3,7 +3,7 @@
 #include "TFile.h"
 #include "TProfile2D.h"
 #include "TProfile.h"
-#include "TRandom3.h"
+#include "TH2F.h"
 #include "TF1.h"
 
 #include "Utility/include/StSpinAlignmentCons.h"
@@ -319,7 +319,7 @@ TVector2 StZdcEpManager::applyZdcSmdShiftCorrEast(TVector2 QVector)
   }
 
   const double PsiShiftRaw = PsiReCenter + deltaPsi;
-  const double PsiShift = angleShift(PsiShiftRaw);
+  const double PsiShift = transPsi(PsiShiftRaw);
 
   TVector2 QVecShift(0.0,0.0);
   QVecShift.Set(TMath::Cos(PsiShift),TMath::Sin(PsiShift));
@@ -344,7 +344,7 @@ TVector2 StZdcEpManager::applyZdcSmdShiftCorrWest(TVector2 QVector)
   }
 
   const double PsiShiftRaw = PsiReCenter + deltaPsi;
-  const double PsiShift = angleShift(PsiShiftRaw);
+  const double PsiShift = transPsi(PsiShiftRaw);
 
   TVector2 QVecShift(0.0,0.0);
   QVecShift.Set(TMath::Cos(PsiShift),TMath::Sin(PsiShift));
@@ -352,17 +352,11 @@ TVector2 StZdcEpManager::applyZdcSmdShiftCorrWest(TVector2 QVector)
   return QVecShift;
 }
 
-double StZdcEpManager::angleShift(double Psi)
+double StZdcEpManager::transPsi(double Psi)
 {
-  double PsiCorr = PsiRaw;
-  if(PsiRaw > 1.0*TMath::Pi())
-  {
-    PsiCorr = PsiRaw - TMath::TwoPi();
-  }
-  if(PsiRaw < -1.0*TMath::Pi())
-  {
-    PsiCorr = PsiRaw + TMath::TwoPi();
-  }
+  double PsiCorr = Psi;
+  if(Psi >  1.0*TMath::Pi()) PsiCorr = Psi - TMath::TwoPi();
+  if(Psi < -1.0*TMath::Pi()) PsiCorr = Psi + TMath::TwoPi();
 
   return PsiCorr;
 }
@@ -440,7 +434,7 @@ TVector2 StZdcEpManager::applyZdcSmdShiftCorrFull(TVector2 QVector)
   }
 
   const double PsiShiftRaw = PsiReCenter + deltaPsi;
-  const double PsiShift = angleShift(PsiShiftRaw);
+  const double PsiShift = transPsi(PsiShiftRaw);
 
   TVector2 QVecShift(0.0,0.0);
   QVecShift.Set(TMath::Cos(PsiShift),TMath::Sin(PsiShift));

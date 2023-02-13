@@ -5,10 +5,10 @@
 #include "TObject.h"
 #include "TVector2.h"
 
+class TFile;
 class TProfile2D;
 class TProfile;
 class TH2F;
-class TFile;
 
 class StZdcEpManager : public TObject
 {
@@ -45,7 +45,7 @@ class StZdcEpManager : public TObject
     void readZdcShiftCorr();
     TVector2 applyZdcSmdShiftCorrEast(TVector2 QVector);
     TVector2 applyZdcSmdShiftCorrWest(TVector2 QVector);
-    double angleShift(double Psi);
+    double transPsi(double Psi);
 
     void initZdcShiftFull(); // Full
     void fillZdcShiftFull(TVector2 QVector);

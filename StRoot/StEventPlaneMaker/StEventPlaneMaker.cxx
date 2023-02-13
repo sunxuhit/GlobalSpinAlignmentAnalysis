@@ -65,9 +65,9 @@ int StEventPlaneMaker::Init()
   if(mMode == 1)
   { // fill ReCenter Correction Parameters for ZDC-SMD & TPC
     file_mOutPutReCenterPar = new TFile(str_mOutPutReCenterPar.c_str(),"RECREATE");
-    mZdcEpManager->initZdcReCenter();
-    mZdcEpManager->initZdcRawEP();
     mZdcEpManager->readZdcGainCorr();
+    mZdcEpManager->initZdcReCenter();
+    mZdcEpManager->initZdcSubEpRaw();
   }
 
   return kStOK;
@@ -90,8 +90,8 @@ int StEventPlaneMaker::Finish()
     {
       file_mOutPutReCenterPar->cd();
       mZdcEpManager->writeZdcReCenter();
-      mZdcEpManager->writeZdcRawEP();
-      file_mOutPutGainCorr->Close();
+      mZdcEpManager->writeZdcSubEpRaw();
+      file_mOutPutReCenterPar->Close();
     }
   }
 
@@ -211,13 +211,12 @@ int StEventPlaneMaker::Make()
 	{
 	  TVector2 QEast = mZdcEpManager->getQEast(mMode);
 	  TVector2 QWest = mZdcEpManager->getQWest(mMode);
-	  // TVector2 QFull = QWest-QEast;
-	  TVector2 QFull = mZdcEpManager->getQFull(QEast,QWest,mMode);
+	  TVector2 QFull = mZdcEpManager->getQFull(QEast,QWest,mMode); // TVector2 QFull = QWest-QEast;
 	  if( !(QEast.Mod() < 1e-10 || QWest.Mod() < 1e-10 || QFull.Mod() < 1e-10) )
 	  {
 	    mZdcEpManager->fillZdcReCenterEast(QEast);
 	    mZdcEpManager->fillZdcReCenterWest(QWest);
-	    mZdcEpManager->fillZdcRawEP(QEast,QWest,QFull);
+	    mZdcEpManager->fillZdcSubEpRaw(QEast,QWest,QFull);
 	  }
 	}
       }

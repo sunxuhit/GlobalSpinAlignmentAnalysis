@@ -4,9 +4,7 @@
 #include "TFile.h"
 #include "TProfile2D.h"
 #include "TProfile.h"
-#include "TNtuple.h"
-#include "TRandom3.h"
-#include "TF1.h"
+#include "TH2F.h"
 
 #include "StRoot/StPicoEvent/StPicoDst.h"
 #include "StRoot/StPicoEvent/StPicoEvent.h"
@@ -80,7 +78,7 @@ TVector2 StTpcEpManager::calq3Vector(StPicoTrack *picoTrack)
 
   const double q3x = TMath::Cos(3.0*phi);
   const double q3y = TMath::Sin(3.0*phi);
-  q2Vector.Set(q3x,q3y);
+  q3Vector.Set(q3x,q3y);
 
   return q3Vector;
 }
@@ -163,6 +161,7 @@ void StTpcEpManager::initTpcReCenter()
 void StTpcEpManager::fillTpcReCenterEast(StPicoTrack* picoTrack)
 {
   const double wgt  = getWeight(picoTrack);
+
   TVector2 q2Vector = calq2Vector(picoTrack);
   const double q2x  = q2Vector.X();
   const double q2y  = q2Vector.Y();
@@ -179,6 +178,7 @@ void StTpcEpManager::fillTpcReCenterEast(StPicoTrack* picoTrack)
 void StTpcEpManager::fillTpcReCenterWest(StPicoTrack* picoTrack)
 {
   const double wgt  = getWeight(picoTrack);
+
   TVector2 q2Vector = calq2Vector(picoTrack);
   const double q2x  = q2Vector.X();
   const double q2y  = q2Vector.Y();
