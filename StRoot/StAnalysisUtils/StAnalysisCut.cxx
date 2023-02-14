@@ -240,7 +240,7 @@ bool StAnalysisCut::passNumTrackTpcSubEpRaw(int numTrackEast, int numTrackWest)
   return kTRUE;
 }
 
-bool StAnalysisCut::passNumTrackTpcSubEp(int numTrackEast, int numTrackWest)
+bool StAnalysisCut::passNumTrackTpcSubEpReCenter(int numTrackEast, int numTrackWest)
 {
   if(numTrackEast < anaUtils::mNumTrackEpMin[mType] || numTrackWest < anaUtils::mNumTrackEpMin[mType])
   {

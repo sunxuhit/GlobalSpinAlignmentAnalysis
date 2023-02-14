@@ -31,7 +31,7 @@ class StAnalysisCut : public TObject
     bool passTrackTpcEpEast(StPicoTrack*, StPicoEvent*);
     bool passTrackTpcEpWest(StPicoTrack*, StPicoEvent*);
     bool passNumTrackTpcSubEpRaw(int numTrackEast, int numTrackWest);
-    bool passNumTrackTpcSubEp(int numTrackEast, int numTrackWest);
+    bool passNumTrackTpcSubEpReCenter(int numTrackEast, int numTrackWest);
 
   private:
     const int mType;
