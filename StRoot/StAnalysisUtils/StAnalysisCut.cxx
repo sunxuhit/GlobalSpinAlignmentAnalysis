@@ -65,13 +65,9 @@ bool StAnalysisCut::isPileUpEvent(double refMult, double numOfBTofMatch, double 
   return true;
 }
 
-bool StAnalysisCut::passEventCut(StPicoDst *picoDst)
+bool StAnalysisCut::passEventCut(StPicoEvent *picoEvent)
 {
-  StPicoEvent *picoEvent = picoDst->event();
-  if(!picoEvent)
-  {
-    return false;
-  }
+  if(!picoEvent) return false;
 
   // const int runId   = picoEvent->runId();
   // const int refMult = picoEvent->refMult();
@@ -132,14 +128,13 @@ bool StAnalysisCut::passTrackBasic(StPicoTrack *picoTrack)
   return true;
 }
 
-bool StAnalysisCut::passTrackQA(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
+bool StAnalysisCut::passTrackQA(StPicoTrack *picoTrack, TVector3 primVtx)
 {
-  if(!picoEvent) return false;
   if(!passTrackBasic(picoTrack)) return false;
 
-  const double vx = picoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
-  const double vy = picoEvent->primaryVertex().y();
-  const double vz = picoEvent->primaryVertex().z();
+  const double vx = primVtx.x();
+  const double vy = primVtx.y();
+  const double vz = primVtx.z();
 
   // dca cut
   if(picoTrack->gDCA(vx,vy,vz) > anaUtils::mDcaQaMax[mType])
@@ -166,14 +161,13 @@ bool StAnalysisCut::passTrackQA(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
 
 //---------------------------------------------------------------------------------
 // Track Cuts for TPC EP
-bool StAnalysisCut::passTrackTpcEpFull(StPicoTrack *picoTrack, StPicoEvent *picoEvent)
+bool StAnalysisCut::passTrackTpcEpFull(StPicoTrack *picoTrack, TVector3 primVtx)
 {
-  if(!picoEvent) return false;
   if(!passTrackBasic(picoTrack)) return false;
 
-  const double vx = picoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
-  const double vy = picoEvent->primaryVertex().y();
-  const double vz = picoEvent->primaryVertex().z();
+  const double vx = primVtx.x();
+  const double vy = primVtx.y();
+  const double vz = primVtx.z();
 
   // dca cut
   if(picoTrack->gDCA(vx,vy,vz) > anaUtils::mDcaEpMax[mType])
@@ -198,9 +192,9 @@ bool StAnalysisCut::passTrackTpcEpFull(StPicoTrack *picoTrack, StPicoEvent *pico
   return true;
 }
 
-bool StAnalysisCut::passTrackTpcEpEast(StPicoTrack *picoTrack, StPicoEvent *picoEvent) // neg
+bool StAnalysisCut::passTrackTpcEpEast(StPicoTrack *picoTrack, TVector3 primVtx) // neg
 {
-  if(!passTrackTpcEpFull(picoTrack, picoEvent)) return false;
+  if(!passTrackTpcEpFull(picoTrack, primVtx)) return false;
 
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
@@ -214,9 +208,9 @@ bool StAnalysisCut::passTrackTpcEpEast(StPicoTrack *picoTrack, StPicoEvent *pico
   return true;
 }
 
-bool StAnalysisCut::passTrackTpcEpWest(StPicoTrack *picoTrack, StPicoEvent *picoEvent) // pos
+bool StAnalysisCut::passTrackTpcEpWest(StPicoTrack *picoTrack, TVector3 primVtx) // pos
 {
-  if(!passTrackTpcEpFull(picoTrack, picoEvent)) return false;
+  if(!passTrackTpcEpFull(picoTrack, primVtx)) return false;
 
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();

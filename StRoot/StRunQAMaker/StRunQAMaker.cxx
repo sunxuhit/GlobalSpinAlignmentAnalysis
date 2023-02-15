@@ -11,8 +11,6 @@
 #include "StPicoEvent/StPicoTrack.h"
 #include "StRoot/StRefMultCorr/StRefMultCorr.h"
 #include "StRoot/StRefMultCorr/CentralityMaker.h"
-// #include "StThreeVectorF.hh"
-// #include "StMessMgr.h"
 
 #include "Utility/include/StSpinAlignmentCons.h"
 #include "StRoot/StAnalysisUtils/StAnalysisUtils.h"
@@ -107,14 +105,15 @@ int StRunQAMaker::Make()
   if( mAnaCut->isMinBias(mPicoEvent) )
   {
     // Event Information
-    const int runId    = mPicoEvent->runId();
-    const int refMult  = mPicoEvent->refMult();
-    const int grefMult = mPicoEvent->grefMult();
-    const double vx    = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
-    const double vy    = mPicoEvent->primaryVertex().y();
-    const double vz    = mPicoEvent->primaryVertex().z();
-    const double vzVpd = mPicoEvent->vzVpd();
-    const double zdcX  = mPicoEvent->ZDCx();
+    const int runId        = mPicoEvent->runId();
+    const int refMult      = mPicoEvent->refMult();
+    const int grefMult     = mPicoEvent->grefMult();
+    const TVector3 primVtx = mPicoEvent->primaryVertex();
+    const double vx        = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
+    const double vy        = mPicoEvent->primaryVertex().y();
+    const double vz        = mPicoEvent->primaryVertex().z();
+    const double vzVpd     = mPicoEvent->vzVpd();
+    const double zdcX      = mPicoEvent->ZDCx();
     // const unsigned short nBTofHits  = mPicoEvent->btofTrayMultiplicity();
     const unsigned int nBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
     const unsigned short nBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
@@ -149,8 +148,8 @@ int StRunQAMaker::Make()
       return kStErr;
     }
 
-    bool isPileUpEventStAnalysisCut = mAnaCut->isPileUpEvent(1.0*refMult, 1.0*nBTofMatch,vz); // alway return false for Isobar
-    bool isPileUpEventStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut(1.0*refMult, 1.0*nBTofMatch,vz); // valid for Isobar
+    bool isPileUpEventStAnalysisCut = mAnaCut->isPileUpEvent((double)refMult, (double)nBTofMatch,vz); // alway return false for Isobar
+    bool isPileUpEventStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut((double)refMult, (double)nBTofMatch,vz); // valid for Isobar
     bool isPileUpEvent = isPileUpEventStAnalysisCut || isPileUpEventStRefMultCorr;
     // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpEventStAnalysisCut = " << isPileUpEventStAnalysisCut << ", isPileUpEventStRefMultCorr = " << isPileUpEventStRefMultCorr << endl;
 
@@ -160,7 +159,7 @@ int StRunQAMaker::Make()
     mRunQAHistoManager->fillEventQA_Vertex(triggerBin,vx,vy,vz,vzVpd,0);
     mRunQAHistoManager->fillEventQA_Trigger(triggerBin,0);
 
-    if(!isPileUpEvent && mAnaCut->passEventCut(mPicoDst))
+    if(!isPileUpEvent && mAnaCut->passEventCut(mPicoEvent))
     { // apply Event Cuts for anlaysis 
       mRunQAProManager->fillRunQA_Event(triggerBin,runIndex,refMult,grefMult,zdcX,vx,vy,vz,1);
       mRunQAHistoManager->fillEventQA_RefMult(triggerBin,refMult,grefMult,cent9,reweight,nBTofHits,nBTofMatch,1); // with event cut
@@ -174,19 +173,6 @@ int StRunQAMaker::Make()
 	{
 	  continue;
 	}
-
-	// get pico track info
-	// TVector3 primMom;
-	// double primPx    = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
-	// double primPy    = picoTrack->pMom().y();
-	// double primPz    = picoTrack->pMom().z();
-	// primMom.SetXYZ(primPx,primPy,primPz);
-
-	// TVector3 globMom;
-	// double globPx     = picoTrack->gMom().x(); // x works for both TVector3 and StThreeVectorF
-	// double globPy     = picoTrack->gMom().y();
-	// double globPz     = picoTrack->gMom().z();
-	// globMom.SetXYZ(globPx,globPy,globPz);
 
 	const TVector3 primMom = picoTrack->pMom();
 	const TVector3 globMom = picoTrack->gMom();
@@ -204,7 +190,7 @@ int StRunQAMaker::Make()
 	mRunQAHistoManager->fillTrackQA_Quliaty(triggerBin,gDCA,nHitsFit,nHitsMax,nHitsDEdx,0);
 	mRunQAHistoManager->fillTrackQA_PID(triggerBin,primMom.Mag(),charge,dEdx,beta,mass2,0);
 	mRunQAProManager->fillRunQA_Track(triggerBin,runIndex,gDCA,nHitsFit,primMom,globMom,0);
-	if( mAnaCut->passTrackQA(picoTrack,mPicoEvent) ) // apply QA track cut
+	if( mAnaCut->passTrackQA(picoTrack,primVtx) ) // apply QA track cut
 	{
 	  mRunQAHistoManager->fillTrackQA_Kinematics(triggerBin,primMom,globMom, 1); // with track cut
 	  mRunQAHistoManager->fillTrackQA_Quliaty(triggerBin,gDCA,nHitsFit,nHitsMax,nHitsDEdx,1);

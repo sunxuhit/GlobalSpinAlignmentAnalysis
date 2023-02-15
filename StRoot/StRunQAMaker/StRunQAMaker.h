@@ -2,7 +2,6 @@
 #define StRunQAMaker_h
 
 #include "StMaker.h"
-// #include "TString.h"
 #include <string>
 
 class StPicoDstMaker;

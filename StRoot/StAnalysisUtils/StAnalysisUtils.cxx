@@ -157,11 +157,6 @@ double StAnalysisUtils::getPrimaryMass2(StPicoDst *picoDst, int i_track)
   {
     StPicoBTofPidTraits *tofTrack = picoDst->btofPidTraits(tofIndex);
     double beta = tofTrack->btofBeta();
-    // TVector3 primMom; // temp fix for StThreeVectorF & TVector3
-    // double primPx = picoTrack->pMom().x(); // x works for both TVector3 and StThreeVectorF
-    // double primPy = picoTrack->pMom().y();
-    // double primPz = picoTrack->pMom().z();
-    // primMom.SetXYZ(primPx,primPy,primPz);
     const TVector3 primMom = picoTrack->pMom(); // primary Momentum
     double primMomMag = primMom.Mag(); // primary momentum magnitude
 
@@ -183,11 +178,6 @@ double StAnalysisUtils::getGlobalMass2(StPicoDst *picoDst, int i_track)
   {
     StPicoBTofPidTraits *tofTrack = picoDst->btofPidTraits(tofIndex);
     double beta = tofTrack->btofBeta();
-    // TVector3 globMom; // temp fix for StThreeVectorF & TVector3
-    // double globPx = picoTrack->gMom().x(); // x works for both TVector3 and StThreeVectorF
-    // double globPy = picoTrack->gMom().y();
-    // double globPz = picoTrack->gMom().z();
-    // globMom.SetXYZ(globPx,globPy,globPz);
     const TVector3 globMom = picoTrack->gMom(); // global Momentum
     double globMomMag = globMom.Mag(); // global momentum magnitude
 

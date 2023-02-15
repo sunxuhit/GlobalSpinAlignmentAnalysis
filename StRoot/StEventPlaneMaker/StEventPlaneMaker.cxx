@@ -220,14 +220,15 @@ int StEventPlaneMaker::Make()
   if( mAnaCut->isMinBias(mPicoEvent) )
   {
     // Event Information
-    const int runId    = mPicoEvent->runId();
-    const int refMult  = mPicoEvent->refMult();
-    const int grefMult = mPicoEvent->grefMult();
-    const double vx    = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
-    const double vy    = mPicoEvent->primaryVertex().y();
-    const double vz    = mPicoEvent->primaryVertex().z();
-    const double vzVpd = mPicoEvent->vzVpd();
-    const double zdcX  = mPicoEvent->ZDCx();
+    const int runId        = mPicoEvent->runId();
+    const int refMult      = mPicoEvent->refMult();
+    const int grefMult     = mPicoEvent->grefMult();
+    const TVector3 primVtx = mPicoEvent->primaryVertex();
+    const double vx        = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
+    const double vy        = mPicoEvent->primaryVertex().y();
+    const double vz        = mPicoEvent->primaryVertex().z();
+    const double vzVpd     = mPicoEvent->vzVpd();
+    const double zdcX      = mPicoEvent->ZDCx();
     // const unsigned short nBTofHits  = mPicoEvent->btofTrayMultiplicity();
     const unsigned int nBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
     const unsigned short nBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
@@ -270,7 +271,7 @@ int StEventPlaneMaker::Make()
     bool isPileUpEvent = isPileUpEventStAnalysisCut || isPileUpEventStRefMultCorr;
     // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpEventStAnalysisCut = " << isPileUpEventStAnalysisCut << ", isPileUpEventStRefMultCorr = " << isPileUpEventStRefMultCorr << endl;
 
-    if(!isPileUpEvent && mAnaCut->passEventCut(mPicoDst))
+    if(!isPileUpEvent && mAnaCut->passEventCut(mPicoEvent))
     { // apply Event Cuts for anlaysis 
       mZdcEpManager->initZdcEpManager(cent9,runIndex,vzBin); // initialize ZDC EP Manager
       mTpcEpManager->initTpcEpManager(cent9,runIndex,vzBin); // initialize TPC EP Manager
@@ -315,12 +316,12 @@ int StEventPlaneMaker::Make()
 
 	  if(mMode == 1) // calculate raw Q2Vector and Q3Vector from TPC
 	  {
-	    if( mAnaCut->passTrackTpcEpEast(picoTrack, mPicoEvent) ) // negative eta
+	    if( mAnaCut->passTrackTpcEpEast(picoTrack, primVtx) ) // negative eta
 	    {
 	      mTpcEpManager->addTrackRawEast(picoTrack);
 	      mTpcEpManager->fillTpcReCenterEast(picoTrack); // fill TPC ReCenter Parameters East
 	    }
-	    if( mAnaCut->passTrackTpcEpWest(picoTrack, mPicoEvent) ) // positive eta
+	    if( mAnaCut->passTrackTpcEpWest(picoTrack, primVtx) ) // positive eta
 	    {
 	      mTpcEpManager->addTrackRawWest(picoTrack);
 	      mTpcEpManager->fillTpcReCenterWest(picoTrack); // fill TPC ReCenter Parameters West
@@ -328,11 +329,11 @@ int StEventPlaneMaker::Make()
 	  }
 	  if(mMode == 2 || mMode == 4) // calculate recentered Q2Vector and Q3Vector from TPC
 	  {
-	    if( mAnaCut->passTrackTpcEpEast(picoTrack, mPicoEvent) ) // negative eta
+	    if( mAnaCut->passTrackTpcEpEast(picoTrack, primVtx) ) // negative eta
 	    {
 	      mTpcEpManager->addTrackReCenterEast(picoTrack);
 	    }
-	    if( mAnaCut->passTrackTpcEpWest(picoTrack, mPicoEvent) ) // positive eta
+	    if( mAnaCut->passTrackTpcEpWest(picoTrack, primVtx) ) // positive eta
 	    {
 	      mTpcEpManager->addTrackReCenterWest(picoTrack);
 	    }

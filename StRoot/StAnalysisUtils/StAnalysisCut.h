@@ -7,6 +7,7 @@
 class StPicoDst;
 class StPicoEvent;
 class StPicoTrack;
+class TVector3;
 
 class StAnalysisCut : public TObject
 {
@@ -21,15 +22,15 @@ class StAnalysisCut : public TObject
     // Event Cuts
     bool isMinBias(StPicoEvent*);
     bool isPileUpEvent(double, double, double); // refmult & nTofMatch & vz
-    bool passEventCut(StPicoDst*);
+    bool passEventCut(StPicoEvent*);
 
     // Track Cuts
     bool passTrackBasic(StPicoTrack*);
-    bool passTrackQA(StPicoTrack*, StPicoEvent*);
+    bool passTrackQA(StPicoTrack*, TVector3 primVtx);
     // TPC EP
-    bool passTrackTpcEpFull(StPicoTrack*, StPicoEvent*);
-    bool passTrackTpcEpEast(StPicoTrack*, StPicoEvent*);
-    bool passTrackTpcEpWest(StPicoTrack*, StPicoEvent*);
+    bool passTrackTpcEpFull(StPicoTrack*, TVector3 primVtx);
+    bool passTrackTpcEpEast(StPicoTrack*, TVector3 primVtx);
+    bool passTrackTpcEpWest(StPicoTrack*, TVector3 primVtx);
     bool passNumTrackTpcSubEpRaw(int numTrackEast, int numTrackWest);
     bool passNumTrackTpcSubEpReCenter(int numTrackEast, int numTrackWest);
 
