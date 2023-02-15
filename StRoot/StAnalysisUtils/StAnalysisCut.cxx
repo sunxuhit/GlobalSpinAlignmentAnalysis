@@ -10,8 +10,6 @@
 #include "StRoot/StAnalysisUtils/StAnalysisCons.h"
 #include "StRoot/StAnalysisUtils/StAnalysisCut.h"
 
-#include "TVector3.h"
-
 ClassImp(StAnalysisCut)
 
 //---------------------------------------------------------------------------------

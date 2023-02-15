@@ -3,11 +3,11 @@
 
 #include "TObject.h"
 #include "TString.h"
+#include "TVector3.h"
 
 class StPicoDst;
 class StPicoEvent;
 class StPicoTrack;
-class TVector3;
 
 class StAnalysisCut : public TObject
 {
