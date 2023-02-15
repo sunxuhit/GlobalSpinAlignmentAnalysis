@@ -8,6 +8,7 @@
 class StPicoDst;
 class StPicoEvent;
 class StPicoTrack;
+class StPicoEpdHit;
 
 class StAnalysisCut : public TObject
 {
@@ -20,19 +21,23 @@ class StAnalysisCut : public TObject
     bool isIsobar();
 
     // Event Cuts
-    bool isMinBias(StPicoEvent*);
-    bool isPileUpEvent(double, double, double); // refmult & nTofMatch & vz
-    bool passEventCut(StPicoEvent*);
+    bool isMinBias(StPicoEvent *picoEvent);
+    bool isPileUpEvent(double refMult, double numOfBTofMatch, double vz);
+    bool passEventCut(StPicoEvent *picoEvent);
 
     // Track Cuts
-    bool passTrackBasic(StPicoTrack*);
-    bool passTrackQA(StPicoTrack*, TVector3 primVtx);
+    bool passTrackBasic(StPicoTrack *picoTrack);
+    bool passTrackQA(StPicoTrack *picoTrack, TVector3 primVtx);
     // TPC EP
-    bool passTrackTpcEpFull(StPicoTrack*, TVector3 primVtx);
-    bool passTrackTpcEpEast(StPicoTrack*, TVector3 primVtx);
-    bool passTrackTpcEpWest(StPicoTrack*, TVector3 primVtx);
+    bool passTrackTpcEpFull(StPicoTrack *picoTrack, TVector3 primVtx);
+    bool passTrackTpcEpEast(StPicoTrack *picoTrack, TVector3 primVtx);
+    bool passTrackTpcEpWest(StPicoTrack *picoTrack, TVector3 primVtx);
     bool passNumTrackTpcSubEpRaw(int numTrackEast, int numTrackWest);
     bool passNumTrackTpcSubEpReCenter(int numTrackEast, int numTrackWest);
+    // EPD EP
+    bool passHitEpdEpFull(StPicoEpdHit *picoEpdHit);
+    bool passHitEpdEpEast(StPicoEpdHit *picoEpdHit);
+    bool passHitEpdEpWest(StPicoEpdHit *picoEpdHit);
 
   private:
     const int mType;

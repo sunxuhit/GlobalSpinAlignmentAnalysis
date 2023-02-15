@@ -242,3 +242,36 @@ bool StAnalysisCut::passNumTrackTpcSubEpReCenter(int numTrackEast, int numTrackW
   return kTRUE;
 }
 //---------------------------------------------------------------------------------
+// Hit Cuts for EPD EP
+bool StAnalysisCut::passHitEpdEpFull(StPicoEpdHit *picoEpdHit)
+{
+  if(!picoEpdHit) return false;
+
+  // EPD threshhold cut: nMip >= 0.3
+  if(picoEpdHit->nMIP() < anaUtils::mMipEpdEpMin[mType])
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool StAnalysisCut::passHitEpdEpEast(StPicoEpdHit *picoEpdHit) // neg
+{
+  if(!passHitEpdEpFull(picoEpdHit)) return false;
+
+  const int tileId = picoEpdHit->id(); // tileId < 0 for East EPD
+  if(tileId > 0) return false;
+
+  return true;
+}
+
+bool StAnalysisCut::passHitEpdEpWest(StPicoEpdHit *picoEpdHit) // pos
+{
+  if(!passHitEpdEpFull(picoEpdHit)) return false;
+
+  const int tileId = picoEpdHit->id(); // tileId > 0 for West EPD
+  if(tileId < 0) return false;
+
+  return true;
+}

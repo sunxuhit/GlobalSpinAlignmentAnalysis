@@ -39,6 +39,10 @@ namespace anaUtils
   const double mEtaEpGap[mNumBeamUtils]       = {0.05, 0.05}; // eta gap between Tracks and EP is 0.05 && eta gap between East and West TPC EP is 0.1
   const int mNumTrackEpMin[mNumBeamUtils]     = {2, 2};
 
+  // hit cuts: EPD Event Plane Maker
+  const double mMipEpdEpMax[mNumBeamUtils] = {2.0, 2.0};
+  const double mMipEpdEpMin[mNumBeamUtils] = {0.3, 0.3};
+
   // track cuts: phi Meson Maker
   // const double mDcaDauMax     = 3.0;
   // const double mEtaDauMax     = 1.0;
