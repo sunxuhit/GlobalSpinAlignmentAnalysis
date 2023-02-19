@@ -118,16 +118,16 @@ void StTpcEpManager::addTrackRawWest(StPicoTrack *picoTrack)
 void StTpcEpManager::addTrackReCenterEast(StPicoTrack *picoTrack)
 {
   const double wgt = getWeight(picoTrack);
-  v_mQ2ReCenterEast += wgt*(calq2Vector(picoTrack) - getq2VecReCenterEast());
-  v_mQ3ReCenterEast += wgt*(calq3Vector(picoTrack) - getq3VecReCenterEast());
+  v_mQ2ReCenterEast += wgt*(calq2Vector(picoTrack) - getq2VecCtrEast());
+  v_mQ3ReCenterEast += wgt*(calq3Vector(picoTrack) - getq3VecCtrEast());
   mQCouReCenterEast++;
 }
 
 void StTpcEpManager::addTrackReCenterWest(StPicoTrack *picoTrack)
 {
   const double wgt = getWeight(picoTrack);
-  v_mQ2ReCenterWest += wgt*(calq2Vector(picoTrack) - getq2VecReCenterWest());
-  v_mQ3ReCenterWest += wgt*(calq3Vector(picoTrack) - getq3VecReCenterWest());
+  v_mQ2ReCenterWest += wgt*(calq2Vector(picoTrack) - getq2VecCtrWest());
+  v_mQ3ReCenterWest += wgt*(calq3Vector(picoTrack) - getq3VecCtrWest());
   mQCouReCenterWest++;
 }
 //---------------------------------------------------------------------------------
@@ -237,7 +237,7 @@ void StTpcEpManager::readTpcReCenter()
   }
 }
 
-TVector2 StTpcEpManager::getq2VecReCenterEast()
+TVector2 StTpcEpManager::getq2VecCtrEast()
 {
   const int binX   = p_mTpcQ2ReCenterXEast[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
   const double q2x = p_mTpcQ2ReCenterXEast[mVzBin]->GetBinContent(binX);
@@ -251,7 +251,7 @@ TVector2 StTpcEpManager::getq2VecReCenterEast()
   return q2Vector;
 }
 
-TVector2 StTpcEpManager::getq2VecReCenterWest()
+TVector2 StTpcEpManager::getq2VecCtrWest()
 {
   const int binX   = p_mTpcQ2ReCenterXWest[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
   const double q2x = p_mTpcQ2ReCenterXWest[mVzBin]->GetBinContent(binX);
@@ -265,7 +265,7 @@ TVector2 StTpcEpManager::getq2VecReCenterWest()
   return q2Vector;
 }
 
-TVector2 StTpcEpManager::getq3VecReCenterEast()
+TVector2 StTpcEpManager::getq3VecCtrEast()
 {
   const int binX   = p_mTpcQ3ReCenterXEast[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
   const double q3x = p_mTpcQ3ReCenterXEast[mVzBin]->GetBinContent(binX);
@@ -279,7 +279,7 @@ TVector2 StTpcEpManager::getq3VecReCenterEast()
   return q3Vector;
 }
 
-TVector2 StTpcEpManager::getq3VecReCenterWest()
+TVector2 StTpcEpManager::getq3VecCtrWest()
 {
   const int binX   = p_mTpcQ3ReCenterXWest[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
   const double q3x = p_mTpcQ3ReCenterXWest[mVzBin]->GetBinContent(binX);
@@ -579,13 +579,13 @@ void StTpcEpManager::readTpcResolution()
     if(valRes2Raw > 0)
     {
       valRes2Sub = TMath::Sqrt(valRes2Raw);
-      errRes2Sub = errRes2Raw/(2*valRes2Sub);
+      errRes2Sub = errRes2Raw/(2.0*valRes2Sub);
     }
 
     if(valRes3Raw > 0)
     {
       valRes3Sub = TMath::Sqrt(valRes3Raw);
-      errRes3Sub = errRes3Raw/(2*valRes3Sub);
+      errRes3Sub = errRes3Raw/(2.0*valRes3Sub);
     }
 
     mTpcSubEp2ResVal[iCent] = valRes2Sub;

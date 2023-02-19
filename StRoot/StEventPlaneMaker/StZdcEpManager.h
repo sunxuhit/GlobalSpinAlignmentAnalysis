@@ -45,7 +45,7 @@ class StZdcEpManager : public TObject
     void readZdcShift();
     TVector2 applyZdcSmdShiftCorrEast(TVector2 QVector);
     TVector2 applyZdcSmdShiftCorrWest(TVector2 QVector);
-    double transPsi(double Psi);
+    double transPsi1(double Psi1);
 
     void initZdcShiftFull(); // Full
     void fillZdcShiftFull(TVector2 QVector);
@@ -58,6 +58,8 @@ class StZdcEpManager : public TObject
     void fillZdcResolution(TVector2 QEast, TVector2 QWest);
     void writeZdcResolution();
     void readZdcResolution();
+    double getZdcSubEpResVal(int cent9);
+    double getZdcSubEpResErr(int cent9);
     double getZdcFullEpResVal(int cent9);
     double getZdcFullEpResErr(int cent9);
 
@@ -117,6 +119,8 @@ class StZdcEpManager : public TObject
 
     // Event Plane Resolution
     TProfile *p_mZdcSubEpRes;
+    double mZdcSubEpResVal[mNumCentrality];
+    double mZdcSubEpResErr[mNumCentrality];
     double mZdcFullEpResVal[mNumCentrality];
     double mZdcFullEpResErr[mNumCentrality];
 

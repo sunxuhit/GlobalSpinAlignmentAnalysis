@@ -319,7 +319,7 @@ TVector2 StZdcEpManager::applyZdcSmdShiftCorrEast(TVector2 QVector)
   }
 
   const double PsiShiftRaw = PsiReCenter + deltaPsi;
-  const double PsiShift = transPsi(PsiShiftRaw);
+  const double PsiShift = transPsi1(PsiShiftRaw);
 
   TVector2 QVecShift(0.0,0.0);
   QVecShift.Set(TMath::Cos(PsiShift),TMath::Sin(PsiShift));
@@ -344,7 +344,7 @@ TVector2 StZdcEpManager::applyZdcSmdShiftCorrWest(TVector2 QVector)
   }
 
   const double PsiShiftRaw = PsiReCenter + deltaPsi;
-  const double PsiShift = transPsi(PsiShiftRaw);
+  const double PsiShift = transPsi1(PsiShiftRaw);
 
   TVector2 QVecShift(0.0,0.0);
   QVecShift.Set(TMath::Cos(PsiShift),TMath::Sin(PsiShift));
@@ -352,7 +352,7 @@ TVector2 StZdcEpManager::applyZdcSmdShiftCorrWest(TVector2 QVector)
   return QVecShift;
 }
 
-double StZdcEpManager::transPsi(double Psi)
+double StZdcEpManager::transPsi1(double Psi)
 {
   double PsiCorr = Psi;
   if(Psi >  1.0*TMath::Pi()) PsiCorr = Psi - TMath::TwoPi();
@@ -434,7 +434,7 @@ TVector2 StZdcEpManager::applyZdcSmdShiftCorrFull(TVector2 QVector)
   }
 
   const double PsiShiftRaw = PsiReCenter + deltaPsi;
-  const double PsiShift = transPsi(PsiShiftRaw);
+  const double PsiShift = transPsi1(PsiShiftRaw);
 
   TVector2 QVecShift(0.0,0.0);
   QVecShift.Set(TMath::Cos(PsiShift),TMath::Sin(PsiShift));
@@ -561,16 +561,14 @@ void StZdcEpManager::readZdcResolution()
   TF1 *f_ZdcEpResFull = new TF1("f_ZdcEpResFull",funcZdcEpResFull,0,10,0);
   for(Int_t iCent = 0; iCent < mNumCentrality; iCent++)
   {
-    double valResFull, errResFull;
+    double valResSub  = -999.9;
+    double errResSub  = 1.0;
+    double valResFull = -999.9;
+    double errResFull = 1.0;
     double valResRaw = p_mZdcSubEpRes->GetBinContent(iCent+1);
     double errResRaw = p_mZdcSubEpRes->GetBinError(iCent+1);
     //    cout << "valResRaw = " << valResRaw << ", errResRaw = " << errResRaw << endl;
-    if(valResRaw <= 0)
-    {
-      valResFull = -999.9;
-      errResFull = 1.0;
-    }
-    else
+    if(valResRaw > 0)
     {
       double valResSub = TMath::Sqrt(valResRaw);
       double errResSub = errResRaw/(2*valResSub);
@@ -583,11 +581,23 @@ void StZdcEpManager::readZdcResolution()
       double errChiSub = errResSub/f_ZdcEpResFull->Derivative(chiSub);
       errResFull = f_ZdcEpResFull->Derivative(chiFull)*errChiSub*TMath::Sqrt(2.0);
     }
+    mZdcSubEpResVal[iCent]  = valResSub;
+    mZdcSubEpResErr[iCent]  = errResSub;
     mZdcFullEpResVal[iCent] = valResFull;
     mZdcFullEpResErr[iCent] = errResFull;
   }
 
   file_mResolution->Close();
+}
+
+double StZdcEpManager::getZdcSubEpResVal(int cent9)
+{
+  return mZdcSubEpResVal[cent9];
+}
+
+double StZdcEpManager::getZdcSubEpResErr(int cent9)
+{
+  return mZdcSubEpResErr[cent9];
 }
 
 double StZdcEpManager::getZdcFullEpResVal(int cent9)

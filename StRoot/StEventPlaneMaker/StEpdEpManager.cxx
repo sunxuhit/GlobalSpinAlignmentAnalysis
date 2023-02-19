@@ -18,6 +18,17 @@
 #include "StRoot/StAnalysisUtils/StAnalysisCons.h"
 #include "StRoot/StEventPlaneMaker/StEpdEpManager.h"
 
+double funcEpdEpResFull(double *x_val, double *par)
+{
+  double chi = x_val[0];
+  double arg = chi*chi/4.0;
+  double norm = TMath::Sqrt(TMath::Pi()/2.0)/2.0;
+
+  double resFull = norm*chi*TMath::Exp(-1.0*arg)*(TMath::BesselI0(arg)+TMath::BesselI1(arg));
+
+  return resFull;
+}
+
 ClassImp(StEpdEpManager)
 
 //---------------------------------------------------------------------------------
@@ -26,6 +37,8 @@ StEpdEpManager::StEpdEpManager(int beamType) : mType(beamType)
   // mEnergy = energy;
   clearEpdEpManager();
   mEpdGeom = new StEpdGeom();
+  mUsePhiWgt = false;
+  mUseEtaWgt = false;
 }
 
 StEpdEpManager::~StEpdEpManager()
@@ -39,19 +52,41 @@ void StEpdEpManager::clearEpdEpManager()
   mRunIndex = -1;
   mVzBin = -1;
 
-  // mQCouRawEast = 0; // raw EP
-  // mQCouRawWest = 0;
-  // v_mQ2RawWest.Set(0.0,0.0); // 2nd raw EP
-  // v_mQ2RawEast.Set(0.0,0.0);
-  // v_mQ3RawEast.Set(0.0,0.0); // 3rd raw EP
-  // v_mQ3RawWest.Set(0.0,0.0);
+  mQ1WgtSideRawEast = 0.0;
+  mQ1WgtSideRawWest = 0.0;
+  v_mQ1SideRawEast.Set(0.0,0.0);
+  v_mQ1SideRawWest.Set(0.0,0.0);
+  for(int iRing = 0; iRing < mNumRings; ++iRing)
+  {
+    mQ1WgtRingRawEast[iRing] = 0.0
+    mQ1WgtRingRawWest[iRing] = 0.0
+    v_mQ1RingRawEast[iRing].Set(0.0,0.0);
+    v_mQ1RingRawWest[iRing].Set(0.0,0.0);
+  }
 
-  // mQCouReCenterEast = 0; // recenter EP
-  // mQCouReCenterWest = 0;
-  // v_mQ2ReCenterEast.Set(0.0,0.0); // 2nd recenter EP
-  // v_mQ2ReCenterWest.Set(0.0,0.0);
-  // v_mQ3ReCenterEast.Set(0.0,0.0);
-  // v_mQ3ReCenterWest.Set(0.0,0.0); // 3rd recenter EP
+  mQ1WgtSideWgtEast = 0.0;
+  mQ1WgtSideWgtWest = 0.0;
+  v_mQ1SideWgtEast.Set(0.0,0.0);
+  v_mQ1SideWgtWest.Set(0.0,0.0);
+  for(int iRing = 0; iRing < mNumRings; ++iRing)
+  {
+    mQ1WgtRingWgtEast[iRing] = 0.0
+    mQ1WgtRingWgtWest[iRing] = 0.0
+    v_mQ1RingWgtEast[iRing].Set(0.0,0.0);
+    v_mQ1RingWgtWest[iRing].Set(0.0,0.0);
+  }
+
+  mQ1WgtSideReCtrEast = 0.0;
+  mQ1WgtSideReCtrWest = 0.0;
+  v_mQ1SideReCtrEast.Set(0.0,0.0);
+  v_mQ1SideReCtrWest.Set(0.0,0.0);
+  for(int iRing = 0; iRing < mNumRings; ++iRing)
+  {
+    mQ1WgtRingReCtrEast[iRing] = 0.0
+    mQ1WgtRingReCtrWest[iRing] = 0.0
+    v_mQ1RingReCtrEast[iRing].Set(0.0,0.0);
+    v_mQ1RingReCtrWest[iRing].Set(0.0,0.0);
+  }
 }
 
 void StEpdEpManager::initEpdEpManager(int cent9, int runIndex, int vzBin)
@@ -87,7 +122,23 @@ double StEpdEpManager::getTileWeight(StPicoEpdHit *picoEpdHit)
 
 double StEpdEpManager::getPhiWeight(StPicoEpdHit *picoEpdHit)
 {
-  double phiWgt = 1.0; // TODO: add real phi weight
+  double phiWgt = 1.0;
+  if(mUsePhiWgt)
+  {
+    const int tileId      = picoEpdHit->id();
+    const int secId       = picoEpdHit->position()-1; // convert to 0-11
+    const int tileIdOnSec = picoEpdHit->tile()-1;     // conver to 0-30
+    if(tileId < 0) // East EPD
+    {
+      int binWgt = h_mEpdPhiWgtEast[mCent9]->FindBin((double)secId,(double)tileIdOnSec);
+      phiWgt     = 1.0/h_mEpdPhiWgtEast[mCent9]->GetBinContent(binWgt);
+    }
+    if(tileId > 0) // West EPD
+    {
+      int binWgt = h_mEpdPhiWgtWest[mCent9]->FindBin((double)secId,(double)tileIdOnSec);
+      phiWgt     = 1.0/h_mEpdPhiWgtWest[mCent9]->GetBinContent(binWgt);
+    }
+  }
 
   return phiWgt;
 }
@@ -99,199 +150,272 @@ double StEpdEpManager::getEtaWeight(StPicoEpdHit *picoEpdHit)
   return etaWgt;
 }
 
-#if 0
-void StEpdEpManager::addHitRawEast(StPicoTrack *picoTrack)
+void StEpdEpManager::addHitRawEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double wgt = getWeight(picoTrack);
-  v_mQ2RawEast += wgt*calq2Vector(picoTrack);
-  v_mQ3RawEast += wgt*calq3Vector(picoTrack);
-  mQCouRawEast++;
+  const double tileWgt = getTileWeight(picoEpdHit);
+  v_mQ1SideRawEast  += tileWgt*calq1Vector(picoEpdHit,primVtx);
+  mQ1WgtSideRawEast += tileWgt;
+
+  const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
+  v_mQ1RingRawEast[ringId]  += tileWgt*calq1Vector(picoEpdHit,primVtx);
+  mQ1WgtRingRawEast[ringId] += tileWgt;
 }
 
-void StEpdEpManager::addHitRawWest(StPicoTrack *picoTrack)
+void StEpdEpManager::addHitRawWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double wgt = getWeight(picoTrack);
-  v_mQ2RawWest += wgt*calq2Vector(picoTrack);
-  v_mQ3RawWest += wgt*calq3Vector(picoTrack);
-  mQCouRawWest++;
+  const double tileWgt = getTileWeight(picoEpdHit);
+  v_mQ1SideRawWest  += tileWgt*calq1Vector(picoEpdHit,primVtx);
+  mQ1WgtSideRawWest += tileWgt;
+
+  const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
+  v_mQ1RingRawWest[ringId]  += tileWgt*calq1Vector(picoEpdHit,primVtx);
+  mQ1WgtRingRawWest[ringId] += tileWgt;
 }
 
-void StEpdEpManager::addHitReCenterEast(StPicoTrack *picoTrack)
+void StEpdEpManager::addHitWgtEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double wgt = getWeight(picoTrack);
-  v_mQ2ReCenterEast += wgt*(calq2Vector(picoTrack) - getq2VecReCenterEast());
-  v_mQ3ReCenterEast += wgt*(calq3Vector(picoTrack) - getq3VecReCenterEast());
-  mQCouReCenterEast++;
+  const double tileWgt = getTileWeight(picoEpdHit);
+  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  const double wgt     = tileWgt * phiWgt * etaWgt;
+  v_mQ1SideWgtEast  += wgt*calq1Vector(picoEpdHit,primVtx);
+  mQ1WgtSideWgtEast += wgt;
+
+  const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
+  v_mQ1RingWgtEast[ringId]  += wgt*calq1Vector(picoEpdHit,primVtx);
+  mQ1WgtRingWgtEast[ringId] += wgt;
 }
 
-void StEpdEpManager::addHitReCenterWest(StPicoTrack *picoTrack)
+void StEpdEpManager::addHitWgtWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double wgt = getWeight(picoTrack);
-  v_mQ2ReCenterWest += wgt*(calq2Vector(picoTrack) - getq2VecReCenterWest());
-  v_mQ3ReCenterWest += wgt*(calq3Vector(picoTrack) - getq3VecReCenterWest());
-  mQCouReCenterWest++;
+  const double tileWgt = getTileWeight(picoEpdHit);
+  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  const double wgt     = tileWgt * phiWgt * etaWgt;
+  v_mQ1SideWgtWest  += wgt*calq1Vector(picoEpdHit,primVtx);
+  mQ1WgtSideWgtWest += wgt;
+
+  const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
+  v_mQ1RingWgtWest[ringId]  += wgt*calq1Vector(picoEpdHit,primVtx);
+  mQ1WgtRingWgtWest[ringId] += wgt;
+}
+
+void StEpdEpManager::addHitReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
+{
+  const double tileWgt = getTileWeight(picoEpdHit);
+  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  const double wgt     = tileWgt * phiWgt * etaWgt;
+  v_mQ1SideReCtrEast  += wgt*(calq1Vector(picoEpdHit,primVtx) - getq1VecCtrEast());
+  mQ1WgtRingReCtrEast += wgt;
+}
+
+void StEpdEpManager::addHitReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
+{
+  const double tileWgt = getTileWeight(picoEpdHit);
+  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  const double wgt     = tileWgt * phiWgt * etaWgt;
+  v_mQ1SideReCtrWest  += wgt*(calq1Vector(picoEpdHit,primVtx) - getq1VecCtrWest());
+  mQ1WgtRingReCtrWest += wgt;
 }
 //---------------------------------------------------------------------------------
-// ReCenterPar Correction
-void StEpdEpManager::initEpdReCenter()
+// phi Weight Correction
+void StEpdEpManager::initEpdPhiWgt()
 {
-  for(int iVz = 0; iVz < mNumVzBin; ++iVz)
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string proName = Form("p_mEpdQ2ReCenterXEastVz%d",iVz); // 2nd EP
-    p_mEpdQ2ReCenterXEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-    proName = Form("p_mEpdQ2ReCenterYEastVz%d",iVz);
-    p_mEpdQ2ReCenterYEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    std::string histName = Form("h_mEpdPhiWgtEastCent%d",iCent);
+    h_mEpdPhiWgtEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),mNumSectors,-0.5,(double)mNumSectors-0.5,mNumTiles,-0.5,(double)mNumTiles-0.5);
+    histName = Form("h_mEpdPhiAveEastCent%d",iCent);
+    h_mEpdPhiAveEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),mNumSectors,-0.5,(double)mNumSectors-0.5,mNumTiles,-0.5,(double)mNumTiles-0.5);
 
-    proName = Form("p_mEpdQ2ReCenterXWestVz%d",iVz);
-    p_mEpdQ2ReCenterXWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-    proName = Form("p_mEpdQ2ReCenterYWestVz%d",iVz);
-    p_mEpdQ2ReCenterYWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-
-    proName = Form("p_mEpdQ3ReCenterXEastVz%d",iVz); // 3rd EP
-    p_mEpdQ3ReCenterXEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-    proName = Form("p_mEpdQ3ReCenterYEastVz%d",iVz);
-    p_mEpdQ3ReCenterYEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-
-    proName = Form("p_mEpdQ3ReCenterXWestVz%d",iVz);
-    p_mEpdQ3ReCenterXWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-    proName = Form("p_mEpdQ3ReCenterYWestVz%d",iVz);
-    p_mEpdQ3ReCenterYWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    histName = Form("h_mEpdPhiWgtWestCent%d",iCent);
+    h_mEpdPhiWgtWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),mNumSectors,-0.5,(double)mNumSectors-0.5,mNumTiles,-0.5,(double)mNumTiles-0.5);
+    histName = Form("h_mEpdPhiAveWestCent%d",iCent);
+    h_mEpdPhiAveWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),mNumSectors,-0.5,(double)mNumSectors-0.5,mNumTiles,-0.5,(double)mNumTiles-0.5);
   }
 }
 
-void StEpdEpManager::fillEpdReCenterEast(StPicoTrack* picoTrack)
+void StEpdEpManager::fillEpdPhiWgtEast(StPicoEpdHit* picoEpdHit)
 {
-  const double wgt  = getWeight(picoTrack);
+  const int secId       = picoEpdHit->position()-1; // convert to 0-11
+  const int tileIdOnSec = picoEpdHit->tile()-1;     // conver to 0-30
+  const int ringId      = picoEpdHit->row()-1;      // conver to 0-15
+  const double tileWgt  = getTileWeight(picoEpdHit);
+  h_mEpdPhiWgtEast[mCent9]->Fill(secId,tileIdOnSec,tileWgt);
 
-  TVector2 q2Vector = calq2Vector(picoTrack);
-  const double q2x  = q2Vector.X();
-  const double q2y  = q2Vector.Y();
-  p_mEpdQ2ReCenterXEast[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q2x,wgt);
-  p_mEpdQ2ReCenterYEast[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q2y,wgt);
-
-  TVector2 q3Vector = calq3Vector(picoTrack);
-  const double q3x  = q3Vector.X();
-  const double q3y  = q3Vector.Y();
-  p_mEpdQ3ReCenterXEast[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q3x,wgt);
-  p_mEpdQ3ReCenterYEast[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q3y,wgt);
-}
-
-void StEpdEpManager::fillEpdReCenterWest(StPicoTrack* picoTrack)
-{
-  const double wgt  = getWeight(picoTrack);
-
-  TVector2 q2Vector = calq2Vector(picoTrack);
-  const double q2x  = q2Vector.X();
-  const double q2y  = q2Vector.Y();
-  p_mEpdQ2ReCenterXWest[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q2x,wgt);
-  p_mEpdQ2ReCenterYWest[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q2y,wgt);
-
-  TVector2 q3Vector = calq3Vector(picoTrack);
-  const double q3x  = q3Vector.X();
-  const double q3y  = q3Vector.Y();
-  p_mEpdQ3ReCenterXWest[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q3x,wgt);
-  p_mEpdQ3ReCenterYWest[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q3y,wgt);
-}
-
-void StEpdEpManager::writeEpdReCenter()
-{
-  for(int iVz = 0; iVz < mNumVzBin; ++iVz)
+  for(int iSec = 0; iSec < mNumSectors; ++iSec)
   {
-    p_mEpdQ2ReCenterXEast[iVz]->Write();
-    p_mEpdQ2ReCenterYEast[iVz]->Write();
-    p_mEpdQ2ReCenterXWest[iVz]->Write();
-    p_mEpdQ2ReCenterYWest[iVz]->Write();
-
-    p_mEpdQ3ReCenterXEast[iVz]->Write();
-    p_mEpdQ3ReCenterYEast[iVz]->Write();
-    p_mEpdQ3ReCenterXWest[iVz]->Write();
-    p_mEpdQ3ReCenterYWest[iVz]->Write();
+    if(tileIdOnSec == 0)
+    {
+      h_mEpdPhiAveEast[mCent9]->Fill(iSec,0,tileWgt/12.0); // average over 12 tiles in the most inner ring
+    }
+    else
+    {
+      for(int iTile = 2*ringId-1; iTile < 2*ringId+1; ++iTile)
+      {
+	h_mEpdPhiAveEast[mCent9]->Fill(iSec,iTile,tileWgt/24.0); // average over 24 tiles
+      }
+    }
   }
 }
 
-void StEpdEpManager::readEpdReCenter()
+void StEpdEpManager::fillEpdPhiWgtWest(StPicoEpdHit* picoEpdHit)
 {
-  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ReCenterPar/file_%s_EpdReCenterPar.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+  const int secId       = picoEpdHit->position()-1; // convert to 0-11
+  const int tileIdOnSec = picoEpdHit->tile()-1;     // conver to 0-30
+  const int ringId      = picoEpdHit->row()-1;      // conver to 0-15
+  const double tileWgt  = getTileWeight(picoEpdHit);
+  h_mEpdPhiWgtWest[mCent9]->Fill(secId,tileIdOnSec,tileWgt);
 
-  file_mReCenterPar = TFile::Open(inputFile.c_str());
-  for(int iVz = 0; iVz < mNumVzBin; ++iVz)
+  for(int iSec = 0; iSec < mNumSectors; ++iSec)
   {
-    std::string proName = Form("p_mEpdQ2ReCenterXEastVz%d",iVz); // 2nd EP
-    p_mEpdQ2ReCenterXEast[iVz] = (TProfile2D*)file_mReCenterPar->Get(proName.c_str());
-    proName = Form("p_mEpdQ2ReCenterYEastVz%d",iVz);
-    p_mEpdQ2ReCenterYEast[iVz] = (TProfile2D*)file_mReCenterPar->Get(proName.c_str());
-
-    proName = Form("p_mEpdQ2ReCenterXWestVz%d",iVz);
-    p_mEpdQ2ReCenterXWest[iVz] = (TProfile2D*)file_mReCenterPar->Get(proName.c_str());
-    proName = Form("p_mEpdQ2ReCenterYWestVz%d",iVz);
-    p_mEpdQ2ReCenterYWest[iVz] = (TProfile2D*)file_mReCenterPar->Get(proName.c_str());
-
-    proName = Form("p_mEpdQ3ReCenterXEastVz%d",iVz); // 3rd EP
-    p_mEpdQ3ReCenterXEast[iVz] = (TProfile2D*)file_mReCenterPar->Get(proName.c_str());
-    proName = Form("p_mEpdQ3ReCenterYEastVz%d",iVz);
-    p_mEpdQ3ReCenterYEast[iVz] = (TProfile2D*)file_mReCenterPar->Get(proName.c_str());
-
-    proName = Form("p_mEpdQ3ReCenterXWestVz%d",iVz);
-    p_mEpdQ3ReCenterXWest[iVz] = (TProfile2D*)file_mReCenterPar->Get(proName.c_str());
-    proName = Form("p_mEpdQ3ReCenterYWestVz%d",iVz);
-    p_mEpdQ3ReCenterYWest[iVz] = (TProfile2D*)file_mReCenterPar->Get(proName.c_str());
+    if(tileIdOnSec == 0)
+    {
+      h_mEpdPhiAveWest[mCent9]->Fill(iSec,0,tileWgt/12.0); // average over 12 tiles in the most inner ring
+    }
+    else
+    {
+      for(int iTile = 2*ringId-1; iTile < 2*ringId+1; ++iTile)
+      {
+	h_mEpdPhiAveWest[mCent9]->Fill(iSec,iTile,tileWgt/24.0); // average over 24 tiles
+      }
+    }
   }
 }
 
-TVector2 StEpdEpManager::getq2VecReCenterEast()
+void StEpdEpManager::writeEpdPhiWgt()
 {
-  const int binX   = p_mEpdQ2ReCenterXEast[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
-  const double q2x = p_mEpdQ2ReCenterXEast[mVzBin]->GetBinContent(binX);
-
-  const int binY   = p_mEpdQ2ReCenterYEast[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
-  const double q2y = p_mEpdQ2ReCenterYEast[mVzBin]->GetBinContent(binY);
-
-  TVector2 q2Vector(0.0,0.0);
-  q2Vector.Set(q2x,q2y);
-
-  return q2Vector;
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    h_mEpdPhiWgtEast[iCent]->Write();
+    h_mEpdPhiAveEast[iCent]->Write();
+    h_mEpdPhiWgtWest[iCent]->Write();
+    h_mEpdPhiAveWest[iCent]->Write();
+  }
 }
 
-TVector2 StEpdEpManager::getq2VecReCenterWest()
+void StZdcEpManager::readEpdPhiWgt()
 {
-  const int binX   = p_mEpdQ2ReCenterXWest[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
-  const double q2x = p_mEpdQ2ReCenterXWest[mVzBin]->GetBinContent(binX);
+  std::string inputFile = Form("Utility/EventPlaneMaker/%s/GainCorrPar/file_%s_EpdPhiWgtPar.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+  file_mPhiWgtPar = TFile::Open(inputFile.c_str());
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    std::string histName = Form("h_mEpdPhiWgtEastCent%d",iCent);
+    h_mEpdPhiWgtEast[iCent] = (TH2F*)file_mPhiWgtPar->Get(histName.c_str());
 
-  const int binY   = p_mEpdQ2ReCenterYWest[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
-  const double q2y = p_mEpdQ2ReCenterYWest[mVzBin]->GetBinContent(binY);
+    histName = Form("h_mEpdPhiWgtWestCent%d",iCent);
+    h_mEpdPhiWgtWest[iCent] = (TH2F*)file_mPhiWgtPar->Get(histName.c_str());
+  }
+  mUsePhiWgt = true;
+}
+//---------------------------------------------------------------------------------
 
-  TVector2 q2Vector(0.0,0.0);
-  q2Vector.Set(q2x,q2y);
+//---------------------------------------------------------------------------------
+// ReCtrPar Correction
+void StEpdEpManager::initEpdReCtr()
+{
+  for(int iVz = 0; iVz < mNumVzBin; ++iVz)
+  {
+    std::string proName = Form("p_mEpdQ1ReCtrXEastVz%d",iVz); // 1st EP
+    p_mEpdQ1ReCtrXEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    proName = Form("p_mEpdQ1ReCtrYEastVz%d",iVz);
+    p_mEpdQ1ReCtrYEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
-  return q2Vector;
+    proName = Form("p_mEpdQ1ReCtrXWestVz%d",iVz);
+    p_mEpdQ1ReCtrXWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    proName = Form("p_mEpdQ1ReCtrYWestVz%d",iVz);
+    p_mEpdQ1ReCtrYWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+  }
 }
 
-TVector2 StEpdEpManager::getq3VecReCenterEast()
+void StEpdEpManager::fillEpdReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const int binX   = p_mEpdQ3ReCenterXEast[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
-  const double q3x = p_mEpdQ3ReCenterXEast[mVzBin]->GetBinContent(binX);
+  const double tileWgt = getTileWeight(picoEpdHit);
+  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  const double wgt     = tileWgt * phiWgt * etaWgt;
 
-  const int binY   = p_mEpdQ3ReCenterYEast[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
-  const double q3y = p_mEpdQ3ReCenterYEast[mVzBin]->GetBinContent(binY);
+  const TVector2 q1Vector = calq1Vector(picoEpdHit,primVtx);
+  const double q1x = q1Vector.X();
+  const double q1y = q1Vector.Y();
 
-  TVector2 q3Vector(0.0,0.0);
-  q3Vector.Set(q3x,q3y);
-
-  return q3Vector;
+  p_mEpdQ1ReCtrXEast[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1x,wgt);
+  p_mEpdQ1ReCtrYEast[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1y,wgt);
 }
 
-TVector2 StEpdEpManager::getq3VecReCenterWest()
+void StEpdEpManager::fillEpdReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const int binX   = p_mEpdQ3ReCenterXWest[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
-  const double q3x = p_mEpdQ3ReCenterXWest[mVzBin]->GetBinContent(binX);
+  const double tileWgt = getTileWeight(picoEpdHit);
+  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  const double wgt     = tileWgt * phiWgt * etaWgt;
 
-  const int binY   = p_mEpdQ3ReCenterYWest[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
-  const double q3y = p_mEpdQ3ReCenterYWest[mVzBin]->GetBinContent(binY);
+  const TVector2 q1Vector = calq1Vector(picoEpdHit,primVtx);
+  const double q1x = q1Vector.X();
+  const double q1y = q1Vector.Y();
 
-  TVector2 q3Vector(0.0,0.0);
-  q3Vector.Set(q3x,q3y);
+  p_mEpdQ1ReCtrXWest[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1x,wgt);
+  p_mEpdQ1ReCtrYWest[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1y,wgt);
+}
 
-  return q3Vector;
+void StEpdEpManager::writeEpdReCtr()
+{
+  for(int iVz = 0; iVz < mNumVzBin; ++iVz)
+  {
+    p_mEpdQ1ReCtrXEast[iVz]->Write();
+    p_mEpdQ1ReCtrYEast[iVz]->Write();
+    p_mEpdQ1ReCtrXWest[iVz]->Write();
+    p_mEpdQ1ReCtrYWest[iVz]->Write();
+  }
+}
+
+void StEpdEpManager::readEpdReCtr()
+{
+  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ReCencterPar/file_%s_EpdReCenterPar.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+
+  file_mReCtrPar = TFile::Open(inputFile.c_str());
+  for(int iVz = 0; iVz < mNumVzBin; ++iVz)
+  {
+    std::string proName = Form("p_mEpdQ1ReCtrXEastVz%d",iVz); // 1st EP
+    p_mEpdQ1ReCtrXEast[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+    proName = Form("p_mEpdQ1ReCtrYEastVz%d",iVz);
+    p_mEpdQ1ReCtrYEast[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+
+    proName = Form("p_mEpdQ1ReCtrXWestVz%d",iVz);
+    p_mEpdQ1ReCtrXWest[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+    proName = Form("p_mEpdQ1ReCtrYWestVz%d",iVz);
+    p_mEpdQ1ReCtrYWest[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+  }
+}
+
+TVector2 StEpdEpManager::getq1VecCtrEast()
+{
+  const int binX   = p_mEpdQ1ReCtrXEast[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
+  const double q1x = p_mEpdQ1ReCtrXEast[mVzBin]->GetBinContent(binX);
+
+  const int binY   = p_mEpdQ1ReCtrYEast[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
+  const double q1y = p_mEpdQ1ReCtrYEast[mVzBin]->GetBinContent(binY);
+
+  TVector2 q1Vector(0.0,0.0);
+  q1Vector.Set(q1x,q1y);
+
+  return q1Vector;
+}
+
+TVector2 StEpdEpManager::getq1VecCtrWest()
+{
+  const int binX   = p_mEpdQ1ReCtrXWest[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
+  const double q1x = p_mEpdQ1ReCtrXWest[mVzBin]->GetBinContent(binX);
+
+  const int binY   = p_mEpdQ1ReCtrYWest[mVzBin]->FindBin((double)mRunIndex,(double)mCent9);
+  const double q1y = p_mEpdQ1ReCtrYWest[mVzBin]->GetBinContent(binY);
+
+  TVector2 q1Vector(0.0,0.0);
+  q1Vector.Set(q1x,q1y);
+
+  return Q1Vector;
 }
 //---------------------------------------------------------------------------------
 // Shift Correction
@@ -301,72 +425,42 @@ void StEpdEpManager::initEpdShift()
   {
     for(int iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order
     {
-      std::string proName = Form("p_mEpdQ2ShiftCos%dEastVz%d",iShift,iVz); // 2nd EP
-      p_mEpdQ2ShiftCosEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-      proName = Form("p_mEpdQ2ShiftSin%dEastVz%d",iShift,iVz);
-      p_mEpdQ2ShiftSinEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      std::string proName = Form("p_mEpdQ1ShiftCos%dEastVz%d",iShift,iVz); // 1st EP
+      p_mEpdQ1ShiftCosEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      proName = Form("p_mEpdQ1ShiftSin%dEastVz%d",iShift,iVz);
+      p_mEpdQ1ShiftSinEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
-      proName = Form("p_mEpdQ2ShiftCos%dWestVz%d",iShift,iVz);
-      p_mEpdQ2ShiftCosWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-      proName = Form("p_mEpdQ2ShiftSin%dWestVz%d",iShift,iVz);
-      p_mEpdQ2ShiftSinWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-
-      proName = Form("p_mEpdQ3ShiftCos%dEastVz%d",iShift,iVz); // 3rd EP
-      p_mEpdQ3ShiftCosEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-      proName = Form("p_mEpdQ3ShiftSin%dEastVz%d",iShift,iVz);
-      p_mEpdQ3ShiftSinEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-
-      proName = Form("p_mEpdQ3ShiftCos%dWestVz%d",iShift,iVz);
-      p_mEpdQ3ShiftCosWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-      proName = Form("p_mEpdQ3ShiftSin%dWestVz%d",iShift,iVz);
-      p_mEpdQ3ShiftSinWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      proName = Form("p_mEpdQ1ShiftCos%dWestVz%d",iShift,iVz);
+      p_mEpdQ1ShiftCosWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      proName = Form("p_mEpdQ1ShiftSin%dWestVz%d",iShift,iVz);
+      p_mEpdQ1ShiftSinWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
     }
   }
 }
 
 void StEpdEpManager::fillEpdShiftEast()
 {
-  TVector2 Q2Vector = getQ2VecReCenterEast();
-  const double Psi2 = TMath::ATan2(Q2Vector.Y(),Q2Vector.X())/2.0;
+  TVector2 Q1Vector = getQ1VecReCtrEast();
+  const double Psi1 = TMath::ATan2(Q1Vector.Y(),Q1Vector.X());
   for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
   {
-    const double Psi2Cos = TMath::Cos(2.0*((double)iShift+1.0)*Psi2);
-    const double Psi2Sin = TMath::Sin(2.0*((double)iShift+1.0)*Psi2);
-    p_mEpdQ2ShiftCosEast[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi2Cos);
-    p_mEpdQ2ShiftSinEast[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi2Sin);
-  }
-
-  TVector2 Q3Vector = getQ3VecReCenterEast();
-  const double Psi3 = TMath::ATan2(Q3Vector.Y(),Q3Vector.X())/3.0;
-  for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
-  {
-    const double Psi3Cos = TMath::Cos(3.0*((double)iShift+1.0)*Psi3);
-    const double Psi3Sin = TMath::Sin(3.0*((double)iShift+1.0)*Psi3);
-    p_mEpdQ3ShiftCosEast[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi3Cos);
-    p_mEpdQ3ShiftSinEast[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi3Sin);
+    const double Psi1Cos = TMath::Cos(((double)iShift+1.0)*Psi1);
+    const double Psi1Sin = TMath::Sin(((double)iShift+1.0)*Psi1);
+    p_mEpdQ1ShiftCosEast[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
+    p_mEpdQ1ShiftSinEast[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
   }
 }
 
 void StEpdEpManager::fillEpdShiftWest()
 {
-  TVector2 Q2Vector = getQ2VecReCenterWest();
-  const double Psi2 = TMath::ATan2(Q2Vector.Y(),Q2Vector.X())/2.0;
+  TVector2 Q1Vector = getQ1VecReCtrWest();
+  const double Psi1 = TMath::ATan2(Q1Vector.Y(),Q1Vector.X());
   for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
   {
-    const double Psi2Cos = TMath::Cos(2.0*((double)iShift+1.0)*Psi2);
-    const double Psi2Sin = TMath::Sin(2.0*((double)iShift+1.0)*Psi2);
-    p_mEpdQ2ShiftCosWest[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi2Cos);
-    p_mEpdQ2ShiftSinWest[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi2Sin);
-  }
-
-  TVector2 Q3Vector = getQ3VecReCenterWest();
-  const double Psi3 = TMath::ATan2(Q3Vector.Y(),Q3Vector.X())/3.0;
-  for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
-  {
-    const double Psi3Cos = TMath::Cos(3.0*((double)iShift+1.0)*Psi3);
-    const double Psi3Sin = TMath::Sin(3.0*((double)iShift+1.0)*Psi3);
-    p_mEpdQ3ShiftCosWest[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi3Cos);
-    p_mEpdQ3ShiftSinWest[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi3Sin);
+    const double Psi1Cos = TMath::Cos(((double)iShift+1.0)*Psi1);
+    const double Psi1Sin = TMath::Sin(((double)iShift+1.0)*Psi1);
+    p_mEpdQ1ShiftCosWest[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
+    p_mEpdQ1ShiftSinWest[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
   }
 }
 
@@ -376,15 +470,10 @@ void StEpdEpManager::writeEpdShift()
   {
     for(int iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order
     {
-      p_mEpdQ2ShiftCosEast[iVz][iShift]->Write();
-      p_mEpdQ2ShiftSinEast[iVz][iShift]->Write();
-      p_mEpdQ2ShiftCosWest[iVz][iShift]->Write();
-      p_mEpdQ2ShiftSinWest[iVz][iShift]->Write();
-
-      p_mEpdQ3ShiftCosEast[iVz][iShift]->Write();
-      p_mEpdQ3ShiftSinEast[iVz][iShift]->Write();
-      p_mEpdQ3ShiftCosWest[iVz][iShift]->Write();
-      p_mEpdQ3ShiftSinWest[iVz][iShift]->Write();
+      p_mEpdQ1ShiftCosEast[iVz][iShift]->Write();
+      p_mEpdQ1ShiftSinEast[iVz][iShift]->Write();
+      p_mEpdQ1ShiftCosWest[iVz][iShift]->Write();
+      p_mEpdQ1ShiftSinWest[iVz][iShift]->Write();
     }
   }
 }
@@ -398,356 +487,454 @@ void StEpdEpManager::readEpdShift()
   {
     for(int iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order
     {
-      std::string proName = Form("p_mEpdQ2ShiftCos%dEastVz%d",iShift,iVz); // 2nd EP
-      p_mEpdQ2ShiftCosEast[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
-      proName = Form("p_mEpdQ2ShiftSin%dEastVz%d",iShift,iVz);
-      p_mEpdQ2ShiftSinEast[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
+      std::string proName = Form("p_mEpdQ1ShiftCos%dEastVz%d",iShift,iVz); // 2nd EP
+      p_mEpdQ1ShiftCosEast[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
+      proName = Form("p_mEpdQ1ShiftSin%dEastVz%d",iShift,iVz);
+      p_mEpdQ1ShiftSinEast[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
 
-      proName = Form("p_mEpdQ2ShiftCos%dWestVz%d",iShift,iVz);
-      p_mEpdQ2ShiftCosWest[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
-      proName = Form("p_mEpdQ2ShiftSin%dWestVz%d",iShift,iVz);
-      p_mEpdQ2ShiftSinWest[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
-
-      proName = Form("p_mEpdQ3ShiftCos%dEastVz%d",iShift,iVz); // 3rd EP
-      p_mEpdQ3ShiftCosEast[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
-      proName = Form("p_mEpdQ3ShiftSin%dEastVz%d",iShift,iVz);
-      p_mEpdQ3ShiftSinEast[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
-
-      proName = Form("p_mEpdQ3ShiftCos%dWestVz%d",iShift,iVz);
-      p_mEpdQ3ShiftCosWest[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
-      proName = Form("p_mEpdQ3ShiftSin%dWestVz%d",iShift,iVz);
-      p_mEpdQ3ShiftSinWest[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
+      proName = Form("p_mEpdQ1ShiftCos%dWestVz%d",iShift,iVz);
+      p_mEpdQ1ShiftCosWest[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
+      proName = Form("p_mEpdQ1ShiftSin%dWestVz%d",iShift,iVz);
+      p_mEpdQ1ShiftSinWest[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
     }
   }
 }
 
-double StEpdEpManager::getPsi2ShiftEast()
+double StEpdEpManager::getPsi1ShiftEast()
 {
-  TVector2 Q2Vector = getQ2VecReCenterEast();
-  const double Psi2ReCenter = TMath::ATan2(Q2Vector.Y(),Q2Vector.X())/2.0; // -pi/2 to pi/2
+  TVector2 Q1Vector = getQ1VecReCtrEast();
+  const double Psi1ReCtr = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
 
-  double deltaPsi2 = 0.0;
+  double deltaPsi1 = 0.0;
   for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
   {
-    const int binCos     = p_mEpdQ2ShiftCosEast[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
-    const double meanCos = p_mEpdQ2ShiftCosEast[mVzBin][iShift]->GetBinContent(binCos);
+    const int binCos     = p_mEpdQ1ShiftCosEast[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
+    const double meanCos = p_mEpdQ1ShiftCosEast[mVzBin][iShift]->GetBinContent(binCos);
 
-    const int binSin     = p_mEpdQ2ShiftSinEast[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
-    const double meanSin = p_mEpdQ2ShiftSinEast[mVzBin][iShift]->GetBinContent(binSin);
+    const int binSin     = p_mEpdQ1ShiftSinEast[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
+    const double meanSin = p_mEpdQ1ShiftSinEast[mVzBin][iShift]->GetBinContent(binSin);
 
-    deltaPsi2 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(2.0*((double)iShift+1.0)*Psi2ReCenter)+meanCos*TMath::Sin(2.0*((double)iShift+1.0)*Psi2ReCenter));
+    deltaPsi1 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(((double)iShift+1.0)*Psi1ReCtr)+meanCos*TMath::Sin(((double)iShift+1.0)*Psi1ReCtr));
   }
 
-  double Psi2ShiftRaw = Psi2ReCenter + deltaPsi2/2.0;
-  double Psi2Shift    = transPsi2(Psi2ShiftRaw);
+  double Psi1ShiftRaw = Psi1ReCtr + deltaPsi1;
+  double Psi1Shift    = transPsi1(Psi1ShiftRaw);
 
-  return Psi2Shift;
+  return Psi1Shift;
 }
 
-double StEpdEpManager::getPsi2ShiftWest()
+double StEpdEpManager::getPsi1ShiftWest()
 {
-  TVector2 Q2Vector = getQ2VecReCenterWest();
+  TVector2 Q1Vector = getQ1VecReCtrWest();
+  const double Psi1ReCtr = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
 
-  const double Psi2ReCenter = TMath::ATan2(Q2Vector.Y(),Q2Vector.X())/2.0;
-  double deltaPsi2 = 0.0;
+  double deltaPsi1 = 0.0;
   for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
   {
-    const int binCos     = p_mEpdQ2ShiftCosWest[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
-    const double meanCos = p_mEpdQ2ShiftCosWest[mVzBin][iShift]->GetBinContent(binCos);
+    const int binCos     = p_mEpdQ1ShiftCosWest[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
+    const double meanCos = p_mEpdQ1ShiftCosWest[mVzBin][iShift]->GetBinContent(binCos);
 
-    const int binSin     = p_mEpdQ2ShiftSinWest[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
-    const double meanSin = p_mEpdQ2ShiftSinWest[mVzBin][iShift]->GetBinContent(binSin);
+    const int binSin     = p_mEpdQ1ShiftSinWest[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
+    const double meanSin = p_mEpdQ1ShiftSinWest[mVzBin][iShift]->GetBinContent(binSin);
 
-    deltaPsi2 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(2.0*((double)iShift+1.0)*Psi2ReCenter)+meanCos*TMath::Sin(2.0*((double)iShift+1.0)*Psi2ReCenter));
+    deltaPsi1 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(((double)iShift+1.0)*Psi1ReCtr)+meanCos*TMath::Sin(((double)iShift+1.0)*Psi1ReCtr));
   }
 
-  double Psi2ShiftRaw = Psi2ReCenter + deltaPsi2/2.0;
-  double Psi2Shift    = transPsi2(Psi2ShiftRaw);
+  double Psi1ShiftRaw = Psi1ReCtr + deltaPsi1;
+  double Psi1Shift    = transPsi1(Psi1ShiftRaw);
 
-  return Psi2Shift;
+  return Psi1Shift;
 }
 
-double StEpdEpManager::transPsi2(double Psi2)
+double StEpdEpManager::getPsi1ShiftFull()
 {
-  double Psi2Corr = Psi2;
-  if(Psi2 >  TMath::Pi()/2.0) Psi2Corr = Psi2 - TMath::Pi();
-  if(Psi2 < -TMath::Pi()/2.0) Psi2Corr = Psi2 + TMath::Pi();
+  TVector2 Q1Vector = getQ1VecShiftFull();
+  double Psi1ShiftRaw = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
+  double Psi1Shift    = transPsi1(Psi1ShiftRaw);
 
-  return Psi2Corr;
+  return Psi1Shift;
 }
 
-double StEpdEpManager::getPsi3ShiftEast()
+double StEpdEpManager::transPsi1(double Psi1)
 {
-  TVector2 Q3Vector = getQ3VecReCenterEast();
-  const double Psi3ReCenter = TMath::ATan2(Q3Vector.Y(),Q3Vector.X())/3.0; // -pi/3 to pi/3
+  double Psi1Corr = Psi1;
+  if(Psi1 >  1.0*TMath::Pi()) Psi1Corr = Psi1 - TMath::TwoPi();
+  if(Psi1 < -1.0*TMath::Pi()) Psi1Corr = Psi1 + TMath::TwoPi();
 
-  double deltaPsi3 = 0.0;
+  return Psi1Corr;
+}
+//---------------------------------------------------------------------------------
+// Shift Correction Full EP
+void StEpdEpManager::initEpdShiftFull()
+{
+  for(int iVz = 0; iVz < mNumVzBin; ++iVz)
+  {
+    for(int iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order
+    {
+      std::string proName = Form("p_mEpdQ1ShiftCos%dFullVz%d",iShift,iVz);
+      p_mEpdQ1ShiftCosFull[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      proName = Form("p_mEpdQ1ShiftSin%dFullVz%d",iShift,iVz);
+      p_mEpdQ1ShiftSinFull[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    }
+  }
+}
+
+void StEpdEpManager::fillEpdShiftFull(TVector2 QVector)
+{
+  TVector2 Q1Vector = getQ1VecShiftFull();
+  const double Psi1 = TMath::ATan2(Q1Vector.Y(),Q1Vector.X());
+  for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
+  {
+    const double Psi1Cos = TMath::Cos(((double)iShift+1.0)*Psi1);
+    const double Psi1Sin = TMath::Sin(((double)iShift+1.0)*Psi1);
+    p_mEpdQ1ShiftCosFull[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
+    p_mEpdQ1ShiftSinFull[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
+  }
+}
+
+void StEpdEpManager::writeEpdShiftFull()
+{
+  for(int iVz = 0; iVz < mNumVzBin; ++iVz)
+  {
+    for(int iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order
+    {
+      p_mEpdQ1ShiftCosFull[iVz][iShift]->Write();
+      p_mEpdQ1ShiftSinFull[iVz][iShift]->Write();
+    }
+  }
+}
+
+void StEpdEpManager::readEpdShiftFull()
+{
+  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ShiftParameter/file_%s_EpdShiftParFull.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+  file_mShiftPar = TFile::Open(inputFile.c_str());
+
+  for(int iVz = 0; iVz < mNumVzBin; ++iVz)
+  {
+    for(int iShift = 0; iShift < 20; ++iShift) // Shift Order
+    {
+      std::string proName = Form("p_mEpdQ1ShiftCos%dFullVz%d",iShift,iVz);
+      p_mEpdQ1ShiftCosFull[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
+      proName = Form("p_mEpdQ1ShiftSin%dFullVz%d",iShift,iVz);
+      p_mEpdQ1ShiftSinFull[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
+    }
+  }
+}
+
+double StEpdEpManager::getPsi1ShiftFullCorr()
+{
+  TVector2 Q1Vector = getQ1VecShiftFull();
+  const double Psi1Shift = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
+
+  double deltaPsi1 = 0.0;
   for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
   {
-    const int binCos     = p_mEpdQ3ShiftCosEast[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
-    const double meanCos = p_mEpdQ3ShiftCosEast[mVzBin][iShift]->GetBinContent(binCos);
+    const int binCos     = p_mEpdQ1ShiftCosFull[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
+    const double meanCos = p_mEpdQ1ShiftCosFull[mVzBin][iShift]->GetBinContent(binCos);
 
-    const int binSin     = p_mEpdQ3ShiftSinEast[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
-    const double meanSin = p_mEpdQ3ShiftSinEast[mVzBin][iShift]->GetBinContent(binSin);
+    const int binSin     = p_mEpdQ1ShiftSinFull[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
+    const double meanSin = p_mEpdQ1ShiftSinFull[mVzBin][iShift]->GetBinContent(binSin);
 
-    deltaPsi3 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(3.0*((double)iShift+1.0)*Psi3ReCenter)+meanCos*TMath::Sin(3.0*((double)iShift+1.0)*Psi3ReCenter));
+    deltaPsi1 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(((double)iShift+1.0)*Psi1Shift)+meanCos*TMath::Sin(((double)iShift+1.0)*Psi1Shift));
   }
 
-  double Psi3ShiftRaw = Psi3ReCenter + deltaPsi3/3.0;
-  double Psi3Shift    = transPsi3(Psi3ShiftRaw);
+  double Psi1ShiftCorrRaw = Psi1Shift + deltaPsi1;
+  double Psi1ShiftCorr    = transPsi1(Psi1ShiftCorrRaw);
 
-  return Psi3Shift;
+  return Psi1ShiftCorr;
 }
 
-double StEpdEpManager::getPsi3ShiftWest()
+TVector2 StEpdEpManager::getQ1VecShiftFullCorr()
 {
-  TVector2 Q3Vector = getQ3VecReCenterWest();
+  TVector2 Q1Vector(0.0,0.0);
+  const double Psi1FullCorr = getPsi1ShiftFullCorr();
+  const double Q1x = TMath::Cos(1.0*Psi1FullCorr);
+  const double Q1y = TMath::Sin(1.0*Psi1FullCorr);
+  Q1Vector.Set(Q1x,Q1y);
 
-  const double Psi3ReCenter = TMath::ATan2(Q3Vector.Y(),Q3Vector.X())/3.0;
-  double deltaPsi3 = 0.0;
-  for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
-  {
-    const int binCos     = p_mEpdQ3ShiftCosWest[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
-    const double meanCos = p_mEpdQ3ShiftCosWest[mVzBin][iShift]->GetBinContent(binCos);
-
-    const int binSin     = p_mEpdQ3ShiftSinWest[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
-    const double meanSin = p_mEpdQ3ShiftSinWest[mVzBin][iShift]->GetBinContent(binSin);
-
-    deltaPsi3 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(3.0*((double)iShift+1.0)*Psi3ReCenter)+meanCos*TMath::Sin(3.0*((double)iShift+1.0)*Psi3ReCenter));
-  }
-
-  double Psi3ShiftRaw = Psi3ReCenter + deltaPsi3/3.0;
-  double Psi3Shift    = transPsi3(Psi3ShiftRaw);
-
-  return Psi3Shift;
+  return Q1Vector;
 }
 
-double StEpdEpManager::transPsi3(double Psi3)
-{
-  double Psi3Corr = Psi3;
-  if(Psi3 >  TMath::Pi()/3.0) Psi3Corr = Psi3 - TMath::TwoPi()/3.0;
-  if(Psi3 < -TMath::Pi()/3.0) Psi3Corr = Psi3 + TMath::TwoPi()/3.0;
-
-  return Psi3Corr;
-}
 //---------------------------------------------------------------------------------
 // Sub Event Plane Resolution
 void StEpdEpManager::initEpdResolution()
 {
-  p_mEpdSubEp2Res = new TProfile("p_mEpdSubEp2Res","p_mEpdSubEp2Res",mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-  p_mEpdSubEp3Res = new TProfile("p_mEpdSubEp3Res","p_mEpdSubEp3Res",mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+  p_mEpdSubEp1Res = new TProfile("p_mEpdSubEp1Res","p_mEpdSubEp1Res",mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 }
 
-void StEpdEpManager::fillEpdResolution(double Psi2East, double Psi2West, double Psi3East, double Psi3West)
+void StEpdEpManager::fillEpdResolution(double Psi1East, double Psi1West)
 {
-  double res2Sub = TMath::Cos(2.0*(Psi2East-Psi2West));
-  p_mEpdSubEp2Res->Fill((double)mCent9,res2Sub);
-
-  double res3Sub = TMath::Cos(3.0*(Psi3East-Psi3West));
-  p_mEpdSubEp3Res->Fill((double)mCent9,res3Sub);
+  double res1Sub = TMath::Cos(1.0*(Psi1West-Psi1East));
+  p_mEpdSubEp1Res->Fill((double)mCent9,res1Sub);
 }
 
 void StEpdEpManager::writeEpdResolution()
 {
-  p_mEpdSubEp2Res->Write();
-  p_mEpdSubEp3Res->Write();
+  p_mEpdSubEp1Res->Write();
 }
 
 void StEpdEpManager::readEpdResolution()
 {
   std::string inputFile = Form("Utility/EventPlaneMaker/%s/Resolution/file_%s_EpdEpResolution.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   file_mResolution = TFile::Open(inputFile.c_str());
-  p_mEpdSubEp2Res = (TProfile*)file_mResolution->Get("p_mEpdSubEp2Res");
-  p_mEpdSubEp3Res = (TProfile*)file_mResolution->Get("p_mEpdSubEp3Res");
+  p_mEpdSubEp1Res = (TProfile*)file_mResolution->Get("p_mEpdSubEp1Res");
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    mEpdSubEp2ResVal[iCent] = 0.0;
-    mEpdSubEp2ResErr[iCent] = 0.0;
-    mEpdSubEp3ResVal[iCent] = 0.0;
-    mEpdSubEp3ResErr[iCent] = 0.0;
+    mEpdSubEp1ResVal[iCent]  = 0.0;
+    mEpdSubEp1ResErr[iCent]  = 0.0;
+    mEpdFullEp1ResVal[iCent] = 0.0;
+    mEpdFullEp1ResErr[iCent] = 0.0;
   }
 
+  TF1 *f_EpdEpResFull = new TF1("f_EpdEpResFull",funcEpdEpResFull,0,10,0);
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    double valRes2Sub = -999.9;
-    double errRes2Sub = 1.0;
-    double valRes3Sub = -999.9;
-    double errRes3Sub = 1.0;
-    double valRes2Raw = p_mEpdSubEp2Res->GetBinContent(iCent+1);
-    double errRes2Raw = p_mEpdSubEp2Res->GetBinError(iCent+1);
-    double valRes3Raw = p_mEpdSubEp3Res->GetBinContent(iCent+1);
-    double errRes3Raw = p_mEpdSubEp3Res->GetBinError(iCent+1);
-    if(valRes2Raw > 0)
+    double valRes1Sub  = -999.9;
+    double errRes1Sub  = 1.0;
+    double valRes1Full = -999.9;
+    double errRes1Full = 1.0;
+    double valRes1Raw  = p_mEpdSubEp1Res->GetBinContent(iCent+1);
+    double errRes1Raw  = p_mEpdSubEp1Res->GetBinError(iCent+1);
+    if(valRes1Raw > 0)
     {
-      valRes2Sub = TMath::Sqrt(valRes2Raw);
-      errRes2Sub = errRes2Raw/(2*valRes2Sub);
+      valRes1Sub = TMath::Sqrt(valRes1Raw);
+      errRes1Sub = errRes1Raw/(2.0*valRes1Sub);
+
+      // calculate full event plane resolution
+      double chiSub  = f_EpdEpResFull->GetX(valRes1Sub);
+      double chiFull = chiSub*TMath::Sqrt(2.0);
+      valRes1Full    = f_EpdEpResFull->Eval(chiFull);
+      // error propagation
+      double errChiSub = errRes1Sub/f_EpdEpResFull->Derivative(chiSub);
+      errRes1Full = f_EpdEpResFull->Derivative(chiFull)*errChiSub*TMath::Sqrt(2.0);
     }
 
-    if(valRes3Raw > 0)
-    {
-      valRes3Sub = TMath::Sqrt(valRes3Raw);
-      errRes3Sub = errRes3Raw/(2*valRes3Sub);
-    }
-
-    mEpdSubEp2ResVal[iCent] = valRes2Sub;
-    mEpdSubEp2ResErr[iCent] = errRes2Sub;
-    mEpdSubEp3ResVal[iCent] = valRes3Sub;
-    mEpdSubEp3ResErr[iCent] = errRes3Sub;
+    mEpdSubEp1ResVal[iCent]  = valRes1Sub;
+    mEpdSubEp1ResErr[iCent]  = errRes1Sub;
+    mEpdFullEp1ResVal[iCent] = valRes1Full;
+    mEpdFullEp1ResErr[iCent] = errRes1Full;
   }
   file_mResolution->Close();
 }
 
-double StEpdEpManager::getEpdSubEp2ResVal(int cent9)
+double StEpdEpManager::getEpdSubEp1ResVal(int cent9)
 {
-  return mEpdSubEp2ResVal[cent9];
+  return mEpdSubEp1ResVal[cent9];
 }
 
-double StEpdEpManager::getEpdSubEp2ResErr(int cent9)
+double StEpdEpManager::getEpdSubEp1ResErr(int cent9)
 {
-  return mEpdSubEp2ResErr[cent9];
+  return mEpdSubEp1ResErr[cent9];
 }
 
-double StEpdEpManager::getEpdSubEp3ResVal(int cent9)
+double StEpdEpManager::getEpdFullEp1ResVal(int cent9)
 {
-  return mEpdSubEp3ResVal[cent9];
+  return mEpdFullEp1ResVal[cent9];
 }
 
-double StEpdEpManager::getEpdSubEp3ResErr(int cent9)
+double StEpdEpManager::getEpdFullEp1ResErr(int cent9)
 {
-  return mEpdSubEp3ResErr[cent9];
+  return mEpdFullEp1ResErr[cent9];
 }
 //---------------------------------------------------------------------------------
-// QVector
-TVector2 StEpdEpManager::getQ2VecRawEast()
+// Q1Vector
+TVector2 StEpdEpManager::getQ1VecRawEast()
 {
-  return v_mQ2RawEast;
+  TVector2 Q1Vector(0.0, 0.0);
+  const double Q1x = -1.0*v_mQ1SideRawEast.X()/mQ1WgtSideWgtEast; // flip the sign for Q1VecEast
+  const double Q1y = -1.0*v_mQ1SideRawEast.Y()/mQ1WgtSideWgtEast;
+  Q1Vector.Set(Q1x, Q1y);
+
+  return Q1Vector;
 }
 
-TVector2 StEpdEpManager::getQ2VecRawWest()
+TVector2 StEpdEpManager::getQ1VecRawWest()
 {
-  return v_mQ2RawWest;
+  TVector2 Q1Vector(0.0, 0.0);
+  const double Q1x = v_mQ1SideRawWest.X()/mQ1WgtSideWgtWest;
+  const double Q1y = v_mQ1SideRawWest.Y()/mQ1WgtSideWgtWest;
+  Q1Vector.Set(Q1x, Q1y);
+
+  return Q1Vector;
 }
 
-TVector2 StEpdEpManager::getQ2VecReCenterEast()
+TVector2 StEpdEpManager::getQ1VecRawFull()
 {
-  return v_mQ2ReCenterEast;
+  TVector2 Q1VecEast = getQ1VecRawEast();
+  TVector2 Q1VecWest = getQ1VecRawWest();
+  TVector2 Q1VecFull = Q1VecWest + Q1VecEast;
+
+  return Q1VecFull;
 }
 
-TVector2 StEpdEpManager::getQ2VecReCenterWest()
+TVector2 StEpdEpManager::getQ1VecWgtEast()
 {
-  return v_mQ2ReCenterWest;
+  TVector2 Q1Vector(0.0, 0.0);
+  const double Q1x = -1.0*v_mQ1SideWgtEast.X()/mQ1WgtSideWgtEast; // flip the sign for Q1VecEast
+  const double Q1y = -1.0*v_mQ1SideWgtEast.Y()/mQ1WgtSideWgtEast;
+  Q1Vector.Set(Q1x, Q1y);
+
+  return Q1Vector;
 }
 
-double StEpdEpManager::getPsi2RawEast()
+TVector2 StEpdEpManager::getQ1VecWgtWest()
 {
-  TVector2 Q2Vector = getQ2VecRawEast();
-  double Psi2       = TMath::ATan2(Q2Vector.Y(),Q2Vector.X())/2.0; // -pi/2 to pi/2
-  double Psi2Raw    = transPsi2(Psi2);
+  TVector2 Q1Vector(0.0, 0.0);
+  const double Q1x = v_mQ1SideWgtWest.X()/mQ1WgtSideWgtWest;
+  const double Q1y = v_mQ1SideWgtWest.Y()/mQ1WgtSideWgtWest;
+  Q1Vector.Set(Q1x, Q1y);
 
-  return Psi2Raw;
+  return Q1Vector;
 }
 
-double StEpdEpManager::getPsi2RawWest()
+TVector2 StEpdEpManager::getQ1VecWgtFull()
 {
-  TVector2 Q2Vector = getQ2VecRawWest();
-  double Psi2       = TMath::ATan2(Q2Vector.Y(),Q2Vector.X())/2.0; // -pi/2 to pi/2
-  double Psi2Raw    = transPsi2(Psi2);
+  TVector2 Q1VecEast = getQ1VecWgtEast();
+  TVector2 Q1VecWest = getQ1VecWgtWest();
+  TVector2 Q1VecFull = Q1VecWest + Q1VecEast;
 
-  return Psi2Raw;
+  return Q1VecFull;
 }
 
-double StEpdEpManager::getPsi2ReCenterEast()
+TVector2 StEpdEpManager::getQ1VecReCtrEast()
 {
-  TVector2 Q2Vector   = getQ2VecReCenterEast();
-  double Psi2         = TMath::ATan2(Q2Vector.Y(),Q2Vector.X())/2.0; // -pi/2 to pi/2
-  double Psi2ReCenter = transPsi2(Psi2);
+  TVector2 Q1Vector(0.0, 0.0);
+  const double Q1x = -1.0*v_mQ1SideReCtrEast.X()/mQ1WgtSideReCtrEast; // flip the sign for Q1VecEast
+  const double Q1y = -1.0*v_mQ1SideReCtrEast.Y()/mQ1WgtSideReCtrEast;
+  Q1Vector.Set(Q1x, Q1y);
 
-  return Psi2ReCenter;
+  return Q1Vector;
 }
 
-double StEpdEpManager::getPsi2ReCenterWest()
+TVector2 StEpdEpManager::getQ1VecReCtrWest()
 {
-  TVector2 Q2Vector   = getQ2VecReCenterWest();
-  double Psi2         = TMath::ATan2(Q2Vector.Y(),Q2Vector.X())/2.0; // -pi/2 to pi/2
-  double Psi2ReCenter = transPsi2(Psi2);
+  TVector2 Q1Vector(0.0, 0.0);
+  const double Q1x = v_mQ1SideReCtrWest.X()/mQ1WgtSideReCtrWest;
+  const double Q1y = v_mQ1SideReCtrWest.Y()/mQ1WgtSideReCtrWest;
+  Q1Vector.Set(Q1x, Q1y);
 
-  return Psi2ReCenter;
+  return Q1Vector;
 }
 
-TVector2 StEpdEpManager::getQ3VecRawEast()
+TVector2 StEpdEpManager::getQ1VecReCtrFull()
 {
-  return v_mQ3RawEast;
+  TVector2 Q1VecEast = getQ1VecReCtrEast();
+  TVector2 Q1VecWest = getQ1VecReCtrWest();
+  TVector2 Q1VecFull = Q1VecWest + Q1VecEast;
+
+  return Q1VecFull;
 }
 
-TVector2 StEpdEpManager::getQ3VecRawWest()
+TVector2 StEpdEpManager::getQ1VecShiftEast()
 {
-  return v_mQ3RawWest;
+  TVector2 Q1Vector(0.0,0.0);
+  const double Psi1East = getPsi1ShiftEast();
+  const double Q1x = TMath::Cos(1.0*Psi1East);
+  const double Q1y = TMath::Sin(1.0*Psi1East);
+  Q1Vector.Set(Q1x,Q1y);
+
+  return Q1Vector;
 }
 
-TVector2 StEpdEpManager::getQ3VecReCenterEast()
+TVector2 StEpdEpManager::getQ1VecShiftWest()
 {
-  return v_mQ3ReCenterEast;
+  TVector2 Q1Vector(0.0,0.0);
+  const double Psi1West = getPsi1ShiftWest();
+  const double Q1x = TMath::Cos(1.0*Psi1West);
+  const double Q1y = TMath::Sin(1.0*Psi1West);
+  Q1Vector.Set(Q1x,Q1y);
+
+  return Q1Vector;
 }
 
-TVector2 StEpdEpManager::getQ3VecReCenterWest()
+TVector2 StEpdEpManager::getQ1VecShiftFull()
 {
-  return v_mQ3ReCenterWest;
+  TVector2 Q1VecEast = getQ1VecShiftEast();
+  TVector2 Q1VecWest = getQ1VecShiftWest();
+  TVector2 Q1VecFull = Q1VecWest + Q1VecEast;
+
+  return Q1VecFull;
 }
 
-double StEpdEpManager::getPsi3RawEast()
+double StEpdEpManager::getPsi1RawEast()
 {
-  TVector2 Q3Vector = getQ3VecRawEast();
-  double Psi3       = TMath::ATan2(Q3Vector.Y(),Q3Vector.X())/3.0; // -pi/3 to pi/3
-  double Psi3Raw    = transPsi3(Psi3);
+  TVector2 Q1Vector = getQ1VecRawEast();
+  double Psi1       = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
+  double Psi1Raw    = transPsi1(Psi1);
 
-  return Psi3Raw;
+  return Psi1Raw;
 }
 
-double StEpdEpManager::getPsi3RawWest()
+double StEpdEpManager::getPsi1RawWest()
 {
-  TVector2 Q3Vector = getQ3VecRawWest();
-  double Psi3       = TMath::ATan2(Q3Vector.Y(),Q3Vector.X())/3.0; // -pi/3 to pi/3
-  double Psi3Raw    = transPsi3(Psi3);
+  TVector2 Q1Vector = getQ1VecRawWest();
+  double Psi1       = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
+  double Psi1Raw    = transPsi1(Psi1);
 
-  return Psi3Raw;
+  return Psi1Raw;
 }
 
-double StEpdEpManager::getPsi3ReCenterEast()
+double StEpdEpManager::getPsi1RawFull()
 {
-  TVector2 Q3Vector   = getQ3VecReCenterEast();
-  double Psi3         = TMath::ATan2(Q3Vector.Y(),Q3Vector.X())/3.0; // -pi/3 to pi/3
-  double Psi3ReCenter = transPsi3(Psi3);
+  TVector2 Q1Vector = getQ1VecRawFull();
+  double Psi1       = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
+  double Psi1Raw    = transPsi1(Psi1);
 
-  return Psi3ReCenter;
+  return Psi1Raw;
 }
 
-double StEpdEpManager::getPsi3ReCenterWest()
+double StEpdEpManager::getPsi1WgtEast()
 {
-  TVector2 Q3Vector   = getQ3VecReCenterWest();
-  double Psi3         = TMath::ATan2(Q3Vector.Y(),Q3Vector.X())/3.0; // -pi/3 to pi/3
-  double Psi3ReCenter = transPsi3(Psi3);
+  TVector2 Q1Vector = getQ1VecWgtEast();
+  double Psi1       = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
+  double Psi1Wgt    = transPsi1(Psi1);
 
-  return Psi3ReCenter;
+  return Psi1Wgt;
 }
 
-int StEpdEpManager::getNumTrkRawEast()
+double StEpdEpManager::getPsi1WgtWest()
 {
-  return mQCouRawEast;
+  TVector2 Q1Vector = getQ1VecWgtWest();
+  double Psi1       = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
+  double Psi1Wgt    = transPsi1(Psi1);
+
+  return Psi1Wgt;
 }
 
-int StEpdEpManager::getNumTrkRawWest()
+double StEpdEpManager::getPsi1WgtFull()
 {
-  return mQCouRawWest;
+  TVector2 Q1Vector = getQ1VecWgtFull();
+  double Psi1       = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
+  double Psi1Wgt    = transPsi1(Psi1);
+
+  return Psi1Wgt;
 }
 
-int StEpdEpManager::getNumTrkReCenterEast()
+double StEpdEpManager::getPsi1ReCtrEast()
 {
-  return mQCouReCenterEast;
+  TVector2 Q1Vector = getQ1VecReCtrEast();
+  double Psi1       = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
+  double Psi1Wgt    = transPsi1(Psi1);
+
+  return Psi1Wgt;
 }
 
-int StEpdEpManager::getNumTrkReCenterWest()
+double StEpdEpManager::getPsi1ReCtrWest()
 {
-  return mQCouReCenterWest;
+  TVector2 Q1Vector = getQ1VecReCtrWest();
+  double Psi1       = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
+  double Psi1Wgt    = transPsi1(Psi1);
+
+  return Psi1Wgt;
+}
+
+double StEpdEpManager::getPsi1ReCtrFull()
+{
+  TVector2 Q1Vector = getQ1VecReCtrFull();
+  double Psi1       = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
+  double Psi1Wgt    = transPsi1(Psi1);
+
+  return Psi1Wgt;
 }
 //---------------------------------------------------------------------------------
 // raw EP
@@ -755,90 +942,103 @@ void StEpdEpManager::initEpdSubEpRaw()
 {
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string histName = Form("h_mEpdEp2RawEastCent%d",iCent); // 2nd EP
-    h_mEpdEp2RawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
-    histName = Form("h_mEpdEp2RawWestCent%d",iCent);
-    h_mEpdEp2RawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
-    histName = Form("h_mEpdEp2RawCorrCent%d",iCent);
-    h_mEpdEp2RawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
-
-    histName = Form("h_mEpdEp3RawEastCent%d",iCent); // 3rd EP
-    h_mEpdEp3RawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
-    histName = Form("h_mEpdEp3RawWestCent%d",iCent);
-    h_mEpdEp3RawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
-    histName = Form("h_mEpdEp3RawCorrCent%d",iCent);
-    h_mEpdEp3RawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+    std::string histName = Form("h_mEpdEp1RawEastCent%d",iCent); // 2nd EP
+    h_mEpdEp1RawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mEpdEp1RawWestCent%d",iCent);
+    h_mEpdEp1RawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mEpdEp1RawFullCent%d",iCent);
+    h_mEpdEp1RawFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mEpdEp1RawCorrCent%d",iCent);
+    h_mEpdEp1RawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
   }
 }
 
-void StEpdEpManager::fillEpdSubEpRaw(double Psi2East, double Psi2West, double Psi3East, double Psi3West)
+void StEpdEpManager::fillEpdSubEpRaw(double Psi1East, double Psi1West, double Psi1Full)
 {
-  h_mEpdEp2RawEast[mCent9]->Fill(mRunIndex,Psi2East);
-  h_mEpdEp2RawWest[mCent9]->Fill(mRunIndex,Psi2West);
-  h_mEpdEp2RawCorr[mCent9]->Fill(Psi2East,Psi2West);
-
-  h_mEpdEp3RawEast[mCent9]->Fill(mRunIndex,Psi3East);
-  h_mEpdEp3RawWest[mCent9]->Fill(mRunIndex,Psi3West);
-  h_mEpdEp3RawCorr[mCent9]->Fill(Psi3East,Psi3West);
+  h_mEpdEp1RawEast[mCent9]->Fill(mRunIndex,Psi1East);
+  h_mEpdEp1RawWest[mCent9]->Fill(mRunIndex,Psi1West);
+  h_mEpdEp1RawFull[mCent9]->Fill(mRunIndex,Psi1Full);
+  h_mEpdEp1RawCorr[mCent9]->Fill(Psi1East,Psi1West);
 }
 
 void StEpdEpManager::writeEpdSubEpRaw()
 {
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    h_mEpdEp2RawEast[iCent]->Write();
-    h_mEpdEp2RawWest[iCent]->Write();
-    h_mEpdEp2RawCorr[iCent]->Write();
+    h_mEpdEp1RawEast[iCent]->Write();
+    h_mEpdEp1RawWest[iCent]->Write();
+    h_mEpdEp1RawFull[iCent]->Write();
+    h_mEpdEp1RawCorr[iCent]->Write();
+  }
+}
 
-    h_mEpdEp3RawEast[iCent]->Write();
-    h_mEpdEp3RawWest[iCent]->Write();
-    h_mEpdEp3RawCorr[iCent]->Write();
+// phi weighted EP
+void StEpdEpManager::initEpdSubEpWgt()
+{
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    std::string histName = Form("h_mEpdEp1WgtEastCent%d",iCent); // 2nd EP
+    h_mEpdEp1WgtEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mEpdEp1WgtWestCent%d",iCent);
+    h_mEpdEp1WgtWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mEpdEp1WgtFullCent%d",iCent);
+    h_mEpdEp1WgtFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mEpdEp1WgtCorrCent%d",iCent);
+    h_mEpdEp1WgtCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+  }
+}
+
+void StEpdEpManager::fillEpdSubEpWgt(double Psi1East, double Psi1West, double Psi1Full)
+{
+  h_mEpdEp1WgtEast[mCent9]->Fill(mRunIndex,Psi1East);
+  h_mEpdEp1WgtWest[mCent9]->Fill(mRunIndex,Psi1West);
+  h_mEpdEp1WgtFull[mCent9]->Fill(mRunIndex,Psi1Full);
+  h_mEpdEp1WgtCorr[mCent9]->Fill(Psi1East,Psi1West);
+}
+
+void StEpdEpManager::writeEpdSubEpWgt()
+{
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    h_mEpdEp1WgtEast[iCent]->Write();
+    h_mEpdEp1WgtWest[iCent]->Write();
+    h_mEpdEp1WgtFull[iCent]->Write();
+    h_mEpdEp1WgtCorr[iCent]->Write();
   }
 }
 
 // recenter EP
-void StEpdEpManager::initEpdSubEpReCenter()
+void StEpdEpManager::initEpdSubEpReCtr()
 {
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string histName = Form("h_mEpdEp2ReCenterEastCent%d",iCent); // 2nd EP
-    h_mEpdEp2ReCenterEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
-    histName = Form("h_mEpdEp2ReCenterWestCent%d",iCent);
-    h_mEpdEp2ReCenterWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
-    histName = Form("h_mEpdEp2ReCenterCorrCent%d",iCent);
-    h_mEpdEp2ReCenterCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
-
-    histName = Form("h_mEpdEp3ReCenterEastCent%d",iCent); // 3rd EP
-    h_mEpdEp3ReCenterEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
-    histName = Form("h_mEpdEp3ReCenterWestCent%d",iCent);
-    h_mEpdEp3ReCenterWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
-    histName = Form("h_mEpdEp3ReCenterCorrCent%d",iCent);
-    h_mEpdEp3ReCenterCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+    std::string histName = Form("h_mEpdEp1ReCtrEastCent%d",iCent); // 2nd EP
+    h_mEpdEp1ReCtrEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mEpdEp1ReCtrWestCent%d",iCent);
+    h_mEpdEp1ReCtrWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mEpdEp1ReCtrFullCent%d",iCent);
+    h_mEpdEp1ReCtrFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mEpdEp1ReCtrCorrCent%d",iCent);
+    h_mEpdEp1ReCtrCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
   }
 }
 
-void StEpdEpManager::fillEpdSubEpReCenter(double Psi2East, double Psi2West, double Psi3East, double Psi3West)
+void StEpdEpManager::fillEpdSubEpReCtr(double Psi1East, double Psi1West, double Psi1Full)
 {
-  h_mEpdEp2ReCenterEast[mCent9]->Fill(mRunIndex,Psi2East);
-  h_mEpdEp2ReCenterWest[mCent9]->Fill(mRunIndex,Psi2West);
-  h_mEpdEp2ReCenterCorr[mCent9]->Fill(Psi2East,Psi2West);
-
-  h_mEpdEp3ReCenterEast[mCent9]->Fill(mRunIndex,Psi3East);
-  h_mEpdEp3ReCenterWest[mCent9]->Fill(mRunIndex,Psi3West);
-  h_mEpdEp3ReCenterCorr[mCent9]->Fill(Psi3East,Psi3West);
+  h_mEpdEp1ReCtrEast[mCent9]->Fill(mRunIndex,Psi1East);
+  h_mEpdEp1ReCtrWest[mCent9]->Fill(mRunIndex,Psi1West);
+  h_mEpdEp1ReCtrFull[mCent9]->Fill(mRunIndex,Psi1Full);
+  h_mEpdEp1ReCtrCorr[mCent9]->Fill(Psi1East,Psi1West);
 }
 
-void StEpdEpManager::writeEpdSubEpReCenter()
+void StEpdEpManager::writeEpdSubEpReCtr()
 {
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    h_mEpdEp2ReCenterEast[iCent]->Write();
-    h_mEpdEp2ReCenterWest[iCent]->Write();
-    h_mEpdEp2ReCenterCorr[iCent]->Write();
-
-    h_mEpdEp3ReCenterEast[iCent]->Write();
-    h_mEpdEp3ReCenterWest[iCent]->Write();
-    h_mEpdEp3ReCenterCorr[iCent]->Write();
+    h_mEpdEp1ReCtrEast[iCent]->Write();
+    h_mEpdEp1ReCtrWest[iCent]->Write();
+    h_mEpdEp1ReCtrFull[iCent]->Write();
+    h_mEpdEp1ReCtrCorr[iCent]->Write();
   }
 }
 
@@ -847,45 +1047,56 @@ void StEpdEpManager::initEpdSubEpShift()
 {
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string histName = Form("h_mEpdEp2ShiftEastCent%d",iCent); // 2nd EP
-    h_mEpdEp2ShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
-    histName = Form("h_mEpdEp2ShiftWestCent%d",iCent);
-    h_mEpdEp2ShiftWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
-    histName = Form("h_mEpdEp2ShiftCorrCent%d",iCent);
-    h_mEpdEp2ShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
-
-    histName = Form("h_mEpdEp3ShiftEastCent%d",iCent); // 3rd EP
-    h_mEpdEp3ShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
-    histName = Form("h_mEpdEp3ShiftWestCent%d",iCent);
-    h_mEpdEp3ShiftWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
-    histName = Form("h_mEpdEp3ShiftCorrCent%d",iCent);
-    h_mEpdEp3ShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+    std::string histName = Form("h_mEpdEp1ShiftEastCent%d",iCent); // 2nd EP
+    h_mEpdEp1ShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mEpdEp1ShiftWestCent%d",iCent);
+    h_mEpdEp1ShiftWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mEpdEp1ShiftFullCent%d",iCent);
+    h_mEpdEp1ShiftFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    histName = Form("h_mEpdEp1ShiftCorrCent%d",iCent);
+    h_mEpdEp1ShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
   }
 }
 
-void StEpdEpManager::fillEpdSubEpShift(double Psi2East, double Psi2West, double Psi3East, double Psi3West)
+void StEpdEpManager::fillEpdSubEpShift(double Psi1East, double Psi1West, double Psi1Full)
 {
-  h_mEpdEp2ShiftEast[mCent9]->Fill(mRunIndex,Psi2East);
-  h_mEpdEp2ShiftWest[mCent9]->Fill(mRunIndex,Psi2West);
-  h_mEpdEp2ShiftCorr[mCent9]->Fill(Psi2East,Psi2West);
-
-  h_mEpdEp3ShiftEast[mCent9]->Fill(mRunIndex,Psi3East);
-  h_mEpdEp3ShiftWest[mCent9]->Fill(mRunIndex,Psi3West);
-  h_mEpdEp3ShiftCorr[mCent9]->Fill(Psi3East,Psi3West);
+  h_mEpdEp1ShiftEast[mCent9]->Fill(mRunIndex,Psi1East);
+  h_mEpdEp1ShiftWest[mCent9]->Fill(mRunIndex,Psi1West);
+  h_mEpdEp1ShiftFull[mCent9]->Fill(mRunIndex,Psi1West);
+  h_mEpdEp1ShiftCorr[mCent9]->Fill(Psi1East,Psi1West);
 }
 
 void StEpdEpManager::writeEpdSubEpShift()
 {
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    h_mEpdEp2ShiftEast[iCent]->Write();
-    h_mEpdEp2ShiftWest[iCent]->Write();
-    h_mEpdEp2ShiftCorr[iCent]->Write();
+    h_mEpdEp1ShiftEast[iCent]->Write();
+    h_mEpdEp1ShiftWest[iCent]->Write();
+    h_mEpdEp1ShiftFull[iCent]->Write();
+    h_mEpdEp1ShiftCorr[iCent]->Write();
+  }
+}
 
-    h_mEpdEp3ShiftEast[iCent]->Write();
-    h_mEpdEp3ShiftWest[iCent]->Write();
-    h_mEpdEp3ShiftCorr[iCent]->Write();
+// shift Full EP
+void StEpdEpManager::initEpdFullEpShift()
+{
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    std::string histName = Form("h_mEpdEp1ShiftFullCorrCent%d",iCent); // 1st EP
+    h_mEpdEp1ShiftFullCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+  }
+}
+
+void StEpdEpManager::fillEpdFullEpShift(double Psi1FullCorr)
+{
+  h_mEpdEp1ShiftFullCorr[mCent9]->Fill(mRunIndex,Psi1FullCorr);
+}
+
+void StEpdEpManager::writeEpdFullEpShift()
+{
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    h_mEpdEp1ShiftFullCorr[iCent]->Write();
   }
 }
 //---------------------------------------------------------------------------------
-#endif

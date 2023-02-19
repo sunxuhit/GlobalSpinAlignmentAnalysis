@@ -34,10 +34,10 @@ class StTpcEpManager : public TObject
     void fillTpcReCenterWest(StPicoTrack* picoTrack);
     void writeTpcReCenter();
     void readTpcReCenter();
-    TVector2 getq2VecReCenterEast(); // 2nd ReCenter Parameter
-    TVector2 getq2VecReCenterWest();
-    TVector2 getq3VecReCenterEast(); // 3rd ReCenter Parameter
-    TVector2 getq3VecReCenterWest();
+    TVector2 getq2VecCtrEast(); // 2nd ReCenter Parameter
+    TVector2 getq2VecCtrWest();
+    TVector2 getq3VecCtrEast(); // 3rd ReCenter Parameter
+    TVector2 getq3VecCtrWest();
 
     // Shift Correction
     void initTpcShift();
