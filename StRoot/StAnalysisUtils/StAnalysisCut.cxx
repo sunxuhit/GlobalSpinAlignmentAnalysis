@@ -1,10 +1,10 @@
 #include <iostream>
 
-#include "StPicoEvent/StPicoDst.h"
-#include "StPicoEvent/StPicoEvent.h"
-#include "StPicoEvent/StPicoTrack.h"
-#include "StPicoEvent/StPicoBTofPidTraits.h"
-// #include "StMessMgr.h"
+#include "StRoot/StPicoEvent/StPicoDst.h"
+#include "StRoot/StPicoEvent/StPicoEvent.h"
+#include "StRoot/StPicoEvent/StPicoTrack.h"
+#include "StRoot/StPicoEvent/StPicoBTofPidTraits.h"
+#include "StRoot/StPicoEvent/StPicoEpdHit.h"
 
 #include "Utility/include/StSpinAlignmentCons.h"
 #include "StRoot/StAnalysisUtils/StAnalysisCons.h"

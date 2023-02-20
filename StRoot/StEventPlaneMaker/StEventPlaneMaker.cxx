@@ -271,15 +271,15 @@ int StEventPlaneMaker::Make()
     // Event Information
     const int runId        = mPicoEvent->runId();
     const int refMult      = mPicoEvent->refMult();
-    const int grefMult     = mPicoEvent->grefMult();
+    // const int grefMult     = mPicoEvent->grefMult();
     const TVector3 primVtx = mPicoEvent->primaryVertex();
-    const double vx        = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
-    const double vy        = mPicoEvent->primaryVertex().y();
+    // const double vx        = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
+    // const double vy        = mPicoEvent->primaryVertex().y();
     const double vz        = mPicoEvent->primaryVertex().z();
-    const double vzVpd     = mPicoEvent->vzVpd();
+    // const double vzVpd     = mPicoEvent->vzVpd();
     const double zdcX      = mPicoEvent->ZDCx();
     // const unsigned short nBTofHits  = mPicoEvent->btofTrayMultiplicity();
-    const unsigned int nBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
+    // const unsigned int nBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
     const unsigned short nBTofMatch = mPicoEvent->nBTOFMatch();     // get number of tof match points
     const unsigned int nTracks      = mPicoDst->numberOfTracks();   // get number of tracks
     const unsigned int nEpdHits     = mPicoDst->numberOfEpdHits();  // get number of EPD hits
@@ -305,9 +305,9 @@ int StEventPlaneMaker::Make()
     }
 
     const int cent9       = mRefMultCorr->getCentralityBin9(); // get Centrality9
-    const double reweight = mRefMultCorr->getWeight(); // get weight
+    // const double reweight = mRefMultCorr->getWeight(); // get weight
     const int runIndex    = mAnaUtils->findRunIndex(runId); // find run index for a specific run
-    const int triggerBin  = mAnaUtils->getTriggerBin(mPicoEvent);
+    // const int triggerBin  = mAnaUtils->getTriggerBin(mPicoEvent);
     const int vzBin       = mAnaUtils->getVzBin(vz); // 0 for -vz || 1 for +vz
     // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
     if(runIndex < 0)
@@ -355,12 +355,12 @@ int StEventPlaneMaker::Make()
 	  if( mAnaCut->passHitEpdEpEast(picoEpdHit) ) // negative eta
 	  {
 	    mEpdEpManager->addHitRawEast(picoEpdHit, primVtx);
-	    mEpdEpManager->fillEpdPhiWgtEast(picoEpdHit, primVtx);
+	    mEpdEpManager->fillEpdPhiWgtEast(picoEpdHit);
 	  }
 	  if( mAnaCut->passHitEpdEpWest(picoEpdHit) ) // positive eta
 	  {
 	    mEpdEpManager->addHitRawWest(picoEpdHit, primVtx);
-	    mEpdEpManager->fillEpdPhiWgtWest(picoEpdHit, primVtx);
+	    mEpdEpManager->fillEpdPhiWgtWest(picoEpdHit);
 	  }
 	}
 

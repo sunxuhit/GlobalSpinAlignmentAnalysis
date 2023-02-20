@@ -6,7 +6,7 @@
 #include "TVector2.h"
 #include "TVector3.h"
 
-class StPicoEpdHit
+class StPicoEpdHit;
 class StEpdGeom;
 class TFile;
 class TProfile2D;
@@ -36,8 +36,8 @@ class StEpdEpManager : public TObject
 
     // phi Weight Correction
     void initEpdPhiWgt();
-    void fillEpdPhiWgtEast(StPicoEpdHit* picoEpdHit, TVector3 primVtx);
-    void fillEpdPhiWgtWest(StPicoEpdHit* picoEpdHit, TVector3 primVtx);
+    void fillEpdPhiWgtEast(StPicoEpdHit* picoEpdHit);
+    void fillEpdPhiWgtWest(StPicoEpdHit* picoEpdHit);
     void writeEpdPhiWgt();
     void readEpdPhiWgt();
 
@@ -200,7 +200,7 @@ class StEpdEpManager : public TObject
     TFile *file_mPhiWgtPar;
     TFile *file_mReCtrPar;
     TFile *file_mShiftPar;
-    // TFile *file_mResolution;
+    TFile *file_mResolution;
 
     int mCent9;
     int mRunIndex;
@@ -208,7 +208,7 @@ class StEpdEpManager : public TObject
     bool mUsePhiWgt;
     bool mUseEtaWgt;
     const int mType;
-    StEpdGeom* mEpdGeom;
+    StEpdGeom *mEpdGeom;
 
   ClassDef(StEpdEpManager,1)
 };

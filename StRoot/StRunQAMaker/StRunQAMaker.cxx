@@ -140,7 +140,7 @@ int StRunQAMaker::Make()
     const double reweight = mRefMultCorr->getWeight(); // get Centrality reweight
     const int runIndex    = mAnaUtils->findRunIndex(runId); // find run index for a specific run
     const int triggerBin  = mAnaUtils->getTriggerBin(mPicoEvent);
-    const int vzBin       = mAnaUtils->getVzBin(vz); // 0 for -vz || 1 for +vz
+    // const int vzBin       = mAnaUtils->getVzBin(vz); // 0 for -vz || 1 for +vz
     // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
     if(runIndex < 0)
     {

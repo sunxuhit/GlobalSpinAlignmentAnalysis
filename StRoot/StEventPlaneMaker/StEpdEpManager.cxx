@@ -5,6 +5,7 @@
 #include "TProfile2D.h"
 #include "TProfile.h"
 #include "TH2F.h"
+#include "TF1.h"
 
 #include "StRoot/StPicoEvent/StPicoDst.h"
 #include "StRoot/StPicoEvent/StPicoEvent.h"
@@ -98,10 +99,9 @@ void StEpdEpManager::initEpdEpManager(int cent9, int runIndex, int vzBin)
 TVector2 StEpdEpManager::calq1Vector(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
   TVector2 q1Vector(0.0,0.0);
-  TVector3 EpdPoint = mEpdGeom->RandomPointOnTile(EpdHit->id()); // get a random position within the tile
+  TVector3 EpdPoint = mEpdGeom->RandomPointOnTile(picoEpdHit->id()); // get a random position within the tile
   TVector3 StraightLine = EpdPoint-primVtx;
   const double phi = StraightLine.Phi(); // -pi to pi
-					 //
   const double q1x = TMath::Cos(1.0*phi);
   const double q1y = TMath::Sin(1.0*phi);
   q1Vector.Set(q1x,q1y);
@@ -112,7 +112,7 @@ TVector2 StEpdEpManager::calq1Vector(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 double StEpdEpManager::getTileWeight(StPicoEpdHit *picoEpdHit)
 {
   const double nMip = picoEpdHit->nMIP();
-  double tileWgt = (nMip < anaUtils::mMipEpdEpMax[mType]) ? nMip : mMipEpdEpMax[mType];
+  double tileWgt = (nMip < anaUtils::mMipEpdEpMax[mType]) ? nMip : anaUtils::mMipEpdEpMax[mType];
   if(nMip < anaUtils::mMipEpdEpMin[mType]) tileWgt = 0.0;
 
   return tileWgt;
@@ -241,19 +241,19 @@ void StEpdEpManager::fillEpdPhiWgtEast(StPicoEpdHit* picoEpdHit)
   const int tileIdOnSec = picoEpdHit->tile()-1;     // conver to 0-30
   const int ringId      = picoEpdHit->row()-1;      // conver to 0-15
   const double tileWgt  = getTileWeight(picoEpdHit);
-  h_mEpdPhiWgtEast[mCent9]->Fill(secId,tileIdOnSec,tileWgt);
+  h_mEpdPhiWgtEast[mCent9]->Fill((double)secId,(double)tileIdOnSec,tileWgt);
 
   for(int iSec = 0; iSec < mNumSectors; ++iSec)
   {
     if(tileIdOnSec == 0)
     {
-      h_mEpdPhiAveEast[mCent9]->Fill(iSec,0,tileWgt/12.0); // average over 12 tiles in the most inner ring
+      h_mEpdPhiAveEast[mCent9]->Fill((double)iSec,0.0,tileWgt/12.0); // average over 12 tiles in the most inner ring
     }
     else
     {
       for(int iTile = 2*ringId-1; iTile < 2*ringId+1; ++iTile)
       {
-	h_mEpdPhiAveEast[mCent9]->Fill(iSec,iTile,tileWgt/24.0); // average over 24 tiles
+	h_mEpdPhiAveEast[mCent9]->Fill((double)iSec,(double)iTile,tileWgt/24.0); // average over 24 tiles
       }
     }
   }
@@ -265,19 +265,19 @@ void StEpdEpManager::fillEpdPhiWgtWest(StPicoEpdHit* picoEpdHit)
   const int tileIdOnSec = picoEpdHit->tile()-1;     // conver to 0-30
   const int ringId      = picoEpdHit->row()-1;      // conver to 0-15
   const double tileWgt  = getTileWeight(picoEpdHit);
-  h_mEpdPhiWgtWest[mCent9]->Fill(secId,tileIdOnSec,tileWgt);
+  h_mEpdPhiWgtWest[mCent9]->Fill((double)secId,(double)tileIdOnSec,tileWgt);
 
   for(int iSec = 0; iSec < mNumSectors; ++iSec)
   {
     if(tileIdOnSec == 0)
     {
-      h_mEpdPhiAveWest[mCent9]->Fill(iSec,0,tileWgt/12.0); // average over 12 tiles in the most inner ring
+      h_mEpdPhiAveWest[mCent9]->Fill((double)iSec,0.0,tileWgt/12.0); // average over 12 tiles in the most inner ring
     }
     else
     {
       for(int iTile = 2*ringId-1; iTile < 2*ringId+1; ++iTile)
       {
-	h_mEpdPhiAveWest[mCent9]->Fill(iSec,iTile,tileWgt/24.0); // average over 24 tiles
+	h_mEpdPhiAveWest[mCent9]->Fill((double)iSec,(double)iTile,tileWgt/24.0); // average over 24 tiles
       }
     }
   }
@@ -294,7 +294,7 @@ void StEpdEpManager::writeEpdPhiWgt()
   }
 }
 
-void StZdcEpManager::readEpdPhiWgt()
+void StEpdEpManager::readEpdPhiWgt()
 {
   std::string inputFile = Form("Utility/EventPlaneMaker/%s/GainCorrPar/file_%s_EpdPhiWgtPar.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   file_mPhiWgtPar = TFile::Open(inputFile.c_str());
@@ -413,7 +413,7 @@ TVector2 StEpdEpManager::getq1VecCtrWest()
   TVector2 q1Vector(0.0,0.0);
   q1Vector.Set(q1x,q1y);
 
-  return Q1Vector;
+  return q1Vector;
 }
 //---------------------------------------------------------------------------------
 // Shift Correction
