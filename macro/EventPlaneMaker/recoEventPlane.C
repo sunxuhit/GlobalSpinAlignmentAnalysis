@@ -9,27 +9,28 @@ class StPicoEvent;
 
 StChain *chain;
 
-void recoEventPlane(const Char_t *inputFile="../FileList/200GeV_2014/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 1, const Int_t energy = 0)
+void recoEventPlane(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 1, const Int_t beamType = 0)
+// void recoEventPlane(const Char_t *inputFile="Utility/FileList/RuRu200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 1, const Int_t beamType = 1)
 {
-  // mBeamEnergy[NumBeamEnergy] = {"200GeV","54GeV","27GeV"};
-  // Mode: 0 for QA, 1 for re-center correction, 2 for shift correction, 3 for resolution calculation, 4 for phi meson
-  // flag_ME: 0 for Same Event, 1 for Mixed Event
+  // mBeamType[NumBeamType] = {"ZrZr200GeV_2018","RuRu200GeV_2018"};
+  // Mode: 0 for gain correction, 1 for re-center correction, 2 for shift correction, 3 for full shift correction, 4 for resolution calculation, 5 for charged flow
 
   TStopwatch *stopWatch = new TStopwatch();
   stopWatch->Start();
 
+  /*
   string SL_version = "pro";
-  if(energy == 0) SL_version = "SL20a"; // 200GeV_2014
-  if(energy == 1) SL_version = "SL18c"; // 54GeV_2017
-  if(energy == 2) SL_version = "SL19b"; // 27GeV_2018
+  if(beamType == 0) SL_version = "SL20c"; // ZrZr200GeV_2018
+  if(beamType == 1) SL_version = "SL20c"; // RuRu200GeV_2018
   string env_SL = getenv ("STAR");
-  if (env_SL.find(SL_version)==string::npos) 
+  if (env_SL.find(SL_version)==string::npos)
   {
-    cout<<"Environment Star Library does not match the requested library in runPicoMixedEventMaker.C. Exiting..."<<endl;
+    cout<<"Environment Star Library does not match the requested library in RunQA.C. Exiting..."<<endl;
     exit(1);
   }
+  */
 
-  // Int_t nEvents = 10000000;
+  // Int_t nEvents = 10000000000;
   Int_t nEvents = 10000;
 
   gROOT->LoadMacro("$STAR/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");
@@ -38,12 +39,14 @@ void recoEventPlane(const Char_t *inputFile="../FileList/200GeV_2014/pico_xrootd
   gSystem->Load("StPicoEvent");
   gSystem->Load("StPicoDstMaker");
   gSystem->Load("StRefMultCorr");
+  gSystem->Load("StEpdUtil");
+  gSystem->Load("StAnalysisUtils");
   gSystem->Load("StEventPlaneMaker");
 
   chain = new StChain();
   StPicoDstMaker *picoMaker = new StPicoDstMaker(2,inputFile,"picoDst");
 
-  StEventPlaneMaker *EventPlaneMaker = new StEventPlaneMaker("EventPlane",picoMaker,jobId,Mode,energy);
+  StEventPlaneMaker *EventPlaneMaker = new StEventPlaneMaker("EventPlane",picoMaker,jobId,Mode,beamType);
 
   if( chain->Init()==kStErr ){ 
     cout<<"chain->Init();"<<endl;
