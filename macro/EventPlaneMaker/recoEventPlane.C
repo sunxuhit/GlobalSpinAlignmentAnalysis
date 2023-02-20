@@ -84,10 +84,10 @@ void recoEventPlane(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/pi
   cout << "." << flush;
   cout << " " << nEvents << "(" << 100 << "%)";
   cout << endl;
+  chain->Finish();
   cout << "****************************************** " << endl;
   cout << "Work done... now its time to close up shop!"<< endl;
   cout << "****************************************** " << endl;
-  chain->Finish();
   cout << "****************************************** " << endl;
   cout << "total number of events  " << nEvents << endl;
   cout << "****************************************** " << endl;

@@ -342,7 +342,7 @@ int StEventPlaneMaker::Make()
 	    for(int iSlat = 0; iSlat < 8; ++iSlat)
 	    {
 	      mZdcEpManager->fillZdcGain(iEastWest,iVertHori,iSlat,mZdcEpManager->getZdcSmd(iEastWest,iVertHori,iSlat));
-	      // cout << "iEastWest = " << iEastWest << ", iVertHori = " << iVertHori << ", iSlat = " << iSlat << ", zdc = " << mZdcSmdCorrection->getZdcSmd(iEastWest,iVertHori,iSlat) << endl;
+	      // std::cout << "iEastWest = " << iEastWest << ", iVertHori = " << iVertHori << ", iSlat = " << iSlat << ", zdc = " << mZdcEpManager->getZdcSmd(iEastWest,iVertHori,iSlat) << std::endl;
 	    }
 	  }
 	}
