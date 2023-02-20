@@ -472,7 +472,7 @@ double StZdcEpManager::getPosition(int eastwest, int verthori, int slat, int mod
   return 0;
 }
 
-TVector2 StZdcEpManager::getQEast(int mode) 
+TVector2 StZdcEpManager::getQ1VecEast(int mode) 
 {
   TVector2 QVector(0.0,0.0);
   double qXsum = 0.; double qYsum = 0.;
@@ -495,7 +495,7 @@ TVector2 StZdcEpManager::getQEast(int mode)
   return QVector;
 }
 
-TVector2 StZdcEpManager::getQWest(int mode)
+TVector2 StZdcEpManager::getQ1VecWest(int mode)
 {
   TVector2 QVector(0.0,0.0);
   double qXsum = 0.; double qYsum = 0.;
@@ -518,7 +518,7 @@ TVector2 StZdcEpManager::getQWest(int mode)
   return QVector;
 }
 
-TVector2 StZdcEpManager::getQFull(TVector2 QEast, TVector2 QWest, int mode)
+TVector2 StZdcEpManager::getQ1VecFull(TVector2 QEast, TVector2 QWest, int mode)
 {
   // TVector2 QVector = QWest-QEast;
   TVector2 QVecShift = QWest - QEast;
@@ -535,9 +535,9 @@ void StZdcEpManager::initZdcResolution()
 
 void StZdcEpManager::fillZdcResolution(TVector2 QEast, TVector2 QWest)
 {
-  double PsiEast = TMath::ATan2(QEast.Y(),QEast.X());
+  double PsiEast = TMath::ATan2(-1.0*QEast.Y(),-1.0*QEast.X()); // flip the sign for Q1VecEast
   double PsiWest = TMath::ATan2(QWest.Y(),QWest.X());
-  double res1Sub = TMath::Cos(PsiWest-PsiEast+TMath::Pi());
+  double res1Sub = TMath::Cos(PsiWest-PsiEast);
   p_mZdcSubEpRes->Fill((double)mCent9,res1Sub);
 }
 
@@ -628,7 +628,7 @@ void StZdcEpManager::initZdcSubEpRaw()
 
 void StZdcEpManager::fillZdcSubEpRaw(TVector2 QEast, TVector2 QWest, TVector2 QFull)
 {
-  double PsiEast = TMath::ATan2(QEast.Y(),QEast.X()); h_mZdcEpRawEast[mCent9]->Fill(mRunIndex,PsiEast);
+  double PsiEast = TMath::ATan2(-1.0*QEast.Y(),-1.0*QEast.X()); h_mZdcEpRawEast[mCent9]->Fill(mRunIndex,PsiEast); // flip the sign for Q1VecEast
   double PsiWest = TMath::ATan2(QWest.Y(),QWest.X()); h_mZdcEpRawWest[mCent9]->Fill(mRunIndex,PsiWest);
   double PsiFull = TMath::ATan2(QFull.Y(),QFull.X()); h_mZdcEpRawFull[mCent9]->Fill(mRunIndex,PsiFull);
   h_mZdcEpRawCorr[mCent9]->Fill(PsiEast,PsiWest);
@@ -663,7 +663,7 @@ void StZdcEpManager::initZdcSubEpReCenter()
 
 void StZdcEpManager::fillZdcSubEpReCenter(TVector2 QEast, TVector2 QWest, TVector2 QFull)
 {
-  double PsiEast = TMath::ATan2(QEast.Y(),QEast.X()); h_mZdcEpReCenterEast[mCent9]->Fill(mRunIndex,PsiEast);
+  double PsiEast = TMath::ATan2(-1.0*QEast.Y(),-1.0*QEast.X()); h_mZdcEpReCenterEast[mCent9]->Fill(mRunIndex,PsiEast); // flip the sign for Q1VecEast
   double PsiWest = TMath::ATan2(QWest.Y(),QWest.X()); h_mZdcEpReCenterWest[mCent9]->Fill(mRunIndex,PsiWest);
   double PsiFull = TMath::ATan2(QFull.Y(),QFull.X()); h_mZdcEpReCenterFull[mCent9]->Fill(mRunIndex,PsiFull);
   h_mZdcEpReCenterCorr[mCent9]->Fill(PsiEast,PsiWest);
@@ -698,7 +698,7 @@ void StZdcEpManager::initZdcSubEpShift()
 
 void StZdcEpManager::fillZdcSubEpShift(TVector2 QEast, TVector2 QWest, TVector2 QFull)
 {
-  double PsiEast = TMath::ATan2(QEast.Y(),QEast.X()); h_mZdcEpShiftEast[mCent9]->Fill(mRunIndex,PsiEast);
+  double PsiEast = TMath::ATan2(-1.0*QEast.Y(),-1.0*QEast.X()); h_mZdcEpShiftEast[mCent9]->Fill(mRunIndex,PsiEast); // flip the sign for Q1VecEast
   double PsiWest = TMath::ATan2(QWest.Y(),QWest.X()); h_mZdcEpShiftWest[mCent9]->Fill(mRunIndex,PsiWest);
   double PsiFull = TMath::ATan2(QFull.Y(),QFull.X()); h_mZdcEpShiftFull[mCent9]->Fill(mRunIndex,PsiFull);
   h_mZdcEpShiftCorr[mCent9]->Fill(PsiEast,PsiWest);

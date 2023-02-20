@@ -10,6 +10,7 @@
 #include "StPicoEvent/StPicoDst.h"
 #include "StPicoEvent/StPicoEvent.h"
 #include "StPicoEvent/StPicoTrack.h"
+#include "StPicoEvent/StPicoEpdHit.h"
 #include "StRefMultCorr/StRefMultCorr.h"
 #include "StRefMultCorr/CentralityMaker.h"
 
@@ -17,6 +18,7 @@
 #include "StRoot/StAnalysisUtils/StAnalysisUtils.h"
 #include "StRoot/StAnalysisUtils/StAnalysisCut.h"
 #include "StRoot/StEventPlaneMaker/StZdcEpManager.h"
+#include "StRoot/StEventPlaneMaker/StEpdEpManager.h"
 #include "StRoot/StEventPlaneMaker/StTpcEpManager.h"
 #include "StRoot/StEventPlaneMaker/StEventPlaneMaker.h"
 
@@ -31,25 +33,29 @@ StEventPlaneMaker::StEventPlaneMaker(const char* name, StPicoDstMaker *picoMaker
   // mMode = Mode;
   // mType = beamType;
 
-  if(mMode == 0) // Gain Correction for ZDC-SMD & EPD
+  if(mMode == 0) // fill Gain Correction for ZDC & phi Weight for EPD
   {
     str_mOutPutGainCorr = Form("./file_%s_GainCorr_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
   }
-  if(mMode == 1) // Re-Center Correction for ZDC-SMD & EPD & TPC Sub EP
+  if(mMode == 1) // fill Re-Center Correction for ZDC & EPD & TPC Sub EP
   {
     str_mOutPutReCenterPar = Form("./file_%s_ReCenterPar_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
   }
-  if(mMode == 2) // Shift Correction for ZDC-SMD & EPD & TPC Sub EP
+  if(mMode == 2) // fill Shift Correction for ZDC & EPD & TPC Sub EP
   {
     str_mOutPutShiftPar = Form("./file_%s_ShiftPar_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
   }
-  if(mMode == 3) // Shift Correction for ZDC-SMD & EPD Full EP
+  if(mMode == 3) // fill Shift Correction for ZDC & EPD Full EP
   {
     str_mOutPutShiftPar = Form("./file_%s_ShiftParFull_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
   }
-  if(mMode == 4) // Event Plane Resolution for ZDC-SMD & EPD & TPC Sub EP
+  if(mMode == 4) // fill Event Plane Resolution for ZDC & EPD & TPC Sub EP
   {
     str_mOutPutResolution = Form("./file_%s_EpResolution_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
+  }
+  if(mMode == 5) // fill Charged Hadron v1 for ZDC and EPD & v2 and v3 for TPC
+  {
+    str_mOutPutFlow = Form("./file_%s_ChargedFlow_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
   }
 }
 
@@ -60,6 +66,7 @@ StEventPlaneMaker::~StEventPlaneMaker()
 int StEventPlaneMaker::Init() 
 {
   mZdcEpManager = new StZdcEpManager(mType); // initialize ZDC EP Manager
+  mEpdEpManager = new StEpdEpManager(mType); // initialize EPD EP Manager
   mTpcEpManager = new StTpcEpManager(mType); // initialize TPC EP Manager
   mAnaCut       = new StAnalysisCut(mType);
   mAnaUtils     = new StAnalysisUtils(mType);
@@ -71,9 +78,12 @@ int StEventPlaneMaker::Init()
   }
 
   if(mMode == 0)
-  { // fill Gain Correction Factors for ZDC-SMDa & EPD
+  { // fill Gain Correction Factors for ZDC and phi Weight for EPD
     file_mOutPutGainCorr = new TFile(str_mOutPutGainCorr.c_str(),"RECREATE");
     mZdcEpManager->initZdcGain(); // ZDC
+
+    mEpdEpManager->initEpdPhiWgt(); // EPD
+    mEpdEpManager->initEpdSubEpRaw();
   }
   if(mMode == 1)
   { // fill ReCenter Correction Parameters for ZDC-SMD & EPD & TPC Sub EP
@@ -81,6 +91,10 @@ int StEventPlaneMaker::Init()
     mZdcEpManager->readZdcGain(); // ZDC
     mZdcEpManager->initZdcReCenter();
     mZdcEpManager->initZdcSubEpRaw();
+
+    mEpdEpManager->readEpdPhiWgt(); // EPD
+    mEpdEpManager->initEpdReCtr();
+    mEpdEpManager->initEpdSubEpWgt();
 
     mTpcEpManager->initTpcReCenter(); // TPC
     mTpcEpManager->initTpcSubEpRaw();
@@ -92,6 +106,11 @@ int StEventPlaneMaker::Init()
     mZdcEpManager->readZdcReCenter();
     mZdcEpManager->initZdcShift();
     mZdcEpManager->initZdcSubEpReCenter();
+
+    mEpdEpManager->readEpdPhiWgt(); // EPD
+    mEpdEpManager->readEpdReCtr();
+    mEpdEpManager->initEpdShift();
+    mEpdEpManager->initEpdSubEpReCtr();
 
     mTpcEpManager->readTpcReCenter(); // TPC
     mTpcEpManager->initTpcShift();
@@ -105,6 +124,12 @@ int StEventPlaneMaker::Init()
     mZdcEpManager->readZdcShift();
     mZdcEpManager->initZdcShiftFull();
     mZdcEpManager->initZdcSubEpShift();
+
+    mEpdEpManager->readEpdPhiWgt(); // EPD
+    mEpdEpManager->readEpdReCtr();
+    mEpdEpManager->readEpdShift();
+    mEpdEpManager->initEpdShiftFull();
+    mEpdEpManager->initEpdSubEpShift();
   }
   if(mMode == 4)
   { // fill Event Plane Resolution for ZDC-SMD & EPD & TPC Sub EP
@@ -116,6 +141,14 @@ int StEventPlaneMaker::Init()
     mZdcEpManager->initZdcResolution();
     mZdcEpManager->initZdcSubEpShift();
     mZdcEpManager->initZdcFullEpShift();
+
+    mEpdEpManager->readEpdPhiWgt(); // EPD
+    mEpdEpManager->readEpdReCtr();
+    mEpdEpManager->readEpdShift();
+    mEpdEpManager->readEpdShiftFull();
+    mEpdEpManager->initEpdResolution();
+    mEpdEpManager->initEpdSubEpShift();
+    mEpdEpManager->initEpdFullEpShift();
 
     mTpcEpManager->readTpcReCenter(); // TPC
     mTpcEpManager->readTpcShift();
@@ -134,6 +167,9 @@ int StEventPlaneMaker::Finish()
     {
       file_mOutPutGainCorr->cd();
       mZdcEpManager->writeZdcGain(); // ZDC
+
+      mEpdEpManager->writeEpdPhiWgt(); // EPD
+      mEpdEpManager->writeEpdSubEpRaw();
       file_mOutPutGainCorr->Close();
     }
   }
@@ -144,6 +180,9 @@ int StEventPlaneMaker::Finish()
       file_mOutPutReCenterPar->cd();
       mZdcEpManager->writeZdcReCenter(); // ZDC
       mZdcEpManager->writeZdcSubEpRaw();
+
+      mEpdEpManager->writeEpdReCtr(); // EPD
+      mEpdEpManager->writeEpdSubEpWgt();
 
       mTpcEpManager->writeTpcReCenter(); // TPC
       mTpcEpManager->writeTpcSubEpRaw();
@@ -158,6 +197,9 @@ int StEventPlaneMaker::Finish()
       mZdcEpManager->writeZdcShift(); // ZDC
       mZdcEpManager->writeZdcSubEpReCenter();
 
+      mEpdEpManager->writeEpdShift(); // EPD
+      mEpdEpManager->writeEpdSubEpReCtr();
+
       mTpcEpManager->writeTpcShift(); // TPC
       mTpcEpManager->writeTpcSubEpReCenter();
       file_mOutPutShiftPar->Close();
@@ -170,6 +212,9 @@ int StEventPlaneMaker::Finish()
       file_mOutPutShiftPar->cd();
       mZdcEpManager->writeZdcShiftFull(); // ZDC
       mZdcEpManager->writeZdcSubEpShift();
+
+      mEpdEpManager->writeEpdShiftFull(); // EPD
+      mEpdEpManager->writeEpdSubEpShift(); // EPD
       file_mOutPutShiftPar->Close();
     }
   }
@@ -181,6 +226,10 @@ int StEventPlaneMaker::Finish()
       mZdcEpManager->writeZdcResolution(); // ZDC
       mZdcEpManager->writeZdcSubEpShift();
       mZdcEpManager->writeZdcFullEpShift();
+
+      mEpdEpManager->writeEpdResolution(); // EPD
+      mEpdEpManager->writeEpdSubEpShift();
+      mEpdEpManager->writeEpdFullEpShift();
 
       mTpcEpManager->writeTpcResolution(); // TPC
       mTpcEpManager->writeTpcSubEpShift();
@@ -231,8 +280,9 @@ int StEventPlaneMaker::Make()
     const double zdcX      = mPicoEvent->ZDCx();
     // const unsigned short nBTofHits  = mPicoEvent->btofTrayMultiplicity();
     const unsigned int nBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
-    const unsigned short nBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
-    const unsigned int nTracks      = mPicoDst->numberOfTracks(); // get number of tracks
+    const unsigned short nBTofMatch = mPicoEvent->nBTOFMatch();     // get number of tof match points
+    const unsigned int nTracks      = mPicoDst->numberOfTracks();   // get number of tracks
+    const unsigned int nEpdHits     = mPicoDst->numberOfEpdHits();  // get number of EPD hits
 
     // StRefMultCorr Cut & centrality
     if(!mRefMultCorr)
@@ -271,12 +321,13 @@ int StEventPlaneMaker::Make()
     bool isPileUpEvent = isPileUpEventStAnalysisCut || isPileUpEventStRefMultCorr;
     // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpEventStAnalysisCut = " << isPileUpEventStAnalysisCut << ", isPileUpEventStRefMultCorr = " << isPileUpEventStRefMultCorr << endl;
 
-    if(!isPileUpEvent && mAnaCut->passEventCut(mPicoEvent))
+    if(!isPileUpEvent && mAnaCut->isGoodCentrality(cent9) && mAnaCut->passEventCut(mPicoEvent))
     { // apply Event Cuts for anlaysis 
       mZdcEpManager->initZdcEpManager(cent9,runIndex,vzBin); // initialize ZDC EP Manager
+      mEpdEpManager->initEpdEpManager(cent9,runIndex,vzBin); // initialize EPD EP Manager
       mTpcEpManager->initTpcEpManager(cent9,runIndex,vzBin); // initialize TPC EP Manager
       if(mMode == 0)
-      { // fill Gain Correction Factors for ZDC-SMD & EPD (TODO)
+      { // fill Gain Correction Factors for ZDC
 	for(int iSlat = 0; iSlat < 8; ++iSlat) // read in raw ADC value from ZDC-SMD
 	{
 	  mZdcEpManager->setZdcSmd(0,0,iSlat,mPicoEvent->ZdcSmdEastVertical(iSlat));
@@ -295,19 +346,75 @@ int StEventPlaneMaker::Make()
 	    }
 	  }
 	}
+
+	for(unsigned int iEpdHit = 0; iEpdHit < nEpdHits; ++iEpdHit)
+	{ // fill phi weight for EPD
+	  StPicoEpdHit *picoEpdHit = (StPicoEpdHit*)mPicoDst->epdHit(iEpdHit); 
+	  if(!picoEpdHit) continue;
+
+	  if( mAnaCut->passHitEpdEpEast(picoEpdHit) ) // negative eta
+	  {
+	    mEpdEpManager->addHitRawEast(picoEpdHit, primVtx);
+	    mEpdEpManager->fillEpdPhiWgtEast(picoEpdHit, primVtx);
+	  }
+	  if( mAnaCut->passHitEpdEpWest(picoEpdHit) ) // positive eta
+	  {
+	    mEpdEpManager->addHitRawWest(picoEpdHit, primVtx);
+	    mEpdEpManager->fillEpdPhiWgtWest(picoEpdHit, primVtx);
+	  }
+	}
+
+	TVector2 Q1EpdEast = mEpdEpManager->getQ1VecRawEast(); // get Q1Vector from EPD
+	TVector2 Q1EpdWest = mEpdEpManager->getQ1VecRawWest();
+	TVector2 Q1EpdFull = mEpdEpManager->getQ1VecRawFull();
+	if( !(Q1EpdEast.Mod() < 1e-10 || Q1EpdWest.Mod() < 1e-10 || Q1EpdFull.Mod() < 1e-10) ) // EPD EP
+	{
+	  const double Psi1RawEast = mEpdEpManager->getPsi1RawEast();
+	  const double Psi1RawWest = mEpdEpManager->getPsi1RawWest();
+	  const double Psi1RawFull = mEpdEpManager->getPsi1RawFull();
+	  mEpdEpManager->fillEpdSubEpRaw(Psi1RawEast,Psi1RawWest,Psi1RawFull);
+	}
       }
       if(mMode > 0)
       {
-	for(int iSlat = 0; iSlat < 8; ++iSlat) // read in raw ADC value from ZDC-SMD & EPD and apply gain correction
+	for(int iSlat = 0; iSlat < 8; ++iSlat) // read and apply gain correction to raw ADC value for ZDC
 	{
 	  mZdcEpManager->setZdcSmdGainCorr(0,0,iSlat,mPicoEvent->ZdcSmdEastVertical(iSlat));
 	  mZdcEpManager->setZdcSmdGainCorr(0,1,iSlat,mPicoEvent->ZdcSmdEastHorizontal(iSlat));
 	  mZdcEpManager->setZdcSmdGainCorr(1,0,iSlat,mPicoEvent->ZdcSmdWestVertical(iSlat));
 	  mZdcEpManager->setZdcSmdGainCorr(1,1,iSlat,mPicoEvent->ZdcSmdWestHorizontal(iSlat));
 	}
-	TVector2 QEast = mZdcEpManager->getQEast(mMode); // get QVector from ZDC
-	TVector2 QWest = mZdcEpManager->getQWest(mMode);
-	TVector2 QFull = mZdcEpManager->getQFull(QEast,QWest,mMode); // TVector2 QFull = QWest-QEast;
+
+	for(unsigned int iEpdHit = 0; iEpdHit < nEpdHits; ++iEpdHit) // read and apply phi weight & eta weight (if avaliable) for EPD
+	{ // fill phi weight for EPD
+	  StPicoEpdHit *picoEpdHit = (StPicoEpdHit*)mPicoDst->epdHit(iEpdHit); 
+	  if(!picoEpdHit) continue;
+
+	  if(mMode == 1) // calculate phi and eta weighted (if avaliable) Q1Vector from EPD
+	  {
+	    if( mAnaCut->passHitEpdEpEast(picoEpdHit) ) // negative eta
+	    {
+	      mEpdEpManager->addHitWgtEast(picoEpdHit, primVtx);
+	      mEpdEpManager->fillEpdReCtrEast(picoEpdHit, primVtx); // fill EPD ReCenter Parameters East
+	    }
+	    if( mAnaCut->passHitEpdEpWest(picoEpdHit) ) // positive eta
+	    {
+	      mEpdEpManager->addHitWgtWest(picoEpdHit, primVtx);
+	      mEpdEpManager->fillEpdReCtrWest(picoEpdHit, primVtx); // fill EPD ReCenter Parameters West
+	    }
+	  }
+	  else // calculate phi & eta weighted (if avaliable) and recentered Q1Vector from EPD
+	  {
+	    if( mAnaCut->passHitEpdEpEast(picoEpdHit) ) // negative eta
+	    {
+	      mEpdEpManager->addHitReCtrEast(picoEpdHit, primVtx);
+	    }
+	    if( mAnaCut->passHitEpdEpWest(picoEpdHit) ) // positive eta
+	    {
+	      mEpdEpManager->addHitReCtrWest(picoEpdHit, primVtx);
+	    }
+	  }
+	}
 
 	for(unsigned int iTrack = 0; iTrack < nTracks; ++iTrack) // calculate Q2Vector and Q3Vector from TPC
 	{ // track loop
@@ -340,13 +447,27 @@ int StEventPlaneMaker::Make()
 	  }
 	}
 
-	if(mMode == 1) // fill recenter correction parameter for ZDC-SMD & EPD & TPC Sub EP
+	if(mMode == 1) // fill recenter correction parameter for ZDC & EPD & TPC Sub EP
 	{
-	  if( !(QEast.Mod() < 1e-10 || QWest.Mod() < 1e-10 || QFull.Mod() < 1e-10) ) // ZDC EP
+	  TVector2 Q1ZdcEast = mZdcEpManager->getQ1VecEast(mMode); // get Q1Vector from ZDC
+	  TVector2 Q1ZdcWest = mZdcEpManager->getQ1VecWest(mMode);
+	  TVector2 Q1ZdcFull = mZdcEpManager->getQ1VecFull(Q1ZdcEast,Q1ZdcWest,mMode); // TVector2 Q1ZdcFull = Q1ZdcWest-Q1ZdcEast;
+	  if( !(Q1ZdcEast.Mod() < 1e-10 || Q1ZdcWest.Mod() < 1e-10 || Q1ZdcFull.Mod() < 1e-10) ) // ZDC EP
 	  {
-	    mZdcEpManager->fillZdcReCenterEast(QEast);
-	    mZdcEpManager->fillZdcReCenterWest(QWest);
-	    mZdcEpManager->fillZdcSubEpRaw(QEast,QWest,QFull);
+	    mZdcEpManager->fillZdcSubEpRaw(Q1ZdcEast,Q1ZdcWest,Q1ZdcFull);
+	    mZdcEpManager->fillZdcReCenterEast(Q1ZdcEast);
+	    mZdcEpManager->fillZdcReCenterWest(Q1ZdcWest);
+	  }
+
+	  TVector2 Q1EpdEast = mEpdEpManager->getQ1VecWgtEast(); // get Q1Vector from EPD
+	  TVector2 Q1EpdWest = mEpdEpManager->getQ1VecWgtWest();
+	  TVector2 Q1EpdFull = mEpdEpManager->getQ1VecWgtFull();
+	  if( !(Q1EpdEast.Mod() < 1e-10 || Q1EpdWest.Mod() < 1e-10 || Q1EpdFull.Mod() < 1e-10) ) // EPD EP
+	  {
+	    const double Psi1WgtEast = mEpdEpManager->getPsi1WgtEast(); // EPD EP
+	    const double Psi1WgtWest = mEpdEpManager->getPsi1WgtWest();
+	    const double Psi1WgtFull = mEpdEpManager->getPsi1WgtFull();
+	    mEpdEpManager->fillEpdSubEpWgt(Psi1WgtEast, Psi1WgtWest, Psi1WgtFull);
 	  }
 
 	  const int numTrackRawEast = mTpcEpManager->getNumTrkRawEast(); // TPC EP
@@ -360,13 +481,29 @@ int StEventPlaneMaker::Make()
 	    mTpcEpManager->fillTpcSubEpRaw(Psi2RawEast, Psi2RawWest, Psi3RawEast, Psi3RawWest);
 	  }
 	}
-	if(mMode == 2) // fill shift correction parameter for ZDC-SMD & EPD & TPC Sub EP
+	if(mMode == 2) // fill shift correction parameter for ZDC & EPD & TPC Sub EP
 	{
-	  if( !(QEast.Mod() < 1e-10 || QWest.Mod() < 1e-10 || QFull.Mod() < 1e-10) ) // ZDC EP
+	  TVector2 Q1ZdcEast = mZdcEpManager->getQ1VecEast(mMode); // get Q1Vector from ZDC
+	  TVector2 Q1ZdcWest = mZdcEpManager->getQ1VecWest(mMode);
+	  TVector2 Q1ZdcFull = mZdcEpManager->getQ1VecFull(Q1ZdcEast,Q1ZdcWest,mMode); // TVector2 Q1ZdcFull = Q1ZdcWest-Q1ZdcEast;
+	  if( !(Q1ZdcEast.Mod() < 1e-10 || Q1ZdcWest.Mod() < 1e-10 || Q1ZdcFull.Mod() < 1e-10) ) // ZDC EP
 	  {
-	    mZdcEpManager->fillZdcShiftEast(QEast);
-	    mZdcEpManager->fillZdcShiftWest(QWest);
-	    mZdcEpManager->fillZdcSubEpReCenter(QEast,QWest,QFull);
+	    mZdcEpManager->fillZdcSubEpReCenter(Q1ZdcEast,Q1ZdcWest,Q1ZdcFull);
+	    mZdcEpManager->fillZdcShiftEast(Q1ZdcEast);
+	    mZdcEpManager->fillZdcShiftWest(Q1ZdcWest);
+	  }
+
+	  TVector2 Q1EpdEast = mEpdEpManager->getQ1VecReCtrEast(); // get Q1Vector from EPD
+	  TVector2 Q1EpdWest = mEpdEpManager->getQ1VecReCtrWest();
+	  TVector2 Q1EpdFull = mEpdEpManager->getQ1VecReCtrFull();
+	  if( !(Q1EpdEast.Mod() < 1e-10 || Q1EpdWest.Mod() < 1e-10 || Q1EpdFull.Mod() < 1e-10) ) // EPD EP
+	  {
+	    const double Psi1ReCtrEast = mEpdEpManager->getPsi1ReCtrEast(); // EPD EP
+	    const double Psi1ReCtrWest = mEpdEpManager->getPsi1ReCtrWest();
+	    const double Psi1ReCtrFull = mEpdEpManager->getPsi1ReCtrFull();
+	    mEpdEpManager->fillEpdSubEpReCtr(Psi1ReCtrEast, Psi1ReCtrWest, Psi1ReCtrFull);
+	    mEpdEpManager->fillEpdShiftEast();
+	    mEpdEpManager->fillEpdShiftWest();
 	  }
 
 	  const int numTrackReCenterEast = mTpcEpManager->getNumTrkReCenterEast(); // TPC EP
@@ -382,21 +519,54 @@ int StEventPlaneMaker::Make()
 	    mTpcEpManager->fillTpcShiftWest();
 	  }
 	}
-	if(mMode == 3) // fill shift correction parameter for ZDC-SMD & EPD Full EP
+	if(mMode == 3) // fill shift correction parameter for ZDC & EPD Full EP
 	{
-	  if( !(QEast.Mod() < 1e-10 || QWest.Mod() < 1e-10 || QFull.Mod() < 1e-10) ) // ZDC EP
+	  TVector2 Q1ZdcEast = mZdcEpManager->getQ1VecEast(mMode); // get Q1Vector from ZDC
+	  TVector2 Q1ZdcWest = mZdcEpManager->getQ1VecWest(mMode);
+	  TVector2 Q1ZdcFull = mZdcEpManager->getQ1VecFull(Q1ZdcEast,Q1ZdcWest,mMode); // TVector2 Q1ZdcFull = Q1ZdcWest-Q1ZdcEast;
+	  if( !(Q1ZdcEast.Mod() < 1e-10 || Q1ZdcWest.Mod() < 1e-10 || Q1ZdcFull.Mod() < 1e-10) ) // ZDC EP
 	  {
-	    mZdcEpManager->fillZdcShiftFull(QFull);
-	    mZdcEpManager->fillZdcSubEpShift(QEast,QWest,QFull);
+	    mZdcEpManager->fillZdcSubEpShift(Q1ZdcEast,Q1ZdcWest,Q1ZdcFull);
+	    mZdcEpManager->fillZdcShiftFull(Q1ZdcFull);
+	  }
+
+	  TVector2 Q1EpdEast = mEpdEpManager->getQ1VecShiftEast(); // get Q1Vector from EPD
+	  TVector2 Q1EpdWest = mEpdEpManager->getQ1VecShiftWest();
+	  TVector2 Q1EpdFull = mEpdEpManager->getQ1VecShiftFull();
+	  if( !(Q1EpdEast.Mod() < 1e-10 || Q1EpdWest.Mod() < 1e-10 || Q1EpdFull.Mod() < 1e-10) ) // EPD EP
+	  {
+	    const double Psi1ShiftEast = mEpdEpManager->getPsi1ShiftEast(); // EPD EP
+	    const double Psi1ShiftWest = mEpdEpManager->getPsi1ShiftWest();
+	    const double Psi1ShiftFull = mEpdEpManager->getPsi1ShiftFull();
+	    mEpdEpManager->fillEpdSubEpShift(Psi1ShiftEast, Psi1ShiftWest, Psi1ShiftFull);
+	    mEpdEpManager->fillEpdShiftFull();
 	  }
 	}
 	if(mMode == 4) // fill event plane resolution for ZDC-SMD & EPD & TPC Sub EP
 	{
-	  if( !(QEast.Mod() < 1e-10 || QWest.Mod() < 1e-10 || QFull.Mod() < 1e-10) ) // ZDC EP
+	  TVector2 Q1ZdcEast = mZdcEpManager->getQ1VecEast(mMode); // get Q1Vector from ZDC
+	  TVector2 Q1ZdcWest = mZdcEpManager->getQ1VecWest(mMode);
+	  TVector2 Q1ZdcFull = mZdcEpManager->getQ1VecFull(Q1ZdcEast,Q1ZdcWest,mMode); // TVector2 Q1ZdcFull = Q1ZdcWest-Q1ZdcEast;
+	  if( !(Q1ZdcEast.Mod() < 1e-10 || Q1ZdcWest.Mod() < 1e-10 || Q1ZdcFull.Mod() < 1e-10) ) // ZDC EP
 	  {
-	    mZdcEpManager->fillZdcResolution(QEast,QWest);
-	    mZdcEpManager->fillZdcSubEpShift(QEast,QWest,QFull);
-	    mZdcEpManager->fillZdcFullEpShift(QFull);
+	    mZdcEpManager->fillZdcSubEpShift(Q1ZdcEast,Q1ZdcWest,Q1ZdcFull);
+	    mZdcEpManager->fillZdcFullEpShift(Q1ZdcFull);
+	    mZdcEpManager->fillZdcResolution(Q1ZdcEast,Q1ZdcWest);
+	  }
+
+	  TVector2 Q1EpdEast     = mEpdEpManager->getQ1VecShiftEast(); // get Q1Vector from EPD
+	  TVector2 Q1EpdWest     = mEpdEpManager->getQ1VecShiftWest();
+	  TVector2 Q1EpdFull     = mEpdEpManager->getQ1VecShiftFull();
+	  TVector2 Q1EpdFullCorr = mEpdEpManager->getQ1VecShiftFullCorr();
+	  if( !(Q1EpdEast.Mod() < 1e-10 || Q1EpdWest.Mod() < 1e-10 || Q1EpdFull.Mod() < 1e-10) ) // EPD EP
+	  {
+	    const double Psi1ShiftEast     = mEpdEpManager->getPsi1ShiftEast(); // EPD EP
+	    const double Psi1ShiftWest     = mEpdEpManager->getPsi1ShiftWest();
+	    const double Psi1ShiftFull     = mEpdEpManager->getPsi1ShiftFull();
+	    const double Psi1ShiftFullCorr = mEpdEpManager->getPsi1ShiftFullCorr();
+	    mEpdEpManager->fillEpdSubEpShift(Psi1ShiftEast, Psi1ShiftWest, Psi1ShiftFull);
+	    mEpdEpManager->fillEpdFullEpShift(Psi1ShiftFullCorr);
+	    mEpdEpManager->fillEpdResolution(Psi1ShiftEast, Psi1ShiftWest);
 	  }
 
 	  const int numTrackReCenterEast = mTpcEpManager->getNumTrkReCenterEast(); // TPC EP
@@ -413,6 +583,7 @@ int StEventPlaneMaker::Make()
 	}
       }
       mZdcEpManager->clearZdcEpManager();
+      mEpdEpManager->clearEpdEpManager();
       mTpcEpManager->clearTpcEpManager();
     }
   }

@@ -34,7 +34,7 @@ class StEventPlaneMaker : public StMaker {
     StAnalysisCut   *mAnaCut;   // Analysis Cuts
     StZdcEpManager  *mZdcEpManager;
     StTpcEpManager  *mTpcEpManager;
-    // StEpdEpManager  *mEpdEpManager;
+    StEpdEpManager  *mEpdEpManager;
     
     const int mMode;
     const int mType;
@@ -43,11 +43,13 @@ class StEventPlaneMaker : public StMaker {
     string str_mOutPutReCenterPar;
     string str_mOutPutShiftPar;
     string str_mOutPutResolution;
+    string str_mOutPutFlow;
 
     TFile *file_mOutPutGainCorr;
     TFile *file_mOutPutReCenterPar;
     TFile *file_mOutPutShiftPar;
     TFile *file_mOutPutResolution;
+    TFile *file_mOutPutFlow;
 
     // int mUsedTrackCounter;
 

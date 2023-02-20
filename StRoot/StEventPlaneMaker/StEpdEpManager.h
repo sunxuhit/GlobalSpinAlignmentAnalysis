@@ -43,8 +43,8 @@ class StEpdEpManager : public TObject
 
     // ReCenter Correction
     void initEpdReCtr();
-    void fillEpdReCtrEast();
-    void fillEpdReCtrWest();
+    void fillEpdReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx);
+    void fillEpdReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx);
     void writeEpdReCtr();
     void readEpdReCtr();
     TVector2 getq1VecCtrEast(); // 1st ReCtr Parameter
@@ -133,15 +133,15 @@ class StEpdEpManager : public TObject
     double mQ1WgtSideRawEast, mQ1WgtSideRawWest; // tileWgt only
     double mQ1WgtSideWgtEast, mQ1WgtSideWgtWest; // tileWgt * phiWgt(if avaliable) * etaWgt(if avaliable)
     double mQ1WgtSideReCtrEast, mQ1WgtSideReCtrWest; // tileWgt * phiWgt(if avaliable) * etaWgt(if avaliable)
-    double mQ1WgtRingRawEast[mNumRings], mQ1WgtRingRawWest[mNumRings]; // tileWgt only for each ring
-    double mQ1WgtRingWgtEast[mNumRings], mQ1WgtRingWgtWest[mNumRings]; // tileWgt * phiWgt(if avaliable) * etaWgt(if avaliable) for each ring
+    // double mQ1WgtRingRawEast[mNumRings], mQ1WgtRingRawWest[mNumRings]; // tileWgt only for each ring
+    // double mQ1WgtRingWgtEast[mNumRings], mQ1WgtRingWgtWest[mNumRings]; // tileWgt * phiWgt(if avaliable) * etaWgt(if avaliable) for each ring
     // double mQ1WgtRingReCtrEast[mNumRings], mQ1WgtRingReCtrWest[mNumRings]; // tileWgt * phiWgt(if avaliable) * etaWgt(if avaliable) for each ring
     
     TVector2 v_mQ1SideRawEast, v_mQ1SideRawWest; // raw Q1 Vector
     TVector2 v_mQ1SideWgtEast, v_mQ1SideWgtWest; // phi&eta weighted Q1 Vector
     TVector2 v_mQ1SideReCtrEast, v_mQ1SideReCtrWest; // phi&eta weighted Q1 Vector
-    TVector2 v_mQ1RingRawEast[mNumRings], v_mQ1RingRawWest[mNumRings]; // raw Q1 Vector for each ring
-    TVector2 v_mQ1RingWgtEast[mNumRings], v_mQ1RingWgtWest[mNumRings]; // phi&eta weighted Q1 Vector for each ring
+    // TVector2 v_mQ1RingRawEast[mNumRings], v_mQ1RingRawWest[mNumRings]; // raw Q1 Vector for each ring
+    // TVector2 v_mQ1RingWgtEast[mNumRings], v_mQ1RingWgtWest[mNumRings]; // phi&eta weighted Q1 Vector for each ring
     // TVector2 v_mQ1RingReCtrEast[mNumRings], v_mQ1RingReCtrWest[mNumRings]; // phi&eta weighted Q1 Vector for each ring
 
 
@@ -195,7 +195,7 @@ class StEpdEpManager : public TObject
     TH2F *h_mEpdEp1ShiftFull[mNumCentrality];
     TH2F *h_mEpdEp1ShiftCorr[mNumCentrality]; // Psi1East vs Psi1West
 
-    TH2F *h_mEpdEp1ShiftFullCorr[mNumCentrality];
+    TH2F *h_mEpdEp1ShiftFullCorr[mNumCentrality]; // 1st shift full EP
 
     TFile *file_mPhiWgtPar;
     TFile *file_mReCtrPar;

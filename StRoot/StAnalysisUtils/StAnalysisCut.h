@@ -23,6 +23,7 @@ class StAnalysisCut : public TObject
     // Event Cuts
     bool isMinBias(StPicoEvent *picoEvent);
     bool isPileUpEvent(double refMult, double numOfBTofMatch, double vz);
+    bool isGoodCentrality(int cent9);
     bool passEventCut(StPicoEvent *picoEvent);
 
     // Track Cuts

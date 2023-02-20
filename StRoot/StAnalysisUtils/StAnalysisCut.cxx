@@ -63,6 +63,13 @@ bool StAnalysisCut::isPileUpEvent(double refMult, double numOfBTofMatch, double 
   return true;
 }
 
+bool StAnalysisCut::isGoodCentrality(int cent9)
+{
+  if(cent9 < 0) return false; // not within 0-80%
+
+  return true;
+}
+
 bool StAnalysisCut::passEventCut(StPicoEvent *picoEvent)
 {
   if(!picoEvent) return false;

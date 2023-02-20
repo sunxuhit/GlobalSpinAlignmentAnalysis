@@ -56,37 +56,35 @@ void StEpdEpManager::clearEpdEpManager()
   mQ1WgtSideRawWest = 0.0;
   v_mQ1SideRawEast.Set(0.0,0.0);
   v_mQ1SideRawWest.Set(0.0,0.0);
+
+  mQ1WgtSideWgtEast = 0.0;
+  mQ1WgtSideWgtWest = 0.0;
+  v_mQ1SideWgtEast.Set(0.0,0.0);
+  v_mQ1SideWgtWest.Set(0.0,0.0);
+
+  mQ1WgtSideReCtrEast = 0.0;
+  mQ1WgtSideReCtrWest = 0.0;
+  v_mQ1SideReCtrEast.Set(0.0,0.0);
+  v_mQ1SideReCtrWest.Set(0.0,0.0);
+  /*
   for(int iRing = 0; iRing < mNumRings; ++iRing)
   {
     mQ1WgtRingRawEast[iRing] = 0.0
     mQ1WgtRingRawWest[iRing] = 0.0
     v_mQ1RingRawEast[iRing].Set(0.0,0.0);
     v_mQ1RingRawWest[iRing].Set(0.0,0.0);
-  }
 
-  mQ1WgtSideWgtEast = 0.0;
-  mQ1WgtSideWgtWest = 0.0;
-  v_mQ1SideWgtEast.Set(0.0,0.0);
-  v_mQ1SideWgtWest.Set(0.0,0.0);
-  for(int iRing = 0; iRing < mNumRings; ++iRing)
-  {
     mQ1WgtRingWgtEast[iRing] = 0.0
     mQ1WgtRingWgtWest[iRing] = 0.0
     v_mQ1RingWgtEast[iRing].Set(0.0,0.0);
     v_mQ1RingWgtWest[iRing].Set(0.0,0.0);
-  }
 
-  mQ1WgtSideReCtrEast = 0.0;
-  mQ1WgtSideReCtrWest = 0.0;
-  v_mQ1SideReCtrEast.Set(0.0,0.0);
-  v_mQ1SideReCtrWest.Set(0.0,0.0);
-  for(int iRing = 0; iRing < mNumRings; ++iRing)
-  {
     mQ1WgtRingReCtrEast[iRing] = 0.0
     mQ1WgtRingReCtrWest[iRing] = 0.0
     v_mQ1RingReCtrEast[iRing].Set(0.0,0.0);
     v_mQ1RingReCtrWest[iRing].Set(0.0,0.0);
   }
+  */
 }
 
 void StEpdEpManager::initEpdEpManager(int cent9, int runIndex, int vzBin)
@@ -156,9 +154,9 @@ void StEpdEpManager::addHitRawEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
   v_mQ1SideRawEast  += tileWgt*calq1Vector(picoEpdHit,primVtx);
   mQ1WgtSideRawEast += tileWgt;
 
-  const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
-  v_mQ1RingRawEast[ringId]  += tileWgt*calq1Vector(picoEpdHit,primVtx);
-  mQ1WgtRingRawEast[ringId] += tileWgt;
+  // const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
+  // v_mQ1RingRawEast[ringId]  += tileWgt*calq1Vector(picoEpdHit,primVtx);
+  // mQ1WgtRingRawEast[ringId] += tileWgt;
 }
 
 void StEpdEpManager::addHitRawWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
@@ -167,9 +165,9 @@ void StEpdEpManager::addHitRawWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
   v_mQ1SideRawWest  += tileWgt*calq1Vector(picoEpdHit,primVtx);
   mQ1WgtSideRawWest += tileWgt;
 
-  const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
-  v_mQ1RingRawWest[ringId]  += tileWgt*calq1Vector(picoEpdHit,primVtx);
-  mQ1WgtRingRawWest[ringId] += tileWgt;
+  // const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
+  // v_mQ1RingRawWest[ringId]  += tileWgt*calq1Vector(picoEpdHit,primVtx);
+  // mQ1WgtRingRawWest[ringId] += tileWgt;
 }
 
 void StEpdEpManager::addHitWgtEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
@@ -181,9 +179,9 @@ void StEpdEpManager::addHitWgtEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
   v_mQ1SideWgtEast  += wgt*calq1Vector(picoEpdHit,primVtx);
   mQ1WgtSideWgtEast += wgt;
 
-  const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
-  v_mQ1RingWgtEast[ringId]  += wgt*calq1Vector(picoEpdHit,primVtx);
-  mQ1WgtRingWgtEast[ringId] += wgt;
+  // const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
+  // v_mQ1RingWgtEast[ringId]  += wgt*calq1Vector(picoEpdHit,primVtx);
+  // mQ1WgtRingWgtEast[ringId] += wgt;
 }
 
 void StEpdEpManager::addHitWgtWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
@@ -195,9 +193,9 @@ void StEpdEpManager::addHitWgtWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
   v_mQ1SideWgtWest  += wgt*calq1Vector(picoEpdHit,primVtx);
   mQ1WgtSideWgtWest += wgt;
 
-  const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
-  v_mQ1RingWgtWest[ringId]  += wgt*calq1Vector(picoEpdHit,primVtx);
-  mQ1WgtRingWgtWest[ringId] += wgt;
+  // const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
+  // v_mQ1RingWgtWest[ringId]  += wgt*calq1Vector(picoEpdHit,primVtx);
+  // mQ1WgtRingWgtWest[ringId] += wgt;
 }
 
 void StEpdEpManager::addHitReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
@@ -207,7 +205,7 @@ void StEpdEpManager::addHitReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
   const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
   const double wgt     = tileWgt * phiWgt * etaWgt;
   v_mQ1SideReCtrEast  += wgt*(calq1Vector(picoEpdHit,primVtx) - getq1VecCtrEast());
-  mQ1WgtRingReCtrEast += wgt;
+  mQ1WgtSideReCtrEast += wgt;
 }
 
 void StEpdEpManager::addHitReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
@@ -217,7 +215,7 @@ void StEpdEpManager::addHitReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
   const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
   const double wgt     = tileWgt * phiWgt * etaWgt;
   v_mQ1SideReCtrWest  += wgt*(calq1Vector(picoEpdHit,primVtx) - getq1VecCtrWest());
-  mQ1WgtRingReCtrWest += wgt;
+  mQ1WgtSideReCtrWest += wgt;
 }
 //---------------------------------------------------------------------------------
 // phi Weight Correction
@@ -579,7 +577,7 @@ void StEpdEpManager::initEpdShiftFull()
   }
 }
 
-void StEpdEpManager::fillEpdShiftFull(TVector2 QVector)
+void StEpdEpManager::fillEpdShiftFull()
 {
   TVector2 Q1Vector = getQ1VecShiftFull();
   const double Psi1 = TMath::ATan2(Q1Vector.Y(),Q1Vector.X());
@@ -741,8 +739,8 @@ double StEpdEpManager::getEpdFullEp1ResErr(int cent9)
 TVector2 StEpdEpManager::getQ1VecRawEast()
 {
   TVector2 Q1Vector(0.0, 0.0);
-  const double Q1x = -1.0*v_mQ1SideRawEast.X()/mQ1WgtSideWgtEast; // flip the sign for Q1VecEast
-  const double Q1y = -1.0*v_mQ1SideRawEast.Y()/mQ1WgtSideWgtEast;
+  const double Q1x = -1.0*v_mQ1SideRawEast.X()/mQ1WgtSideRawEast; // flip the sign for Q1VecEast
+  const double Q1y = -1.0*v_mQ1SideRawEast.Y()/mQ1WgtSideRawEast;
   Q1Vector.Set(Q1x, Q1y);
 
   return Q1Vector;
@@ -751,8 +749,8 @@ TVector2 StEpdEpManager::getQ1VecRawEast()
 TVector2 StEpdEpManager::getQ1VecRawWest()
 {
   TVector2 Q1Vector(0.0, 0.0);
-  const double Q1x = v_mQ1SideRawWest.X()/mQ1WgtSideWgtWest;
-  const double Q1y = v_mQ1SideRawWest.Y()/mQ1WgtSideWgtWest;
+  const double Q1x = v_mQ1SideRawWest.X()/mQ1WgtSideRawWest;
+  const double Q1y = v_mQ1SideRawWest.Y()/mQ1WgtSideRawWest;
   Q1Vector.Set(Q1x, Q1y);
 
   return Q1Vector;

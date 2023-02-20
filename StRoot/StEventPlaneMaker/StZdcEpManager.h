@@ -65,9 +65,9 @@ class StZdcEpManager : public TObject
 
     // QVector
     double getPosition(int eastwest,int verthori,int strip, int mode);
-    TVector2 getQEast(int mode);
-    TVector2 getQWest(int mode);
-    TVector2 getQFull(TVector2 QEast, TVector2 QWest, int mode);
+    TVector2 getQ1VecEast(int mode);
+    TVector2 getQ1VecWest(int mode);
+    TVector2 getQ1VecFull(TVector2 QEast, TVector2 QWest, int mode);
 
     // Event Plane Distribution
     void initZdcSubEpRaw(); // raw Sub EP
