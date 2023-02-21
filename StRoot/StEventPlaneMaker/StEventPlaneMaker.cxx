@@ -643,7 +643,7 @@ int StEventPlaneMaker::Make()
 	    if( !(Q1ZdcEast.Mod() < 1e-10 || Q1ZdcWest.Mod() < 1e-10 || Q1ZdcFull.Mod() < 1e-10) ) // ZDC EP
 	    { // charged hadron v1 from ZDC
 	      const double v1Zdc = TMath::Cos(1.0*(phi-Psi1ZdcFull))/mZdcEpManager->getZdcFullEpResVal(cent9);
-	      mZdcEpManager->fillZdcFullEpDFlow(eta, pt, v1Zdc, reweight)
+	      mZdcEpManager->fillZdcFullEpDFlow(eta, pt, v1Zdc, reweight);
 	    }
 
 	    if(mAnaCut->passNumTrackTpcSubEpReCenter(numTrackReCenterEast, numTrackReCenterWest))
@@ -684,12 +684,12 @@ int StEventPlaneMaker::Make()
 	      if( mAnaCut->passHitEpdFlowEast(picoEpdHit) ) // negative eta
 	      {
 		const double v1Epd = TMath::Cos(1.0*(phi-Psi1EpdWest))/mEpdEpManager->getEpdSubEp1ResVal(cent9);
-		mEpdEpManager->fillEpdSubEpDFlow(eta, v1, reweight);
+		mEpdEpManager->fillEpdSubEpDFlow(eta, v1Epd, reweight);
 	      }
 	      if( mAnaCut->passHitEpdFlowWest(picoEpdHit) ) // positive eta
 	      {
 		const double v1Epd = TMath::Cos(1.0*(phi-Psi1EpdEast))/mEpdEpManager->getEpdSubEp1ResVal(cent9);
-		mEpdEpManager->fillEpdSubEpDFlow(eta, v1, reweight);
+		mEpdEpManager->fillEpdSubEpDFlow(eta, v1Epd, reweight);
 	      }
 	    }
 	  }
