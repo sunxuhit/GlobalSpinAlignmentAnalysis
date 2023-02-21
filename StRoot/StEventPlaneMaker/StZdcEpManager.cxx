@@ -220,7 +220,6 @@ void StZdcEpManager::setZdcSmdCenter()
   mCenterHoriWest       = p_mZdcQReCenterHoriWest[mVzBin]->GetBinContent(binHoriWest);
   // cout << "mCenterVertEast = " << mCenterVertEast << ", mCenterHoriEast = " << mCenterHoriEast << ", mCenterVertWest = " << mCenterVertWest << ", mCenterHoriWest = " << mCenterHoriWest << endl;
 }
-
 //---------------------------------------------------------------------------------
 // Shift Correction East/West EP
 void StZdcEpManager::initZdcShift()
@@ -608,6 +607,32 @@ double StZdcEpManager::getZdcFullEpResVal(int cent9)
 double StZdcEpManager::getZdcFullEpResErr(int cent9)
 {
   return mZdcFullEpResErr[cent9];
+}
+//---------------------------------------------------------------------------------
+// Charged Hadron Directed Flow
+void StZdcEpManager::initZdcFullEpFlow()
+{
+  for(int i_cent = 0; i_cent < 9; ++i_cent)
+  {
+    std::string proName = Form("p_mZdcFullEpDFlowCent%d",i_cent);
+    p_mZdcFullEpDFlow[i_cent] = new TProfile(proName.c_str(),proName.c_str(),40,-6.0,6.0);
+  }
+}
+
+void StZdcEpManager::fillZdcFullEpDFlow(double eta, double pt, double v1, double reweight)
+{
+  if(pt > 0.15 && pt < 2.0)
+  { // pT cut for comparison
+    p_mZdcFullEpDFlow[mCent9]->Fill(eta, v1, reweight);
+  }
+}
+
+void StZdcEpManager::writeZdcFullEpFlow()
+{
+  for(int i_cent = 0; i_cent < 9; ++i_cent)
+  {
+    p_mZdcFullEpDFlow[i_cent]->Write();
+  }
 }
 //---------------------------------------------------------------------------------
 // raw EP

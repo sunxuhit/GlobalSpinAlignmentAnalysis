@@ -62,6 +62,11 @@ class StTpcEpManager : public TObject
     double getTpcSubEp3ResVal(int cent9);
     double getTpcSubEp3ResErr(int cent9);
 
+    void initTpcSubEpFlow(); // Sub EP
+    void fillTpcSubEpEFlow(double pt, double v2, double reweight);
+    void fillTpcSubEpTFlow(double pt, double v3, double reweight);
+    void writeTpcSubEpFlow();
+
     // Q2Vector
     TVector2 getQ2VecRawEast(); // Q2Vector
     TVector2 getQ2VecRawWest();
@@ -147,6 +152,10 @@ class StTpcEpManager : public TObject
     TProfile *p_mTpcSubEp3Res; // 3rd EP
     double mTpcSubEp3ResVal[mNumCentrality];
     double mTpcSubEp3ResErr[mNumCentrality];
+
+    // Charged Hadron Elliptic and Triangular Flow
+    TProfile *p_mTpcSubEpEFlow[mNumCentrality]; // v2 vs. pT
+    TProfile *p_mTpcSubEpTFlow[mNumCentrality]; // v3 vs. pT
 
     // Event Plane Distribution
     TH2F *h_mTpcEp2RawEast[mNumCentrality]; // 2nd raw EP

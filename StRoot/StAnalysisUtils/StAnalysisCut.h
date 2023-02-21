@@ -33,12 +33,16 @@ class StAnalysisCut : public TObject
     bool passTrackTpcEpFull(StPicoTrack *picoTrack, TVector3 primVtx);
     bool passTrackTpcEpEast(StPicoTrack *picoTrack, TVector3 primVtx);
     bool passTrackTpcEpWest(StPicoTrack *picoTrack, TVector3 primVtx);
+    bool passTrackTpcFlowEast(StPicoTrack *picoTrack, TVector3 primVtx);
+    bool passTrackTpcFlowWest(StPicoTrack *picoTrack, TVector3 primVtx);
     bool passNumTrackTpcSubEpRaw(int numTrackEast, int numTrackWest);
     bool passNumTrackTpcSubEpReCenter(int numTrackEast, int numTrackWest);
     // EPD EP
     bool passHitEpdEpFull(StPicoEpdHit *picoEpdHit);
     bool passHitEpdEpEast(StPicoEpdHit *picoEpdHit);
     bool passHitEpdEpWest(StPicoEpdHit *picoEpdHit);
+    bool passHitEpdFlowEast(StPicoEpdHit *picoEpdHit);
+    bool passHitEpdFlowWest(StPicoEpdHit *picoEpdHit);
 
   private:
     const int mType;

@@ -96,14 +96,21 @@ void StEpdEpManager::initEpdEpManager(int cent9, int runIndex, int vzBin)
 }
 //---------------------------------------------------------------------------------
 // Utilities
+TVector3 StEpdEpManager::getEpdRanVec(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
+{
+  TVector3 EpdPoint  = mEpdGeom->RandomPointOnTile(picoEpdHit->id()); // get a random position within the tile
+  TVector3 EpdVector = EpdPoint - primVtx;
+
+  return EpdVector;
+}
+
 TVector2 StEpdEpManager::calq1Vector(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
   TVector2 q1Vector(0.0,0.0);
-  TVector3 EpdPoint = mEpdGeom->RandomPointOnTile(picoEpdHit->id()); // get a random position within the tile
-  TVector3 StraightLine = EpdPoint-primVtx;
-  const double phi = StraightLine.Phi(); // -pi to pi
-  const double q1x = TMath::Cos(1.0*phi);
-  const double q1y = TMath::Sin(1.0*phi);
+  TVector3 EpdVector = getEpdRanVec(picoEpdHit, primVtx);
+  const double phi   = EpdVector.Phi(); // -pi to pi
+  const double q1x   = TMath::Cos(1.0*phi);
+  const double q1y   = TMath::Sin(1.0*phi);
   q1Vector.Set(q1x,q1y);
 
   return q1Vector;
@@ -151,10 +158,13 @@ double StEpdEpManager::getEtaWeight(StPicoEpdHit *picoEpdHit)
 void StEpdEpManager::addHitRawEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
   const double tileWgt = getTileWeight(picoEpdHit);
-  v_mQ1SideRawEast  += tileWgt*calq1Vector(picoEpdHit,primVtx);
-  mQ1WgtSideRawEast += tileWgt;
+  const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
+  if(ringId < mNumRingsUsed)
+  {
+    v_mQ1SideRawEast  += tileWgt*calq1Vector(picoEpdHit,primVtx);
+    mQ1WgtSideRawEast += tileWgt;
+  }
 
-  // const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
   // v_mQ1RingRawEast[ringId]  += tileWgt*calq1Vector(picoEpdHit,primVtx);
   // mQ1WgtRingRawEast[ringId] += tileWgt;
 }
@@ -162,10 +172,13 @@ void StEpdEpManager::addHitRawEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 void StEpdEpManager::addHitRawWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
   const double tileWgt = getTileWeight(picoEpdHit);
-  v_mQ1SideRawWest  += tileWgt*calq1Vector(picoEpdHit,primVtx);
-  mQ1WgtSideRawWest += tileWgt;
+  const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
+  if(ringId < mNumRingsUsed)
+  {
+    v_mQ1SideRawWest  += tileWgt*calq1Vector(picoEpdHit,primVtx);
+    mQ1WgtSideRawWest += tileWgt;
+  }
 
-  // const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
   // v_mQ1RingRawWest[ringId]  += tileWgt*calq1Vector(picoEpdHit,primVtx);
   // mQ1WgtRingRawWest[ringId] += tileWgt;
 }
@@ -176,10 +189,13 @@ void StEpdEpManager::addHitWgtEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
   const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
   const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
   const double wgt     = tileWgt * phiWgt * etaWgt;
-  v_mQ1SideWgtEast  += wgt*calq1Vector(picoEpdHit,primVtx);
-  mQ1WgtSideWgtEast += wgt;
+  const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
+  if(ringId < mNumRingsUsed)
+  {
+    v_mQ1SideWgtEast  += wgt*calq1Vector(picoEpdHit,primVtx);
+    mQ1WgtSideWgtEast += wgt;
+  }
 
-  // const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
   // v_mQ1RingWgtEast[ringId]  += wgt*calq1Vector(picoEpdHit,primVtx);
   // mQ1WgtRingWgtEast[ringId] += wgt;
 }
@@ -190,10 +206,13 @@ void StEpdEpManager::addHitWgtWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
   const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
   const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
   const double wgt     = tileWgt * phiWgt * etaWgt;
-  v_mQ1SideWgtWest  += wgt*calq1Vector(picoEpdHit,primVtx);
-  mQ1WgtSideWgtWest += wgt;
+  const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
+  if(ringId < mNumRingsUsed)
+  {
+    v_mQ1SideWgtWest  += wgt*calq1Vector(picoEpdHit,primVtx);
+    mQ1WgtSideWgtWest += wgt;
+  }
 
-  // const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
   // v_mQ1RingWgtWest[ringId]  += wgt*calq1Vector(picoEpdHit,primVtx);
   // mQ1WgtRingWgtWest[ringId] += wgt;
 }
@@ -204,8 +223,12 @@ void StEpdEpManager::addHitReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
   const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
   const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
   const double wgt     = tileWgt * phiWgt * etaWgt;
-  v_mQ1SideReCtrEast  += wgt*(calq1Vector(picoEpdHit,primVtx) - getq1VecCtrEast());
-  mQ1WgtSideReCtrEast += wgt;
+  const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
+  if(ringId < mNumRingsUsed)
+  {
+    v_mQ1SideReCtrEast  += wgt*(calq1Vector(picoEpdHit,primVtx) - getq1VecCtrEast());
+    mQ1WgtSideReCtrEast += wgt;
+  }
 }
 
 void StEpdEpManager::addHitReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
@@ -214,8 +237,12 @@ void StEpdEpManager::addHitReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
   const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
   const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
   const double wgt     = tileWgt * phiWgt * etaWgt;
-  v_mQ1SideReCtrWest  += wgt*(calq1Vector(picoEpdHit,primVtx) - getq1VecCtrWest());
-  mQ1WgtSideReCtrWest += wgt;
+  const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
+  if(ringId < mNumRingsUsed)
+  {
+    v_mQ1SideReCtrWest  += wgt*(calq1Vector(picoEpdHit,primVtx) - getq1VecCtrWest());
+    mQ1WgtSideReCtrWest += wgt;
+  }
 }
 //---------------------------------------------------------------------------------
 // phi Weight Correction
@@ -339,8 +366,12 @@ void StEpdEpManager::fillEpdReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx
   const double q1x = q1Vector.X();
   const double q1y = q1Vector.Y();
 
-  p_mEpdQ1ReCtrXEast[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1x,wgt);
-  p_mEpdQ1ReCtrYEast[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1y,wgt);
+  const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
+  if(ringId < mNumRingsUsed)
+  {
+    p_mEpdQ1ReCtrXEast[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1x,wgt);
+    p_mEpdQ1ReCtrYEast[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1y,wgt);
+  }
 }
 
 void StEpdEpManager::fillEpdReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
@@ -354,8 +385,12 @@ void StEpdEpManager::fillEpdReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx
   const double q1x = q1Vector.X();
   const double q1y = q1Vector.Y();
 
-  p_mEpdQ1ReCtrXWest[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1x,wgt);
-  p_mEpdQ1ReCtrYWest[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1y,wgt);
+  const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
+  if(ringId < mNumRingsUsed)
+  {
+    p_mEpdQ1ReCtrXWest[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1x,wgt);
+    p_mEpdQ1ReCtrYWest[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1y,wgt);
+  }
 }
 
 void StEpdEpManager::writeEpdReCtr()
@@ -733,6 +768,29 @@ double StEpdEpManager::getEpdFullEp1ResVal(int cent9)
 double StEpdEpManager::getEpdFullEp1ResErr(int cent9)
 {
   return mEpdFullEp1ResErr[cent9];
+}
+//---------------------------------------------------------------------------------
+// Charged Hadron Directed Flow
+void StEpdEpManager::initEpdSubEpFlow()
+{
+  for(int i_cent = 0; i_cent < 9; ++i_cent)
+  {
+    std::string proName = Form("p_mEpdSubEpDFlowCent%d",i_cent);
+    p_mEpdSubEpDFlow[i_cent] = new TProfile(proName.c_str(),proName.c_str(),40,-6.0,6.0);
+  }
+}
+
+void StEpdEpManager::fillEpdSubEpDFlow(double eta, double v1, double reweight)
+{
+  p_mEpdSubEpDFlow[mCent9]->Fill(eta, v1, reweight);
+}
+
+void StEpdEpManager::writeEpdSubEpFlow()
+{
+  for(int i_cent = 0; i_cent < 9; ++i_cent)
+  {
+    p_mEpdSubEpDFlow[i_cent]->Write();
+  }
 }
 //---------------------------------------------------------------------------------
 // Q1Vector

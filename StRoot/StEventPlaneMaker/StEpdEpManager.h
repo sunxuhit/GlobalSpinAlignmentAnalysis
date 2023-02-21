@@ -22,6 +22,7 @@ class StEpdEpManager : public TObject
     void initEpdEpManager(int cent9, int runIndex, int vzBin);
 
     // Utilities
+    TVector3 getEpdRanVec(StPicoEpdHit* picoEpdHit, TVector3 primVtx);
     TVector2 calq1Vector(StPicoEpdHit* picoEpdHit, TVector3 primVtx);
     double getTileWeight(StPicoEpdHit* picoEpdHit);
     double getPhiWeight(StPicoEpdHit* picoEpdHit);
@@ -78,6 +79,11 @@ class StEpdEpManager : public TObject
     double getEpdFullEp1ResVal(int cent9);
     double getEpdFullEp1ResErr(int cent9);
 
+    // Charged Hadron Directed Flow
+    void initEpdSubEpFlow(); // Sub EP
+    void fillEpdSubEpDFlow(double eta, double v1, double reweight);
+    void writeEpdSubEpFlow();
+
     // Q1Vector
     TVector2 getQ1VecRawEast(); // Q1Vector
     TVector2 getQ1VecRawWest();
@@ -129,6 +135,7 @@ class StEpdEpManager : public TObject
     static const int mNumSectors    = 12; // picoEpdHit->position(): return 1-12 | use sec-1
     static const int mNumTiles      = 31; // picoEpdHit->tile(): return 1-31 | use tile-1
     static const int mNumRings      = 16; // picoEpdHit->row(): return 1-16 | use ring-1 = > 0: most inner ring (12 tiles), 1-15: 24 tiles
+    static const int mNumRingsUsed  = 4;  // rings used in Q1Vector calculation: [0, mNumRingsUsed) | set to 4 to get eta weight then to 16 for EPD EP
 
     double mQ1WgtSideRawEast, mQ1WgtSideRawWest; // tileWgt only
     double mQ1WgtSideWgtEast, mQ1WgtSideWgtWest; // tileWgt * phiWgt(if avaliable) * etaWgt(if avaliable)
@@ -173,6 +180,9 @@ class StEpdEpManager : public TObject
     double mEpdSubEp1ResErr[mNumCentrality];
     double mEpdFullEp1ResVal[mNumCentrality];
     double mEpdFullEp1ResErr[mNumCentrality];
+
+    // Charged Hadron Directed Flow
+    TProfile *p_mEpdSubEpDFlow[mNumCentrality]; // v1 vs. eta
 
     // Event Plane Distribution
     TH2F *h_mEpdEp1RawEast[mNumCentrality]; // 1st raw EP

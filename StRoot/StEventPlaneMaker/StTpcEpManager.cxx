@@ -616,6 +616,39 @@ double StTpcEpManager::getTpcSubEp3ResErr(int cent9)
   return mTpcSubEp3ResErr[cent9];
 }
 //---------------------------------------------------------------------------------
+// Charged Hadron Elliptic and Triangular FLow
+void StTpcEpManager::initTpcSubEpFlow()
+{
+  for(int i_cent = 0; i_cent < 9; ++i_cent)
+  {
+    std::string proName = Form("p_mTpcSubEpEFlowCent%d",i_cent);
+    p_mTpcSubEpEFlow[i_cent] = new TProfile(proName.c_str(),proName.c_str(),50,0.0,10.0);
+    proName = Form("p_mTpcSubEpTFlowCent%d",i_cent);
+    p_mTpcSubEpTFlow[i_cent] = new TProfile(proName.c_str(),proName.c_str(),50,0.0,10.0);
+  }
+}
+
+void StTpcEpManager::fillTpcSubEpEFlow(double pt, double v2, double reweight)
+{
+    p_mTpcSubEpEFlow[mCent9]->Fill(pt, v2, reweight);
+}
+
+void StTpcEpManager::fillTpcSubEpTFlow(double pt, double v3, double reweight)
+{
+    p_mTpcSubEpTFlow[mCent9]->Fill(pt, v3, reweight);
+}
+
+void StTpcEpManager::writeTpcSubEpFlow()
+{
+  for(int i_cent = 0; i_cent < 9; ++i_cent)
+  {
+    p_mTpcSubEpEFlow[i_cent]->Write();
+    p_mTpcSubEpTFlow[i_cent]->Write();
+  }
+}
+
+
+//---------------------------------------------------------------------------------
 // QVector
 TVector2 StTpcEpManager::getQ2VecRawEast()
 {

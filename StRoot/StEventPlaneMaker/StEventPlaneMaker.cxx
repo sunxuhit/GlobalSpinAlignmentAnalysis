@@ -86,7 +86,7 @@ int StEventPlaneMaker::Init()
     mEpdEpManager->initEpdSubEpRaw();
   }
   if(mMode == 1)
-  { // fill ReCenter Correction Parameters for ZDC-SMD & EPD & TPC Sub EP
+  { // fill ReCenter Correction Parameters for ZDC & EPD & TPC Sub EP
     file_mOutPutReCenterPar = new TFile(str_mOutPutReCenterPar.c_str(),"RECREATE");
     mZdcEpManager->readZdcGain(); // ZDC
     mZdcEpManager->initZdcReCenter();
@@ -100,7 +100,7 @@ int StEventPlaneMaker::Init()
     mTpcEpManager->initTpcSubEpRaw();
   }
   if(mMode == 2)
-  { // fill Shift Correction Parameters for ZDC-SMD & EPD & TPC Sub EP
+  { // fill Shift Correction Parameters for ZDC & EPD & TPC Sub EP
     file_mOutPutShiftPar = new TFile(str_mOutPutShiftPar.c_str(),"RECREATE");
     mZdcEpManager->readZdcGain(); // ZDC
     mZdcEpManager->readZdcReCenter();
@@ -117,7 +117,7 @@ int StEventPlaneMaker::Init()
     mTpcEpManager->initTpcSubEpReCenter();
   }
   if(mMode == 3)
-  { // fill Shift Correction Parameters for ZDC-SMD & EPD Full EP
+  { // fill Shift Correction Parameters for ZDC & EPD Full EP
     file_mOutPutShiftPar = new TFile(str_mOutPutShiftPar.c_str(),"RECREATE");
     mZdcEpManager->readZdcGain(); // ZDC
     mZdcEpManager->readZdcReCenter();
@@ -132,7 +132,7 @@ int StEventPlaneMaker::Init()
     mEpdEpManager->initEpdSubEpShift();
   }
   if(mMode == 4)
-  { // fill Event Plane Resolution for ZDC-SMD & EPD & TPC Sub EP
+  { // fill Event Plane Resolution for ZDC & EPD & TPC Sub EP
     file_mOutPutResolution = new TFile(str_mOutPutResolution.c_str(),"RECREATE");
     mZdcEpManager->readZdcGain(); // ZDC
     mZdcEpManager->readZdcReCenter();
@@ -154,6 +154,28 @@ int StEventPlaneMaker::Init()
     mTpcEpManager->readTpcShift();
     mTpcEpManager->initTpcResolution();
     mTpcEpManager->initTpcSubEpShift();
+  }
+  if(mMode == 5)
+  { // calculate charged hadron v1 from ZDC & EPD and charged hadron v2 and v3 from TPC
+    file_mOutPutFlow = new TFile(str_mOutPutFlow.c_str(),"RECREATE");
+    mZdcEpManager->readZdcGain(); // ZDC
+    mZdcEpManager->readZdcReCenter();
+    mZdcEpManager->readZdcShift();
+    mZdcEpManager->readZdcShiftFull();
+    mZdcEpManager->readZdcResolution();
+    mZdcEpManager->initZdcFullEpFlow();
+
+    mEpdEpManager->readEpdPhiWgt(); // EPD
+    mEpdEpManager->readEpdReCtr();
+    mEpdEpManager->readEpdShift();
+    mEpdEpManager->readEpdShiftFull();
+    mEpdEpManager->readEpdResolution();
+    mEpdEpManager->initEpdSubEpFlow();
+
+    mTpcEpManager->readTpcReCenter(); // TPC
+    mTpcEpManager->readTpcShift();
+    mTpcEpManager->readTpcResolution();
+    mTpcEpManager->initTpcSubEpFlow();
   }
 
   return kStOK;
@@ -236,6 +258,19 @@ int StEventPlaneMaker::Finish()
       file_mOutPutResolution->Close();
     }
   }
+  if(mMode == 5)
+  {
+    if(str_mOutPutFlow != "")
+    {
+      file_mOutPutFlow->cd();
+      mZdcEpManager->writeZdcFullEpFlow(); // ZDC
+
+      mEpdEpManager->writeEpdSubEpFlow(); // EPD
+
+      mTpcEpManager->writeTpcSubEpFlow(); // TPC
+      file_mOutPutFlow->Close();
+    }
+  }
 
   return kStOK;
 }
@@ -305,7 +340,7 @@ int StEventPlaneMaker::Make()
     }
 
     const int cent9       = mRefMultCorr->getCentralityBin9(); // get Centrality9
-    // const double reweight = mRefMultCorr->getWeight(); // get weight
+    const double reweight = mRefMultCorr->getWeight(); // get weight
     const int runIndex    = mAnaUtils->findRunIndex(runId); // find run index for a specific run
     // const int triggerBin  = mAnaUtils->getTriggerBin(mPicoEvent);
     const int vzBin       = mAnaUtils->getVzBin(vz); // 0 for -vz || 1 for +vz
@@ -579,6 +614,84 @@ int StEventPlaneMaker::Make()
 	    const double Psi3ShiftWest = mTpcEpManager->getPsi3ShiftWest();
 	    mTpcEpManager->fillTpcSubEpShift(Psi2ShiftEast, Psi2ShiftWest, Psi3ShiftEast, Psi3ShiftWest);
 	    mTpcEpManager->fillTpcResolution(Psi2ShiftEast, Psi2ShiftWest, Psi3ShiftEast, Psi3ShiftWest);
+	  }
+	}
+	if(mMode == 5) // calculate charged hadron v1 from ZDC & EPD and charged hadron v2 and v3 from TPC
+	{
+	  TVector2 Q1ZdcEast = mZdcEpManager->getQ1VecEast(mMode); // get Q1Vector from ZDC
+	  TVector2 Q1ZdcWest = mZdcEpManager->getQ1VecWest(mMode);
+	  TVector2 Q1ZdcFull = mZdcEpManager->getQ1VecFull(Q1ZdcEast,Q1ZdcWest,mMode); // TVector2 Q1ZdcFull = Q1ZdcWest-Q1ZdcEast;
+	  const double Psi1ZdcFull = TMath::ATan2(Q1ZdcFull.Y(),Q1ZdcFull.X()); // -pi to pi
+
+	  const int numTrackReCenterEast = mTpcEpManager->getNumTrkReCenterEast(); // TPC EP
+	  const int numTrackReCenterWest = mTpcEpManager->getNumTrkReCenterWest();
+	  const double Psi2TpcEast       = mTpcEpManager->getPsi2ShiftEast(); // -pi/2 to pi/2
+	  const double Psi2TpcWest       = mTpcEpManager->getPsi2ShiftWest();
+	  const double Psi3TpcEast       = mTpcEpManager->getPsi3ShiftEast(); // -pi/3 to pi/3
+	  const double Psi3TpcWest       = mTpcEpManager->getPsi3ShiftWest();
+
+	  for(unsigned int iTrack = 0; iTrack < nTracks; ++iTrack)	  
+	  { // calculate charged hadron v1 from ZDC and charged hadron v2 & v3 from TPC
+	    StPicoTrack *picoTrack = (StPicoTrack*)mPicoDst->track(iTrack);
+	    if(!picoTrack) continue;
+
+	    const TVector3 primMom = picoTrack->pMom(); // primary Momentum
+	    const double pt  = primMom.Pt();
+	    const double eta = primMom.PseudoRapidity();
+	    const double phi = primMom.Phi(); // -pi to pi
+
+	    if( !(Q1ZdcEast.Mod() < 1e-10 || Q1ZdcWest.Mod() < 1e-10 || Q1ZdcFull.Mod() < 1e-10) ) // ZDC EP
+	    { // charged hadron v1 from ZDC
+	      const double v1Zdc = TMath::Cos(1.0*(phi-Psi1ZdcFull))/mZdcEpManager->getZdcFullEpResVal(cent9);
+	      mZdcEpManager->fillZdcFullEpDFlow(eta, pt, v1Zdc, reweight)
+	    }
+
+	    if(mAnaCut->passNumTrackTpcSubEpReCenter(numTrackReCenterEast, numTrackReCenterWest))
+	    { // charged hadron v2 and v3 from TPC
+	      if(mAnaCut->passTrackTpcFlowEast(picoTrack, primVtx)) // neg
+	      { // correlate track from East to EP from West
+		const double v2Tpc = TMath::Cos(2.0*(phi-Psi2TpcWest))/mTpcEpManager->getTpcSubEp2ResVal(cent9);
+		const double v3Tpc = TMath::Cos(3.0*(phi-Psi3TpcWest))/mTpcEpManager->getTpcSubEp3ResVal(cent9);
+		mTpcEpManager->fillTpcSubEpEFlow(pt, v2Tpc, reweight);
+		mTpcEpManager->fillTpcSubEpTFlow(pt, v3Tpc, reweight);
+	      }
+	      if(mAnaCut->passTrackTpcFlowWest(picoTrack, primVtx)) // neg
+	      {
+		const double v2Tpc = TMath::Cos(2.0*(phi-Psi2TpcEast))/mTpcEpManager->getTpcSubEp2ResVal(cent9);
+		const double v3Tpc = TMath::Cos(3.0*(phi-Psi3TpcEast))/mTpcEpManager->getTpcSubEp3ResVal(cent9);
+		mTpcEpManager->fillTpcSubEpEFlow(pt, v2Tpc, reweight);
+		mTpcEpManager->fillTpcSubEpTFlow(pt, v3Tpc, reweight);
+	      }
+	    }
+	  }
+
+	  TVector2 Q1EpdEast = mEpdEpManager->getQ1VecShiftEast(); // get Q1Vector from EPD
+	  TVector2 Q1EpdWest = mEpdEpManager->getQ1VecShiftWest();
+	  TVector2 Q1EpdFull = mEpdEpManager->getQ1VecShiftFull();
+	  const double Psi1EpdEast = mEpdEpManager->getPsi1ShiftEast(); // EPD EP
+	  const double Psi1EpdWest = mEpdEpManager->getPsi1ShiftWest();
+	  for(unsigned int iEpdHit = 0; iEpdHit < nEpdHits; ++iEpdHit)
+	  { // charged hadron v1 from EPD
+	    StPicoEpdHit *picoEpdHit = (StPicoEpdHit*)mPicoDst->epdHit(iEpdHit); 
+	    if(!picoEpdHit) continue;
+
+	    TVector3 EpdVector = mEpdEpManager->getEpdRanVec(picoEpdHit,primVtx);
+	    const double eta = EpdVector.PseudoRapidity();
+	    const double phi = EpdVector.Phi(); // -pi to pi
+
+	    if( !(Q1EpdEast.Mod() < 1e-10 || Q1EpdWest.Mod() < 1e-10 || Q1EpdFull.Mod() < 1e-10) ) // EPD EP
+	    {
+	      if( mAnaCut->passHitEpdFlowEast(picoEpdHit) ) // negative eta
+	      {
+		const double v1Epd = TMath::Cos(1.0*(phi-Psi1EpdWest))/mEpdEpManager->getEpdSubEp1ResVal(cent9);
+		mEpdEpManager->fillEpdSubEpDFlow(eta, v1, reweight);
+	      }
+	      if( mAnaCut->passHitEpdFlowWest(picoEpdHit) ) // positive eta
+	      {
+		const double v1Epd = TMath::Cos(1.0*(phi-Psi1EpdEast))/mEpdEpManager->getEpdSubEp1ResVal(cent9);
+		mEpdEpManager->fillEpdSubEpDFlow(eta, v1, reweight);
+	      }
+	    }
 	  }
 	}
       }

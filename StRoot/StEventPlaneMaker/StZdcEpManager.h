@@ -63,6 +63,11 @@ class StZdcEpManager : public TObject
     double getZdcFullEpResVal(int cent9);
     double getZdcFullEpResErr(int cent9);
 
+    // Charged Hadron Directed Flow
+    void initZdcFullEpFlow(); // Full EP
+    void fillZdcFullEpDFlow(double eta, double pt, double v1, double reweight);
+    void writeZdcFullEpFlow();
+
     // QVector
     double getPosition(int eastwest,int verthori,int strip, int mode);
     TVector2 getQ1VecEast(int mode);
@@ -123,6 +128,9 @@ class StZdcEpManager : public TObject
     double mZdcSubEpResErr[mNumCentrality];
     double mZdcFullEpResVal[mNumCentrality];
     double mZdcFullEpResErr[mNumCentrality];
+
+    // Charged Hadron Directed Flow
+    TProfile *p_mZdcFullEpDFlow[mNumCentrality]; // v1 vs. eta
 
     // Event Plane Distribution | x axis is runIndex, y axis is EP angle
     TH2F *h_mZdcEpRawEast[mNumCentrality]; // raw EP

@@ -203,10 +203,8 @@ bool StAnalysisCut::passTrackTpcEpEast(StPicoTrack *picoTrack, TVector3 primVtx)
 
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
-
-  // eta cut: [-anaUtils::mEtaEpMax[mType], -anaUtils::mEtaEpGap[mType]]
   if(eta < -1.0*anaUtils::mEtaEpMax[mType] || eta > -1.0*anaUtils::mEtaEpGap[mType])
-  {
+  { // eta cut: [-anaUtils::mEtaEpMax[mType], -anaUtils::mEtaEpGap[mType]]
     return false;
   }
 
@@ -219,9 +217,69 @@ bool StAnalysisCut::passTrackTpcEpWest(StPicoTrack *picoTrack, TVector3 primVtx)
 
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
-
-  // eta cut: [anaUtils::mEtaEpGap[mType], anaUtils::mEtaEpMax[mType]]
   if(eta < anaUtils::mEtaEpGap[mType] || eta > anaUtils::mEtaEpMax[mType])
+  { // eta cut: [anaUtils::mEtaEpGap[mType], anaUtils::mEtaEpMax[mType]]
+    return false;
+  }
+
+  return true;
+}
+
+bool StAnalysisCut::passTrackTpcFlowEast(StPicoTrack *picoTrack, TVector3 primVtx) // neg
+{
+  if(!passTrackBasic(picoTrack)) return false;
+
+  const double vx = primVtx.x();
+  const double vy = primVtx.y();
+  const double vz = primVtx.z();
+
+  // dca cut
+  if(picoTrack->gDCA(vx,vy,vz) > anaUtils::mDcaTrkMax[mType])
+  {
+    return false;
+  }
+
+  // eta cut
+  const TVector3 primMom = picoTrack->pMom(); // primary Momentum
+  const double eta = primMom.PseudoRapidity();
+  if(eta < -1.0*anaUtils::mEtaTrkMax[mType] || eta > 0.0)
+  { // eta cut: [-anaUtils::mEtaTrkMax[mType], 0.0]
+    return false;
+  }
+
+  // momentum cut: pT >= 0.2 GeV/c && p <= 10.0 GeV/c
+  if(primMom.Pt() < anaUtils::mPrimPtTrkMin[mType] || primMom.Mag() > anaUtils::mPrimMomTrkMax[mType])
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool StAnalysisCut::passTrackTpcFlowWest(StPicoTrack *picoTrack, TVector3 primVtx) // pos
+{
+  if(!passTrackBasic(picoTrack)) return false;
+
+  const double vx = primVtx.x();
+  const double vy = primVtx.y();
+  const double vz = primVtx.z();
+
+  // dca cut
+  if(picoTrack->gDCA(vx,vy,vz) > anaUtils::mDcaTrkMax[mType])
+  {
+    return false;
+  }
+
+  // eta cut
+  const TVector3 primMom = picoTrack->pMom(); // primary Momentum
+  const double eta = primMom.PseudoRapidity();
+  if(eta <= 0.0 || eta > anaUtils::mEtaTrkMax[mType])
+  { // eta cut: (0.0, anaUtils::mEtaTrkMax[mType]]
+    return false;
+  }
+
+  // momentum cut: pT >= 0.2 GeV/c && p <= 10.0 GeV/c
+  if(primMom.Pt() < anaUtils::mPrimPtTrkMin[mType] || primMom.Mag() > anaUtils::mPrimMomTrkMax[mType])
   {
     return false;
   }
@@ -274,6 +332,26 @@ bool StAnalysisCut::passHitEpdEpEast(StPicoEpdHit *picoEpdHit) // neg
 }
 
 bool StAnalysisCut::passHitEpdEpWest(StPicoEpdHit *picoEpdHit) // pos
+{
+  if(!passHitEpdEpFull(picoEpdHit)) return false;
+
+  const int tileId = picoEpdHit->id(); // tileId > 0 for West EPD
+  if(tileId < 0) return false;
+
+  return true;
+}
+
+bool StAnalysisCut::passHitEpdFlowEast(StPicoEpdHit *picoEpdHit) // neg
+{
+  if(!passHitEpdEpFull(picoEpdHit)) return false;
+
+  const int tileId = picoEpdHit->id(); // tileId < 0 for East EPD
+  if(tileId > 0) return false;
+
+  return true;
+}
+
+bool StAnalysisCut::passHitEpdFlowWest(StPicoEpdHit *picoEpdHit) // pos
 {
   if(!passHitEpdEpFull(picoEpdHit)) return false;
 
