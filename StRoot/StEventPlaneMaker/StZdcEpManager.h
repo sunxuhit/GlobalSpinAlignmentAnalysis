@@ -30,11 +30,11 @@ class StZdcEpManager : public TObject
     double getZdcSmdGainCorr(int eastwest,int verthori,int strip);
 
     // ReCenter Correction
-    void initZdcReCenter();
-    void fillZdcReCenterEast(TVector2 QVector);
-    void fillZdcReCenterWest(TVector2 QVector);
-    void writeZdcReCenter();
-    void readZdcReCenter();
+    void initZdcReCtr();
+    void fillZdcReCtrEast(TVector2 QVector);
+    void fillZdcReCtrWest(TVector2 QVector);
+    void writeZdcReCtr();
+    void readZdcReCtr();
     void setZdcSmdCenter();
 
     // Shift Correction
@@ -79,9 +79,9 @@ class StZdcEpManager : public TObject
     void fillZdcSubEpRaw(TVector2 QEast, TVector2 QWest, TVector2 QFull);
     void writeZdcSubEpRaw();
 
-    void initZdcSubEpReCenter(); // recenter Sub EP
-    void fillZdcSubEpReCenter(TVector2 QEast, TVector2 QWest, TVector2 QFull);
-    void writeZdcSubEpReCenter();
+    void initZdcSubEpReCtr(); // recenter Sub EP
+    void fillZdcSubEpReCtr(TVector2 QEast, TVector2 QWest, TVector2 QFull);
+    void writeZdcSubEpReCtr();
 
     void initZdcSubEpShift(); // shift Sub EP
     void fillZdcSubEpShift(TVector2 QEast, TVector2 QWest, TVector2 QFull);
@@ -106,52 +106,52 @@ class StZdcEpManager : public TObject
     TH2F *h_mZdcGainCorr[2][2][8]; // 0: east/west | 1: vertical(x)/horizontal(y) | 2: 7 slats(x)/8 slats(y); | x-axis: runIndex | y-axis: ADC
 
     // ReCenter Correction | x axis is runIndex, y axis is Centrality
-    TProfile2D *p_mZdcQReCenterVertEast[mNumVzBin];
-    TProfile2D *p_mZdcQReCenterHoriEast[mNumVzBin];
-    TProfile2D *p_mZdcQReCenterVertWest[mNumVzBin];
-    TProfile2D *p_mZdcQReCenterHoriWest[mNumVzBin];
+    TProfile2D *p_mZdcQ1ReCtrVertEast[mNumVzBin];
+    TProfile2D *p_mZdcQ1ReCtrHoriEast[mNumVzBin];
+    TProfile2D *p_mZdcQ1ReCtrVertWest[mNumVzBin];
+    TProfile2D *p_mZdcQ1ReCtrHoriWest[mNumVzBin];
     double mCenterVertEast, mCenterHoriEast, mCenterVertWest, mCenterHoriWest;
 
     // Shift Correction for East/West EP
-    TProfile2D *p_mZdcQShiftCosEast[mNumVzBin][mNumShiftCorr]; // 0 = vertex neg/pos | 1 = shift correction harmonics
-    TProfile2D *p_mZdcQShiftSinEast[mNumVzBin][mNumShiftCorr];
-    TProfile2D *p_mZdcQShiftCosWest[mNumVzBin][mNumShiftCorr];
-    TProfile2D *p_mZdcQShiftSinWest[mNumVzBin][mNumShiftCorr];
+    TProfile2D *p_mZdcQ1ShiftCosEast[mNumVzBin][mNumShiftCorr]; // 0 = vertex neg/pos | 1 = shift correction harmonics
+    TProfile2D *p_mZdcQ1ShiftSinEast[mNumVzBin][mNumShiftCorr];
+    TProfile2D *p_mZdcQ1ShiftCosWest[mNumVzBin][mNumShiftCorr];
+    TProfile2D *p_mZdcQ1ShiftSinWest[mNumVzBin][mNumShiftCorr];
 
     // Shift Correction for Full EP
-    TProfile2D *p_mZdcQShiftCosFull[mNumVzBin][mNumShiftCorr]; // 0 = vertex neg/pos | 1 = shift correction harmonics
-    TProfile2D *p_mZdcQShiftSinFull[mNumVzBin][mNumShiftCorr];
+    TProfile2D *p_mZdcQ1ShiftCosFull[mNumVzBin][mNumShiftCorr]; // 0 = vertex neg/pos | 1 = shift correction harmonics
+    TProfile2D *p_mZdcQ1ShiftSinFull[mNumVzBin][mNumShiftCorr];
 
     // Event Plane Resolution
-    TProfile *p_mZdcSubEpRes;
-    double mZdcSubEpResVal[mNumCentrality];
-    double mZdcSubEpResErr[mNumCentrality];
-    double mZdcFullEpResVal[mNumCentrality];
-    double mZdcFullEpResErr[mNumCentrality];
+    TProfile *p_mZdcSubEp1Res;
+    double mZdcSubEp1ResVal[mNumCentrality];
+    double mZdcSubEp1ResErr[mNumCentrality];
+    double mZdcFullEp1ResVal[mNumCentrality];
+    double mZdcFullEp1ResErr[mNumCentrality];
 
     // Charged Hadron Directed Flow
     TProfile *p_mZdcFullEpDFlow[mNumCentrality]; // v1 vs. eta
 
     // Event Plane Distribution | x axis is runIndex, y axis is EP angle
-    TH2F *h_mZdcEpRawEast[mNumCentrality]; // raw EP
-    TH2F *h_mZdcEpRawWest[mNumCentrality];
-    TH2F *h_mZdcEpRawFull[mNumCentrality]; // Qwest-QEast
-    TH2F *h_mZdcEpRawCorr[mNumCentrality]; // Psi1East vs Psi1West
+    TH2F *h_mZdcEp1RawEast[mNumCentrality]; // raw EP
+    TH2F *h_mZdcEp1RawWest[mNumCentrality];
+    TH2F *h_mZdcEp1RawFull[mNumCentrality]; // Qwest-QEast
+    TH2F *h_mZdcEp1RawCorr[mNumCentrality]; // Psi1East vs Psi1West
 
-    TH2F *h_mZdcEpReCenterEast[mNumCentrality]; // recenter EP
-    TH2F *h_mZdcEpReCenterWest[mNumCentrality];
-    TH2F *h_mZdcEpReCenterFull[mNumCentrality]; // Qwest-QEast
-    TH2F *h_mZdcEpReCenterCorr[mNumCentrality]; // Psi1East vs Psi1West
+    TH2F *h_mZdcEp1ReCtrEast[mNumCentrality]; // recenter EP
+    TH2F *h_mZdcEp1ReCtrWest[mNumCentrality];
+    TH2F *h_mZdcEp1ReCtrFull[mNumCentrality]; // Qwest-QEast
+    TH2F *h_mZdcEp1ReCtrCorr[mNumCentrality]; // Psi1East vs Psi1West
 
-    TH2F *h_mZdcEpShiftEast[mNumCentrality]; // shift EP
-    TH2F *h_mZdcEpShiftWest[mNumCentrality];
-    TH2F *h_mZdcEpShiftFull[mNumCentrality]; // Qwest-QEast
-    TH2F *h_mZdcEpShiftCorr[mNumCentrality]; // Psi1East vs Psi1West
+    TH2F *h_mZdcEp1ShiftEast[mNumCentrality]; // shift EP
+    TH2F *h_mZdcEp1ShiftWest[mNumCentrality];
+    TH2F *h_mZdcEp1ShiftFull[mNumCentrality]; // Qwest-QEast
+    TH2F *h_mZdcEp1ShiftCorr[mNumCentrality]; // Psi1East vs Psi1West
 
-    TH2F *h_mZdcEpShiftFullCorr[mNumCentrality]; // Qwest-QEast
+    TH2F *h_mZdcEp1ShiftFullCorr[mNumCentrality]; // Qwest-QEast
 
     TFile *file_mGainCorrPar;
-    TFile *file_mReCenterPar;
+    TFile *file_mReCtrPar;
     TFile *file_mShiftPar;
     TFile *file_mShiftParFull;
     TFile *file_mResolution;

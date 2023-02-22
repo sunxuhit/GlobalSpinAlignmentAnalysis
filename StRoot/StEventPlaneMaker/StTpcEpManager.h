@@ -25,15 +25,15 @@ class StTpcEpManager : public TObject
     double getWeight(StPicoTrack* picoTrack);
     void addTrackRawEast(StPicoTrack* picoTrack);
     void addTrackRawWest(StPicoTrack* picoTrack);
-    void addTrackReCenterEast(StPicoTrack* picoTrack);
-    void addTrackReCenterWest(StPicoTrack* picoTrack);
+    void addTrackReCtrEast(StPicoTrack* picoTrack);
+    void addTrackReCtrWest(StPicoTrack* picoTrack);
 
     // ReCenter Correction
-    void initTpcReCenter();
-    void fillTpcReCenterEast(StPicoTrack* picoTrack);
-    void fillTpcReCenterWest(StPicoTrack* picoTrack);
-    void writeTpcReCenter();
-    void readTpcReCenter();
+    void initTpcReCtr();
+    void fillTpcReCtrEast(StPicoTrack* picoTrack);
+    void fillTpcReCtrWest(StPicoTrack* picoTrack);
+    void writeTpcReCtr();
+    void readTpcReCtr();
     TVector2 getq2VecCtrEast(); // 2nd ReCenter Parameter
     TVector2 getq2VecCtrWest();
     TVector2 getq3VecCtrEast(); // 3rd ReCenter Parameter
@@ -70,35 +70,35 @@ class StTpcEpManager : public TObject
     // Q2Vector
     TVector2 getQ2VecRawEast(); // Q2Vector
     TVector2 getQ2VecRawWest();
-    TVector2 getQ2VecReCenterEast();
-    TVector2 getQ2VecReCenterWest();
+    TVector2 getQ2VecReCtrEast();
+    TVector2 getQ2VecReCtrWest();
     double getPsi2RawEast();
     double getPsi2RawWest();
-    double getPsi2ReCenterEast();
-    double getPsi2ReCenterWest();
+    double getPsi2ReCtrEast();
+    double getPsi2ReCtrWest();
 
     TVector2 getQ3VecRawEast(); // Q3Vector
     TVector2 getQ3VecRawWest();
-    TVector2 getQ3VecReCenterEast();
-    TVector2 getQ3VecReCenterWest();
+    TVector2 getQ3VecReCtrEast();
+    TVector2 getQ3VecReCtrWest();
     double getPsi3RawEast();
     double getPsi3RawWest();
-    double getPsi3ReCenterEast();
-    double getPsi3ReCenterWest();
+    double getPsi3ReCtrEast();
+    double getPsi3ReCtrWest();
 
     int getNumTrkRawEast();
     int getNumTrkRawWest();
-    int getNumTrkReCenterEast();
-    int getNumTrkReCenterWest();
+    int getNumTrkReCtrEast();
+    int getNumTrkReCtrWest();
 
     // Event Plane Distribution
     void initTpcSubEpRaw(); // raw Sub EP
     void fillTpcSubEpRaw(double Psi2East, double Psi2West, double Psi3East, double Psi3West);
     void writeTpcSubEpRaw();
 
-    void initTpcSubEpReCenter(); // recenter Sub EP
-    void fillTpcSubEpReCenter(double Psi2East, double Psi2West, double Psi3East, double Psi3West);
-    void writeTpcSubEpReCenter();
+    void initTpcSubEpReCtr(); // recenter Sub EP
+    void fillTpcSubEpReCtr(double Psi2East, double Psi2West, double Psi3East, double Psi3West);
+    void writeTpcSubEpReCtr();
 
     void initTpcSubEpShift(); // shift Sub EP
     void fillTpcSubEpShift(double Psi2East, double Psi2West, double Psi3East, double Psi3West);
@@ -114,24 +114,24 @@ class StTpcEpManager : public TObject
     int mVzBin;
 
     int mQCouRawEast, mQCouRawWest;
-    int mQCouReCenterEast, mQCouReCenterWest;
+    int mQCouReCtrEast, mQCouReCtrWest;
 
     TVector2 v_mQ2RawEast, v_mQ2RawWest; // 2nd EP
-    TVector2 v_mQ2ReCenterEast, v_mQ2ReCenterWest; 
+    TVector2 v_mQ2ReCtrEast, v_mQ2ReCtrWest; 
 
     TVector2 v_mQ3RawEast, v_mQ3RawWest; // 3rd EP
-    TVector2 v_mQ3ReCenterEast, v_mQ3ReCenterWest; 
+    TVector2 v_mQ3ReCtrEast, v_mQ3ReCtrWest; 
 
     // ReCenter Correction | x axis is runIndex, y axis is Centrality
-    TProfile2D *p_mTpcQ2ReCenterXEast[mNumVzBin]; // 2nd EP
-    TProfile2D *p_mTpcQ2ReCenterYEast[mNumVzBin];
-    TProfile2D *p_mTpcQ2ReCenterXWest[mNumVzBin];
-    TProfile2D *p_mTpcQ2ReCenterYWest[mNumVzBin];
+    TProfile2D *p_mTpcQ2ReCtrXEast[mNumVzBin]; // 2nd EP
+    TProfile2D *p_mTpcQ2ReCtrYEast[mNumVzBin];
+    TProfile2D *p_mTpcQ2ReCtrXWest[mNumVzBin];
+    TProfile2D *p_mTpcQ2ReCtrYWest[mNumVzBin];
 
-    TProfile2D *p_mTpcQ3ReCenterXEast[mNumVzBin]; // 3rd EP
-    TProfile2D *p_mTpcQ3ReCenterYEast[mNumVzBin];
-    TProfile2D *p_mTpcQ3ReCenterXWest[mNumVzBin];
-    TProfile2D *p_mTpcQ3ReCenterYWest[mNumVzBin];
+    TProfile2D *p_mTpcQ3ReCtrXEast[mNumVzBin]; // 3rd EP
+    TProfile2D *p_mTpcQ3ReCtrYEast[mNumVzBin];
+    TProfile2D *p_mTpcQ3ReCtrXWest[mNumVzBin];
+    TProfile2D *p_mTpcQ3ReCtrYWest[mNumVzBin];
 
     // Shift Correction for East/West | 0 = vertex neg/pos | 1 = shift correction harmonics
     TProfile2D *p_mTpcQ2ShiftCosEast[mNumVzBin][mNumShiftCorr]; // 2nd EP
@@ -166,13 +166,13 @@ class StTpcEpManager : public TObject
     TH2F *h_mTpcEp3RawWest[mNumCentrality];
     TH2F *h_mTpcEp3RawCorr[mNumCentrality]; // Psi3East vs Psi3West
 
-    TH2F *h_mTpcEp2ReCenterEast[mNumCentrality]; // 2nd recenter EP
-    TH2F *h_mTpcEp2ReCenterWest[mNumCentrality];
-    TH2F *h_mTpcEp2ReCenterCorr[mNumCentrality]; // Psi2East vs Psi2West
+    TH2F *h_mTpcEp2ReCtrEast[mNumCentrality]; // 2nd recenter EP
+    TH2F *h_mTpcEp2ReCtrWest[mNumCentrality];
+    TH2F *h_mTpcEp2ReCtrCorr[mNumCentrality]; // Psi2East vs Psi2West
 
-    TH2F *h_mTpcEp3ReCenterEast[mNumCentrality]; // 3rd recenter EP
-    TH2F *h_mTpcEp3ReCenterWest[mNumCentrality];
-    TH2F *h_mTpcEp3ReCenterCorr[mNumCentrality]; // Psi3East vs Psi3West
+    TH2F *h_mTpcEp3ReCtrEast[mNumCentrality]; // 3rd recenter EP
+    TH2F *h_mTpcEp3ReCtrWest[mNumCentrality];
+    TH2F *h_mTpcEp3ReCtrCorr[mNumCentrality]; // Psi3East vs Psi3West
 
     TH2F *h_mTpcEp2ShiftEast[mNumCentrality]; // 3rd shift EP
     TH2F *h_mTpcEp2ShiftWest[mNumCentrality];
@@ -182,7 +182,7 @@ class StTpcEpManager : public TObject
     TH2F *h_mTpcEp3ShiftWest[mNumCentrality];
     TH2F *h_mTpcEp3ShiftCorr[mNumCentrality]; // Psi3East vs Psi3West
 
-    TFile *file_mReCenterPar;
+    TFile *file_mReCtrPar;
     TFile *file_mShiftPar;
     TFile *file_mResolution;
 

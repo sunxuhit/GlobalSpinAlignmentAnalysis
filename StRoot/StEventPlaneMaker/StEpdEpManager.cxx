@@ -323,7 +323,7 @@ void StEpdEpManager::writeEpdPhiWgt()
 
 void StEpdEpManager::readEpdPhiWgt()
 {
-  std::string inputFile = Form("Utility/EventPlaneMaker/%s/GainCorrPar/file_%s_EpdPhiWgtPar.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+  std::string inputFile = Form("Utility/EventPlaneMaker/%s/GainCorrPar/file_EpdPhiWgtPar_%s.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   file_mPhiWgtPar = TFile::Open(inputFile.c_str());
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
@@ -406,7 +406,7 @@ void StEpdEpManager::writeEpdReCtr()
 
 void StEpdEpManager::readEpdReCtr()
 {
-  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ReCencterPar/file_%s_EpdReCenterPar.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ReCencterPar/file_EpdReCenterPar_%s.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
 
   file_mReCtrPar = TFile::Open(inputFile.c_str());
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)
@@ -513,7 +513,7 @@ void StEpdEpManager::writeEpdShift()
 
 void StEpdEpManager::readEpdShift()
 {
-  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ShiftParameter/file_%s_EpdShiftPar.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ShiftParameter/file_EpdShiftPar_%s.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
 
   file_mShiftPar = TFile::Open(inputFile.c_str());
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)
@@ -639,7 +639,7 @@ void StEpdEpManager::writeEpdShiftFull()
 
 void StEpdEpManager::readEpdShiftFull()
 {
-  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ShiftParameter/file_%s_EpdShiftParFull.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ShiftParameter/file_EpdShiftParFull_%s.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   file_mShiftPar = TFile::Open(inputFile.c_str());
 
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)
@@ -708,7 +708,7 @@ void StEpdEpManager::writeEpdResolution()
 
 void StEpdEpManager::readEpdResolution()
 {
-  std::string inputFile = Form("Utility/EventPlaneMaker/%s/Resolution/file_%s_EpdEpResolution.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+  std::string inputFile = Form("Utility/EventPlaneMaker/%s/Resolution/file_EpdEpResolution_%s.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   file_mResolution = TFile::Open(inputFile.c_str());
   p_mEpdSubEp1Res = (TProfile*)file_mResolution->Get("p_mEpdSubEp1Res");
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)

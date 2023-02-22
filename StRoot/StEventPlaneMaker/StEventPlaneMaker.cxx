@@ -35,27 +35,27 @@ StEventPlaneMaker::StEventPlaneMaker(const char* name, StPicoDstMaker *picoMaker
 
   if(mMode == 0) // fill Gain Correction for ZDC & phi Weight for EPD
   {
-    str_mOutPutGainCorr = Form("./file_%s_GainCorr_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
+    str_mOutPutGainCorr = Form("./file_GainCorr_%s_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
   }
   if(mMode == 1) // fill Re-Center Correction for ZDC & EPD & TPC Sub EP
   {
-    str_mOutPutReCenterPar = Form("./file_%s_ReCenterPar_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
+    str_mOutPutReCenterPar = Form("./file_ReCenterPar_%s_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
   }
   if(mMode == 2) // fill Shift Correction for ZDC & EPD & TPC Sub EP
   {
-    str_mOutPutShiftPar = Form("./file_%s_ShiftPar_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
+    str_mOutPutShiftPar = Form("./file_ShiftPar_%s_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
   }
   if(mMode == 3) // fill Shift Correction for ZDC & EPD Full EP
   {
-    str_mOutPutShiftPar = Form("./file_%s_ShiftParFull_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
+    str_mOutPutShiftPar = Form("./file_ShiftParFull_%s_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
   }
   if(mMode == 4) // fill Event Plane Resolution for ZDC & EPD & TPC Sub EP
   {
-    str_mOutPutResolution = Form("./file_%s_EpResolution_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
+    str_mOutPutResolution = Form("./file_EpResolution_%s_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
   }
   if(mMode == 5) // fill Charged Hadron v1 for ZDC and EPD & v2 and v3 for TPC
   {
-    str_mOutPutFlow = Form("./file_%s_ChargedFlow_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
+    str_mOutPutFlow = Form("./file_ChargedFlow_%s_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
   }
 }
 
@@ -89,38 +89,38 @@ int StEventPlaneMaker::Init()
   { // fill ReCenter Correction Parameters for ZDC & EPD & TPC Sub EP
     file_mOutPutReCenterPar = new TFile(str_mOutPutReCenterPar.c_str(),"RECREATE");
     mZdcEpManager->readZdcGain(); // ZDC
-    mZdcEpManager->initZdcReCenter();
+    mZdcEpManager->initZdcReCtr();
     mZdcEpManager->initZdcSubEpRaw();
 
     mEpdEpManager->readEpdPhiWgt(); // EPD
     mEpdEpManager->initEpdReCtr();
     mEpdEpManager->initEpdSubEpWgt();
 
-    mTpcEpManager->initTpcReCenter(); // TPC
+    mTpcEpManager->initTpcReCtr(); // TPC
     mTpcEpManager->initTpcSubEpRaw();
   }
   if(mMode == 2)
   { // fill Shift Correction Parameters for ZDC & EPD & TPC Sub EP
     file_mOutPutShiftPar = new TFile(str_mOutPutShiftPar.c_str(),"RECREATE");
     mZdcEpManager->readZdcGain(); // ZDC
-    mZdcEpManager->readZdcReCenter();
+    mZdcEpManager->readZdcReCtr();
     mZdcEpManager->initZdcShift();
-    mZdcEpManager->initZdcSubEpReCenter();
+    mZdcEpManager->initZdcSubEpReCtr();
 
     mEpdEpManager->readEpdPhiWgt(); // EPD
     mEpdEpManager->readEpdReCtr();
     mEpdEpManager->initEpdShift();
     mEpdEpManager->initEpdSubEpReCtr();
 
-    mTpcEpManager->readTpcReCenter(); // TPC
+    mTpcEpManager->readTpcReCtr(); // TPC
     mTpcEpManager->initTpcShift();
-    mTpcEpManager->initTpcSubEpReCenter();
+    mTpcEpManager->initTpcSubEpReCtr();
   }
   if(mMode == 3)
   { // fill Shift Correction Parameters for ZDC & EPD Full EP
     file_mOutPutShiftPar = new TFile(str_mOutPutShiftPar.c_str(),"RECREATE");
     mZdcEpManager->readZdcGain(); // ZDC
-    mZdcEpManager->readZdcReCenter();
+    mZdcEpManager->readZdcReCtr();
     mZdcEpManager->readZdcShift();
     mZdcEpManager->initZdcShiftFull();
     mZdcEpManager->initZdcSubEpShift();
@@ -135,7 +135,7 @@ int StEventPlaneMaker::Init()
   { // fill Event Plane Resolution for ZDC & EPD & TPC Sub EP
     file_mOutPutResolution = new TFile(str_mOutPutResolution.c_str(),"RECREATE");
     mZdcEpManager->readZdcGain(); // ZDC
-    mZdcEpManager->readZdcReCenter();
+    mZdcEpManager->readZdcReCtr();
     mZdcEpManager->readZdcShift();
     mZdcEpManager->readZdcShiftFull();
     mZdcEpManager->initZdcResolution();
@@ -150,7 +150,7 @@ int StEventPlaneMaker::Init()
     mEpdEpManager->initEpdSubEpShift();
     mEpdEpManager->initEpdFullEpShift();
 
-    mTpcEpManager->readTpcReCenter(); // TPC
+    mTpcEpManager->readTpcReCtr(); // TPC
     mTpcEpManager->readTpcShift();
     mTpcEpManager->initTpcResolution();
     mTpcEpManager->initTpcSubEpShift();
@@ -159,7 +159,7 @@ int StEventPlaneMaker::Init()
   { // calculate charged hadron v1 from ZDC & EPD and charged hadron v2 and v3 from TPC
     file_mOutPutFlow = new TFile(str_mOutPutFlow.c_str(),"RECREATE");
     mZdcEpManager->readZdcGain(); // ZDC
-    mZdcEpManager->readZdcReCenter();
+    mZdcEpManager->readZdcReCtr();
     mZdcEpManager->readZdcShift();
     mZdcEpManager->readZdcShiftFull();
     mZdcEpManager->readZdcResolution();
@@ -172,7 +172,7 @@ int StEventPlaneMaker::Init()
     mEpdEpManager->readEpdResolution();
     mEpdEpManager->initEpdSubEpFlow();
 
-    mTpcEpManager->readTpcReCenter(); // TPC
+    mTpcEpManager->readTpcReCtr(); // TPC
     mTpcEpManager->readTpcShift();
     mTpcEpManager->readTpcResolution();
     mTpcEpManager->initTpcSubEpFlow();
@@ -200,13 +200,13 @@ int StEventPlaneMaker::Finish()
     if(str_mOutPutReCenterPar != "")
     {
       file_mOutPutReCenterPar->cd();
-      mZdcEpManager->writeZdcReCenter(); // ZDC
+      mZdcEpManager->writeZdcReCtr(); // ZDC
       mZdcEpManager->writeZdcSubEpRaw();
 
       mEpdEpManager->writeEpdReCtr(); // EPD
       mEpdEpManager->writeEpdSubEpWgt();
 
-      mTpcEpManager->writeTpcReCenter(); // TPC
+      mTpcEpManager->writeTpcReCtr(); // TPC
       mTpcEpManager->writeTpcSubEpRaw();
       file_mOutPutReCenterPar->Close();
     }
@@ -217,13 +217,13 @@ int StEventPlaneMaker::Finish()
     {
       file_mOutPutShiftPar->cd();
       mZdcEpManager->writeZdcShift(); // ZDC
-      mZdcEpManager->writeZdcSubEpReCenter();
+      mZdcEpManager->writeZdcSubEpReCtr();
 
       mEpdEpManager->writeEpdShift(); // EPD
       mEpdEpManager->writeEpdSubEpReCtr();
 
       mTpcEpManager->writeTpcShift(); // TPC
-      mTpcEpManager->writeTpcSubEpReCenter();
+      mTpcEpManager->writeTpcSubEpReCtr();
       file_mOutPutShiftPar->Close();
     }
   }
@@ -461,23 +461,23 @@ int StEventPlaneMaker::Make()
 	    if( mAnaCut->passTrackTpcEpEast(picoTrack, primVtx) ) // negative eta
 	    {
 	      mTpcEpManager->addTrackRawEast(picoTrack);
-	      mTpcEpManager->fillTpcReCenterEast(picoTrack); // fill TPC ReCenter Parameters East
+	      mTpcEpManager->fillTpcReCtrEast(picoTrack); // fill TPC ReCenter Parameters East
 	    }
 	    if( mAnaCut->passTrackTpcEpWest(picoTrack, primVtx) ) // positive eta
 	    {
 	      mTpcEpManager->addTrackRawWest(picoTrack);
-	      mTpcEpManager->fillTpcReCenterWest(picoTrack); // fill TPC ReCenter Parameters West
+	      mTpcEpManager->fillTpcReCtrWest(picoTrack); // fill TPC ReCenter Parameters West
 	    }
 	  }
 	  if(mMode == 2 || mMode == 4) // calculate recentered Q2Vector and Q3Vector from TPC
 	  {
 	    if( mAnaCut->passTrackTpcEpEast(picoTrack, primVtx) ) // negative eta
 	    {
-	      mTpcEpManager->addTrackReCenterEast(picoTrack);
+	      mTpcEpManager->addTrackReCtrEast(picoTrack);
 	    }
 	    if( mAnaCut->passTrackTpcEpWest(picoTrack, primVtx) ) // positive eta
 	    {
-	      mTpcEpManager->addTrackReCenterWest(picoTrack);
+	      mTpcEpManager->addTrackReCtrWest(picoTrack);
 	    }
 	  }
 	}
@@ -490,8 +490,8 @@ int StEventPlaneMaker::Make()
 	  if( !(Q1ZdcEast.Mod() < 1e-10 || Q1ZdcWest.Mod() < 1e-10 || Q1ZdcFull.Mod() < 1e-10) ) // ZDC EP
 	  {
 	    mZdcEpManager->fillZdcSubEpRaw(Q1ZdcEast,Q1ZdcWest,Q1ZdcFull);
-	    mZdcEpManager->fillZdcReCenterEast(Q1ZdcEast);
-	    mZdcEpManager->fillZdcReCenterWest(Q1ZdcWest);
+	    mZdcEpManager->fillZdcReCtrEast(Q1ZdcEast);
+	    mZdcEpManager->fillZdcReCtrWest(Q1ZdcWest);
 	  }
 
 	  TVector2 Q1EpdEast = mEpdEpManager->getQ1VecWgtEast(); // get Q1Vector from EPD
@@ -523,7 +523,7 @@ int StEventPlaneMaker::Make()
 	  TVector2 Q1ZdcFull = mZdcEpManager->getQ1VecFull(Q1ZdcEast,Q1ZdcWest,mMode); // TVector2 Q1ZdcFull = Q1ZdcWest-Q1ZdcEast;
 	  if( !(Q1ZdcEast.Mod() < 1e-10 || Q1ZdcWest.Mod() < 1e-10 || Q1ZdcFull.Mod() < 1e-10) ) // ZDC EP
 	  {
-	    mZdcEpManager->fillZdcSubEpReCenter(Q1ZdcEast,Q1ZdcWest,Q1ZdcFull);
+	    mZdcEpManager->fillZdcSubEpReCtr(Q1ZdcEast,Q1ZdcWest,Q1ZdcFull);
 	    mZdcEpManager->fillZdcShiftEast(Q1ZdcEast);
 	    mZdcEpManager->fillZdcShiftWest(Q1ZdcWest);
 	  }
@@ -541,15 +541,15 @@ int StEventPlaneMaker::Make()
 	    mEpdEpManager->fillEpdShiftWest();
 	  }
 
-	  const int numTrackReCenterEast = mTpcEpManager->getNumTrkReCenterEast(); // TPC EP
-	  const int numTrackReCenterWest = mTpcEpManager->getNumTrkReCenterWest();
+	  const int numTrackReCenterEast = mTpcEpManager->getNumTrkReCtrEast(); // TPC EP
+	  const int numTrackReCenterWest = mTpcEpManager->getNumTrkReCtrWest();
 	  if(mAnaCut->passNumTrackTpcSubEpReCenter(numTrackReCenterEast, numTrackReCenterWest))
 	  {
-	    const double Psi2ReCenterEast = mTpcEpManager->getPsi2ReCenterEast();
-	    const double Psi2ReCenterWest = mTpcEpManager->getPsi2ReCenterWest();
-	    const double Psi3ReCenterEast = mTpcEpManager->getPsi3ReCenterEast();
-	    const double Psi3ReCenterWest = mTpcEpManager->getPsi3ReCenterWest();
-	    mTpcEpManager->fillTpcSubEpReCenter(Psi2ReCenterEast, Psi2ReCenterWest, Psi3ReCenterEast, Psi3ReCenterWest);
+	    const double Psi2ReCenterEast = mTpcEpManager->getPsi2ReCtrEast();
+	    const double Psi2ReCenterWest = mTpcEpManager->getPsi2ReCtrWest();
+	    const double Psi3ReCenterEast = mTpcEpManager->getPsi3ReCtrEast();
+	    const double Psi3ReCenterWest = mTpcEpManager->getPsi3ReCtrWest();
+	    mTpcEpManager->fillTpcSubEpReCtr(Psi2ReCenterEast, Psi2ReCenterWest, Psi3ReCenterEast, Psi3ReCenterWest);
 	    mTpcEpManager->fillTpcShiftEast();
 	    mTpcEpManager->fillTpcShiftWest();
 	  }
@@ -604,8 +604,8 @@ int StEventPlaneMaker::Make()
 	    mEpdEpManager->fillEpdResolution(Psi1ShiftEast, Psi1ShiftWest);
 	  }
 
-	  const int numTrackReCenterEast = mTpcEpManager->getNumTrkReCenterEast(); // TPC EP
-	  const int numTrackReCenterWest = mTpcEpManager->getNumTrkReCenterWest();
+	  const int numTrackReCenterEast = mTpcEpManager->getNumTrkReCtrEast(); // TPC EP
+	  const int numTrackReCenterWest = mTpcEpManager->getNumTrkReCtrWest();
 	  if(mAnaCut->passNumTrackTpcSubEpReCenter(numTrackReCenterEast, numTrackReCenterWest))
 	  {
 	    const double Psi2ShiftEast = mTpcEpManager->getPsi2ShiftEast();
@@ -623,8 +623,8 @@ int StEventPlaneMaker::Make()
 	  TVector2 Q1ZdcFull = mZdcEpManager->getQ1VecFull(Q1ZdcEast,Q1ZdcWest,mMode); // TVector2 Q1ZdcFull = Q1ZdcWest-Q1ZdcEast;
 	  const double Psi1ZdcFull = TMath::ATan2(Q1ZdcFull.Y(),Q1ZdcFull.X()); // -pi to pi
 
-	  const int numTrackReCenterEast = mTpcEpManager->getNumTrkReCenterEast(); // TPC EP
-	  const int numTrackReCenterWest = mTpcEpManager->getNumTrkReCenterWest();
+	  const int numTrackReCenterEast = mTpcEpManager->getNumTrkReCtrEast(); // TPC EP
+	  const int numTrackReCenterWest = mTpcEpManager->getNumTrkReCtrWest();
 	  const double Psi2TpcEast       = mTpcEpManager->getPsi2ShiftEast(); // -pi/2 to pi/2
 	  const double Psi2TpcWest       = mTpcEpManager->getPsi2ShiftWest();
 	  const double Psi3TpcEast       = mTpcEpManager->getPsi3ShiftEast(); // -pi/3 to pi/3
