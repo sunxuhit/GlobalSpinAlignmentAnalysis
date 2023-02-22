@@ -28,6 +28,16 @@ StZdcEpManager::StZdcEpManager(int beamType) : mType(beamType)
 {
   // mType = energy;
   clearZdcEpManager();
+  for(int iEastWest = 0; iEastWest < 2; ++iEastWest)
+  {
+    for(int iVertHori = 0; iVertHori < 2; ++iVertHori)
+    {
+      for(int iSlat = 0; iSlat < 8; ++iSlat)
+      {
+	mGainFactor[iEastWest][iVertHori][iSlat] = -999.9;
+      }
+    }
+  }
 }
 
 StZdcEpManager::~StZdcEpManager()
@@ -48,10 +58,10 @@ void StZdcEpManager::clearZdcEpManager()
       for(int iSlat = 0; iSlat < 8; ++iSlat)
       {
 	mZdcSmd[iEastWest][iVertHori][iSlat] = 0.0;
-	mGainFactor[iEastWest][iVertHori][iSlat] = -999.9;
       }
     }
   }
+
   mCenterVertEast = -999.9;
   mCenterHoriEast = -999.9;
   mCenterVertWest = -999.9;
