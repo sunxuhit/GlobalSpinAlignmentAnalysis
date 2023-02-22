@@ -1033,7 +1033,7 @@ void StEpdEpManager::initEpdSubEpWgt()
 {
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string histName = Form("h_mEpdEp1WgtEastCent%d",iCent); // 2nd EP
+    std::string histName = Form("h_mEpdEp1WgtEastCent%d",iCent); // 1st EP
     h_mEpdEp1WgtEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mEpdEp1WgtWestCent%d",iCent);
     h_mEpdEp1WgtWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
