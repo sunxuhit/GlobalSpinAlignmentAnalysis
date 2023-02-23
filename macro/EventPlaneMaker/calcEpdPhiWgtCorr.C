@@ -10,7 +10,7 @@
 
 void calcEpdPhiWgtCorr(int beamType = 0)
 {
-  string inputFile = Form("../../data/%s/EventPlaneMaker/file_%s_GainCorr.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string inputFile = Form("../../data/%s/EventPlaneMaker/file_GainCorr_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *file_InPut = TFile::Open(inputFile.c_str());
   if(!file_InPut->IsOpen()) cout << "inputFile: " << inputFile.c_str() << "is problematic" << endl;
   cout << "inputFile sets to: " << inputFile.c_str() << endl;
@@ -61,7 +61,7 @@ void calcEpdPhiWgtCorr(int beamType = 0)
   figName = Form("../../figures/%s/EventPlaneMaker/EpdPhiWgtWest_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   c_EpdPhiWgtEast->SaveAs(figName.c_str());
 
-  string outputFile = Form("../../Utility/EventPlaneMaker/%s/GainCorrPar/file_%s_EpdPhiWgtPar.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string outputFile = Form("../../Utility/EventPlaneMaker/%s/GainCorrPar/file_EpdPhiWgtPar_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   cout << "outputFile: " << outputFile.c_str() << endl;
   TFile *file_OutPut = new TFile(outputFile.c_str(),"RECREATE");
   file_OutPut->cd();
@@ -105,7 +105,7 @@ void calcEpdPhiWgtCorr(int beamType = 0)
     c_EpdEp1RawDist[iCent]->SaveAs(figName.c_str());
   }
 
-  string outputFileRawEp = Form("../../data/%s/EventPlaneMaker/file_%s_EpdRawEpDist.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string outputFileRawEp = Form("../../data/%s/EventPlaneMaker/file_EpdRawEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   cout << "outputFile of Raw EP: " << outputFileRawEp.c_str() << endl;
   TFile *file_OutPutRawEp = new TFile(outputFileRawEp.c_str(),"RECREATE");
   file_OutPutRawEp->cd();

@@ -10,7 +10,7 @@
 
 void fitZdcGainCorr(int beamType = 0)
 {
-  string inputFile = Form("../../data/%s/EventPlaneMaker/file_%s_GainCorr.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string inputFile = Form("../../data/%s/EventPlaneMaker/file_GainCorr_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *file_InPut = TFile::Open(inputFile.c_str());
   if(!file_InPut->IsOpen()) cout << "inputFile: " << inputFile.c_str() << "is problematic" << endl;
   cout << "inputFile sets to: " << inputFile.c_str() << endl;
@@ -156,7 +156,7 @@ void fitZdcGainCorr(int beamType = 0)
     }
   }
 
-  string outputFile = Form("../../Utility/EventPlaneMaker/%s/GainCorrPar/file_%s_ZdcGainCorrFac.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string outputFile = Form("../../Utility/EventPlaneMaker/%s/GainCorrPar/file_ZdcGainCorrFac_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *file_OutPut = new TFile(outputFile.c_str(),"RECREATE");
   file_OutPut->cd();
   for(int iEastWest = 0; iEastWest < 2; ++iEastWest)

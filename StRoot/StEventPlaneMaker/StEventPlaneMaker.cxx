@@ -458,12 +458,12 @@ int StEventPlaneMaker::Make()
 
 	  if(mMode == 1) // calculate raw Q2Vector and Q3Vector from TPC
 	  {
-	    if( mAnaCut->passTrackTpcEpEast(picoTrack, primVtx) ) // negative eta
+	    if( mAnaCut->passTrkTpcEpEast(picoTrack, primVtx) ) // negative eta
 	    {
 	      mTpcEpManager->addTrackRawEast(picoTrack);
 	      mTpcEpManager->fillTpcReCtrEast(picoTrack); // fill TPC ReCenter Parameters East
 	    }
-	    if( mAnaCut->passTrackTpcEpWest(picoTrack, primVtx) ) // positive eta
+	    if( mAnaCut->passTrkTpcEpWest(picoTrack, primVtx) ) // positive eta
 	    {
 	      mTpcEpManager->addTrackRawWest(picoTrack);
 	      mTpcEpManager->fillTpcReCtrWest(picoTrack); // fill TPC ReCenter Parameters West
@@ -471,11 +471,11 @@ int StEventPlaneMaker::Make()
 	  }
 	  if(mMode == 2 || mMode == 4) // calculate recentered Q2Vector and Q3Vector from TPC
 	  {
-	    if( mAnaCut->passTrackTpcEpEast(picoTrack, primVtx) ) // negative eta
+	    if( mAnaCut->passTrkTpcEpEast(picoTrack, primVtx) ) // negative eta
 	    {
 	      mTpcEpManager->addTrackReCtrEast(picoTrack);
 	    }
-	    if( mAnaCut->passTrackTpcEpWest(picoTrack, primVtx) ) // positive eta
+	    if( mAnaCut->passTrkTpcEpWest(picoTrack, primVtx) ) // positive eta
 	    {
 	      mTpcEpManager->addTrackReCtrWest(picoTrack);
 	    }
@@ -507,7 +507,7 @@ int StEventPlaneMaker::Make()
 
 	  const int numTrackRawEast = mTpcEpManager->getNumTrkRawEast(); // TPC EP
 	  const int numTrackRawWest = mTpcEpManager->getNumTrkRawWest();
-	  if(mAnaCut->passNumTrackTpcSubEpRaw(numTrackRawEast, numTrackRawWest))
+	  if(mAnaCut->passNumTrkTpcSubEpRaw(numTrackRawEast, numTrackRawWest))
 	  {
 	    const double Psi2RawEast = mTpcEpManager->getPsi2RawEast();
 	    const double Psi2RawWest = mTpcEpManager->getPsi2RawWest();
@@ -543,7 +543,7 @@ int StEventPlaneMaker::Make()
 
 	  const int numTrkReCtrEast = mTpcEpManager->getNumTrkReCtrEast(); // TPC EP
 	  const int numTrkReCtrWest = mTpcEpManager->getNumTrkReCtrWest();
-	  if(mAnaCut->passNumTrackTpcSubEpReCenter(numTrkReCtrEast, numTrkReCtrWest))
+	  if(mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest))
 	  {
 	    const double Psi2ReCenterEast = mTpcEpManager->getPsi2ReCtrEast();
 	    const double Psi2ReCenterWest = mTpcEpManager->getPsi2ReCtrWest();
@@ -606,7 +606,7 @@ int StEventPlaneMaker::Make()
 
 	  const int numTrkReCtrEast = mTpcEpManager->getNumTrkReCtrEast(); // TPC EP
 	  const int numTrkReCtrWest = mTpcEpManager->getNumTrkReCtrWest();
-	  if(mAnaCut->passNumTrackTpcSubEpReCenter(numTrkReCtrEast, numTrkReCtrWest))
+	  if(mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest))
 	  {
 	    const TVector2 vQ2ReCtrEast = mTpcEpManager->getQ2VecReCtrEast();
 	    const TVector2 vQ2ReCtrWest = mTpcEpManager->getQ2VecReCtrWest();
@@ -658,16 +658,16 @@ int StEventPlaneMaker::Make()
 	      mZdcEpManager->fillZdcFullEpDFlow(eta, pt, v1Zdc, reweight);
 	    }
 
-	    if(mAnaCut->passNumTrackTpcSubEpReCenter(numTrkReCtrEast, numTrkReCtrWest))
+	    if(mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest))
 	    { // charged hadron v2 and v3 from TPC
-	      if(mAnaCut->passTrackTpcFlowEast(picoTrack, primVtx)) // neg
+	      if(mAnaCut->passTrkTpcFlowEast(picoTrack, primVtx)) // neg
 	      { // correlate track from East to EP from West
 		const double v2Tpc = TMath::Cos(2.0*(phi-Psi2TpcWest))/mTpcEpManager->getTpcSubEp2ResVal(cent9);
 		const double v3Tpc = TMath::Cos(3.0*(phi-Psi3TpcWest))/mTpcEpManager->getTpcSubEp3ResVal(cent9);
 		mTpcEpManager->fillTpcSubEpEFlow(pt, v2Tpc, reweight);
 		mTpcEpManager->fillTpcSubEpTFlow(pt, v3Tpc, reweight);
 	      }
-	      if(mAnaCut->passTrackTpcFlowWest(picoTrack, primVtx)) // neg
+	      if(mAnaCut->passTrkTpcFlowWest(picoTrack, primVtx)) // neg
 	      {
 		const double v2Tpc = TMath::Cos(2.0*(phi-Psi2TpcEast))/mTpcEpManager->getTpcSubEp2ResVal(cent9);
 		const double v3Tpc = TMath::Cos(3.0*(phi-Psi3TpcEast))/mTpcEpManager->getTpcSubEp3ResVal(cent9);

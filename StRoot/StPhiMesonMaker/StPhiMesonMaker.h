@@ -1,25 +1,25 @@
-#ifndef StVecMesonMaker_h
-#define StVecMesonMaker_h
+#ifndef StPhiMesonMaker_h
+#define StPhiMesonMaker_h
 
 #include "StMaker.h"
-// #include "TString.h"
 #include <string>
 
 class StPicoDst;
 class StPicoDstMaker;
 class StPicoEvent;
 class StRefMultCorr;
-class StVecMesonCut;
-class StVecMesonHistoManager;
-class StVecMesonUtility;
-class StVecMesonProManager;
-class StVecMesonZdcEpManager;
-// class StVecMesonTree;
 
-class StVecMesonMaker : public StMaker {
+class StAnalysisUtils;
+class StAnalysisCut;
+class StZdcEpManager;
+class StEpdEpManager;
+class StTpcEpManager;
+// class StPhiMesonTree;
+
+class StPhiMesonMaker : public StMaker {
   public:
-    StVecMesonMaker(const char *name, StPicoDstMaker *picoMaker, const string jobId, const int Mode, const int Energy, const int Flag_ME);
-    virtual ~StVecMesonMaker();
+    StPhiMesonMaker(const char *name, StPicoDstMaker *picoMaker, const string jobId, const int mode, const int beamType, const int flagME);
+    virtual ~StPhiMesonMaker();
     
     virtual int Init();
     virtual int Make();
@@ -31,41 +31,25 @@ class StVecMesonMaker : public StMaker {
     StPicoDst      *mPicoDst;
     StPicoEvent    *mPicoEvent;
     StRefMultCorr  *mRefMultCorr;
-    StVecMesonCut  *mVecMesonCut;
-    StVecMesonHistoManager *mVecMesonHistoManager;
-    StVecMesonUtility *mVecMesonUtility;
-    StVecMesonProManager *mVecMesonProManager;
-    StVecMesonZdcEpManager *mVecMesonZdcEpManager;
-    // StVecMesonBbcEpManager *mVecMesonBbcEpManager;
-    // StVecMesonEpdEpManager *mVecMesonEpdEpManager;
-    // StVecMesonTpcEpManager *mVecMesonTpcEpManager;
-    // StVecMesonTree *mVecMesonTree;
+
+    StAnalysisUtils *mAnaUtils; // Analysis Utilities
+    StAnalysisCut   *mAnaCut;   // Analysis Cuts
+    StZdcEpManager  *mZdcEpManager;
+    StEpdEpManager  *mEpdEpManager;
+    StTpcEpManager  *mTpcEpManager;
+    // StPhiMesonTree *mPhiMesonTree;
     
     int mMode;
-    int mEnergy;
-    int mFlag_ME;
+    int mType;
+    int mFlagME;
 
-    string mInPut_Corr_ReCenter;
+    string str_mOutPutRecoPhi;
+    string str_mOutPutPhiTree;
 
-    string mOutPut_QA;
-    string mOutPut_ZdcGainCorr;
-    // string mOutPut_BbcGainCorr;
-    string mOutPut_ReCenterPar;
-    string mOutPut_ShiftPar;
-    string mOutPut_Resolution;
-    string mOutPut_Phi;
+    TFile *file_mOutPutRecoPhi;
+    TFile *file_mOutPutPhiTree;
 
-    TFile *mFile_QA;
-    TFile *mFile_ZdcGainCorr;
-    // TFile *mFile_BbcGainCorr;
-    TFile *mFile_ReCenterPar;
-    TFile *mFile_ShiftPar;
-    TFile *mFile_Resolution;
-    TFile *mFile_Phi;
-
-    int mUsedTrackCounter;
-
-    ClassDef(StVecMesonMaker, 1)
+    ClassDef(StPhiMesonMaker, 1)
 };
 
 #endif

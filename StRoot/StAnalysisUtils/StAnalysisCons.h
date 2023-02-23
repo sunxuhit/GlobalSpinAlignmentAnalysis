@@ -40,20 +40,16 @@ namespace anaUtils
   const int mNumTrackEpMin[mNumBeamUtils]     = {2, 2};
 
   // track cuts: Kaon
-  const double mDcaTrkMax[mNumBeamUtils]       = {3.0, 3.0};
-  const double mEtaTrkMax[mNumBeamUtils]       = {1.0, 1.0};
-  const double mPrimPtTrkMin[mNumBeamUtils]    = {0.2, 0.2};
-  const double mPrimMomTrkMax[mNumBeamUtils]   = {10.0, 10.0};
+  const double mDcaKaonMax[mNumBeamUtils]     = {3.0, 3.0};
+  const double mEtaKaonMax[mNumBeamUtils]     = {1.0, 1.0};
+  const double mPrimPtKaonMin[mNumBeamUtils]  = {0.2, 0.2};
+  const double mPrimMomKaonMax[mNumBeamUtils] = {10.0, 10.0};
+  const double mNSigKaonMin[mNumBeamUtils]   = {-2.5, -2.5};
+  const double mNSigKaonMax[mNumBeamUtils]   = {2.5, 2.5};
 
   // hit cuts: EPD Event Plane Maker
   const double mMipEpdEpMax[mNumBeamUtils] = {2.0, 2.0};
   const double mMipEpdEpMin[mNumBeamUtils] = {0.3, 0.3};
-
-  // track cuts: phi Meson Maker
-  // const double mDcaDauMax     = 3.0;
-  // const double mEtaDauMax     = 1.0;
-  // const double mPrimPtDauMin  = 0.2; // for phi decay daughter K+ and K-
-  // const double mPrimMomDauMax = 10.0;
 }
 
 #endif

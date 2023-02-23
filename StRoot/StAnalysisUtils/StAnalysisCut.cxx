@@ -110,7 +110,7 @@ bool StAnalysisCut::passEventCut(StPicoEvent *picoEvent)
 
 //---------------------------------------------------------------------------------
 // Track Cuts
-bool StAnalysisCut::passTrackBasic(StPicoTrack *picoTrack)
+bool StAnalysisCut::passTrkBasic(StPicoTrack *picoTrack)
 {
   if(!picoTrack) return false;
 
@@ -133,9 +133,9 @@ bool StAnalysisCut::passTrackBasic(StPicoTrack *picoTrack)
   return true;
 }
 
-bool StAnalysisCut::passTrackQA(StPicoTrack *picoTrack, TVector3 primVtx)
+bool StAnalysisCut::passTrkQA(StPicoTrack *picoTrack, TVector3 primVtx)
 {
-  if(!passTrackBasic(picoTrack)) return false;
+  if(!passTrkBasic(picoTrack)) return false;
 
   const double vx = primVtx.x();
   const double vy = primVtx.y();
@@ -166,9 +166,9 @@ bool StAnalysisCut::passTrackQA(StPicoTrack *picoTrack, TVector3 primVtx)
 
 //---------------------------------------------------------------------------------
 // Track Cuts for TPC EP
-bool StAnalysisCut::passTrackTpcEpFull(StPicoTrack *picoTrack, TVector3 primVtx)
+bool StAnalysisCut::passTrkTpcEpFull(StPicoTrack *picoTrack, TVector3 primVtx)
 {
-  if(!passTrackBasic(picoTrack)) return false;
+  if(!passTrkBasic(picoTrack)) return false;
 
   const double vx = primVtx.x();
   const double vy = primVtx.y();
@@ -197,9 +197,9 @@ bool StAnalysisCut::passTrackTpcEpFull(StPicoTrack *picoTrack, TVector3 primVtx)
   return true;
 }
 
-bool StAnalysisCut::passTrackTpcEpEast(StPicoTrack *picoTrack, TVector3 primVtx) // neg
+bool StAnalysisCut::passTrkTpcEpEast(StPicoTrack *picoTrack, TVector3 primVtx) // neg
 {
-  if(!passTrackTpcEpFull(picoTrack, primVtx)) return false;
+  if(!passTrkTpcEpFull(picoTrack, primVtx)) return false;
 
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
@@ -211,9 +211,9 @@ bool StAnalysisCut::passTrackTpcEpEast(StPicoTrack *picoTrack, TVector3 primVtx)
   return true;
 }
 
-bool StAnalysisCut::passTrackTpcEpWest(StPicoTrack *picoTrack, TVector3 primVtx) // pos
+bool StAnalysisCut::passTrkTpcEpWest(StPicoTrack *picoTrack, TVector3 primVtx) // pos
 {
-  if(!passTrackTpcEpFull(picoTrack, primVtx)) return false;
+  if(!passTrkTpcEpFull(picoTrack, primVtx)) return false;
 
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
@@ -225,69 +225,7 @@ bool StAnalysisCut::passTrackTpcEpWest(StPicoTrack *picoTrack, TVector3 primVtx)
   return true;
 }
 
-bool StAnalysisCut::passTrackTpcFlowEast(StPicoTrack *picoTrack, TVector3 primVtx) // neg
-{
-  if(!passTrackBasic(picoTrack)) return false;
-
-  const double vx = primVtx.x();
-  const double vy = primVtx.y();
-  const double vz = primVtx.z();
-
-  // dca cut
-  if(picoTrack->gDCA(vx,vy,vz) > anaUtils::mDcaTrkMax[mType])
-  {
-    return false;
-  }
-
-  // eta cut
-  const TVector3 primMom = picoTrack->pMom(); // primary Momentum
-  const double eta = primMom.PseudoRapidity();
-  if(eta < -1.0*anaUtils::mEtaTrkMax[mType] || eta > 0.0)
-  { // eta cut: [-anaUtils::mEtaTrkMax[mType], 0.0]
-    return false;
-  }
-
-  // momentum cut: pT >= 0.2 GeV/c && p <= 10.0 GeV/c
-  if(primMom.Pt() < anaUtils::mPrimPtTrkMin[mType] || primMom.Mag() > anaUtils::mPrimMomTrkMax[mType])
-  {
-    return false;
-  }
-
-  return true;
-}
-
-bool StAnalysisCut::passTrackTpcFlowWest(StPicoTrack *picoTrack, TVector3 primVtx) // pos
-{
-  if(!passTrackBasic(picoTrack)) return false;
-
-  const double vx = primVtx.x();
-  const double vy = primVtx.y();
-  const double vz = primVtx.z();
-
-  // dca cut
-  if(picoTrack->gDCA(vx,vy,vz) > anaUtils::mDcaTrkMax[mType])
-  {
-    return false;
-  }
-
-  // eta cut
-  const TVector3 primMom = picoTrack->pMom(); // primary Momentum
-  const double eta = primMom.PseudoRapidity();
-  if(eta <= 0.0 || eta > anaUtils::mEtaTrkMax[mType])
-  { // eta cut: (0.0, anaUtils::mEtaTrkMax[mType]]
-    return false;
-  }
-
-  // momentum cut: pT >= 0.2 GeV/c && p <= 10.0 GeV/c
-  if(primMom.Pt() < anaUtils::mPrimPtTrkMin[mType] || primMom.Mag() > anaUtils::mPrimMomTrkMax[mType])
-  {
-    return false;
-  }
-
-  return true;
-}
-
-bool StAnalysisCut::passNumTrackTpcSubEpRaw(int numTrackEast, int numTrackWest)
+bool StAnalysisCut::passNumTrkTpcSubEpRaw(int numTrackEast, int numTrackWest)
 {
   if(numTrackEast < anaUtils::mNumTrackEpMin[mType] || numTrackWest < anaUtils::mNumTrackEpMin[mType])
   {
@@ -297,7 +235,7 @@ bool StAnalysisCut::passNumTrackTpcSubEpRaw(int numTrackEast, int numTrackWest)
   return kTRUE;
 }
 
-bool StAnalysisCut::passNumTrackTpcSubEpReCenter(int numTrackEast, int numTrackWest)
+bool StAnalysisCut::passNumTrkTpcSubEpReCtr(int numTrackEast, int numTrackWest)
 {
   if(numTrackEast < anaUtils::mNumTrackEpMin[mType] || numTrackWest < anaUtils::mNumTrackEpMin[mType])
   {
@@ -305,6 +243,137 @@ bool StAnalysisCut::passNumTrackTpcSubEpReCenter(int numTrackEast, int numTrackW
   }
 
   return kTRUE;
+}
+//---------------------------------------------------------------------------------
+// Track Cuts for TPC flow
+bool StAnalysisCut::passTrkTpcFlowFull(StPicoTrack *picoTrack, TVector3 primVtx) // neg
+{
+  if(!passTrkBasic(picoTrack)) return false;
+
+  const double vx = primVtx.x();
+  const double vy = primVtx.y();
+  const double vz = primVtx.z();
+
+  // dca cut
+  if(picoTrack->gDCA(vx,vy,vz) > anaUtils::mDcaKaonMax[mType])
+  {
+    return false;
+  }
+
+  // eta cut
+  const TVector3 primMom = picoTrack->pMom(); // primary Momentum
+  const double eta = primMom.PseudoRapidity();
+  if(fabs(eta) > anaUtils::mEtaKaonMax[mType])
+  { // eta cut: [-anaUtils::mEtaKaonMax[mType], anaUtils::mEtaKaonMax[mType]]
+    return false;
+  }
+
+  // momentum cut: pT >= 0.2 GeV/c && p <= 10.0 GeV/c
+  if(primMom.Pt() < anaUtils::mPrimPtKaonMin[mType] || primMom.Mag() > anaUtils::mPrimMomKaonMax[mType])
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool StAnalysisCut::passTrkTpcFlowEast(StPicoTrack *picoTrack, TVector3 primVtx) // neg
+{
+  if(!passTrkTpcFlowFull(picoTrack, primVtx)) return false;
+
+  // eta cut
+  const TVector3 primMom = picoTrack->pMom(); // primary Momentum
+  const double eta = primMom.PseudoRapidity();
+  if(eta < -1.0*anaUtils::mEtaKaonMax[mType] || eta > 0.0)
+  { // eta cut: [-anaUtils::mEtaKaonMax[mType], 0.0]
+    return false;
+  }
+
+  return true;
+}
+
+bool StAnalysisCut::passTrkTpcFlowWest(StPicoTrack *picoTrack, TVector3 primVtx) // pos
+{
+  if(!passTrkTpcFlowFull(picoTrack, primVtx)) return false;
+
+  // eta cut
+  const TVector3 primMom = picoTrack->pMom(); // primary Momentum
+  const double eta = primMom.PseudoRapidity();
+  if(eta <= 0.0 || eta > anaUtils::mEtaKaonMax[mType])
+  { // eta cut: (0.0, anaUtils::mEtaKaonMax[mType]]
+    return false;
+  }
+
+  return true;
+}
+//---------------------------------------------------------------------------------
+// Track Cuts for Kaon Candidate
+bool StAnalysisCut::passTrkKaonFull(StPicoTrack *picoTrack, TVector3 primVtx)
+{
+  if(!passTrkBasic(picoTrack)) return false;
+
+  const double vx = primVtx.x();
+  const double vy = primVtx.y();
+  const double vz = primVtx.z();
+
+  // dca cut
+  if(picoTrack->gDCA(vx,vy,vz) > anaUtils::mDcaKaonMax[mType])
+  {
+    return false;
+  }
+
+  // eta cut
+  const TVector3 primMom = picoTrack->pMom(); // primary Momentum
+  const double eta = primMom.PseudoRapidity();
+  if(fabs(eta) > anaUtils::mEtaKaonMax[mType])
+  {
+    return false;
+  }
+
+  // momentum cut: pT >= 0.2 && p <= 10.0 GeV/c
+  if(primMom.Pt() < anaUtils::mPrimPtKaonMin[mType] || primMom.Mag() > anaUtils::mPrimMomKaonMax[mType])
+  {
+    return false;
+  }
+
+  // nSigmaKaon cut: |nSigmaKaon| <= 2.5
+  const double nSigKaon = picoTrack->nSigmaKaon();
+  if(nSigmaKaon < anaUtils::mNSigKaonMin[mType] || nSigmaKaon > anaUtils::mNSigKaonMax[mType])
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool StAnalysisCut::passTrkKaonEast(StPicoTrack *picoTrack, TVector3 primVtx) // neg
+{
+  if(!passTrkKaonFull(picoTrack, primVtx)) return false;
+
+  // eta cut
+  const TVector3 primMom = picoTrack->pMom(); // primary Momentum
+  const double eta = primMom.PseudoRapidity();
+  if(eta < -1.0*anaUtils::mEtaKaonMax[mType] || eta > 0.0)
+  { // eta cut: [-anaUtils::mEtaKaonMax[mType], 0.0]
+    return false;
+  }
+
+  return true;
+}
+
+bool StAnalysisCut::passTrkKaonWest(StPicoTrack *picoTrack, TVector3 primVtx) // pos
+{
+  if(!passTrkKaonFull(picoTrack, primVtx)) return false;
+
+  // eta cut
+  const TVector3 primMom = picoTrack->pMom(); // primary Momentum
+  const double eta = primMom.PseudoRapidity();
+  if(eta <= 0.0 || eta > anaUtils::mEtaKaonMax[mType])
+  { // eta cut: (0.0, anaUtils::mEtaKaonMax[mType]]
+    return false;
+  }
+
+  return true;
 }
 //---------------------------------------------------------------------------------
 // Hit Cuts for EPD EP

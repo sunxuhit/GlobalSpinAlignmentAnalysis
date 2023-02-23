@@ -27,17 +27,24 @@ class StAnalysisCut : public TObject
     bool passEventCut(StPicoEvent *picoEvent);
 
     // Track Cuts
-    bool passTrackBasic(StPicoTrack *picoTrack);
-    bool passTrackQA(StPicoTrack *picoTrack, TVector3 primVtx);
+    bool passTrkBasic(StPicoTrack *picoTrack);
+    bool passTrkQA(StPicoTrack *picoTrack, TVector3 primVtx);
     // TPC EP
-    bool passTrackTpcEpFull(StPicoTrack *picoTrack, TVector3 primVtx);
-    bool passTrackTpcEpEast(StPicoTrack *picoTrack, TVector3 primVtx);
-    bool passTrackTpcEpWest(StPicoTrack *picoTrack, TVector3 primVtx);
-    bool passTrackTpcFlowEast(StPicoTrack *picoTrack, TVector3 primVtx);
-    bool passTrackTpcFlowWest(StPicoTrack *picoTrack, TVector3 primVtx);
-    bool passNumTrackTpcSubEpRaw(int numTrackEast, int numTrackWest);
-    bool passNumTrackTpcSubEpReCenter(int numTrackEast, int numTrackWest);
-    // EPD EP
+    bool passTrkTpcEpFull(StPicoTrack *picoTrack, TVector3 primVtx);
+    bool passTrkTpcEpEast(StPicoTrack *picoTrack, TVector3 primVtx);
+    bool passTrkTpcEpWest(StPicoTrack *picoTrack, TVector3 primVtx);
+    bool passNumTrkTpcSubEpRaw(int numTrackEast, int numTrackWest);
+    bool passNumTrkTpcSubEpReCtr(int numTrackEast, int numTrackWest);
+    // TPC Flow
+    bool passTrkTpcFlowFull(StPicoTrack *picoTrack, TVector3 primVtx);
+    bool passTrkTpcFlowEast(StPicoTrack *picoTrack, TVector3 primVtx);
+    bool passTrkTpcFlowWest(StPicoTrack *picoTrack, TVector3 primVtx);
+    // Kaon Candidate
+    bool passTrkKaonFull(StPicoTrack *picoTrack, TVector3 primVtx);
+    bool passTrkKaonEast(StPicoTrack *picoTrack, TVector3 primVtx);
+    bool passTrkKaonWest(StPicoTrack *picoTrack, TVector3 primVtx);
+
+    // EPD Hit Cuts for EPD EP
     bool passHitEpdEpFull(StPicoEpdHit *picoEpdHit);
     bool passHitEpdEpEast(StPicoEpdHit *picoEpdHit);
     bool passHitEpdEpWest(StPicoEpdHit *picoEpdHit);
