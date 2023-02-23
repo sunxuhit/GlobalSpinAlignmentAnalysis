@@ -33,9 +33,8 @@ StPhiMesonMaker::StPhiMesonMaker(const char* name, StPicoDstMaker *picoMaker, co
   mRefMultCorr = NULL;
 
   if(mMode == 0)
-  {
-    // mOutPut_QA = Form("/star/data01/pwg/sunxuhit/AuAu%s/SpinAlignment/QA/file_%s_QA_%s.root",vmsa::mBeamEnergy[energy].c_str(),vmsa::mBeamEnergy[energy].c_str(),jobId.c_str());
-    mOutPut_QA = Form("./file_%s_QA_%s.root",vmsa::mBeamEnergy[energy].c_str(),jobId.c_str());
+  { // Test phi Meson Reconstruction
+    str_mOutPutRecoPhi = Form("./file_RecoPhi_%s_%s.root",globCons::str_mBeamType[beamType].c_str(),jobId.c_str());
   }
 }
 
@@ -59,12 +58,24 @@ int StPhiMesonMaker::Init()
   }
 
   if(mMode == 0)
-  { // QA
-    mFile_QA= new TFile(mOutPut_QA.c_str(),"RECREATE");
-    mFile_QA->cd();
-    mVecMesonHistoManager->initEventQA();
-    mVecMesonHistoManager->initTrackQA();
-    mVecMesonProManager->initRunQA();
+  { // Test phi Meson Reconstruction
+    file_mOutPutRecoPhi = new TFile(str_mOutPutRecoPhi.c_str(),"RECREATE");
+
+    mZdcEpManager->readZdcGain(); // ZDC
+    mZdcEpManager->readZdcReCtr();
+    mZdcEpManager->readZdcShift();
+    mZdcEpManager->readZdcShiftFull();
+    mZdcEpManager->readZdcResolution();
+
+    mEpdEpManager->readEpdPhiWgt(); // EPD
+    mEpdEpManager->readEpdReCtr();
+    mEpdEpManager->readEpdShift();
+    mEpdEpManager->readEpdShiftFull();
+    mEpdEpManager->readEpdResolution();
+
+    mTpcEpManager->readTpcReCtr(); // TPC
+    mTpcEpManager->readTpcShift();
+    mTpcEpManager->readTpcResolution();
   }
 
   return kStOK;
@@ -75,13 +86,11 @@ int StPhiMesonMaker::Finish()
 {
   if(mMode == 0)
   {
-    if(mOutPut_QA != "")
+    if(str_mOutPutRecoPhi != "")
     {
-      mFile_QA->cd();
-      mVecMesonHistoManager->writeEventQA();
-      mVecMesonHistoManager->writeTrackQA();
-      mVecMesonProManager->writeRunQA();
-      mFile_QA->Close();
+      file_mOutPutRecoPhi->cd();
+
+      file_mOutPutRecoPhi->Close();
     }
   }
 

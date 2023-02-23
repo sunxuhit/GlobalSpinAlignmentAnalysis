@@ -406,7 +406,7 @@ void StEpdEpManager::writeEpdReCtr()
 
 void StEpdEpManager::readEpdReCtr()
 {
-  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ReCencterPar/file_EpdReCenterPar_%s.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ReCenterPar/file_EpdReCenterPar_%s.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
 
   file_mReCtrPar = TFile::Open(inputFile.c_str());
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)

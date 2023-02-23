@@ -20,59 +20,59 @@ void getTpcReCtrPar(int beamType = 0)
   const int mNumVzBin = 2; // 0: vz < 0 | 1: vz >= 0
   const int mNumCentrality = 9;
 
-  string inputFile = Form("../../data/%s/EventPlaneMaker/file_%s_ReCenterPar.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string inputFile = Form("../../data/%s/EventPlaneMaker/file_ReCenterPar_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *file_InPut = TFile::Open(inputFile.c_str());
   if(!file_InPut->IsOpen()) cout << "inputFile: " << inputFile.c_str() << "is problematic" << endl;
   cout << "inputFile sets to: " << inputFile.c_str() << endl;
 
   // ReCenter Correction | x axis is runIndex, y axis is Centrality
-  TProfile2D *p_mTpcQ2ReCenterXEast[mNumVzBin]; // 2nd EP
-  TProfile2D *p_mTpcQ2ReCenterYEast[mNumVzBin];
-  TProfile2D *p_mTpcQ2ReCenterXWest[mNumVzBin];
-  TProfile2D *p_mTpcQ2ReCenterYWest[mNumVzBin];
+  TProfile2D *p_mTpcQ2ReCtrXEast[mNumVzBin]; // 2nd EP
+  TProfile2D *p_mTpcQ2ReCtrYEast[mNumVzBin];
+  TProfile2D *p_mTpcQ2ReCtrXWest[mNumVzBin];
+  TProfile2D *p_mTpcQ2ReCtrYWest[mNumVzBin];
 
-  TProfile2D *p_mTpcQ3ReCenterXEast[mNumVzBin]; // 3rd EP
-  TProfile2D *p_mTpcQ3ReCenterYEast[mNumVzBin];
-  TProfile2D *p_mTpcQ3ReCenterXWest[mNumVzBin];
-  TProfile2D *p_mTpcQ3ReCenterYWest[mNumVzBin];
+  TProfile2D *p_mTpcQ3ReCtrXEast[mNumVzBin]; // 3rd EP
+  TProfile2D *p_mTpcQ3ReCtrYEast[mNumVzBin];
+  TProfile2D *p_mTpcQ3ReCtrXWest[mNumVzBin];
+  TProfile2D *p_mTpcQ3ReCtrYWest[mNumVzBin];
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)
   {
-    std::string proName = Form("p_mTpcQ2ReCenterXEastVz%d",iVz); // 2nd EP
-    p_mTpcQ2ReCenterXEast[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
-    proName = Form("p_mTpcQ2ReCenterYEastVz%d",iVz);
-    p_mTpcQ2ReCenterYEast[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
+    std::string proName = Form("p_mTpcQ2ReCtrXEastVz%d",iVz); // 2nd EP
+    p_mTpcQ2ReCtrXEast[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
+    proName = Form("p_mTpcQ2ReCtrYEastVz%d",iVz);
+    p_mTpcQ2ReCtrYEast[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
 
-    proName = Form("p_mTpcQ2ReCenterXWestVz%d",iVz);
-    p_mTpcQ2ReCenterXWest[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
-    proName = Form("p_mTpcQ2ReCenterYWestVz%d",iVz);
-    p_mTpcQ2ReCenterYWest[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
+    proName = Form("p_mTpcQ2ReCtrXWestVz%d",iVz);
+    p_mTpcQ2ReCtrXWest[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
+    proName = Form("p_mTpcQ2ReCtrYWestVz%d",iVz);
+    p_mTpcQ2ReCtrYWest[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
 
-    proName = Form("p_mTpcQ3ReCenterXEastVz%d",iVz); // 3rd EP
-    p_mTpcQ3ReCenterXEast[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
-    proName = Form("p_mTpcQ3ReCenterYEastVz%d",iVz);
-    p_mTpcQ3ReCenterYEast[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
+    proName = Form("p_mTpcQ3ReCtrXEastVz%d",iVz); // 3rd EP
+    p_mTpcQ3ReCtrXEast[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
+    proName = Form("p_mTpcQ3ReCtrYEastVz%d",iVz);
+    p_mTpcQ3ReCtrYEast[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
 
-    proName = Form("p_mTpcQ3ReCenterXWestVz%d",iVz);
-    p_mTpcQ3ReCenterXWest[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
-    proName = Form("p_mTpcQ3ReCenterYWestVz%d",iVz);
-    p_mTpcQ3ReCenterYWest[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
+    proName = Form("p_mTpcQ3ReCtrXWestVz%d",iVz);
+    p_mTpcQ3ReCtrXWest[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
+    proName = Form("p_mTpcQ3ReCtrYWestVz%d",iVz);
+    p_mTpcQ3ReCtrYWest[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
   }
 
-  string outputFile = Form("../../Utility/EventPlaneMaker/%s/ReCenterPar/file_%s_TpcReCenterPar.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string outputFile = Form("../../Utility/EventPlaneMaker/%s/ReCenterPar/file_TpcReCenterPar_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   cout << "outputFile: " << outputFile.c_str() << endl;
   TFile *file_OutPut = new TFile(outputFile.c_str(),"RECREATE");
   file_OutPut->cd();
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)
   {
-    p_mTpcQ2ReCenterXEast[iVz]->Write();
-    p_mTpcQ2ReCenterYEast[iVz]->Write();
-    p_mTpcQ2ReCenterXWest[iVz]->Write();
-    p_mTpcQ2ReCenterYWest[iVz]->Write();
+    p_mTpcQ2ReCtrXEast[iVz]->Write();
+    p_mTpcQ2ReCtrYEast[iVz]->Write();
+    p_mTpcQ2ReCtrXWest[iVz]->Write();
+    p_mTpcQ2ReCtrYWest[iVz]->Write();
 
-    p_mTpcQ3ReCenterXEast[iVz]->Write();
-    p_mTpcQ3ReCenterYEast[iVz]->Write();
-    p_mTpcQ3ReCenterXWest[iVz]->Write();
-    p_mTpcQ3ReCenterYWest[iVz]->Write();
+    p_mTpcQ3ReCtrXEast[iVz]->Write();
+    p_mTpcQ3ReCtrYEast[iVz]->Write();
+    p_mTpcQ3ReCtrXWest[iVz]->Write();
+    p_mTpcQ3ReCtrYWest[iVz]->Write();
   }
   file_OutPut->Close();
 
@@ -129,7 +129,7 @@ void getTpcReCtrPar(int beamType = 0)
     c_TpcEp3RawDist[iCent]->SaveAs(figName.c_str());
   }
 
-  string outputFileWgtEp = Form("../../data/%s/EventPlaneMaker/file_%s_TpcRawEpDist.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string outputFileWgtEp = Form("../../data/%s/EventPlaneMaker/file_TpcRawEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   cout << "outputFile of Raw EP: " << outputFileWgtEp.c_str() << endl;
   TFile *file_OutPutWgtEp = new TFile(outputFileWgtEp.c_str(),"RECREATE");
   file_OutPutWgtEp->cd();

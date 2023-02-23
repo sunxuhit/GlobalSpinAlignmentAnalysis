@@ -23,7 +23,7 @@ class StPhiMesonMaker : public StMaker {
     
     virtual int Init();
     virtual int Make();
-    virtual void  Clear(Option_t *opt="");
+    virtual void Clear(Option_t *opt="");
     virtual int Finish();
     
   private:
@@ -37,7 +37,7 @@ class StPhiMesonMaker : public StMaker {
     StZdcEpManager  *mZdcEpManager;
     StEpdEpManager  *mEpdEpManager;
     StTpcEpManager  *mTpcEpManager;
-    // StPhiMesonTree *mPhiMesonTree;
+    // StPhiMesonTree  *mPhiMesonTree;
     
     int mMode;
     int mType;

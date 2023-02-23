@@ -20,7 +20,7 @@ void getEpdReCtrPar(int beamType = 0)
   const int mNumVzBin = 2; // 0: vz < 0 | 1: vz >= 0
   const int mNumCentrality = 9;
 
-  string inputFile = Form("../../data/%s/EventPlaneMaker/file_%s_ReCenterPar.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string inputFile = Form("../../data/%s/EventPlaneMaker/file_ReCenterPar_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *file_InPut = TFile::Open(inputFile.c_str());
   if(!file_InPut->IsOpen()) cout << "inputFile: " << inputFile.c_str() << "is problematic" << endl;
   cout << "inputFile sets to: " << inputFile.c_str() << endl;
@@ -43,7 +43,7 @@ void getEpdReCtrPar(int beamType = 0)
     p_mEpdQ1ReCtrYWest[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
   }
 
-  string outputFile = Form("../../Utility/EventPlaneMaker/%s/ReCenterPar/file_%s_EpdReCenterPar.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string outputFile = Form("../../Utility/EventPlaneMaker/%s/ReCenterPar/file_EpdReCenterPar_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   cout << "outputFile: " << outputFile.c_str() << endl;
   TFile *file_OutPut = new TFile(outputFile.c_str(),"RECREATE");
   file_OutPut->cd();
@@ -88,7 +88,7 @@ void getEpdReCtrPar(int beamType = 0)
     c_EpdEp1RawDist[iCent]->SaveAs(figName.c_str());
   }
 
-  string outputFileWgtEp = Form("../../data/%s/EventPlaneMaker/file_%s_EpdWgtEpDist.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string outputFileWgtEp = Form("../../data/%s/EventPlaneMaker/file_EpdWgtEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   cout << "outputFile of Raw EP: " << outputFileWgtEp.c_str() << endl;
   TFile *file_OutPutWgtEp = new TFile(outputFileWgtEp.c_str(),"RECREATE");
   file_OutPutWgtEp->cd();
