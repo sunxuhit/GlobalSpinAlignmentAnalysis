@@ -420,12 +420,12 @@ void StTpcEpManager::readTpcShift()
   }
 }
 
-double StTpcEpManager::getPsi2ShiftEast()
+double StTpcEpManager::getPsi2ShiftEast(TVector2 Q2Vector)
 {
-  TVector2 Q2Vector = getQ2VecReCtrEast();
+  // TVector2 Q2Vector = getQ2VecReCtrEast();
   const double Psi2ReCenter = TMath::ATan2(Q2Vector.Y(),Q2Vector.X())/2.0; // -pi/2 to pi/2
-
   double deltaPsi2 = 0.0;
+
   for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
   {
     const int binCos     = p_mTpcQ2ShiftCosEast[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
@@ -443,12 +443,12 @@ double StTpcEpManager::getPsi2ShiftEast()
   return Psi2Shift;
 }
 
-double StTpcEpManager::getPsi2ShiftWest()
+double StTpcEpManager::getPsi2ShiftWest(TVector2 Q2Vector)
 {
-  TVector2 Q2Vector = getQ2VecReCtrWest();
-
+  // TVector2 Q2Vector = getQ2VecReCtrWest();
   const double Psi2ReCenter = TMath::ATan2(Q2Vector.Y(),Q2Vector.X())/2.0;
   double deltaPsi2 = 0.0;
+
   for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
   {
     const int binCos     = p_mTpcQ2ShiftCosWest[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
@@ -475,12 +475,12 @@ double StTpcEpManager::transPsi2(double Psi2)
   return Psi2Corr;
 }
 
-double StTpcEpManager::getPsi3ShiftEast()
+double StTpcEpManager::getPsi3ShiftEast(TVector2 Q3Vector)
 {
-  TVector2 Q3Vector = getQ3VecReCtrEast();
+  // TVector2 Q3Vector = getQ3VecReCtrEast();
   const double Psi3ReCenter = TMath::ATan2(Q3Vector.Y(),Q3Vector.X())/3.0; // -pi/3 to pi/3
-
   double deltaPsi3 = 0.0;
+
   for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
   {
     const int binCos     = p_mTpcQ3ShiftCosEast[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
@@ -498,12 +498,12 @@ double StTpcEpManager::getPsi3ShiftEast()
   return Psi3Shift;
 }
 
-double StTpcEpManager::getPsi3ShiftWest()
+double StTpcEpManager::getPsi3ShiftWest(TVector2 Q3Vector)
 {
-  TVector2 Q3Vector = getQ3VecReCtrWest();
-
+  // TVector2 Q3Vector = getQ3VecReCtrWest();
   const double Psi3ReCenter = TMath::ATan2(Q3Vector.Y(),Q3Vector.X())/3.0;
   double deltaPsi3 = 0.0;
+
   for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
   {
     const int binCos     = p_mTpcQ3ShiftCosWest[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);

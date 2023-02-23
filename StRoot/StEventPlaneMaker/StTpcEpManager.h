@@ -45,11 +45,11 @@ class StTpcEpManager : public TObject
     void fillTpcShiftWest();
     void writeTpcShift();
     void readTpcShift();
-    double getPsi2ShiftEast(); // 2nd shift Psi2
-    double getPsi2ShiftWest();
+    double getPsi2ShiftEast(TVector2 Q2Vector); // 2nd shift Psi2
+    double getPsi2ShiftWest(TVector2 Q2Vector);
     double transPsi2(double Psi2);
-    double getPsi3ShiftEast(); // 3rd shift Psi3
-    double getPsi3ShiftWest();
+    double getPsi3ShiftEast(TVector2 Q3Vector); // 3rd shift Psi3
+    double getPsi3ShiftWest(TVector2 Q3Vector);
     double transPsi3(double Psi3);
 
     // Event Plane Resolution
@@ -72,6 +72,7 @@ class StTpcEpManager : public TObject
     TVector2 getQ2VecRawWest();
     TVector2 getQ2VecReCtrEast();
     TVector2 getQ2VecReCtrWest();
+
     double getPsi2RawEast();
     double getPsi2RawWest();
     double getPsi2ReCtrEast();
@@ -81,12 +82,13 @@ class StTpcEpManager : public TObject
     TVector2 getQ3VecRawWest();
     TVector2 getQ3VecReCtrEast();
     TVector2 getQ3VecReCtrWest();
+
     double getPsi3RawEast();
     double getPsi3RawWest();
     double getPsi3ReCtrEast();
     double getPsi3ReCtrWest();
 
-    int getNumTrkRawEast();
+    int getNumTrkRawEast(); // num of Tracks used in EP reconstruction
     int getNumTrkRawWest();
     int getNumTrkReCtrEast();
     int getNumTrkReCtrWest();
