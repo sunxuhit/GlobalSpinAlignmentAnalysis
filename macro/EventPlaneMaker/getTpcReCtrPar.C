@@ -9,12 +9,6 @@
 
 #include "../../Utility/include/StSpinAlignmentCons.h"
 
-#define _RawEp_ 1
-#define _WgtEp_ 0
-#define _ReCtrEp_ 0
-#define _ShiftEp_ 0
-#define _ShiftFullEp_ 0
-
 void getTpcReCtrPar(int beamType = 0)
 {
   const int mNumVzBin = 2; // 0: vz < 0 | 1: vz >= 0
@@ -101,38 +95,28 @@ void getTpcReCtrPar(int beamType = 0)
     h_mTpcEp3RawCorr[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
   }
 
-  TCanvas *c_TpcEp2RawDist[mNumCentrality];
+  TCanvas *c_TpcEpRawDist[mNumCentrality];
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string canvName = Form("c_TpcEp2RawDistCent%d",iCent);
-    c_TpcEp2RawDist[iCent] = new TCanvas(canvName.c_str(),canvName.c_str(),10,10,1500,500);
-    c_TpcEp2RawDist[iCent]->Divide(3,1);
-    c_TpcEp2RawDist[iCent]->cd(1); h_mTpcEp2RawEast[iCent]->ProjectionY()->Draw();
-    c_TpcEp2RawDist[iCent]->cd(2); h_mTpcEp2RawWest[iCent]->ProjectionY()->Draw();
-    c_TpcEp2RawDist[iCent]->cd(3); h_mTpcEp2RawCorr[iCent]->Draw("colz");
+    std::string canvName = Form("c_TpcEpRawDistCent%d",iCent);
+    c_TpcEpRawDist[iCent] = new TCanvas(canvName.c_str(),canvName.c_str(),10,10,1500,1000);
+    c_TpcEpRawDist[iCent]->Divide(3,2);
+    c_TpcEpRawDist[iCent]->cd(1); h_mTpcEp2RawEast[iCent]->ProjectionY()->Draw();
+    c_TpcEpRawDist[iCent]->cd(2); h_mTpcEp2RawWest[iCent]->ProjectionY()->Draw();
+    c_TpcEpRawDist[iCent]->cd(3); h_mTpcEp2RawCorr[iCent]->Draw("colz");
 
-    std::string figName = Form("../../figures/%s/EventPlaneMaker/TpcRawEp2Cent%d_%s.pdf",globCons::str_mBeamType[beamType].c_str(),iCent,globCons::str_mBeamType[beamType].c_str());
-    c_TpcEp2RawDist[iCent]->SaveAs(figName.c_str());
+    c_TpcEpRawDist[iCent]->cd(4); h_mTpcEp3RawEast[iCent]->ProjectionY()->Draw();
+    c_TpcEpRawDist[iCent]->cd(5); h_mTpcEp3RawWest[iCent]->ProjectionY()->Draw();
+    c_TpcEpRawDist[iCent]->cd(6); h_mTpcEp3RawCorr[iCent]->Draw("colz");
+
+    std::string figName = Form("../../figures/%s/EventPlaneMaker/TpcRawEpCent%d_%s.pdf",globCons::str_mBeamType[beamType].c_str(),iCent,globCons::str_mBeamType[beamType].c_str());
+    c_TpcEpRawDist[iCent]->SaveAs(figName.c_str());
   }
 
-  TCanvas *c_TpcEp3RawDist[mNumCentrality];
-  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
-  {
-    std::string canvName = Form("c_TpcEp3RawDistCent%d",iCent);
-    c_TpcEp3RawDist[iCent] = new TCanvas(canvName.c_str(),canvName.c_str(),10,10,1500,500);
-    c_TpcEp3RawDist[iCent]->Divide(3,1);
-    c_TpcEp3RawDist[iCent]->cd(1); h_mTpcEp3RawEast[iCent]->ProjectionY()->Draw();
-    c_TpcEp3RawDist[iCent]->cd(2); h_mTpcEp3RawWest[iCent]->ProjectionY()->Draw();
-    c_TpcEp3RawDist[iCent]->cd(3); h_mTpcEp3RawCorr[iCent]->Draw("colz");
-
-    std::string figName = Form("../../figures/%s/EventPlaneMaker/TpcRawEp3Cent%d_%s.pdf",globCons::str_mBeamType[beamType].c_str(),iCent,globCons::str_mBeamType[beamType].c_str());
-    c_TpcEp3RawDist[iCent]->SaveAs(figName.c_str());
-  }
-
-  string outputFileWgtEp = Form("../../data/%s/EventPlaneMaker/file_TpcRawEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
-  cout << "outputFile of Raw EP: " << outputFileWgtEp.c_str() << endl;
-  TFile *file_OutPutWgtEp = new TFile(outputFileWgtEp.c_str(),"RECREATE");
-  file_OutPutWgtEp->cd();
+  string outputFileRawEp = Form("../../data/%s/EventPlaneMaker/file_TpcRawEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  cout << "outputFile of Raw EP: " << outputFileRawEp.c_str() << endl;
+  TFile *file_OutPutRawEp = new TFile(outputFileRawEp.c_str(),"RECREATE");
+  file_OutPutRawEp->cd();
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     h_mTpcEp2RawEast[iCent]->Write();
@@ -143,5 +127,5 @@ void getTpcReCtrPar(int beamType = 0)
     h_mTpcEp3RawWest[iCent]->Write();
     h_mTpcEp3RawCorr[iCent]->Write();
   }
-  file_OutPutWgtEp->Close();
+  file_OutPutRawEp->Close();
 }

@@ -513,7 +513,7 @@ void StEpdEpManager::writeEpdShift()
 
 void StEpdEpManager::readEpdShift()
 {
-  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ShiftParameter/file_EpdShiftPar_%s.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ShiftPar/file_EpdShiftPar_%s.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
 
   file_mShiftPar = TFile::Open(inputFile.c_str());
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)
@@ -639,7 +639,7 @@ void StEpdEpManager::writeEpdShiftFull()
 
 void StEpdEpManager::readEpdShiftFull()
 {
-  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ShiftParameter/file_EpdShiftParFull_%s.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ShiftPar/file_EpdShiftParFull_%s.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   file_mShiftPar = TFile::Open(inputFile.c_str());
 
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)
@@ -1005,7 +1005,7 @@ void StEpdEpManager::initEpdSubEpRaw()
     histName = Form("h_mEpdEp1RawFullCent%d",iCent);
     h_mEpdEp1RawFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mEpdEp1RawCorrCent%d",iCent);
-    h_mEpdEp1RawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mEpdEp1RawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),90,-1.0*TMath::Pi(),TMath::Pi(),90,-1.0*TMath::Pi(),TMath::Pi());
   }
 }
 
@@ -1040,7 +1040,7 @@ void StEpdEpManager::initEpdSubEpWgt()
     histName = Form("h_mEpdEp1WgtFullCent%d",iCent);
     h_mEpdEp1WgtFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mEpdEp1WgtCorrCent%d",iCent);
-    h_mEpdEp1WgtCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mEpdEp1WgtCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),90,-1.0*TMath::Pi(),TMath::Pi(),90,-1.0*TMath::Pi(),TMath::Pi());
   }
 }
 
@@ -1075,7 +1075,7 @@ void StEpdEpManager::initEpdSubEpReCtr()
     histName = Form("h_mEpdEp1ReCtrFullCent%d",iCent);
     h_mEpdEp1ReCtrFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mEpdEp1ReCtrCorrCent%d",iCent);
-    h_mEpdEp1ReCtrCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mEpdEp1ReCtrCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),90,-1.0*TMath::Pi(),TMath::Pi(),90,-1.0*TMath::Pi(),TMath::Pi());
   }
 }
 
@@ -1110,7 +1110,7 @@ void StEpdEpManager::initEpdSubEpShift()
     histName = Form("h_mEpdEp1ShiftFullCent%d",iCent);
     h_mEpdEp1ShiftFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mEpdEp1ShiftCorrCent%d",iCent);
-    h_mEpdEp1ShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mEpdEp1ShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),90,-1.0*TMath::Pi(),TMath::Pi(),90,-1.0*TMath::Pi(),TMath::Pi());
   }
 }
 

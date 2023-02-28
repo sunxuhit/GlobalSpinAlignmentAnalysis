@@ -390,7 +390,7 @@ void StTpcEpManager::writeTpcShift()
 
 void StTpcEpManager::readTpcShift()
 {
-  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ShiftParameter/file_TpcShiftPar_%s.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ShiftPar/file_TpcShiftPar_%s.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
 
   file_mShiftPar = TFile::Open(inputFile.c_str());
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)
@@ -788,18 +788,18 @@ void StTpcEpManager::initTpcSubEpRaw()
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     std::string histName = Form("h_mTpcEp2RawEastCent%d",iCent); // 2nd EP
-    h_mTpcEp2RawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2RawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp2RawWestCent%d",iCent);
-    h_mTpcEp2RawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2RawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp2RawCorrCent%d",iCent);
-    h_mTpcEp2RawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2RawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),180,-1.0*TMath::Pi(),TMath::Pi(),180,-1.0*TMath::Pi(),TMath::Pi());
 
     histName = Form("h_mTpcEp3RawEastCent%d",iCent); // 3rd EP
-    h_mTpcEp3RawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3RawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp3RawWestCent%d",iCent);
-    h_mTpcEp3RawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3RawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp3RawCorrCent%d",iCent);
-    h_mTpcEp3RawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3RawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),270,-1.0*TMath::Pi(),TMath::Pi(),270,-1.0*TMath::Pi(),TMath::Pi());
   }
 }
 
@@ -834,18 +834,18 @@ void StTpcEpManager::initTpcSubEpReCtr()
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     std::string histName = Form("h_mTpcEp2ReCtrEastCent%d",iCent); // 2nd EP
-    h_mTpcEp2ReCtrEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2ReCtrEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp2ReCtrWestCent%d",iCent);
-    h_mTpcEp2ReCtrWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2ReCtrWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp2ReCtrCorrCent%d",iCent);
-    h_mTpcEp2ReCtrCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2ReCtrCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),180,-1.0*TMath::Pi(),TMath::Pi(),180,-1.0*TMath::Pi(),TMath::Pi());
 
     histName = Form("h_mTpcEp3ReCtrEastCent%d",iCent); // 3rd EP
-    h_mTpcEp3ReCtrEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3ReCtrEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp3ReCtrWestCent%d",iCent);
-    h_mTpcEp3ReCtrWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3ReCtrWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp3ReCtrCorrCent%d",iCent);
-    h_mTpcEp3ReCtrCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3ReCtrCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),270,-1.0*TMath::Pi(),TMath::Pi(),270,-1.0*TMath::Pi(),TMath::Pi());
   }
 }
 
@@ -880,18 +880,18 @@ void StTpcEpManager::initTpcSubEpShift()
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     std::string histName = Form("h_mTpcEp2ShiftEastCent%d",iCent); // 2nd EP
-    h_mTpcEp2ShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2ShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp2ShiftWestCent%d",iCent);
-    h_mTpcEp2ShiftWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2ShiftWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp2ShiftCorrCent%d",iCent);
-    h_mTpcEp2ShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2ShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),180,-1.0*TMath::Pi(),TMath::Pi(),180,-1.0*TMath::Pi(),TMath::Pi());
 
     histName = Form("h_mTpcEp3ShiftEastCent%d",iCent); // 3rd EP
-    h_mTpcEp3ShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3ShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp3ShiftWestCent%d",iCent);
-    h_mTpcEp3ShiftWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3ShiftWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp3ShiftCorrCent%d",iCent);
-    h_mTpcEp3ShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),360,-1.0*TMath::Pi(),TMath::Pi(),360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3ShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),270,-1.0*TMath::Pi(),TMath::Pi(),270,-1.0*TMath::Pi(),TMath::Pi());
   }
 }
 

@@ -9,12 +9,6 @@
 
 #include "../../Utility/include/StSpinAlignmentCons.h"
 
-#define _RawEp_ 1
-#define _WgtEp_ 0
-#define _ReCtrEp_ 0
-#define _ShiftEp_ 0
-#define _ShiftFullEp_ 0
-
 void getZdcReCtrPar(int beamType = 0)
 {
   const int mNumVzBin = 2; // 0: vz < 0 | 1: vz >= 0

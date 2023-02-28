@@ -336,7 +336,7 @@ bool StAnalysisCut::passTrkKaonFull(StPicoTrack *picoTrack, TVector3 primVtx)
     return false;
   }
 
-  // nSigmaKaon cut: |nSigmaKaon| <= 2.5
+  // nSigmaKaon cut: |nSigmaKaon| <= 3.0
   const double nSigKaon = picoTrack->nSigmaKaon();
   if(nSigKaon < anaUtils::mNSigKaonMin[mType] || nSigKaon > anaUtils::mNSigKaonMax[mType])
   {

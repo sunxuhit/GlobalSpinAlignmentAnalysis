@@ -19,7 +19,7 @@ namespace anaUtils
   // const int mNumVzBin[mNumBeamUtils]                 = {2, 2}; // 0 for vz < 0 & 1 for vz >= 0
 
   // track cuts: Basic 
-  const int mHitsFitTpcMin[mNumBeamUtils]      = {15, 15};
+  const int mHitsFitTpcMin[mNumBeamUtils]      = {15, 15}; // Default >= 15 | SysError: >= 20
   const int mHitsMaxTpcMin[mNumBeamUtils]      = {0, 0};
   const double mHitsRatioTpcMin[mNumBeamUtils] = {0.52, 0.52};
   // const int   mHitsDedxTpcMin[mNumBeamUtils]  = {5, 5}; // not used
@@ -40,16 +40,25 @@ namespace anaUtils
   const int mNumTrackEpMin[mNumBeamUtils]     = {2, 2};
 
   // track cuts: Kaon
-  const double mDcaKaonMax[mNumBeamUtils]     = {3.0, 3.0};
+  const double mDcaKaonMax[mNumBeamUtils]     = {3.0, 3.0}; // Default: <= 3.0 | SysError: <= 2.0 & <= 2.5
   const double mEtaKaonMax[mNumBeamUtils]     = {1.0, 1.0};
   const double mPrimPtKaonMin[mNumBeamUtils]  = {0.2, 0.2};
   const double mPrimMomKaonMax[mNumBeamUtils] = {10.0, 10.0};
-  const double mNSigKaonMin[mNumBeamUtils]   = {-2.5, -2.5};
-  const double mNSigKaonMax[mNumBeamUtils]   = {2.5, 2.5};
+  const double mNSigKaonMin[mNumBeamUtils]    = {-3.0, -3.0}; // Default: <= 2.5 | SysError: <= 3.0 & <= 2.0
+  const double mNSigKaonMax[mNumBeamUtils]    = {3.0, 3.0};
+  const double mMass2KaonMin[mNumBeamUtils]   = {0.1, 0.1};
+  const double mMass2KaonMax[mNumBeamUtils]   = {0.4, 0.4};
 
   // hit cuts: EPD Event Plane Maker
   const double mMipEpdEpMax[mNumBeamUtils] = {2.0, 2.0};
   const double mMipEpdEpMin[mNumBeamUtils] = {0.3, 0.3};
+
+  // constants used in StPhiMesonMaker
+  const double mMassPion = 0.13957;
+  const double mMassKaon = 0.49368;
+  const double mMassProton = 0.93827;
+  const double mMassPhiMin = 0.98;
+  const double mMassPhiMax = 1.08;
 }
 
 #endif
