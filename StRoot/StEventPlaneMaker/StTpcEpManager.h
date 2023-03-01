@@ -197,6 +197,7 @@ class StTpcEpManager : public TObject
     TH2F *h_mTpcEp3RawCorr[mNumCentrality]; // Psi3East vs Psi3West
 
     TH2F *h_mTpcEp2ReCtrEast[mNumCentrality]; // 2nd recenter EP
+    TH2F *h_mTpcEp2ReCtrWest[mNumCentrality];
     TH2F *h_mTpcEp2ReCtrFull[mNumCentrality];
     TH2F *h_mTpcEp2ReCtrCorr[mNumCentrality]; // Psi2East vs Psi2West
 
