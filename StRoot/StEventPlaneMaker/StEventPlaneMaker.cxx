@@ -468,6 +468,11 @@ int StEventPlaneMaker::Make()
 	      mTpcEpManager->addTrackRawWest(picoTrack);
 	      mTpcEpManager->fillTpcReCtrWest(picoTrack); // fill TPC ReCenter Parameters West
 	    }
+	    if( mAnaCut->passTrkTpcEpFull(picoTrack, primVtx) )
+	    {
+	      mTpcEpManager->addTrackRawFull(picoTrack);
+	      mTpcEpManager->fillTpcReCtrFull(picoTrack); // fill TPC ReCenter Parameters Full
+	    }
 	  }
 	  if(mMode == 2 || mMode == 4) // calculate recentered Q2Vector and Q3Vector from TPC
 	  {
@@ -478,6 +483,10 @@ int StEventPlaneMaker::Make()
 	    if( mAnaCut->passTrkTpcEpWest(picoTrack, primVtx) ) // positive eta
 	    {
 	      mTpcEpManager->addTrackReCtrWest(picoTrack);
+	    }
+	    if( mAnaCut->passTrkTpcEpFull(picoTrack, primVtx) )
+	    {
+	      mTpcEpManager->addTrackReCtrFull(picoTrack);
 	    }
 	  }
 	}
@@ -511,9 +520,11 @@ int StEventPlaneMaker::Make()
 	  {
 	    const double Psi2RawEast = mTpcEpManager->getPsi2RawEast();
 	    const double Psi2RawWest = mTpcEpManager->getPsi2RawWest();
+	    const double Psi2RawFull = mTpcEpManager->getPsi2RawFull();
 	    const double Psi3RawEast = mTpcEpManager->getPsi3RawEast();
 	    const double Psi3RawWest = mTpcEpManager->getPsi3RawWest();
-	    mTpcEpManager->fillTpcSubEpRaw(Psi2RawEast, Psi2RawWest, Psi3RawEast, Psi3RawWest);
+	    const double Psi3RawFull = mTpcEpManager->getPsi3RawFull();
+	    mTpcEpManager->fillTpcSubEpRaw(Psi2RawEast, Psi2RawWest, Psi2RawFull, Psi3RawEast, Psi3RawWest, Psi3RawFull);
 	  }
 	}
 	if(mMode == 2) // fill shift correction parameter for ZDC & EPD & TPC Sub EP
@@ -545,13 +556,16 @@ int StEventPlaneMaker::Make()
 	  const int numTrkReCtrWest = mTpcEpManager->getNumTrkReCtrWest();
 	  if(mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest))
 	  {
-	    const double Psi2ReCenterEast = mTpcEpManager->getPsi2ReCtrEast();
-	    const double Psi2ReCenterWest = mTpcEpManager->getPsi2ReCtrWest();
-	    const double Psi3ReCenterEast = mTpcEpManager->getPsi3ReCtrEast();
-	    const double Psi3ReCenterWest = mTpcEpManager->getPsi3ReCtrWest();
-	    mTpcEpManager->fillTpcSubEpReCtr(Psi2ReCenterEast, Psi2ReCenterWest, Psi3ReCenterEast, Psi3ReCenterWest);
+	    const double Psi2ReCtrEast = mTpcEpManager->getPsi2ReCtrEast();
+	    const double Psi2ReCtrWest = mTpcEpManager->getPsi2ReCtrWest();
+	    const double Psi2ReCtrFull = mTpcEpManager->getPsi2ReCtrFull();
+	    const double Psi3ReCtrEast = mTpcEpManager->getPsi3ReCtrEast();
+	    const double Psi3ReCtrWest = mTpcEpManager->getPsi3ReCtrWest();
+	    const double Psi3ReCtrFull = mTpcEpManager->getPsi3ReCtrFull();
+	    mTpcEpManager->fillTpcSubEpReCtr(Psi2ReCtrEast, Psi2ReCtrWest, Psi2ReCtrFull, Psi3ReCtrEast, Psi3ReCtrWest, Psi3ReCtrFull);
 	    mTpcEpManager->fillTpcShiftEast();
 	    mTpcEpManager->fillTpcShiftWest();
+	    mTpcEpManager->fillTpcShiftFull();
 	  }
 	}
 	if(mMode == 3) // fill shift correction parameter for ZDC & EPD Full EP
@@ -610,15 +624,19 @@ int StEventPlaneMaker::Make()
 	  {
 	    const TVector2 vQ2ReCtrEast = mTpcEpManager->getQ2VecReCtrEast();
 	    const TVector2 vQ2ReCtrWest = mTpcEpManager->getQ2VecReCtrWest();
+	    const TVector2 vQ2ReCtrFull = mTpcEpManager->getQ2VecReCtrFull();
 	    const TVector2 vQ3ReCtrEast = mTpcEpManager->getQ3VecReCtrEast();
 	    const TVector2 vQ3ReCtrWest = mTpcEpManager->getQ3VecReCtrWest();
+	    const TVector2 vQ3ReCtrFull = mTpcEpManager->getQ3VecReCtrFull();
 
 	    const double Psi2ShiftEast = mTpcEpManager->getPsi2ShiftEast(vQ2ReCtrEast);
 	    const double Psi2ShiftWest = mTpcEpManager->getPsi2ShiftWest(vQ2ReCtrWest);
+	    const double Psi2ShiftFull = mTpcEpManager->getPsi2ShiftFull(vQ2ReCtrFull);
 	    const double Psi3ShiftEast = mTpcEpManager->getPsi3ShiftEast(vQ3ReCtrEast);
 	    const double Psi3ShiftWest = mTpcEpManager->getPsi3ShiftWest(vQ3ReCtrWest);
+	    const double Psi3ShiftFull = mTpcEpManager->getPsi3ShiftFull(vQ3ReCtrFull);
 
-	    mTpcEpManager->fillTpcSubEpShift(Psi2ShiftEast, Psi2ShiftWest, Psi3ShiftEast, Psi3ShiftWest);
+	    mTpcEpManager->fillTpcSubEpShift(Psi2ShiftEast, Psi2ShiftWest, Psi2ShiftFull, Psi3ShiftEast, Psi3ShiftWest, Psi3ShiftFull);
 	    mTpcEpManager->fillTpcResolution(Psi2ShiftEast, Psi2ShiftWest, Psi3ShiftEast, Psi3ShiftWest);
 	  }
 	}
