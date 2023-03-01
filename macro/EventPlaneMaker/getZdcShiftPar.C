@@ -29,14 +29,14 @@ void getZdcShiftPar(int beamType = 0)
   {
     for(int iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order
     {
-      std::string proName = Form("p_mZdcQShiftCos%dEastVz%d",iShift,iVz);
+      std::string proName = Form("p_mZdcQ1ShiftCos%dEastVz%d",iShift,iVz);
       p_mZdcQ1ShiftCosEast[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
-      proName = Form("p_mZdcQShiftSin%dEastVz%d",iShift,iVz);
+      proName = Form("p_mZdcQ1ShiftSin%dEastVz%d",iShift,iVz);
       p_mZdcQ1ShiftSinEast[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
 
-      proName = Form("p_mZdcQShiftCos%dWestVz%d",iShift,iVz);
+      proName = Form("p_mZdcQ1ShiftCos%dWestVz%d",iShift,iVz);
       p_mZdcQ1ShiftCosWest[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
-      proName = Form("p_mZdcQShiftSin%dWestVz%d",iShift,iVz);
+      proName = Form("p_mZdcQ1ShiftSin%dWestVz%d",iShift,iVz);
       p_mZdcQ1ShiftSinWest[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
     }
   }

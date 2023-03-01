@@ -25,11 +25,15 @@ void getTpcShiftPar(int beamType = 0)
   TProfile2D *p_mTpcQ2ShiftSinEast[mNumVzBin][mNumShiftCorr];
   TProfile2D *p_mTpcQ2ShiftCosWest[mNumVzBin][mNumShiftCorr];
   TProfile2D *p_mTpcQ2ShiftSinWest[mNumVzBin][mNumShiftCorr];
+  TProfile2D *p_mTpcQ2ShiftCosFull[mNumVzBin][mNumShiftCorr];
+  TProfile2D *p_mTpcQ2ShiftSinFull[mNumVzBin][mNumShiftCorr];
 
   TProfile2D *p_mTpcQ3ShiftCosEast[mNumVzBin][mNumShiftCorr]; // 3rd EP
   TProfile2D *p_mTpcQ3ShiftSinEast[mNumVzBin][mNumShiftCorr];
   TProfile2D *p_mTpcQ3ShiftCosWest[mNumVzBin][mNumShiftCorr];
   TProfile2D *p_mTpcQ3ShiftSinWest[mNumVzBin][mNumShiftCorr];
+  TProfile2D *p_mTpcQ3ShiftCosFull[mNumVzBin][mNumShiftCorr];
+  TProfile2D *p_mTpcQ3ShiftSinFull[mNumVzBin][mNumShiftCorr];
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)
   {
     for(int iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order
@@ -44,6 +48,11 @@ void getTpcShiftPar(int beamType = 0)
       proName = Form("p_mTpcQ2ShiftSin%dWestVz%d",iShift,iVz);
       p_mTpcQ2ShiftSinWest[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
 
+      proName = Form("p_mTpcQ2ShiftCos%dFullVz%d",iShift,iVz);
+      p_mTpcQ2ShiftCosFull[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
+      proName = Form("p_mTpcQ2ShiftSin%dFullVz%d",iShift,iVz);
+      p_mTpcQ2ShiftSinFull[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
+
       proName = Form("p_mTpcQ3ShiftCos%dEastVz%d",iShift,iVz); // 3rd EP
       p_mTpcQ3ShiftCosEast[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
       proName = Form("p_mTpcQ3ShiftSin%dEastVz%d",iShift,iVz);
@@ -53,6 +62,11 @@ void getTpcShiftPar(int beamType = 0)
       p_mTpcQ3ShiftCosWest[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
       proName = Form("p_mTpcQ3ShiftSin%dWestVz%d",iShift,iVz);
       p_mTpcQ3ShiftSinWest[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
+
+      proName = Form("p_mTpcQ3ShiftCos%dFullVz%d",iShift,iVz);
+      p_mTpcQ3ShiftCosFull[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
+      proName = Form("p_mTpcQ3ShiftSin%dFullVz%d",iShift,iVz);
+      p_mTpcQ3ShiftSinFull[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
     }
   }
 
@@ -68,11 +82,15 @@ void getTpcShiftPar(int beamType = 0)
       p_mTpcQ2ShiftSinEast[iVz][iShift]->Write();
       p_mTpcQ2ShiftCosWest[iVz][iShift]->Write();
       p_mTpcQ2ShiftSinWest[iVz][iShift]->Write();
+      p_mTpcQ2ShiftCosFull[iVz][iShift]->Write();
+      p_mTpcQ2ShiftSinFull[iVz][iShift]->Write();
 
       p_mTpcQ3ShiftCosEast[iVz][iShift]->Write();
       p_mTpcQ3ShiftSinEast[iVz][iShift]->Write();
       p_mTpcQ3ShiftCosWest[iVz][iShift]->Write();
       p_mTpcQ3ShiftSinWest[iVz][iShift]->Write();
+      p_mTpcQ3ShiftCosFull[iVz][iShift]->Write();
+      p_mTpcQ3ShiftSinFull[iVz][iShift]->Write();
     }
   }
   file_OutPut->Close();
@@ -80,10 +98,12 @@ void getTpcShiftPar(int beamType = 0)
   // Event Plane Distribution | x axis is runIndex, y axis is EP angle
   TH2F *h_mTpcEp2ReCtrEast[mNumCentrality]; // 2nd raw EP
   TH2F *h_mTpcEp2ReCtrWest[mNumCentrality];
+  TH2F *h_mTpcEp2ReCtrFull[mNumCentrality];
   TH2F *h_mTpcEp2ReCtrCorr[mNumCentrality]; // Psi2East vs Psi2West
 
   TH2F *h_mTpcEp3ReCtrEast[mNumCentrality]; // 3rd raw EP
   TH2F *h_mTpcEp3ReCtrWest[mNumCentrality];
+  TH2F *h_mTpcEp3ReCtrFull[mNumCentrality];
   TH2F *h_mTpcEp3ReCtrCorr[mNumCentrality]; // Psi3East vs Psi3West
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
@@ -91,6 +111,8 @@ void getTpcShiftPar(int beamType = 0)
     h_mTpcEp2ReCtrEast[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
     histName = Form("h_mTpcEp2ReCtrWestCent%d",iCent);
     h_mTpcEp2ReCtrWest[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
+    histName = Form("h_mTpcEp2ReCtrFullCent%d",iCent);
+    h_mTpcEp2ReCtrFull[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
     histName = Form("h_mTpcEp2ReCtrCorrCent%d",iCent);
     h_mTpcEp2ReCtrCorr[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
 
@@ -98,6 +120,8 @@ void getTpcShiftPar(int beamType = 0)
     h_mTpcEp3ReCtrEast[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
     histName = Form("h_mTpcEp3ReCtrWestCent%d",iCent);
     h_mTpcEp3ReCtrWest[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
+    histName = Form("h_mTpcEp3ReCtrFullCent%d",iCent);
+    h_mTpcEp3ReCtrFull[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
     histName = Form("h_mTpcEp3ReCtrCorrCent%d",iCent);
     h_mTpcEp3ReCtrCorr[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
   }
@@ -106,15 +130,17 @@ void getTpcShiftPar(int beamType = 0)
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     std::string canvName = Form("c_TpcEpReCtrDistCent%d",iCent);
-    c_TpcEpReCtrDist[iCent] = new TCanvas(canvName.c_str(),canvName.c_str(),10,10,1500,1000);
-    c_TpcEpReCtrDist[iCent]->Divide(3,2);
+    c_TpcEpReCtrDist[iCent] = new TCanvas(canvName.c_str(),canvName.c_str(),10,10,2000,1000);
+    c_TpcEpReCtrDist[iCent]->Divide(4,2);
     c_TpcEpReCtrDist[iCent]->cd(1); h_mTpcEp2ReCtrEast[iCent]->ProjectionY()->Draw();
     c_TpcEpReCtrDist[iCent]->cd(2); h_mTpcEp2ReCtrWest[iCent]->ProjectionY()->Draw();
-    c_TpcEpReCtrDist[iCent]->cd(3); h_mTpcEp2ReCtrCorr[iCent]->Draw("colz");
+    c_TpcEpReCtrDist[iCent]->cd(3); h_mTpcEp2ReCtrFull[iCent]->ProjectionY()->Draw();
+    c_TpcEpReCtrDist[iCent]->cd(4); h_mTpcEp2ReCtrCorr[iCent]->Draw("colz");
 
-    c_TpcEpReCtrDist[iCent]->cd(4); h_mTpcEp3ReCtrEast[iCent]->ProjectionY()->Draw();
-    c_TpcEpReCtrDist[iCent]->cd(5); h_mTpcEp3ReCtrWest[iCent]->ProjectionY()->Draw();
-    c_TpcEpReCtrDist[iCent]->cd(6); h_mTpcEp3ReCtrCorr[iCent]->Draw("colz");
+    c_TpcEpReCtrDist[iCent]->cd(5); h_mTpcEp3ReCtrEast[iCent]->ProjectionY()->Draw();
+    c_TpcEpReCtrDist[iCent]->cd(6); h_mTpcEp3ReCtrWest[iCent]->ProjectionY()->Draw();
+    c_TpcEpReCtrDist[iCent]->cd(7); h_mTpcEp3ReCtrFull[iCent]->ProjectionY()->Draw();
+    c_TpcEpReCtrDist[iCent]->cd(8); h_mTpcEp3ReCtrCorr[iCent]->Draw("colz");
 
     std::string figName = Form("../../figures/%s/EventPlaneMaker/TpcReCtrEpCent%d_%s.pdf",globCons::str_mBeamType[beamType].c_str(),iCent,globCons::str_mBeamType[beamType].c_str());
     c_TpcEpReCtrDist[iCent]->SaveAs(figName.c_str());
@@ -128,10 +154,12 @@ void getTpcShiftPar(int beamType = 0)
   {
     h_mTpcEp2ReCtrEast[iCent]->Write();
     h_mTpcEp2ReCtrWest[iCent]->Write();
+    h_mTpcEp2ReCtrFull[iCent]->Write();
     h_mTpcEp2ReCtrCorr[iCent]->Write();
 
     h_mTpcEp3ReCtrEast[iCent]->Write();
     h_mTpcEp3ReCtrWest[iCent]->Write();
+    h_mTpcEp3ReCtrFull[iCent]->Write();
     h_mTpcEp3ReCtrCorr[iCent]->Write();
   }
   file_OutPutReCtrEp->Close();

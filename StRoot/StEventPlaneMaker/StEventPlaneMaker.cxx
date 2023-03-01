@@ -714,7 +714,7 @@ int StEventPlaneMaker::Make()
 
 	      const TVector3 primMom = picoTrack->pMom(); // primary Momentum
 	      const double pt  = primMom.Pt();
-	      const double eta = primMom.PseudoRapidity();
+	      // const double eta = primMom.PseudoRapidity();
 	      const double phi = primMom.Phi(); // -pi to pi
 
 	      if(mAnaCut->passTrkTpcFlowEast(picoTrack, primVtx)) // neg
