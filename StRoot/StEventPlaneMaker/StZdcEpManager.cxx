@@ -657,7 +657,7 @@ void StZdcEpManager::initZdcSubEpRaw()
     histName = Form("h_mZdcEp1RawFullCent%d",iCent);
     h_mZdcEp1RawFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mZdcEp1RawCorrCent%d",iCent);
-    h_mZdcEp1RawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),135,-1.0*TMath::Pi(),TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
+    h_mZdcEp1RawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
   }
 }
 
@@ -692,7 +692,7 @@ void StZdcEpManager::initZdcSubEpReCtr()
     histName = Form("h_mZdcEp1ReCtrFullCent%d",iCent);
     h_mZdcEp1ReCtrFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mZdcEp1ReCtrCorrCent%d",iCent);
-    h_mZdcEp1ReCtrCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),135,-1.0*TMath::Pi(),TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
+    h_mZdcEp1ReCtrCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
   }
 }
 
@@ -727,7 +727,7 @@ void StZdcEpManager::initZdcSubEpShift()
     histName = Form("h_mZdcEp1ShiftFullCent%d",iCent);
     h_mZdcEp1ShiftFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mZdcEp1ShiftCorrCent%d",iCent);
-    h_mZdcEp1ShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),135,-1.0*TMath::Pi(),TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
+    h_mZdcEp1ShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
   }
 }
 
