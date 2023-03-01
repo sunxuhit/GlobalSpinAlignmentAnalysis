@@ -651,13 +651,13 @@ void StZdcEpManager::initZdcSubEpRaw()
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     std::string histName = Form("h_mZdcEp1RawEastCent%d",iCent);
-    h_mZdcEp1RawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mZdcEp1RawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mZdcEp1RawWestCent%d",iCent);
-    h_mZdcEp1RawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mZdcEp1RawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mZdcEp1RawFullCent%d",iCent);
-    h_mZdcEp1RawFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mZdcEp1RawFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mZdcEp1RawCorrCent%d",iCent);
-    h_mZdcEp1RawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),90,-1.0*TMath::Pi(),TMath::Pi(),90,-1.0*TMath::Pi(),TMath::Pi());
+    h_mZdcEp1RawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),135,-1.0*TMath::Pi(),TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
   }
 }
 
@@ -686,13 +686,13 @@ void StZdcEpManager::initZdcSubEpReCtr()
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     std::string histName = Form("h_mZdcEp1ReCtrEastCent%d",iCent);
-    h_mZdcEp1ReCtrEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mZdcEp1ReCtrEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mZdcEp1ReCtrWestCent%d",iCent);
-    h_mZdcEp1ReCtrWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mZdcEp1ReCtrWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mZdcEp1ReCtrFullCent%d",iCent);
-    h_mZdcEp1ReCtrFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mZdcEp1ReCtrFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mZdcEp1ReCtrCorrCent%d",iCent);
-    h_mZdcEp1ReCtrCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),90,-1.0*TMath::Pi(),TMath::Pi(),90,-1.0*TMath::Pi(),TMath::Pi());
+    h_mZdcEp1ReCtrCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),135,-1.0*TMath::Pi(),TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
   }
 }
 
@@ -721,13 +721,13 @@ void StZdcEpManager::initZdcSubEpShift()
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     std::string histName = Form("h_mZdcEp1ShiftEastCent%d",iCent);
-    h_mZdcEp1ShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mZdcEp1ShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mZdcEp1ShiftWestCent%d",iCent);
-    h_mZdcEp1ShiftWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mZdcEp1ShiftWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mZdcEp1ShiftFullCent%d",iCent);
-    h_mZdcEp1ShiftFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mZdcEp1ShiftFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mZdcEp1ShiftCorrCent%d",iCent);
-    h_mZdcEp1ShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),90,-1.0*TMath::Pi(),TMath::Pi(),90,-1.0*TMath::Pi(),TMath::Pi());
+    h_mZdcEp1ShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),135,-1.0*TMath::Pi(),TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
   }
 }
 
@@ -737,6 +737,8 @@ void StZdcEpManager::fillZdcSubEpShift(TVector2 QEast, TVector2 QWest, TVector2 
   double PsiWest = TMath::ATan2(QWest.Y(),QWest.X()); h_mZdcEp1ShiftWest[mCent9]->Fill(mRunIndex,PsiWest);
   double PsiFull = TMath::ATan2(QFull.Y(),QFull.X()); h_mZdcEp1ShiftFull[mCent9]->Fill(mRunIndex,PsiFull);
   h_mZdcEp1ShiftCorr[mCent9]->Fill(PsiEast,PsiWest);
+  std::cout << "QEast.X = " << -1.0*QEast.X() << ", QEast.Y = " << -1.0*QEast.Y() << ", PsiEast = " << PsiEast << std::endl;
+  std::cout << "QWest.X = " << QWest.X() << ", QWest.Y = " << QWest.Y() << ", PsiWest = " << PsiWest << std::endl;
 }
 
 void StZdcEpManager::writeZdcSubEpShift()
@@ -756,7 +758,7 @@ void StZdcEpManager::initZdcFullEpShift()
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     std::string histName = Form("h_mZdcEp1ShiftFullCorrCent%d",iCent);
-    h_mZdcEp1ShiftFullCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,360,-1.0*TMath::Pi(),TMath::Pi());
+    h_mZdcEp1ShiftFullCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
   }
 }
 
