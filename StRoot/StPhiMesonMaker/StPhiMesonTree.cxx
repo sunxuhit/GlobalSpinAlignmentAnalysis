@@ -35,7 +35,6 @@ void StPhiMesonTree::initPhiTree()
 {
   mAnaCut   = new StAnalysisCut(mType);
   mAnaUtils = new StAnalysisUtils(mType);
-  mAnaUtils->initRunIndex(); // initialize std::map for run index
 
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
@@ -119,85 +118,103 @@ void StPhiMesonTree::clearPhiMixBuffer(int cent9, int vzBin, int PsiBin)
     map_mNHitsFitKm[phiMixKey].clear();
   }
 }
-
-int StPhiMesonTree::getPhiMixKey(int cent9, int vzBin, int PsiBin, int evtBin)
-{ // return 1000*cent9 + 100*vzBin + 10*PsiBin + evtBin
-  int phiMixKey = 1000*cent9 + 100*vzBin + 10*PsiBin + evtBin;
-
-  return phiMixKey;
-}
-
-int StPhiMesonTree::getVzMixBin(double vz)
-{
-  int vzBin = -1;
-
-  double vzBinSize = (anaUtils::mVzMax[mType]-anaUtils::mVzMin[mType])/mNumMixVzBin; // 6cm for IsoBar
-
-  if(std::abs(vz-anaUtils::mVzMin[mType]) < std::numeric_limits<double>::epsilon()) vzBin = 0;
-  for(int iVz = 0; iVz < mNumMixVzBin; ++iVz)
-  {
-    if((vz > anaUtils::mVzMin[mType]+iVz*vzBinSize) && (vz <= anaUtils::mVzMin[mType]+(iVz+1)*vzBinSize))
-    {
-      vzBin = iVz;
-    }
-  }
-
-  return vzBin;
-}
-
-int StPhiMesonTree::getPsi2MixBin(double Psi2)
-{
-  int Psi2Bin = -1;
-  double Psi2Max = TMath::Pi()/2.0;
-  double Psi2Min = -1.0*TMath::Pi()/2.0;
-  double Psi2BinSize = (Psi2Max-Psi2Min)/mNumMixPsiBin; // pi/5
-
-  if(std::abs(Psi2-Psi2Min) < std::numeric_limits<double>::epsilon()) Psi2Bin = 0;
-  for(int iPsi = 0; iPsi < mNumMixPsiBin; ++iPsi)
-  {
-    if((Psi2 > Psi2Min+iPsi*Psi2BinSize) && (Psi2 <= Psi2Min+(iPsi+1)*Psi2BinSize))
-    {
-      Psi2Bin = iPsi;
-    }
-  }
-
-
-  return Psi2Bin;
-}
-
-void StPhiMesonTree::getPhiEvtSize(int cent9, int vzBin, int PsiBin)
-{
-  std::cout << "Event Buffer: Centrality = " << cent9 << ", VertexZ = " << vzBin << ", Psi2 = " << PsiBin << std::endl;
-  std::cout << "Buffer Depth: " << mEventCounter[cent9][vzBin][PsiBin] << std::endl;
-
-  std::cout << "Size of primaryVertex = " << vec_mPrimVtx[cent9][vzBin][PsiBin].size() << std::endl;;
-  std::cout << "Size of refMult       = " << vec_mRefMult[cent9][vzBin][PsiBin].size() << std::endl;;
-  std::cout << "---------------------------------------------------------------------------" << std::endl;
-
-  for(int evtBin = 0; evtBin < mEventCounter[cent9][vzBin][PsiBin]; evtBin++)
-  {
-    int phiMixKey = getPhiMixKey(cent9,vzBin,PsiBin,evtBin);
-    std::cout << "Event Number " << evtBin << ":" << std::endl; 
-    std::cout << "Positive Particle:" << std::endl;
-    std::cout << "  Size of MomVecKp     = " << map_mMomVecKp[phiMixKey].size() << std::endl;;
-    std::cout << "  Size of Mass2        = " << map_mMass2Kp[phiMixKey].size() << std::endl;
-    std::cout << "  Size of nSigmaKaon   = " << map_mNSigKp[phiMixKey].size() << std::endl;
-    std::cout << "  Size of dca          = " << map_mDcaKp[phiMixKey].size() << std::endl;
-    std::cout << "  Size of charge       = " << map_mChargeKp[phiMixKey].size() << std::endl;
-    std::cout << "  Size of nHitsFit     = " << map_mNHitsFitKp[phiMixKey].size() << std::endl;
-
-    std::cout << "Negative Particle:" << std::endl;
-    std::cout << "  Size of MomVecKm     = " << map_mMomVecKm[phiMixKey].size() << std::endl;;
-    std::cout << "  Size of Mass2        = " << map_mMass2Km[phiMixKey].size() << std::endl;
-    std::cout << "  Size of nSigmaKaon   = " << map_mNSigKm[phiMixKey].size() << std::endl;
-    std::cout << "  Size of dca          = " << map_mDcaKm[phiMixKey].size() << std::endl;
-    std::cout << "  Size of charge       = " << map_mChargeKm[phiMixKey].size() << std::endl;
-    std::cout << "  Size of nHitsFit     = " << map_mNHitsFitKm[phiMixKey].size() << std::endl;
-    std::cout << "---------------------------------------------------------------------------" << std::endl;
-  }
-}
-
 //------------------------------------------------------------------------------------------------------------------
+void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
+{
+  StPicoEvent *picoEvent = (StPicoEvent*)picoDst->event();
+
+  int vzBin  = getVzMixBin(mVz);
+  int PsiBin = getPsi2MixBin(mPsi2ShiftFull);
+  int evtBin = mEventCounter[mCent9][vzBin][PsiBin];
+
+  const unsigned int nTracks = picoDst->numberOfTracks();
+  TVector3 primVtx = picoEvent->primaryVertex();
+
+  // store Enent Information
+  mEventCounter[mCent9][vzBin][PsiBin]++; // General Event Info
+  vec_mRunId[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->runId()));
+  vec_mEvtId[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->eventId()));
+  vec_mRefMult[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->refMult()));
+  vec_mNumTofMatch[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->nBTOFMatch()));
+  vec_mCent9[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mCent9));
+  vec_mCent16[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mCent16));
+  vec_mRefWgt[mCent9][vzBin][PsiBin].push_back(static_cast<double>(mRefWgt));
+  vec_mZDCx[mCent9][vzBin][PsiBin].push_back(static_cast<double>(picoEvent->ZDCx()));
+  vec_mBBCx[mCent9][vzBin][PsiBin].push_back(static_cast<double>(picoEvent->BBCx()));
+  vec_mVzVpd[mCent9][vzBin][PsiBin].push_back(static_cast<double>(picoEvent->vzVpd()));
+  vec_mPrimVtx[mCent9][vzBin][PsiBin].push_back(static_cast<TVector3>(primVtx));
+
+  vec_mFlagZdcEp[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mFlagZdcEp)); // ZDC EP Info
+  vec_mQ1ZdcShiftEast[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecZdcShiftEast));
+  vec_mQ1ZdcShiftWest[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecZdcShiftWest));
+  vec_mQ1ZdcShiftFull[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecZdcShiftFull));
+
+  vec_mFlagEpdEp[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mFlagEpdEp)); // EPD EP Info
+  vec_mQ1EpdShiftEast[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdShiftEast));
+  vec_mQ1EpdShiftWest[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdShiftWest));
+  vec_mQ1EpdShiftFull[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdShiftFull));
+
+  vec_mFlagTpcEp[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mFlagTpcEp)); // TPC EP Info
+  vec_mQ2TpcReCtrEast[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ2VecTpcReCtrEast));
+  vec_mQ2TpcReCtrWest[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ2VecTpcReCtrWest));
+  vec_mQ3TpcReCtrEast[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ3VecTpcReCtrEast));
+  vec_mQ3TpcReCtrWest[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ3VecTpcReCtrWest));
+  vec_mNumTrkReCtrEast[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mNumTrkReCtrEast));
+  vec_mNumTrkReCtrWest[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mNumTrkReCtrWest));
+
+  // store Track Information
+  for(unsigned int iTrk = 0; iTrk < nTracks; ++iTrk) // loop over all particles in event
+  {
+    StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(iTrk);
+
+    if(mAnaCut->passTrkKaonFull(picoTrack, primVtx))
+    {
+      double mass2 = mAnaUtils->getPrimaryMass2(picoDst, iTrk);
+      int charge = static_cast<int>(picoTrack->charge());
+      TVector3 primMom = picoTrack->pMom();
+
+      if(
+	  (primMom.Mag() < 0.65 && ((mass2 > anaUtils::mMass2KaonMin[mType] && mass2 < anaUtils::mMass2KaonMax[mType]) || mass2 < -10.0)) // dE/dx + ToF
+	  || (primMom.Mag() >= 0.65 && (mass2 > anaUtils::mMass2KaonMin[mType] && mass2 < anaUtils::mMass2KaonMax[mType])) // dE/dx + ToF(always)
+	)
+      {
+	int phiMixKey = getPhiMixKey(mCent9,vzBin,PsiBin,evtBin);
+	if(charge > 0)
+	{ // K+ candidate
+	  map_mMomVecKp[phiMixKey].push_back(static_cast<TVector3>(picoTrack->pMom()));// primMom 
+	  map_mMass2Kp[phiMixKey].push_back(static_cast<double>(mass2)); // mass2
+	  map_mNSigKp[phiMixKey].push_back(static_cast<double>(picoTrack->nSigmaKaon())); // nSigmaKaon
+	  map_mDcaKp[phiMixKey].push_back(static_cast<double>(picoTrack->gDCA(primVtx.X(),primVtx.Y(),primVtx.Z()))); // dca
+	  map_mChargeKp[phiMixKey].push_back(static_cast<int>(charge)); // charge
+	  map_mNHitsFitKp[phiMixKey].push_back(static_cast<double>(picoTrack->nHitsFit())); // nHitsFit
+	}
+	if(charge < 0)
+	{ // K- candidate
+	  map_mMomVecKm[phiMixKey].push_back(static_cast<TVector3>(picoTrack->pMom()));// primMom 
+	  map_mMass2Km[phiMixKey].push_back(static_cast<double>(mass2)); // mass2
+	  map_mNSigKm[phiMixKey].push_back(static_cast<double>(picoTrack->nSigmaKaon())); // nSigmaKaon
+	  map_mDcaKm[phiMixKey].push_back(static_cast<double>(picoTrack->gDCA(primVtx.X(),primVtx.Y(),primVtx.Z()))); // dca
+	  map_mChargeKm[phiMixKey].push_back(static_cast<int>(charge)); // charge
+	  map_mNHitsFitKm[phiMixKey].push_back(static_cast<double>(picoTrack->nHitsFit())); // nHitsFit
+	}
+      }
+    }
+  }
+
+
+  if(flagME == 0) // same event
+  {
+    recoPhi(mCent9,vzBin,PsiBin);
+    clearPhiMixBuffer(mCent9,vzBin,PsiBin);
+  }
+
+  if(flagME == 1 && mEventCounter[mCent9][vzBin][PsiBin] == mNumMixBuffer) // mix event
+  {
+    mixPhi(mCent9,vzBin,PsiBin);
+    clearPhiMixBuffer(mCent9,vzBin,PsiBin);
+  }
+}
+
 void StPhiMesonTree::recoPhi(int cent9, int vzBin, int PsiBin) // reconstruct phi meson in the same event
 {
   for(int iEvt = 0; iEvt < mEventCounter[cent9][vzBin][PsiBin]; ++iEvt)
@@ -403,105 +420,82 @@ void StPhiMesonTree::mixPhi(int cent9, int vzBin, int PsiBin) // reconstruct phi
   }
   t_mPhiMesonTree->Fill();
 }
-
 //------------------------------------------------------------------------------------------------------------------
+int StPhiMesonTree::getPhiMixKey(int cent9, int vzBin, int PsiBin, int evtBin)
+{ // return 1000*cent9 + 100*vzBin + 10*PsiBin + evtBin
+  int phiMixKey = 1000*cent9 + 100*vzBin + 10*PsiBin + evtBin;
 
-void StPhiMesonTree::fillPhiEvent(StPicoDst *picoDst, int flagME)
+  return phiMixKey;
+}
+
+int StPhiMesonTree::getVzMixBin(double vz)
 {
-  StPicoEvent *picoEvent = (StPicoEvent*)picoDst->event();
+  int vzBin = -1;
 
-  int vzBin  = getVzMixBin(mVz);
-  int PsiBin = getPsi2MixBin(mPsi2ShiftFull);
-  int evtBin = mEventCounter[mCent9][vzBin][PsiBin];
+  double vzBinSize = (anaUtils::mVzMax[mType]-anaUtils::mVzMin[mType])/mNumMixVzBin; // 6cm for IsoBar
 
-  const unsigned int nTracks = picoDst->numberOfTracks();
-  TVector3 primVtx = picoEvent->primaryVertex();
-
-  // store Enent Information
-  mEventCounter[mCent9][vzBin][PsiBin]++; // General Event Info
-  vec_mRunId[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->runId()));
-  vec_mEvtId[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->eventId()));
-  vec_mRefMult[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->refMult()));
-  vec_mNumTofMatch[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->nBTOFMatch()));
-  vec_mCent9[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mCent9));
-  vec_mCent16[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mCent16));
-  vec_mRefWgt[mCent9][vzBin][PsiBin].push_back(static_cast<double>(mRefWgt));
-  vec_mZDCx[mCent9][vzBin][PsiBin].push_back(static_cast<double>(picoEvent->ZDCx()));
-  vec_mBBCx[mCent9][vzBin][PsiBin].push_back(static_cast<double>(picoEvent->BBCx()));
-  vec_mVzVpd[mCent9][vzBin][PsiBin].push_back(static_cast<double>(picoEvent->vzVpd()));
-  vec_mPrimVtx[mCent9][vzBin][PsiBin].push_back(static_cast<TVector3>(primVtx));
-
-  vec_mFlagZdcEp[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mFlagZdcEp)); // ZDC EP Info
-  vec_mQ1ZdcShiftEast[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecZdcShiftEast));
-  vec_mQ1ZdcShiftWest[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecZdcShiftWest));
-  vec_mQ1ZdcShiftFull[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecZdcShiftFull));
-
-  vec_mFlagEpdEp[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mFlagEpdEp)); // EPD EP Info
-  vec_mQ1EpdShiftEast[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdShiftEast));
-  vec_mQ1EpdShiftWest[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdShiftWest));
-  vec_mQ1EpdShiftFull[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdShiftFull));
-
-  vec_mFlagTpcEp[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mFlagTpcEp)); // TPC EP Info
-  vec_mQ2TpcReCtrEast[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ2VecTpcReCtrEast));
-  vec_mQ2TpcReCtrWest[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ2VecTpcReCtrWest));
-  vec_mQ3TpcReCtrEast[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ3VecTpcReCtrEast));
-  vec_mQ3TpcReCtrWest[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ3VecTpcReCtrWest));
-  vec_mNumTrkReCtrEast[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mNumTrkReCtrEast));
-  vec_mNumTrkReCtrWest[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mNumTrkReCtrWest));
-
-  // store Track Information
-  for(unsigned int iTrk = 0; iTrk < nTracks; ++iTrk) // loop over all particles in event
+  if(std::abs(vz-anaUtils::mVzMin[mType]) < std::numeric_limits<double>::epsilon()) vzBin = 0;
+  for(int iVz = 0; iVz < mNumMixVzBin; ++iVz)
   {
-    StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(iTrk);
-
-    if(mAnaCut->passTrkKaonFull(picoTrack, primVtx))
+    if((vz > anaUtils::mVzMin[mType]+iVz*vzBinSize) && (vz <= anaUtils::mVzMin[mType]+(iVz+1)*vzBinSize))
     {
-      double mass2 = mAnaUtils->getPrimaryMass2(picoDst, iTrk);
-      int charge = static_cast<int>(picoTrack->charge());
-      TVector3 primMom = picoTrack->pMom();
-
-      if(
-	  (primMom.Mag() < 0.65 && ((mass2 > anaUtils::mMass2KaonMin[mType] && mass2 < anaUtils::mMass2KaonMax[mType]) || mass2 < -10.0)) // dE/dx + ToF
-	  || (primMom.Mag() >= 0.65 && (mass2 > anaUtils::mMass2KaonMin[mType] && mass2 < anaUtils::mMass2KaonMax[mType])) // dE/dx + ToF(always)
-	)
-      {
-	int phiMixKey = getPhiMixKey(mCent9,vzBin,PsiBin,evtBin);
-	if(charge > 0)
-	{ // K+ candidate
-	  map_mMomVecKp[phiMixKey].push_back(static_cast<TVector3>(picoTrack->pMom()));// primMom 
-	  map_mMass2Kp[phiMixKey].push_back(static_cast<double>(mass2)); // mass2
-	  map_mNSigKp[phiMixKey].push_back(static_cast<double>(picoTrack->nSigmaKaon())); // nSigmaKaon
-	  map_mDcaKp[phiMixKey].push_back(static_cast<double>(picoTrack->gDCA(primVtx.X(),primVtx.Y(),primVtx.Z()))); // dca
-	  map_mChargeKp[phiMixKey].push_back(static_cast<int>(charge)); // charge
-	  map_mNHitsFitKp[phiMixKey].push_back(static_cast<double>(picoTrack->nHitsFit())); // nHitsFit
-	}
-	if(charge < 0)
-	{ // K- candidate
-	  map_mMomVecKm[phiMixKey].push_back(static_cast<TVector3>(picoTrack->pMom()));// primMom 
-	  map_mMass2Km[phiMixKey].push_back(static_cast<double>(mass2)); // mass2
-	  map_mNSigKm[phiMixKey].push_back(static_cast<double>(picoTrack->nSigmaKaon())); // nSigmaKaon
-	  map_mDcaKm[phiMixKey].push_back(static_cast<double>(picoTrack->gDCA(primVtx.X(),primVtx.Y(),primVtx.Z()))); // dca
-	  map_mChargeKm[phiMixKey].push_back(static_cast<int>(charge)); // charge
-	  map_mNHitsFitKm[phiMixKey].push_back(static_cast<double>(picoTrack->nHitsFit())); // nHitsFit
-	}
-      }
+      vzBin = iVz;
     }
   }
 
-
-  if(flagME == 0) // same event
-  {
-    recoPhi(mCent9,vzBin,PsiBin);
-    clearPhiMixBuffer(mCent9,vzBin,PsiBin);
-  }
-
-  if(flagME == 1 && mEventCounter[mCent9][vzBin][PsiBin] == mNumMixBuffer) // mix event
-  {
-    mixPhi(mCent9,vzBin,PsiBin);
-    clearPhiMixBuffer(mCent9,vzBin,PsiBin);
-  }
+  return vzBin;
 }
 
+int StPhiMesonTree::getPsi2MixBin(double Psi2)
+{
+  int Psi2Bin = -1;
+  double Psi2Max = TMath::Pi()/2.0;
+  double Psi2Min = -1.0*TMath::Pi()/2.0;
+  double Psi2BinSize = (Psi2Max-Psi2Min)/mNumMixPsiBin; // pi/5
+
+  if(std::abs(Psi2-Psi2Min) < std::numeric_limits<double>::epsilon()) Psi2Bin = 0;
+  for(int iPsi = 0; iPsi < mNumMixPsiBin; ++iPsi)
+  {
+    if((Psi2 > Psi2Min+iPsi*Psi2BinSize) && (Psi2 <= Psi2Min+(iPsi+1)*Psi2BinSize))
+    {
+      Psi2Bin = iPsi;
+    }
+  }
+
+  return Psi2Bin;
+}
+
+void StPhiMesonTree::getPhiEvtSize(int cent9, int vzBin, int PsiBin)
+{
+  std::cout << "Event Buffer: Centrality = " << cent9 << ", VertexZ = " << vzBin << ", Psi2 = " << PsiBin << std::endl;
+  std::cout << "Buffer Depth: " << mEventCounter[cent9][vzBin][PsiBin] << std::endl;
+
+  std::cout << "Size of primaryVertex = " << vec_mPrimVtx[cent9][vzBin][PsiBin].size() << std::endl;;
+  std::cout << "Size of refMult       = " << vec_mRefMult[cent9][vzBin][PsiBin].size() << std::endl;;
+  std::cout << "---------------------------------------------------------------------------" << std::endl;
+
+  for(int evtBin = 0; evtBin < mEventCounter[cent9][vzBin][PsiBin]; evtBin++)
+  {
+    int phiMixKey = getPhiMixKey(cent9,vzBin,PsiBin,evtBin);
+    std::cout << "Event Number " << evtBin << ":" << std::endl; 
+    std::cout << "Positive Particle:" << std::endl;
+    std::cout << "  Size of MomVecKp     = " << map_mMomVecKp[phiMixKey].size() << std::endl;;
+    std::cout << "  Size of Mass2        = " << map_mMass2Kp[phiMixKey].size() << std::endl;
+    std::cout << "  Size of nSigmaKaon   = " << map_mNSigKp[phiMixKey].size() << std::endl;
+    std::cout << "  Size of dca          = " << map_mDcaKp[phiMixKey].size() << std::endl;
+    std::cout << "  Size of charge       = " << map_mChargeKp[phiMixKey].size() << std::endl;
+    std::cout << "  Size of nHitsFit     = " << map_mNHitsFitKp[phiMixKey].size() << std::endl;
+
+    std::cout << "Negative Particle:" << std::endl;
+    std::cout << "  Size of MomVecKm     = " << map_mMomVecKm[phiMixKey].size() << std::endl;;
+    std::cout << "  Size of Mass2        = " << map_mMass2Km[phiMixKey].size() << std::endl;
+    std::cout << "  Size of nSigmaKaon   = " << map_mNSigKm[phiMixKey].size() << std::endl;
+    std::cout << "  Size of dca          = " << map_mDcaKm[phiMixKey].size() << std::endl;
+    std::cout << "  Size of charge       = " << map_mChargeKm[phiMixKey].size() << std::endl;
+    std::cout << "  Size of nHitsFit     = " << map_mNHitsFitKm[phiMixKey].size() << std::endl;
+    std::cout << "---------------------------------------------------------------------------" << std::endl;
+  }
+}
 //------------------------------------------------------------------------------------------------------------------
 // set QVector from StPhiMesonMaker
 void StPhiMesonTree::clearEvtInfo()
@@ -566,9 +560,9 @@ void StPhiMesonTree::setTpcQVec(int flagEp, TVector2 Q2East, TVector2 Q2West, TV
   v_mQ3VecTpcReCtrWest = Q3West;
 }
 
-void StPhiMesonTree::setNumTrks(int numTrackEast, int numTrackWest)
+void StPhiMesonTree::setNumTrks(int numTrkEast, int numTrkWest)
 {
-  mNumTrkReCtrEast  = numTrackEast;
-  mNumTrkReCtrWest  = numTrackWest;
+  mNumTrkReCtrEast  = numTrkEast;
+  mNumTrkReCtrWest  = numTrkWest;
 }
 //------------------------------------------------------------------------------------------------------------------

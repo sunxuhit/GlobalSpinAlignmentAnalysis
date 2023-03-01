@@ -27,23 +27,23 @@ class StPhiMesonTree : public TObject
     void initPhiTree();
     void clearPhiMixBuffer(int cent9, int vzBin, int PsiBin);
 
+    void fillPhiTree(StPicoDst* picoDst, int flagME);
+    void recoPhi(int cent9, int vzBin, int PsiBin); // reconstruct phi meson in the same event
+    void mixPhi(int cent9, int vzBin, int PsiBin); // reconstruct phi meson in the mixed event
+
+    void writePhiTree();
+
     int getPhiMixKey(int cent9, int vzBin, int PsiBin, int evtBin); // return 1000*cent9 + 100*vzBin + 10*PsiBin + evtBin
     int getVzMixBin(double vz);
     int getPsi2MixBin(double Psi2);
-    void getPhiEvtSize(int,int,int);
-
-    void recoPhi(int cent9, int vzBin, int PsiBin); // reconstruct phi meson in the same event
-    void mixPhi(int cent9, int vzBin, int PsiBin); // reconstruct phi meson in the mixed event
-    void fillPhiEvent(StPicoDst* picoDst, int flagME);
-
-    void writePhiTree();
+    void getPhiEvtSize(int cent9, int vzBin, int PsiBin);
 
     void clearEvtInfo();
     void setEvtInfo(int cent9, int cent16, double refwgt, double vz, double Psi2ShiftFull);
     void setZdcQ1Vec(int flagEp, TVector2 Q1VecZdcShiftEast,TVector2 Q1VecZdcShiftWest, TVector2 Q1VecZdcShiftFull); // Shift Corrected ZDC Q1Vector: East & West & Full
     void setEpdQ1Vec(int flagEp, TVector2 Q1VecEpdShiftEast,TVector2 Q1VecEpdShiftWest, TVector2 Q1VecEpdShiftFull); // Shift Corrected EPD Q1Vector: East & West & Full
     void setTpcQVec(int flagEp, TVector2 Q2VecTpcReCtrEast,TVector2 Q2VecTpcReCtrWest, TVector2 Q3VecTpcReCtrEast,TVector2 Q3VecTpcReCtrWest); // ReCenter Corrected TPC Q2Vector & Q3Vector: East & West
-    void setNumTrks(int,int); // Number of Tracks used in ReCenter Correction: East & West
+    void setNumTrks(int numTrkEast, int numTrkWest); // Number of Tracks used in ReCenter Correction: East & West
 
   private:
     static const int mNumCentrality = 9;  // 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%

@@ -14,7 +14,7 @@ class StAnalysisCut;
 class StZdcEpManager;
 class StEpdEpManager;
 class StTpcEpManager;
-// class StPhiMesonTree;
+class StPhiMesonTree;
 
 class StPhiMesonMaker : public StMaker {
   public:
@@ -37,11 +37,11 @@ class StPhiMesonMaker : public StMaker {
     StZdcEpManager  *mZdcEpManager;
     StEpdEpManager  *mEpdEpManager;
     StTpcEpManager  *mTpcEpManager;
-    // StPhiMesonTree  *mPhiMesonTree;
+    StPhiMesonTree  *mPhiMesonTree;
     
-    int mMode;
-    int mType;
-    int mFlagME;
+    const int mMode;
+    const int mType;
+    const int mFlagME;
 
     string str_mOutPutRecoPhi;
     string str_mOutPutPhiTree;
