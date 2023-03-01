@@ -10,7 +10,11 @@ class TTree;
 class TH2F;
 class TVector2;
 class TVector3;
+
 class StPicoDst;
+
+class StAnalysisUtils;
+class StAnalysisCut;
 class StPhiMesonEvent;
 class StPhiMesonTrack;
 
@@ -28,8 +32,8 @@ class StPhiMesonTree : public TObject
     int getPsi2MixBin(double Psi2);
     void getPhiEvtSize(int,int,int);
 
-    void recoPhi(int cent9, int vzBin, int Psi2Bin); // reconstruct phi meson in the same event
-    void mixPhi(int cent9, int vzBin, int Psi2Bin); // reconstruct phi meson in the mixed event
+    void recoPhi(int cent9, int vzBin, int PsiBin); // reconstruct phi meson in the same event
+    void mixPhi(int cent9, int vzBin, int PsiBin); // reconstruct phi meson in the mixed event
     void fillPhiEvent(StPicoDst* picoDst, int flagME);
 
     void writePhiTree();
@@ -46,6 +50,9 @@ class StPhiMesonTree : public TObject
     static const int mNumMixVzBin   = 10; // 10 vz bins for event mixing
     static const int mNumMixPsiBin  = 5;  // 5 TPC Psi2 bins for event mixing
     static const int mNumMixBuffer  = 5;  // 5 events for event mixing
+
+    StAnalysisUtils *mAnaUtils; // Analysis Utilities
+    StAnalysisCut   *mAnaCut;   // Analysis Cuts
 
     TTree *t_mPhiMesonTree;
     StPhiMesonEvent *mPhiMesonEvent;

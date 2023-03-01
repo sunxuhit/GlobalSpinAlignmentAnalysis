@@ -137,7 +137,7 @@ class StPhiMesonEvent : public TObject
       mZDCx        = -1.0;
       mBBCx        = -1.0;
       mVzVpd       = -1.0;
-      mPrimVtx.Set(-999.9,-999.9,-999.9);
+      mPrimVtx.SetXYZ(-999.9,-999.9,-999.9);
 
       mFlagZdcEp = 0; // ZDC EP
       v_mQ1ZdcShiftEast.Set(0.0,0.0);
