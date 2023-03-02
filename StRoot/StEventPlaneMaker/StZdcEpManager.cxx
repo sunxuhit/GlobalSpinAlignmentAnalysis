@@ -364,10 +364,20 @@ TVector2 StZdcEpManager::applyZdcSmdShiftCorrWest(TVector2 QVector)
 double StZdcEpManager::transPsi1(double Psi)
 {
   double PsiCorr = Psi;
-  if(Psi >  1.0*TMath::Pi()) PsiCorr = Psi - TMath::TwoPi();
-  if(Psi < -1.0*TMath::Pi()) PsiCorr = Psi + TMath::TwoPi();
+  if(Psi >  TMath::Pi()) PsiCorr = Psi - TMath::TwoPi();
+  if(Psi < -TMath::Pi()) PsiCorr = Psi + TMath::TwoPi();
 
   return PsiCorr;
+}
+
+bool StZdcEpManager::isPsi1InRange(double Psi1)
+{
+  if(Psi1 < -TMath::Pi() || Psi1 > TMath::Pi()) 
+  {
+    return false;
+  }
+
+  return true;
 }
 //---------------------------------------------------------------------------------
 // Shift Correction Full EP
@@ -499,7 +509,7 @@ TVector2 StZdcEpManager::getQ1VecEast(int mode)
   }
 
   if(qXwgt > 0.0 && qYwgt > 0.0) QVector.Set(qXsum/qXwgt,qYsum/qYwgt);
-  if(mode > 2)  QVector = applyZdcSmdShiftCorrEast(QVector);
+  if(mode > 2 && QVector.Mod() > 0)  QVector = applyZdcSmdShiftCorrEast(QVector);
 
   return QVector;
 }
@@ -522,7 +532,7 @@ TVector2 StZdcEpManager::getQ1VecWest(int mode)
   }
 
   if(qXwgt > 0.0 && qYwgt > 0.0) QVector.Set(qXsum/qXwgt,qYsum/qYwgt);
-  if(mode > 2) QVector = applyZdcSmdShiftCorrWest(QVector);
+  if(mode > 2 && QVector.Mod() > 0) QVector = applyZdcSmdShiftCorrWest(QVector);
 
   return QVector;
 }
@@ -530,10 +540,10 @@ TVector2 StZdcEpManager::getQ1VecWest(int mode)
 TVector2 StZdcEpManager::getQ1VecFull(TVector2 QEast, TVector2 QWest, int mode)
 {
   // TVector2 QVector = QWest-QEast;
-  TVector2 QVecShift = QWest - QEast;
-  if(mode > 2) QVecShift = applyZdcSmdShiftCorrFull(QVecShift);
+  TVector2 QVector = QWest - QEast;
+  if(mode > 2 && QVector.Mod() > 0) QVector = applyZdcSmdShiftCorrFull(QVecShift);
 
-  return QVecShift;
+  return QVector;
 }
 //---------------------------------------------------------------------------------
 // Full Event Plane Resolution

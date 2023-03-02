@@ -60,7 +60,11 @@ class StEpdEpManager : public TObject
     double getPsi1ShiftEast(); // 1st shift Psi1
     double getPsi1ShiftWest();
     double getPsi1ShiftFull();
+    TVector2 getQ1VecShiftEast();
+    TVector2 getQ1VecShiftWest();
+    TVector2 getQ1VecShiftFull();
     double transPsi1(double Psi1);
+    bool isPsi1InRange(double Psi1);
 
     void initEpdShiftFull(); // Full
     void fillEpdShiftFull();
@@ -94,9 +98,6 @@ class StEpdEpManager : public TObject
     TVector2 getQ1VecReCtrEast();
     TVector2 getQ1VecReCtrWest();
     TVector2 getQ1VecReCtrFull();
-    TVector2 getQ1VecShiftEast();
-    TVector2 getQ1VecShiftWest();
-    TVector2 getQ1VecShiftFull();
     double getPsi1RawEast();
     double getPsi1RawWest();
     double getPsi1RawFull();

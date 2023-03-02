@@ -55,10 +55,12 @@ class StTpcEpManager : public TObject
     double getPsi2ShiftWest(TVector2 Q2Vector);
     double getPsi2ShiftFull(TVector2 Q2Vector);
     double transPsi2(double Psi2);
+    bool isPsi2InRange(double Psi2);
     double getPsi3ShiftEast(TVector2 Q3Vector); // 3rd shift Psi3
     double getPsi3ShiftWest(TVector2 Q3Vector);
     double getPsi3ShiftFull(TVector2 Q3Vector);
     double transPsi3(double Psi3);
+    bool isPsi3InRange(double Psi3);
 
     // Event Plane Resolution
     void initTpcResolution();
