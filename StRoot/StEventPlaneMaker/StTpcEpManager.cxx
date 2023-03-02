@@ -159,34 +159,34 @@ void StTpcEpManager::initTpcReCtr()
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)
   {
     std::string proName = Form("p_mTpcQ2ReCtrXEastVz%d",iVz); // 2nd EP
-    p_mTpcQ2ReCtrXEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    p_mTpcQ2ReCtrXEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
     proName = Form("p_mTpcQ2ReCtrYEastVz%d",iVz);
-    p_mTpcQ2ReCtrYEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    p_mTpcQ2ReCtrYEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
     proName = Form("p_mTpcQ2ReCtrXWestVz%d",iVz);
-    p_mTpcQ2ReCtrXWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    p_mTpcQ2ReCtrXWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
     proName = Form("p_mTpcQ2ReCtrYWestVz%d",iVz);
-    p_mTpcQ2ReCtrYWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    p_mTpcQ2ReCtrYWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
     proName = Form("p_mTpcQ2ReCtrXFullVz%d",iVz);
-    p_mTpcQ2ReCtrXFull[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    p_mTpcQ2ReCtrXFull[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
     proName = Form("p_mTpcQ2ReCtrYFullVz%d",iVz);
-    p_mTpcQ2ReCtrYFull[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    p_mTpcQ2ReCtrYFull[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
     proName = Form("p_mTpcQ3ReCtrXEastVz%d",iVz); // 3rd EP
-    p_mTpcQ3ReCtrXEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    p_mTpcQ3ReCtrXEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
     proName = Form("p_mTpcQ3ReCtrYEastVz%d",iVz);
-    p_mTpcQ3ReCtrYEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    p_mTpcQ3ReCtrYEast[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
     proName = Form("p_mTpcQ3ReCtrXWestVz%d",iVz);
-    p_mTpcQ3ReCtrXWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    p_mTpcQ3ReCtrXWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
     proName = Form("p_mTpcQ3ReCtrYWestVz%d",iVz);
-    p_mTpcQ3ReCtrYWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    p_mTpcQ3ReCtrYWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
     proName = Form("p_mTpcQ3ReCtrXFullVz%d",iVz);
-    p_mTpcQ3ReCtrXFull[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    p_mTpcQ3ReCtrXFull[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
     proName = Form("p_mTpcQ3ReCtrYFullVz%d",iVz);
-    p_mTpcQ3ReCtrYFull[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    p_mTpcQ3ReCtrYFull[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
   }
 }
 
@@ -392,34 +392,34 @@ void StTpcEpManager::initTpcShift()
     for(int iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order
     {
       std::string proName = Form("p_mTpcQ2ShiftCos%dEastVz%d",iShift,iVz); // 2nd EP
-      p_mTpcQ2ShiftCosEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      p_mTpcQ2ShiftCosEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
       proName = Form("p_mTpcQ2ShiftSin%dEastVz%d",iShift,iVz);
-      p_mTpcQ2ShiftSinEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      p_mTpcQ2ShiftSinEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
       proName = Form("p_mTpcQ2ShiftCos%dWestVz%d",iShift,iVz);
-      p_mTpcQ2ShiftCosWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      p_mTpcQ2ShiftCosWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
       proName = Form("p_mTpcQ2ShiftSin%dWestVz%d",iShift,iVz);
-      p_mTpcQ2ShiftSinWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      p_mTpcQ2ShiftSinWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
       proName = Form("p_mTpcQ2ShiftCos%dFullVz%d",iShift,iVz);
-      p_mTpcQ2ShiftCosFull[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      p_mTpcQ2ShiftCosFull[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
       proName = Form("p_mTpcQ2ShiftSin%dFullVz%d",iShift,iVz);
-      p_mTpcQ2ShiftSinFull[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      p_mTpcQ2ShiftSinFull[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
       proName = Form("p_mTpcQ3ShiftCos%dEastVz%d",iShift,iVz); // 3rd EP
-      p_mTpcQ3ShiftCosEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      p_mTpcQ3ShiftCosEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
       proName = Form("p_mTpcQ3ShiftSin%dEastVz%d",iShift,iVz);
-      p_mTpcQ3ShiftSinEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      p_mTpcQ3ShiftSinEast[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
       proName = Form("p_mTpcQ3ShiftCos%dWestVz%d",iShift,iVz);
-      p_mTpcQ3ShiftCosWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      p_mTpcQ3ShiftCosWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
       proName = Form("p_mTpcQ3ShiftSin%dWestVz%d",iShift,iVz);
-      p_mTpcQ3ShiftSinWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      p_mTpcQ3ShiftSinWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
       proName = Form("p_mTpcQ3ShiftCos%dFullVz%d",iShift,iVz);
-      p_mTpcQ3ShiftCosFull[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      p_mTpcQ3ShiftCosFull[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
       proName = Form("p_mTpcQ3ShiftSin%dFullVz%d",iShift,iVz);
-      p_mTpcQ3ShiftSinFull[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      p_mTpcQ3ShiftSinFull[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
     }
   }
 }
@@ -1036,20 +1036,20 @@ void StTpcEpManager::initTpcSubEpRaw()
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     std::string histName = Form("h_mTpcEp2RawEastCent%d",iCent); // 2nd EP
-    h_mTpcEp2RawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2RawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp2RawWestCent%d",iCent);
-    h_mTpcEp2RawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2RawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp2RawFullCent%d",iCent);
-    h_mTpcEp2RawFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2RawFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp2RawCorrCent%d",iCent);
     h_mTpcEp2RawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),180,-1.0*TMath::Pi(),TMath::Pi(),180,-1.0*TMath::Pi(),TMath::Pi());
 
     histName = Form("h_mTpcEp3RawEastCent%d",iCent); // 3rd EP
-    h_mTpcEp3RawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3RawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp3RawWestCent%d",iCent);
-    h_mTpcEp3RawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3RawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp3RawFullCent%d",iCent);
-    h_mTpcEp3RawFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3RawFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp3RawCorrCent%d",iCent);
     h_mTpcEp3RawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),270,-1.0*TMath::Pi(),TMath::Pi(),270,-1.0*TMath::Pi(),TMath::Pi());
   }
@@ -1090,20 +1090,20 @@ void StTpcEpManager::initTpcSubEpReCtr()
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     std::string histName = Form("h_mTpcEp2ReCtrEastCent%d",iCent); // 2nd EP
-    h_mTpcEp2ReCtrEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2ReCtrEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp2ReCtrWestCent%d",iCent);
-    h_mTpcEp2ReCtrWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2ReCtrWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp2ReCtrFullCent%d",iCent);
-    h_mTpcEp2ReCtrFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2ReCtrFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp2ReCtrCorrCent%d",iCent);
     h_mTpcEp2ReCtrCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),180,-1.0*TMath::Pi(),TMath::Pi(),180,-1.0*TMath::Pi(),TMath::Pi());
 
     histName = Form("h_mTpcEp3ReCtrEastCent%d",iCent); // 3rd EP
-    h_mTpcEp3ReCtrEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3ReCtrEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp3ReCtrWestCent%d",iCent);
-    h_mTpcEp3ReCtrWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3ReCtrWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp3ReCtrFullCent%d",iCent);
-    h_mTpcEp3ReCtrFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3ReCtrFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp3ReCtrCorrCent%d",iCent);
     h_mTpcEp3ReCtrCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),270,-1.0*TMath::Pi(),TMath::Pi(),270,-1.0*TMath::Pi(),TMath::Pi());
   }
@@ -1144,20 +1144,20 @@ void StTpcEpManager::initTpcSubEpShift()
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     std::string histName = Form("h_mTpcEp2ShiftEastCent%d",iCent); // 2nd EP
-    h_mTpcEp2ShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2ShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp2ShiftWestCent%d",iCent);
-    h_mTpcEp2ShiftWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2ShiftWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp2ShiftFullCent%d",iCent);
-    h_mTpcEp2ShiftFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp2ShiftFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,720,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp2ShiftCorrCent%d",iCent);
     h_mTpcEp2ShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),180,-1.0*TMath::Pi(),TMath::Pi(),180,-1.0*TMath::Pi(),TMath::Pi());
 
     histName = Form("h_mTpcEp3ShiftEastCent%d",iCent); // 3rd EP
-    h_mTpcEp3ShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3ShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp3ShiftWestCent%d",iCent);
-    h_mTpcEp3ShiftWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3ShiftWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp3ShiftFullCent%d",iCent);
-    h_mTpcEp3ShiftFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],-0.5,(double)globCons::mMaxRunIndex[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
+    h_mTpcEp3ShiftFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mMaxRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,1080,-1.0*TMath::Pi(),TMath::Pi());
     histName = Form("h_mTpcEp3ShiftCorrCent%d",iCent);
     h_mTpcEp3ShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),270,-1.0*TMath::Pi(),TMath::Pi(),270,-1.0*TMath::Pi(),TMath::Pi());
   }
