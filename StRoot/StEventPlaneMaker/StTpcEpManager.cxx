@@ -588,7 +588,7 @@ double StTpcEpManager::getPsi2ShiftEast(TVector2 Q2Vector)
   double Psi2Shift = -999.9;
   if(Q2Vector.Mod() > 0.0)
   {
-    const double Psi2ReCenter = TMath::ATan2(Q2Vector.Y(),Q2Vector.X())/2.0; // -pi/2 to pi/2
+    const double Psi2ReCtr = TMath::ATan2(Q2Vector.Y(),Q2Vector.X())/2.0; // -pi/2 to pi/2
     double deltaPsi2 = 0.0;
 
     for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
@@ -599,10 +599,10 @@ double StTpcEpManager::getPsi2ShiftEast(TVector2 Q2Vector)
       const int binSin     = p_mTpcQ2ShiftSinEast[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
       const double meanSin = p_mTpcQ2ShiftSinEast[mVzBin][iShift]->GetBinContent(binSin);
 
-      deltaPsi2 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(2.0*((double)iShift+1.0)*Psi2ReCenter)+meanCos*TMath::Sin(2.0*((double)iShift+1.0)*Psi2ReCenter));
+      deltaPsi2 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(2.0*((double)iShift+1.0)*Psi2ReCtr)+meanCos*TMath::Sin(2.0*((double)iShift+1.0)*Psi2ReCtr));
     }
 
-    double Psi2ShiftRaw = Psi2ReCenter + deltaPsi2/2.0;
+    double Psi2ShiftRaw = Psi2ReCtr + deltaPsi2/2.0;
     Psi2Shift = transPsi2(Psi2ShiftRaw);
   }
 
@@ -615,7 +615,7 @@ double StTpcEpManager::getPsi2ShiftWest(TVector2 Q2Vector)
   double Psi2Shift = -999.9;
   if(Q2Vector.Mod() > 0.0)
   {
-    const double Psi2ReCenter = TMath::ATan2(Q2Vector.Y(),Q2Vector.X())/2.0;
+    const double Psi2ReCtr = TMath::ATan2(Q2Vector.Y(),Q2Vector.X())/2.0;
     double deltaPsi2 = 0.0;
 
     for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
@@ -626,10 +626,10 @@ double StTpcEpManager::getPsi2ShiftWest(TVector2 Q2Vector)
       const int binSin     = p_mTpcQ2ShiftSinWest[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
       const double meanSin = p_mTpcQ2ShiftSinWest[mVzBin][iShift]->GetBinContent(binSin);
 
-      deltaPsi2 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(2.0*((double)iShift+1.0)*Psi2ReCenter)+meanCos*TMath::Sin(2.0*((double)iShift+1.0)*Psi2ReCenter));
+      deltaPsi2 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(2.0*((double)iShift+1.0)*Psi2ReCtr)+meanCos*TMath::Sin(2.0*((double)iShift+1.0)*Psi2ReCtr));
     }
 
-    double Psi2ShiftRaw = Psi2ReCenter + deltaPsi2/2.0;
+    double Psi2ShiftRaw = Psi2ReCtr + deltaPsi2/2.0;
     Psi2Shift = transPsi2(Psi2ShiftRaw);
   }
 
@@ -642,7 +642,7 @@ double StTpcEpManager::getPsi2ShiftFull(TVector2 Q2Vector)
   double Psi2Shift = -999.9;
   if(Q2Vector.Mod() > 0.0)
   {
-    const double Psi2ReCenter = TMath::ATan2(Q2Vector.Y(),Q2Vector.X())/2.0;
+    const double Psi2ReCtr = TMath::ATan2(Q2Vector.Y(),Q2Vector.X())/2.0;
     double deltaPsi2 = 0.0;
 
     for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
@@ -653,10 +653,10 @@ double StTpcEpManager::getPsi2ShiftFull(TVector2 Q2Vector)
       const int binSin     = p_mTpcQ2ShiftSinFull[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
       const double meanSin = p_mTpcQ2ShiftSinFull[mVzBin][iShift]->GetBinContent(binSin);
 
-      deltaPsi2 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(2.0*((double)iShift+1.0)*Psi2ReCenter)+meanCos*TMath::Sin(2.0*((double)iShift+1.0)*Psi2ReCenter));
+      deltaPsi2 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(2.0*((double)iShift+1.0)*Psi2ReCtr)+meanCos*TMath::Sin(2.0*((double)iShift+1.0)*Psi2ReCtr));
     }
 
-    double Psi2ShiftRaw = Psi2ReCenter + deltaPsi2/2.0;
+    double Psi2ShiftRaw = Psi2ReCtr + deltaPsi2/2.0;
     Psi2Shift = transPsi2(Psi2ShiftRaw);
   }
 
@@ -688,7 +688,7 @@ double StTpcEpManager::getPsi3ShiftEast(TVector2 Q3Vector)
   double Psi3Shift = -999.9;
   if(Q3Vector.Mod() > 0.0)
   {
-    const double Psi3ReCenter = TMath::ATan2(Q3Vector.Y(),Q3Vector.X())/3.0; // -pi/3 to pi/3
+    const double Psi3ReCtr = TMath::ATan2(Q3Vector.Y(),Q3Vector.X())/3.0; // -pi/3 to pi/3
     double deltaPsi3 = 0.0;
 
     for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
@@ -699,10 +699,10 @@ double StTpcEpManager::getPsi3ShiftEast(TVector2 Q3Vector)
       const int binSin     = p_mTpcQ3ShiftSinEast[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
       const double meanSin = p_mTpcQ3ShiftSinEast[mVzBin][iShift]->GetBinContent(binSin);
 
-      deltaPsi3 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(3.0*((double)iShift+1.0)*Psi3ReCenter)+meanCos*TMath::Sin(3.0*((double)iShift+1.0)*Psi3ReCenter));
+      deltaPsi3 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(3.0*((double)iShift+1.0)*Psi3ReCtr)+meanCos*TMath::Sin(3.0*((double)iShift+1.0)*Psi3ReCtr));
     }
 
-    double Psi3ShiftRaw = Psi3ReCenter + deltaPsi3/3.0;
+    double Psi3ShiftRaw = Psi3ReCtr + deltaPsi3/3.0;
     Psi3Shift = transPsi3(Psi3ShiftRaw);
   }
 
@@ -715,7 +715,7 @@ double StTpcEpManager::getPsi3ShiftWest(TVector2 Q3Vector)
   double Psi3Shift = -999.9;
   if(Q3Vector.Mod() > 0.0)
   {
-    const double Psi3ReCenter = TMath::ATan2(Q3Vector.Y(),Q3Vector.X())/3.0;
+    const double Psi3ReCtr = TMath::ATan2(Q3Vector.Y(),Q3Vector.X())/3.0;
     double deltaPsi3 = 0.0;
 
     for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
@@ -726,10 +726,10 @@ double StTpcEpManager::getPsi3ShiftWest(TVector2 Q3Vector)
       const int binSin     = p_mTpcQ3ShiftSinWest[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
       const double meanSin = p_mTpcQ3ShiftSinWest[mVzBin][iShift]->GetBinContent(binSin);
 
-      deltaPsi3 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(3.0*((double)iShift+1.0)*Psi3ReCenter)+meanCos*TMath::Sin(3.0*((double)iShift+1.0)*Psi3ReCenter));
+      deltaPsi3 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(3.0*((double)iShift+1.0)*Psi3ReCtr)+meanCos*TMath::Sin(3.0*((double)iShift+1.0)*Psi3ReCtr));
     }
 
-    double Psi3ShiftRaw = Psi3ReCenter + deltaPsi3/3.0;
+    double Psi3ShiftRaw = Psi3ReCtr + deltaPsi3/3.0;
     Psi3Shift = transPsi3(Psi3ShiftRaw);
   }
 
@@ -742,7 +742,7 @@ double StTpcEpManager::getPsi3ShiftFull(TVector2 Q3Vector)
   double Psi3Shift = -999.9;
   if(Q3Vector.Mod() > 0.0)
   {
-    const double Psi3ReCenter = TMath::ATan2(Q3Vector.Y(),Q3Vector.X())/3.0;
+    const double Psi3ReCtr = TMath::ATan2(Q3Vector.Y(),Q3Vector.X())/3.0;
     double deltaPsi3 = 0.0;
 
     for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
@@ -753,10 +753,10 @@ double StTpcEpManager::getPsi3ShiftFull(TVector2 Q3Vector)
       const int binSin     = p_mTpcQ3ShiftSinFull[mVzBin][iShift]->FindBin((double)mRunIndex,(double)mCent9);
       const double meanSin = p_mTpcQ3ShiftSinFull[mVzBin][iShift]->GetBinContent(binSin);
 
-      deltaPsi3 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(3.0*((double)iShift+1.0)*Psi3ReCenter)+meanCos*TMath::Sin(3.0*((double)iShift+1.0)*Psi3ReCenter));
+      deltaPsi3 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(3.0*((double)iShift+1.0)*Psi3ReCtr)+meanCos*TMath::Sin(3.0*((double)iShift+1.0)*Psi3ReCtr));
     }
 
-    double Psi3ShiftRaw = Psi3ReCenter + deltaPsi3/3.0;
+    double Psi3ShiftRaw = Psi3ReCtr + deltaPsi3/3.0;
     Psi3Shift = transPsi3(Psi3ShiftRaw);
   }
 
@@ -1079,7 +1079,7 @@ double StTpcEpManager::getPsi3RawFull()
 
 double StTpcEpManager::getPsi3ReCtrEast()
 {
-  double Psi3ReCtr = -999.9
+  double Psi3ReCtr = -999.9;
   TVector2 Q3Vector   = getQ3VecReCtrEast();
   if(Q3Vector.Mod() > 0.0)
   {
@@ -1087,12 +1087,12 @@ double StTpcEpManager::getPsi3ReCtrEast()
     Psi3ReCtr = transPsi3(Psi3);
   }
 
-  return Psi3ReCenter;
+  return Psi3ReCtr;
 }
 
 double StTpcEpManager::getPsi3ReCtrWest()
 {
-  double Psi3ReCtr = -999.9
+  double Psi3ReCtr = -999.9;
   TVector2 Q3Vector   = getQ3VecReCtrWest();
   if(Q3Vector.Mod() > 0.0)
   {
@@ -1105,7 +1105,7 @@ double StTpcEpManager::getPsi3ReCtrWest()
 
 double StTpcEpManager::getPsi3ReCtrFull()
 {
-  double Psi3ReCtr = -999.9
+  double Psi3ReCtr = -999.9;
   TVector2 Q3Vector   = getQ3VecReCtrFull();
   if(Q3Vector.Mod() > 0.0)
   {
@@ -1113,7 +1113,7 @@ double StTpcEpManager::getPsi3ReCtrFull()
     Psi3ReCtr = transPsi3(Psi3);
   }
 
-  return Psi3ReCenter;
+  return Psi3ReCtr;
 }
 
 int StTpcEpManager::getNumTrkRawEast()

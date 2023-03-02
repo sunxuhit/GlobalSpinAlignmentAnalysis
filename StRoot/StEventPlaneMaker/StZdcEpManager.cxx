@@ -541,7 +541,7 @@ TVector2 StZdcEpManager::getQ1VecFull(TVector2 QEast, TVector2 QWest, int mode)
 {
   // TVector2 QVector = QWest-QEast;
   TVector2 QVector = QWest - QEast;
-  if(mode > 2 && QVector.Mod() > 0) QVector = applyZdcSmdShiftCorrFull(QVecShift);
+  if(mode > 2 && QVector.Mod() > 0) QVector = applyZdcSmdShiftCorrFull(QVector);
 
   return QVector;
 }

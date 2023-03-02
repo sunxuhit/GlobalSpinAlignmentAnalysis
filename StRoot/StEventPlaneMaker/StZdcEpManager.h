@@ -46,7 +46,7 @@ class StZdcEpManager : public TObject
     TVector2 applyZdcSmdShiftCorrEast(TVector2 QVector);
     TVector2 applyZdcSmdShiftCorrWest(TVector2 QVector);
     double transPsi1(double Psi1);
-    bool isPsi1InRnage(double Psi1);
+    bool isPsi1InRange(double Psi1);
 
     void initZdcShiftFull(); // Full
     void fillZdcShiftFull(TVector2 QVector);
