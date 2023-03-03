@@ -89,7 +89,7 @@ int StPhiMesonMaker::Finish()
 {
   if(mMode == 0)
   {
-    if(str_mOutPutRecoPhi != "")
+    if(str_mOutPutPhiTree != "")
     {
       file_mOutPutPhiTree->cd();
       mPhiMesonTree->writePhiTree();
