@@ -9,11 +9,11 @@ class StPicoEvent;
 
 StChain *chain;
 
-void recoEventPlane(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 1, const Int_t beamType = 0)
-// void recoEventPlane(const Char_t *inputFile="Utility/FileList/RuRu200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 1, const Int_t beamType = 1)
+void recoEventPlane(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int mode = 1, const int beamType = 0)
+// void recoEventPlane(const Char_t *inputFile="Utility/FileList/RuRu200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int mode = 1, const int beamType = 1)
 {
   // mBeamType[NumBeamType] = {"ZrZr200GeV_2018","RuRu200GeV_2018"};
-  // Mode: 0 for gain correction, 1 for re-center correction, 2 for shift correction, 3 for full shift correction, 4 for resolution calculation, 5 for charged flow
+  // mode: 0 for gain correction, 1 for re-center correction, 2 for shift correction, 3 for full shift correction, 4 for resolution calculation, 5 for charged flow
 
   TStopwatch *stopWatch = new TStopwatch();
   stopWatch->Start();
@@ -30,8 +30,8 @@ void recoEventPlane(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/pi
   }
   */
 
-  // Int_t nEvents = 10000000000;
-  Int_t nEvents = 10000;
+  // int nEvents = 10000000000;
+  int nEvents = 10000;
 
   gROOT->LoadMacro("$STAR/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");
   loadSharedLibraries();
@@ -46,7 +46,7 @@ void recoEventPlane(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/pi
   chain = new StChain();
   StPicoDstMaker *picoMaker = new StPicoDstMaker(2,inputFile,"picoDst");
 
-  StEventPlaneMaker *EventPlaneMaker = new StEventPlaneMaker("EventPlane",picoMaker,jobId,Mode,beamType);
+  StEventPlaneMaker *EventPlaneMaker = new StEventPlaneMaker("EventPlane",picoMaker,jobId,mode,beamType);
 
   if( chain->Init()==kStErr ){ 
     cout<<"chain->Init();"<<endl;
@@ -57,7 +57,7 @@ void recoEventPlane(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/pi
   cout << " Total entries = " << total << endl;
   if(nEvents>total) nEvents = total;
 
-  for (Int_t i=0; i<nEvents; i++)
+  for (int i=0; i<nEvents; i++)
   {
     if(i != 0 && i%50 == 0)
     {

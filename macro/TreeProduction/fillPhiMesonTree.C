@@ -9,16 +9,17 @@ class StPicoEvent;
 
 StChain *chain;
 
-void VecMesonTree(const Char_t *inputFile="../FileList/54GeV_2017/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 1, const Int_t energy = 1, const Int_t flag_ME = 0)
-// void VecMesonTree(const Char_t *inputFile="../FileList/27GeV_2018/pico_xrootd_local.list", const string jobId = "14", const Int_t Mode = 1, const Int_t energy = 2, const Int_t flag_ME = 0)
+void fillPhiMesonTree(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int mode = 0, const int beamType = 0, const int flagME = 0)
+// void fillPhiMesonTree(const Char_t *inputFile="Utility/FileList/RuRu200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int mode = 0, const int beamType = 1, const int flagME = 0)
 {
-  // mBeamEnergy[NumBeamEnergy] = {"200GeV","54GeV","27GeV"};
-  // Mode: 0 for QA, 1 for re-center correction, 2 for shift correction, 3 for resolution calculation, 4 for phi meson
-  // flag_ME: 0 for Same Event, 1 for Mixed Event
+  // mBeamType[NumBeamType] = {"ZrZr200GeV_2018","RuRu200GeV_2018"};
+  // mode: 0 for phi meson TTree production
+  // flagME: 0 for Same Event, 1 for Mixed Event
 
   TStopwatch *stopWatch = new TStopwatch();
   stopWatch->Start();
 
+  /*
   string SL_version = "pro";
   if(energy == 0) SL_version = "SL18h"; // 200GeV_2014
   if(energy == 1) SL_version = "SL18c"; // 54GeV_2017
@@ -29,9 +30,10 @@ void VecMesonTree(const Char_t *inputFile="../FileList/54GeV_2017/pico_xrootd_lo
     cout<<"Environment Star Library does not match the requested library in runPicoMixedEventMaker.C. Exiting..."<<endl;
     exit(1);
   }
+  */
 
-  // Int_t nEvents = 10000000;
-  Int_t nEvents = 10000;
+  // int nEvents = 1000000000;
+  int nEvents = 10000;
 
   gROOT->LoadMacro("$STAR/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");
   loadSharedLibraries();
@@ -39,13 +41,14 @@ void VecMesonTree(const Char_t *inputFile="../FileList/54GeV_2017/pico_xrootd_lo
   gSystem->Load("StPicoEvent");
   gSystem->Load("StPicoDstMaker");
   gSystem->Load("StRefMultCorr");
-  gSystem->Load("StAlexPhiMesonEvent");
-  gSystem->Load("StVecMesonMaker");
+  gSystem->Load("StEpdUtil");
+  gSystem->Load("StAnalysisUtils");
+  gSystem->Load("StPhiMesonMaker");
 
   chain = new StChain();
   StPicoDstMaker *picoMaker = new StPicoDstMaker(2,inputFile,"picoDst");
 
-  StVecMesonMaker *VecMesonMaker = new StVecMesonMaker("VecMeson",picoMaker,jobId,Mode,energy,flag_ME);
+  StPhiMesonMaker *phiMesonMaker = new StPhiMesonMaker("phiMeson",picoMaker,jobId,mode,beamType,flagME);
 
   if( chain->Init()==kStErr ){ 
     cout<<"chain->Init();"<<endl;
@@ -56,7 +59,7 @@ void VecMesonTree(const Char_t *inputFile="../FileList/54GeV_2017/pico_xrootd_lo
   cout << " Total entries = " << total << endl;
   if(nEvents>total) nEvents = total;
 
-  for (Int_t i=0; i<nEvents; i++)
+  for (int i=0; i<nEvents; i++)
   {
     if(i != 0 && i%50 == 0)
     {
@@ -83,10 +86,10 @@ void VecMesonTree(const Char_t *inputFile="../FileList/54GeV_2017/pico_xrootd_lo
   cout << "." << flush;
   cout << " " << nEvents << "(" << 100 << "%)";
   cout << endl;
+  chain->Finish();
   cout << "****************************************** " << endl;
   cout << "Work done... now its time to close up shop!"<< endl;
   cout << "****************************************** " << endl;
-  chain->Finish();
   cout << "****************************************** " << endl;
   cout << "total number of events  " << nEvents << endl;
   cout << "****************************************** " << endl;
@@ -94,7 +97,7 @@ void VecMesonTree(const Char_t *inputFile="../FileList/54GeV_2017/pico_xrootd_lo
   stopWatch->Stop();
   stopWatch->Print();
 
-  delete VecMesonMaker;
+  delete phiMesonMaker;
   delete picoMaker;
   delete chain;
 }
