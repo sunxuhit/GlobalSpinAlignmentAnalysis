@@ -38,7 +38,7 @@ class StPhiMesonMaker : public StMaker {
     StEpdEpManager  *mEpdEpManager;
     StTpcEpManager  *mTpcEpManager;
     StPhiMesonTree  *mPhiMesonTree;
-    
+
     const int mMode;
     const int mType;
     const int mFlagME;
@@ -48,6 +48,8 @@ class StPhiMesonMaker : public StMaker {
 
     TFile *file_mOutPutRecoPhi;
     TFile *file_mOutPutPhiTree;
+
+    std::string str_mFlagME[2] = {"SE","ME"};
 
     ClassDef(StPhiMesonMaker, 1)
 };

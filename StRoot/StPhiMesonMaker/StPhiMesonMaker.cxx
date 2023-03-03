@@ -34,7 +34,7 @@ StPhiMesonMaker::StPhiMesonMaker(const char* name, StPicoDstMaker *picoMaker, co
 
   if(mMode == 0)
   { // Test phi Meson Reconstruction
-    str_mOutPutPhiTree = Form("./file_RecoPhi_%s_%s.root",globCons::str_mBeamType[beamType].c_str(),jobId.c_str());
+    str_mOutPutPhiTree = Form("./file_RecoPhi%s_%s_%s.root",str_mFlagME[mFlagME].c_str(),globCons::str_mBeamType[mType].c_str(),jobId.c_str());
   }
 }
 

@@ -43,7 +43,7 @@ void getEpdResolution(int beamType = 0)
     c_EpdSubEp1Res->SaveAs(figName.c_str());
   }
 
-  string outputFile = Form("../../Utility/EventPlaneMaker/%s/Resolution/file_EpdResolutoin_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string outputFile = Form("../../Utility/EventPlaneMaker/%s/Resolution/file_EpdEpResolution_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   cout << "outputFile: " << outputFile.c_str() << endl;
   TFile *file_OutPut = new TFile(outputFile.c_str(),"RECREATE");
   file_OutPut->cd();
