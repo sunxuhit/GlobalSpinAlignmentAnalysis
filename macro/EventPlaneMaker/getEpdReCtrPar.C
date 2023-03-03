@@ -16,7 +16,7 @@ void getEpdReCtrPar(int beamType = 0)
   const int mNumVzBin = 2; // 0: vz < 0 | 1: vz >= 0
   const int mNumCentrality = 9;
 
-  string inputFile = Form("../../data/%s/EventPlaneMaker/file_ReCenterPar_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string inputFile = Form("../../data/EventPlaneMaker/%s/file_ReCenterPar_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *file_InPut = TFile::Open(inputFile.c_str());
   if(!file_InPut->IsOpen()) cout << "inputFile: " << inputFile.c_str() << "is problematic" << endl;
   cout << "inputFile sets to: " << inputFile.c_str() << endl;
@@ -51,11 +51,11 @@ void getEpdReCtrPar(int beamType = 0)
       c_EpdQ1ReCtr->cd(iPad+1)->SetGrid(0,0);
     }
 
-    std::string figName = Form("../../figures/%s/EventPlaneMaker/EpdQ1ReCtr_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    std::string figName = Form("../../figures/EventPlaneMaker/%s/EpdQ1ReCtr_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_EpdQ1ReCtr->Print(figName.c_str());
     for(int iVz = 0; iVz < mNumVzBin; ++iVz)
     {
-      figName = Form("../../figures/%s/EventPlaneMaker/EpdQ1ReCtr_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+      figName = Form("../../figures/EventPlaneMaker/%s/EpdQ1ReCtr_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
       c_EpdQ1ReCtr->cd(1)->Clear(); c_EpdQ1ReCtr->cd(1); p_mEpdQ1ReCtrXEast[iVz]->Draw("colz");
       c_EpdQ1ReCtr->cd(2)->Clear(); c_EpdQ1ReCtr->cd(2); p_mEpdQ1ReCtrYEast[iVz]->Draw("colz");
       c_EpdQ1ReCtr->cd(3)->Clear(); c_EpdQ1ReCtr->cd(3); p_mEpdQ1ReCtrXWest[iVz]->Draw("colz");
@@ -63,7 +63,7 @@ void getEpdReCtrPar(int beamType = 0)
       c_EpdQ1ReCtr->Update();
       c_EpdQ1ReCtr->Print(figName.c_str());
     }
-    figName = Form("../../figures/%s/EventPlaneMaker/EpdQ1ReCtr_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    figName = Form("../../figures/EventPlaneMaker/%s/EpdQ1ReCtr_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_EpdQ1ReCtr->Print(figName.c_str());
   }
 
@@ -109,11 +109,11 @@ void getEpdReCtrPar(int beamType = 0)
       c_EpdEp1WgtDist->cd(iPad+1)->SetGrid(0,0);
     }
 
-    std::string figName = Form("../../figures/%s/EventPlaneMaker/EpdWgtEp_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    std::string figName = Form("../../figures/EventPlaneMaker/%s/EpdWgtEp_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_EpdEp1WgtDist->Print(figName.c_str());
     for(int iCent = 0; iCent < mNumCentrality; ++iCent)
     {
-      figName = Form("../../figures/%s/EventPlaneMaker/EpdWgtEp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+      figName = Form("../../figures/EventPlaneMaker/%s/EpdWgtEp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
       c_EpdEp1WgtDist->cd(1)->Clear(); c_EpdEp1WgtDist->cd(1); h_mEpdEp1WgtEast[iCent]->ProjectionY()->Draw();
       c_EpdEp1WgtDist->cd(2)->Clear(); c_EpdEp1WgtDist->cd(2); h_mEpdEp1WgtWest[iCent]->ProjectionY()->Draw();
       c_EpdEp1WgtDist->cd(3)->Clear(); c_EpdEp1WgtDist->cd(3); h_mEpdEp1WgtFull[iCent]->ProjectionY()->Draw();
@@ -121,11 +121,11 @@ void getEpdReCtrPar(int beamType = 0)
       c_EpdEp1WgtDist->Update();
       c_EpdEp1WgtDist->Print(figName.c_str());
     }
-    figName = Form("../../figures/%s/EventPlaneMaker/EpdWgtEp_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    figName = Form("../../figures/EventPlaneMaker/%s/EpdWgtEp_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_EpdEp1WgtDist->Print(figName.c_str());
   }
 
-  string outputFileWgtEp = Form("../../data/%s/EventPlaneMaker/file_EpdWgtEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string outputFileWgtEp = Form("../../data/EventPlaneMaker/%s/file_EpdWgtEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   cout << "outputFile of Wgt EP: " << outputFileWgtEp.c_str() << endl;
   TFile *file_OutPutWgtEp = new TFile(outputFileWgtEp.c_str(),"RECREATE");
   file_OutPutWgtEp->cd();

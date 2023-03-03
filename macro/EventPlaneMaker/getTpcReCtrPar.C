@@ -16,7 +16,7 @@ void getTpcReCtrPar(int beamType = 0)
   const int mNumVzBin = 2; // 0: vz < 0 | 1: vz >= 0
   const int mNumCentrality = 9;
 
-  string inputFile = Form("../../data/%s/EventPlaneMaker/file_ReCenterPar_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string inputFile = Form("../../data/EventPlaneMaker/%s/file_ReCenterPar_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *file_InPut = TFile::Open(inputFile.c_str());
   if(!file_InPut->IsOpen()) cout << "inputFile: " << inputFile.c_str() << "is problematic" << endl;
   cout << "inputFile sets to: " << inputFile.c_str() << endl;
@@ -80,11 +80,11 @@ void getTpcReCtrPar(int beamType = 0)
       c_TpcQVecReCtr->cd(iPad+1)->SetGrid(0,0);
     }
 
-    std::string figName = Form("../../figures/%s/EventPlaneMaker/TpcQVecReCtr_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    std::string figName = Form("../../figures/EventPlaneMaker/%s/TpcQVecReCtr_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_TpcQVecReCtr->Print(figName.c_str());
     for(int iVz = 0; iVz < mNumVzBin; ++iVz)
     {
-      figName = Form("../../figures/%s/EventPlaneMaker/TpcQVecReCtr_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+      figName = Form("../../figures/EventPlaneMaker/%s/TpcQVecReCtr_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
       c_TpcQVecReCtr->cd(1)->Clear(); c_TpcQVecReCtr->cd(1); p_mTpcQ2ReCtrXEast[iVz]->Draw("colz");
       c_TpcQVecReCtr->cd(2)->Clear(); c_TpcQVecReCtr->cd(2); p_mTpcQ2ReCtrYEast[iVz]->Draw("colz");
       c_TpcQVecReCtr->cd(3)->Clear(); c_TpcQVecReCtr->cd(3); p_mTpcQ2ReCtrXWest[iVz]->Draw("colz");
@@ -103,7 +103,7 @@ void getTpcReCtrPar(int beamType = 0)
       c_TpcQVecReCtr->Update();
       c_TpcQVecReCtr->Print(figName.c_str());
     }
-    figName = Form("../../figures/%s/EventPlaneMaker/TpcQVecReCtr_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    figName = Form("../../figures/EventPlaneMaker/%s/TpcQVecReCtr_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_TpcQVecReCtr->Print(figName.c_str());
   }
 
@@ -172,11 +172,11 @@ void getTpcReCtrPar(int beamType = 0)
       c_TpcEpRawDist->cd(iPad+1)->SetGrid(0,0);
     }
 
-    std::string figName = Form("../../figures/%s/EventPlaneMaker/TpcRawEp_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    std::string figName = Form("../../figures/EventPlaneMaker/%s/TpcRawEp_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_TpcEpRawDist->Print(figName.c_str());
     for(int iCent = 0; iCent < mNumCentrality; ++iCent)
     {
-      figName = Form("../../figures/%s/EventPlaneMaker/TpcRawEp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+      figName = Form("../../figures/EventPlaneMaker/%s/TpcRawEp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
       c_TpcEpRawDist->cd(1); h_mTpcEp2RawEast[iCent]->ProjectionY()->Draw();
       c_TpcEpRawDist->cd(2); h_mTpcEp2RawWest[iCent]->ProjectionY()->Draw();
       c_TpcEpRawDist->cd(3); h_mTpcEp2RawFull[iCent]->ProjectionY()->Draw();
@@ -191,11 +191,11 @@ void getTpcReCtrPar(int beamType = 0)
       c_TpcEpRawDist->Update();
       c_TpcEpRawDist->Print(figName.c_str());
     }
-    figName = Form("../../figures/%s/EventPlaneMaker/TpcRawEp_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    figName = Form("../../figures/EventPlaneMaker/%s/TpcRawEp_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_TpcEpRawDist->Print(figName.c_str());
   }
 
-  string outputFileRawEp = Form("../../data/%s/EventPlaneMaker/file_TpcRawEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string outputFileRawEp = Form("../../data/EventPlaneMaker/%s/file_TpcRawEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   cout << "outputFile of Raw EP: " << outputFileRawEp.c_str() << endl;
   TFile *file_OutPutRawEp = new TFile(outputFileRawEp.c_str(),"RECREATE");
   file_OutPutRawEp->cd();

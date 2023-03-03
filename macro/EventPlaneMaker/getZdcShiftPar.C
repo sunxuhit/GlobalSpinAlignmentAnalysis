@@ -17,7 +17,7 @@ void getZdcShiftPar(int beamType = 0)
   const int mNumShiftCorr = 20;
   const int mNumCentrality = 9;
 
-  string inputFile = Form("../../data/%s/EventPlaneMaker/file_ShiftPar_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string inputFile = Form("../../data/EventPlaneMaker/%s/file_ShiftPar_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *file_InPut = TFile::Open(inputFile.c_str());
   if(!file_InPut->IsOpen()) cout << "inputFile: " << inputFile.c_str() << "is problematic" << endl;
   cout << "inputFile sets to: " << inputFile.c_str() << endl;
@@ -55,13 +55,13 @@ void getZdcShiftPar(int beamType = 0)
       c_ZdcQ1Shift->cd(iPad+1)->SetGrid(0,0);
     }
 
-    std::string figName = Form("../../figures/%s/EventPlaneMaker/ZdcQ1Shift_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    std::string figName = Form("../../figures/EventPlaneMaker/%s/ZdcQ1Shift_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_ZdcQ1Shift->Print(figName.c_str());
     for(int iVz = 0; iVz < mNumVzBin; ++iVz)
     {
       for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
       {
-	figName = Form("../../figures/%s/EventPlaneMaker/ZdcQ1Shift_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+	figName = Form("../../figures/EventPlaneMaker/%s/ZdcQ1Shift_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
 	c_ZdcQ1Shift->cd(1)->Clear(); c_ZdcQ1Shift->cd(1); p_mZdcQ1ShiftCosEast[iVz][iShift]->Draw("colz");
 	c_ZdcQ1Shift->cd(2)->Clear(); c_ZdcQ1Shift->cd(2); p_mZdcQ1ShiftSinEast[iVz][iShift]->Draw("colz");
 	c_ZdcQ1Shift->cd(3)->Clear(); c_ZdcQ1Shift->cd(3); p_mZdcQ1ShiftCosWest[iVz][iShift]->Draw("colz");
@@ -70,7 +70,7 @@ void getZdcShiftPar(int beamType = 0)
 	c_ZdcQ1Shift->Print(figName.c_str());
       }
     }
-    figName = Form("../../figures/%s/EventPlaneMaker/ZdcQ1Shift_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    figName = Form("../../figures/EventPlaneMaker/%s/ZdcQ1Shift_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_ZdcQ1Shift->Print(figName.c_str());
   }
 
@@ -120,11 +120,11 @@ void getZdcShiftPar(int beamType = 0)
       c_ZdcEp1ReCtrDist->cd(iPad+1)->SetGrid(0,0);
     }
 
-    std::string figName = Form("../../figures/%s/EventPlaneMaker/ZdcReCtrEp_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    std::string figName = Form("../../figures/EventPlaneMaker/%s/ZdcReCtrEp_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_ZdcEp1ReCtrDist->Print(figName.c_str());
     for(int iCent = 0; iCent < mNumCentrality; ++iCent)
     {
-      figName = Form("../../figures/%s/EventPlaneMaker/ZdcReCtrEp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+      figName = Form("../../figures/EventPlaneMaker/%s/ZdcReCtrEp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
       c_ZdcEp1ReCtrDist->cd(1)->Clear(); c_ZdcEp1ReCtrDist->cd(1); h_mZdcEp1ReCtrEast[iCent]->ProjectionY()->Draw();
       c_ZdcEp1ReCtrDist->cd(2)->Clear(); c_ZdcEp1ReCtrDist->cd(2); h_mZdcEp1ReCtrWest[iCent]->ProjectionY()->Draw();
       c_ZdcEp1ReCtrDist->cd(3)->Clear(); c_ZdcEp1ReCtrDist->cd(3); h_mZdcEp1ReCtrFull[iCent]->ProjectionY()->Draw();
@@ -132,11 +132,11 @@ void getZdcShiftPar(int beamType = 0)
       c_ZdcEp1ReCtrDist->Update();
       c_ZdcEp1ReCtrDist->Print(figName.c_str());
     }
-    figName = Form("../../figures/%s/EventPlaneMaker/ZdcReCtrEp_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    figName = Form("../../figures/EventPlaneMaker/%s/ZdcReCtrEp_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_ZdcEp1ReCtrDist->Print(figName.c_str());
   }
 
-  string outputFileReCtrEp = Form("../../data/%s/EventPlaneMaker/file_ZdcReCtrEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string outputFileReCtrEp = Form("../../data/EventPlaneMaker/%s/file_ZdcReCtrEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   cout << "outputFile of ReCtr EP: " << outputFileReCtrEp.c_str() << endl;
   TFile *file_OutPutReCtrEp = new TFile(outputFileReCtrEp.c_str(),"RECREATE");
   file_OutPutReCtrEp->cd();

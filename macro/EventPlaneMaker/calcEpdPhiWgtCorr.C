@@ -10,7 +10,7 @@
 
 void calcEpdPhiWgtCorr(int beamType = 0)
 {
-  string inputFile = Form("../../data/%s/EventPlaneMaker/file_GainCorr_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string inputFile = Form("../../data/EventPlaneMaker/%s/file_GainCorr_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *file_InPut = TFile::Open(inputFile.c_str());
   if(!file_InPut->IsOpen()) cout << "inputFile: " << inputFile.c_str() << "is problematic" << endl;
   cout << "inputFile sets to: " << inputFile.c_str() << endl;
@@ -46,7 +46,7 @@ void calcEpdPhiWgtCorr(int beamType = 0)
     h_mEpdPhiWgtEast[iCent]->Divide(h_mEpdPhiAveEast[iCent]);
     h_mEpdPhiWgtEast[iCent]->Draw("colz");
   }
-  std::string figName = Form("../../figures/%s/EventPlaneMaker/EpdPhiWgtEast_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  std::string figName = Form("../../figures/EventPlaneMaker/%s/EpdPhiWgtEast_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   c_EpdPhiWgtEast->SaveAs(figName.c_str());
 
   TCanvas *c_EpdPhiWgtWest = new TCanvas("c_EpdPhiWgtWest","c_EpdPhiWgtWest",10,10,900,900);
@@ -58,7 +58,7 @@ void calcEpdPhiWgtCorr(int beamType = 0)
     h_mEpdPhiWgtWest[iCent]->Divide(h_mEpdPhiAveWest[iCent]);
     h_mEpdPhiWgtWest[iCent]->Draw("colz");
   }
-  figName = Form("../../figures/%s/EventPlaneMaker/EpdPhiWgtWest_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  figName = Form("../../figures/EventPlaneMaker/%s/EpdPhiWgtWest_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   c_EpdPhiWgtEast->SaveAs(figName.c_str());
 
   string outputFile = Form("../../Utility/EventPlaneMaker/%s/GainCorrPar/file_EpdPhiWgtPar_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
@@ -101,11 +101,11 @@ void calcEpdPhiWgtCorr(int beamType = 0)
     c_EpdEp1RawDist[iCent]->cd(3); h_mEpdEp1RawFull[iCent]->ProjectionY()->Draw();
     c_EpdEp1RawDist[iCent]->cd(4); h_mEpdEp1RawCorr[iCent]->Draw("colz");
 
-    std::string figName = Form("../../figures/%s/EventPlaneMaker/EpdRawEpCent%d_%s.pdf",globCons::str_mBeamType[beamType].c_str(),iCent,globCons::str_mBeamType[beamType].c_str());
+    std::string figName = Form("../../figures/EventPlaneMaker/%s/EpdRawEpCent%d_%s.pdf",globCons::str_mBeamType[beamType].c_str(),iCent,globCons::str_mBeamType[beamType].c_str());
     c_EpdEp1RawDist[iCent]->SaveAs(figName.c_str());
   }
 
-  string outputFileRawEp = Form("../../data/%s/EventPlaneMaker/file_EpdRawEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string outputFileRawEp = Form("../../data/EventPlaneMaker/%s/file_EpdRawEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   cout << "outputFile of Raw EP: " << outputFileRawEp.c_str() << endl;
   TFile *file_OutPutRawEp = new TFile(outputFileRawEp.c_str(),"RECREATE");
   file_OutPutRawEp->cd();

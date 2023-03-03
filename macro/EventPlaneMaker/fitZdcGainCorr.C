@@ -10,7 +10,7 @@
 
 void fitZdcGainCorr(int beamType = 0)
 {
-  string inputFile = Form("../../data/%s/EventPlaneMaker/file_GainCorr_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string inputFile = Form("../../data/EventPlaneMaker/%s/file_GainCorr_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *file_InPut = TFile::Open(inputFile.c_str());
   if(!file_InPut->IsOpen()) cout << "inputFile: " << inputFile.c_str() << "is problematic" << endl;
   cout << "inputFile sets to: " << inputFile.c_str() << endl;
@@ -98,7 +98,7 @@ void fitZdcGainCorr(int beamType = 0)
 	f_exp->SetLineStyle(1);
 	f_exp->Draw("l same");
       }
-      string FigureName = Form("../../figures/%s/EventPlaneMaker/ZdcGainCorr%s%s_%s.pdf",globCons::str_mBeamType[beamType].c_str(),str_mEastWest[iEastWest].c_str(),str_mVertHori[iVertHori].c_str(),globCons::str_mBeamType[beamType].c_str());
+      string FigureName = Form("../../figures/EventPlaneMaker/%s/ZdcGainCorr%s%s_%s.pdf",globCons::str_mBeamType[beamType].c_str(),str_mEastWest[iEastWest].c_str(),str_mVertHori[iVertHori].c_str(),globCons::str_mBeamType[beamType].c_str());
       c_ZdcGainCorr[iEastWest][iVertHori]->SaveAs(FigureName.c_str());
     }
   }

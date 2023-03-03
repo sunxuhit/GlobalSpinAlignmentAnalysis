@@ -17,7 +17,7 @@ void getTpcResolution(int beamType = 0)
   const int mNumShiftCorr = 20;
   const int mNumCentrality = 9;
 
-  string inputFile = Form("../../data/%s/EventPlaneMaker/file_EpResolution_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string inputFile = Form("../../data/EventPlaneMaker/%s/file_EpResolution_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *file_InPut = TFile::Open(inputFile.c_str());
   if(!file_InPut->IsOpen()) cout << "inputFile: " << inputFile.c_str() << "is problematic" << endl;
   cout << "inputFile sets to: " << inputFile.c_str() << endl;
@@ -39,7 +39,7 @@ void getTpcResolution(int beamType = 0)
     p_mTpcSubEp2Res->GetYaxis()->SetLabelSize(0.03);
     p_mTpcSubEp2Res->Draw("PE");
 
-    std::string figName = Form("../../figures/%s/EventPlaneMaker/TpcSubEp2Resolution_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    std::string figName = Form("../../figures/EventPlaneMaker/%s/TpcSubEp2Resolution_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_TpcSubEp2Res->SaveAs(figName.c_str());
   }
 
@@ -57,7 +57,7 @@ void getTpcResolution(int beamType = 0)
     p_mTpcSubEp3Res->GetYaxis()->SetLabelSize(0.03);
     p_mTpcSubEp3Res->Draw("PE");
 
-    std::string figName = Form("../../figures/%s/EventPlaneMaker/TpcSubEp3Resolution_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    std::string figName = Form("../../figures/EventPlaneMaker/%s/TpcSubEp3Resolution_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_TpcSubEp3Res->SaveAs(figName.c_str());
   }
 
@@ -112,11 +112,11 @@ void getTpcResolution(int beamType = 0)
       c_TpcEpShiftDist->cd(iPad+1)->SetGrid(0,0);
     }
 
-    std::string figName = Form("../../figures/%s/EventPlaneMaker/TpcShiftEp_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    std::string figName = Form("../../figures/EventPlaneMaker/%s/TpcShiftEp_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_TpcEpShiftDist->Print(figName.c_str());
     for(int iCent = 0; iCent < mNumCentrality; ++iCent)
     {
-      figName = Form("../../figures/%s/EventPlaneMaker/TpcShiftEp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+      figName = Form("../../figures/EventPlaneMaker/%s/TpcShiftEp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
       c_TpcEpShiftDist->cd(1); h_mTpcEp2ShiftEast[iCent]->ProjectionY()->Draw();
       c_TpcEpShiftDist->cd(2); h_mTpcEp2ShiftWest[iCent]->ProjectionY()->Draw();
       c_TpcEpShiftDist->cd(3); h_mTpcEp2ShiftFull[iCent]->ProjectionY()->Draw();
@@ -131,11 +131,11 @@ void getTpcResolution(int beamType = 0)
       c_TpcEpShiftDist->Update();
       c_TpcEpShiftDist->Print(figName.c_str());
     }
-    figName = Form("../../figures/%s/EventPlaneMaker/TpcShiftEp_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    figName = Form("../../figures/EventPlaneMaker/%s/TpcShiftEp_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_TpcEpShiftDist->Print(figName.c_str());
   }
 
-  string outputFileShiftEp = Form("../../data/%s/EventPlaneMaker/file_TpcShiftEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string outputFileShiftEp = Form("../../data/EventPlaneMaker/%s/file_TpcShiftEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   cout << "outputFile of Shift EP: " << outputFileShiftEp.c_str() << endl;
   TFile *file_OutPutShiftEp = new TFile(outputFileShiftEp.c_str(),"RECREATE");
   file_OutPutShiftEp->cd();
