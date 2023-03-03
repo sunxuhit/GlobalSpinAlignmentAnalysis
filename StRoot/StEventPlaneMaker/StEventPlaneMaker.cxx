@@ -658,8 +658,11 @@ int StEventPlaneMaker::Make()
 	      const double eta = primMom.PseudoRapidity();
 	      const double phi = primMom.Phi(); // -pi to pi
 
-	      const double v1Zdc = TMath::Cos(1.0*(phi-Psi1ZdcFull))/mZdcEpManager->getZdcFullEpResVal(cent9);
-	      mZdcEpManager->fillZdcFullEpDFlow(eta, pt, v1Zdc, reweight);
+	      if(mZdcEpManager->getZdcFullEpResVal(cent9) > 0.0)
+	      {
+		const double v1Zdc = TMath::Cos(1.0*(phi-Psi1ZdcFull))/mZdcEpManager->getZdcFullEpResVal(cent9);
+		mZdcEpManager->fillZdcFullEpDFlow(eta, pt, v1Zdc, reweight);
+	      }
 	    }
 	  }
 
@@ -679,12 +682,12 @@ int StEventPlaneMaker::Make()
 	      const double eta = EpdVector.PseudoRapidity();
 	      const double phi = EpdVector.Phi(); // -pi to pi
 
-	      if( mAnaCut->passHitEpdFlowEast(picoEpdHit) ) // negative eta
+	      if( mAnaCut->passHitEpdFlowEast(picoEpdHit) && mEpdEpManager->getEpdSubEp1ResVal(cent9) > 0.0 ) // negative eta
 	      {
 		const double v1Epd = TMath::Cos(1.0*(phi-Psi1EpdWest))/mEpdEpManager->getEpdSubEp1ResVal(cent9);
 		mEpdEpManager->fillEpdSubEpDFlow(eta, v1Epd, reweight);
 	      }
-	      if( mAnaCut->passHitEpdFlowWest(picoEpdHit) ) // positive eta
+	      if( mAnaCut->passHitEpdFlowWest(picoEpdHit) && mEpdEpManager->getEpdSubEp1ResVal(cent9) > 0.0  ) // positive eta
 	      {
 		const double v1Epd = TMath::Cos(1.0*(phi-Psi1EpdEast))/mEpdEpManager->getEpdSubEp1ResVal(cent9);
 		mEpdEpManager->fillEpdSubEpDFlow(eta, v1Epd, reweight);
@@ -719,17 +722,29 @@ int StEventPlaneMaker::Make()
 
 	      if(mAnaCut->passTrkTpcFlowEast(picoTrack, primVtx)) // neg
 	      { // correlate track from East to EP from West
-		const double v2Tpc = TMath::Cos(2.0*(phi-Psi2TpcWest))/mTpcEpManager->getTpcSubEp2ResVal(cent9);
-		const double v3Tpc = TMath::Cos(3.0*(phi-Psi3TpcWest))/mTpcEpManager->getTpcSubEp3ResVal(cent9);
-		mTpcEpManager->fillTpcSubEpEFlow(pt, v2Tpc, reweight);
-		mTpcEpManager->fillTpcSubEpTFlow(pt, v3Tpc, reweight);
+		if(mTpcEpManager->getTpcSubEp2ResVal(cent9) > 0.0)
+		{
+		  const double v2Tpc = TMath::Cos(2.0*(phi-Psi2TpcWest))/mTpcEpManager->getTpcSubEp2ResVal(cent9);
+		  mTpcEpManager->fillTpcSubEpEFlow(pt, v2Tpc, reweight);
+		}
+		if(mTpcEpManager->getTpcSubEp3ResVal(cent9) > 0.0)
+		{
+		  const double v3Tpc = TMath::Cos(3.0*(phi-Psi3TpcWest))/mTpcEpManager->getTpcSubEp3ResVal(cent9);
+		  mTpcEpManager->fillTpcSubEpTFlow(pt, v3Tpc, reweight);
+		}
 	      }
 	      if(mAnaCut->passTrkTpcFlowWest(picoTrack, primVtx)) // neg
 	      { // correlate track from West to EP from East
-		const double v2Tpc = TMath::Cos(2.0*(phi-Psi2TpcEast))/mTpcEpManager->getTpcSubEp2ResVal(cent9);
-		const double v3Tpc = TMath::Cos(3.0*(phi-Psi3TpcEast))/mTpcEpManager->getTpcSubEp3ResVal(cent9);
-		mTpcEpManager->fillTpcSubEpEFlow(pt, v2Tpc, reweight);
-		mTpcEpManager->fillTpcSubEpTFlow(pt, v3Tpc, reweight);
+		if(mTpcEpManager->getTpcSubEp2ResVal(cent9) > 0.0)
+		{
+		  const double v2Tpc = TMath::Cos(2.0*(phi-Psi2TpcEast))/mTpcEpManager->getTpcSubEp2ResVal(cent9);
+		  mTpcEpManager->fillTpcSubEpEFlow(pt, v2Tpc, reweight);
+		}
+		if(mTpcEpManager->getTpcSubEp3ResVal(cent9) > 0.0)
+		{
+		  const double v3Tpc = TMath::Cos(3.0*(phi-Psi3TpcEast))/mTpcEpManager->getTpcSubEp3ResVal(cent9);
+		  mTpcEpManager->fillTpcSubEpTFlow(pt, v3Tpc, reweight);
+		}
 	      }
 	    }
 	  }

@@ -190,7 +190,7 @@ int StPhiMesonMaker::Make()
       mEpdEpManager->initEpdEpManager(cent9,runIndex,vzBin); // initialize EPD EP Manager
       mTpcEpManager->initTpcEpManager(cent9,runIndex,vzBin); // initialize TPC EP Manager
 
-      for(int iSlat = 0; iSlat < 8; ++iSlat) // read and apply gain correction to raw ADC value for ZDC
+      for(int iSlat = 0; iSlat < 8; ++iSlat) // calculate Q1Vector from ZDC
       {
 	mZdcEpManager->setZdcSmdGainCorr(0,0,iSlat,mPicoEvent->ZdcSmdEastVertical(iSlat));
 	mZdcEpManager->setZdcSmdGainCorr(0,1,iSlat,mPicoEvent->ZdcSmdEastHorizontal(iSlat));
@@ -234,16 +234,16 @@ int StPhiMesonMaker::Make()
 
       if(mMode == 0) // fill phi meson TTree
       {
-	const TVector2 vQ1ZdcEast = mZdcEpManager->getQ1VecEast(mMode); // get Q1Vector from ZDC
-	const TVector2 vQ1ZdcWest = mZdcEpManager->getQ1VecWest(mMode);
-	const TVector2 vQ1ZdcFull = mZdcEpManager->getQ1VecFull(vQ1ZdcEast,vQ1ZdcWest,mMode); // TVector2 vQ1ZdcFull = vQ1ZdcWest-vQ1ZdcEast;
+	const TVector2 vQ1ZdcEast = mZdcEpManager->getQ1VecEast(5); // get Shift Corrected Q1Vector from ZDC
+	const TVector2 vQ1ZdcWest = mZdcEpManager->getQ1VecWest(5);
+	const TVector2 vQ1ZdcFull = mZdcEpManager->getQ1VecFull(vQ1ZdcEast,vQ1ZdcWest,5); // TVector2 vQ1ZdcFull = vQ1ZdcWest-vQ1ZdcEast;
 	int flagZdcEp = 0;
 	if( vQ1ZdcEast.Mod() > 0.0 && vQ1ZdcWest.Mod() > 0.0 && vQ1ZdcFull.Mod() > 0.0 ) // ZDC EP
 	{
 	  flagZdcEp = 1; // flag for ZDC EP
 	}
 
-	const TVector2 vQ1EpdEast = mEpdEpManager->getQ1VecShiftEast(); // get Q1Vector from EPD
+	const TVector2 vQ1EpdEast = mEpdEpManager->getQ1VecShiftEast(); // get Shift Corrected Q1Vector from EPD
 	const TVector2 vQ1EpdWest = mEpdEpManager->getQ1VecShiftWest();
 	const TVector2 vQ1EpdFull = mEpdEpManager->getQ1VecShiftFull();
 	const TVector2 vQ1EpdFullCorr = mEpdEpManager->getQ1VecShiftFullCorr();
