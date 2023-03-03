@@ -70,6 +70,48 @@ void getTpcShiftPar(int beamType = 0)
     }
   }
 
+  {
+    TCanvas *c_TpcQVecShift = new TCanvas("c_TpcQVecShift","c_TpcQVecShift",10,10,800,1200);
+    c_TpcQVecShift->Divide(2,3);
+    for(int iPad = 0; iPad < 6; ++iPad)
+    {
+      c_TpcQVecShift->cd(iPad+1)->SetLeftMargin(0.15);
+      c_TpcQVecShift->cd(iPad+1)->SetRightMargin(0.15);
+      c_TpcQVecShift->cd(iPad+1)->SetBottomMargin(0.15);
+      c_TpcQVecShift->cd(iPad+1)->SetTicks(1,1);
+      c_TpcQVecShift->cd(iPad+1)->SetGrid(0,0);
+    }
+
+    std::string figName = Form("../../figures/%s/EventPlaneMaker/TpcQVecShift_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_TpcQVecShift->Print(figName.c_str());
+    for(int iVz = 0; iVz < mNumVzBin; ++iVz)
+    {
+      for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
+      {
+	figName = Form("../../figures/%s/EventPlaneMaker/TpcQVecShift_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+	c_TpcQVecShift->cd(1)->Clear(); c_TpcQVecShift->cd(1); p_mTpcQ2ShiftCosEast[iVz][iShift]->Draw("colz");
+	c_TpcQVecShift->cd(2)->Clear(); c_TpcQVecShift->cd(2); p_mTpcQ2ShiftSinEast[iVz][iShift]->Draw("colz");
+	c_TpcQVecShift->cd(3)->Clear(); c_TpcQVecShift->cd(3); p_mTpcQ2ShiftCosWest[iVz][iShift]->Draw("colz");
+	c_TpcQVecShift->cd(4)->Clear(); c_TpcQVecShift->cd(4); p_mTpcQ2ShiftSinWest[iVz][iShift]->Draw("colz");
+	c_TpcQVecShift->cd(5)->Clear(); c_TpcQVecShift->cd(5); p_mTpcQ2ShiftCosFull[iVz][iShift]->Draw("colz");
+	c_TpcQVecShift->cd(6)->Clear(); c_TpcQVecShift->cd(6); p_mTpcQ2ShiftSinFull[iVz][iShift]->Draw("colz");
+	c_TpcQVecShift->Update();
+	c_TpcQVecShift->Print(figName.c_str());
+
+	c_TpcQVecShift->cd(1)->Clear(); c_TpcQVecShift->cd(1); p_mTpcQ3ShiftCosEast[iVz][iShift]->Draw("colz");
+	c_TpcQVecShift->cd(2)->Clear(); c_TpcQVecShift->cd(2); p_mTpcQ3ShiftSinEast[iVz][iShift]->Draw("colz");
+	c_TpcQVecShift->cd(3)->Clear(); c_TpcQVecShift->cd(3); p_mTpcQ3ShiftCosWest[iVz][iShift]->Draw("colz");
+	c_TpcQVecShift->cd(4)->Clear(); c_TpcQVecShift->cd(4); p_mTpcQ3ShiftSinWest[iVz][iShift]->Draw("colz");
+	c_TpcQVecShift->cd(5)->Clear(); c_TpcQVecShift->cd(5); p_mTpcQ3ShiftCosFull[iVz][iShift]->Draw("colz");
+	c_TpcQVecShift->cd(6)->Clear(); c_TpcQVecShift->cd(6); p_mTpcQ3ShiftSinFull[iVz][iShift]->Draw("colz");
+	c_TpcQVecShift->Update();
+	c_TpcQVecShift->Print(figName.c_str());
+      }
+    }
+    figName = Form("../../figures/%s/EventPlaneMaker/TpcQVecShift_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_TpcQVecShift->Print(figName.c_str());
+  }
+
   string outputFile = Form("../../Utility/EventPlaneMaker/%s/ShiftPar/file_TpcShiftPar_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   cout << "outputFile: " << outputFile.c_str() << endl;
   TFile *file_OutPut = new TFile(outputFile.c_str(),"RECREATE");
@@ -126,24 +168,39 @@ void getTpcShiftPar(int beamType = 0)
     h_mTpcEp3ReCtrCorr[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
   }
 
-  TCanvas *c_TpcEpReCtrDist[mNumCentrality];
-  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string canvName = Form("c_TpcEpReCtrDistCent%d",iCent);
-    c_TpcEpReCtrDist[iCent] = new TCanvas(canvName.c_str(),canvName.c_str(),10,10,2000,1000);
-    c_TpcEpReCtrDist[iCent]->Divide(4,2);
-    c_TpcEpReCtrDist[iCent]->cd(1); h_mTpcEp2ReCtrEast[iCent]->ProjectionY()->Draw();
-    c_TpcEpReCtrDist[iCent]->cd(2); h_mTpcEp2ReCtrWest[iCent]->ProjectionY()->Draw();
-    c_TpcEpReCtrDist[iCent]->cd(3); h_mTpcEp2ReCtrFull[iCent]->ProjectionY()->Draw();
-    c_TpcEpReCtrDist[iCent]->cd(4); h_mTpcEp2ReCtrCorr[iCent]->Draw("colz");
+    TCanvas *c_TpcEpReCtrDist = new TCanvas("c_TpcEpReCtrDist","c_TpcEpReCtrDist",10,10,800,800);
+    c_TpcEpReCtrDist->Divide(2,2);
+    for(int iPad = 0; iPad < 4; ++iPad)
+    {
+      c_TpcEpReCtrDist->cd(iPad+1)->SetLeftMargin(0.15);
+      c_TpcEpReCtrDist->cd(iPad+1)->SetRightMargin(0.15);
+      c_TpcEpReCtrDist->cd(iPad+1)->SetBottomMargin(0.15);
+      c_TpcEpReCtrDist->cd(iPad+1)->SetTicks(1,1);
+      c_TpcEpReCtrDist->cd(iPad+1)->SetGrid(0,0);
+    }
 
-    c_TpcEpReCtrDist[iCent]->cd(5); h_mTpcEp3ReCtrEast[iCent]->ProjectionY()->Draw();
-    c_TpcEpReCtrDist[iCent]->cd(6); h_mTpcEp3ReCtrWest[iCent]->ProjectionY()->Draw();
-    c_TpcEpReCtrDist[iCent]->cd(7); h_mTpcEp3ReCtrFull[iCent]->ProjectionY()->Draw();
-    c_TpcEpReCtrDist[iCent]->cd(8); h_mTpcEp3ReCtrCorr[iCent]->Draw("colz");
+    std::string figName = Form("../../figures/%s/EventPlaneMaker/TpcReCtrEp_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_TpcEpReCtrDist->Print(figName.c_str());
+    for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+    {
+      figName = Form("../../figures/%s/EventPlaneMaker/TpcReCtrEp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+      c_TpcEpReCtrDist->cd(1); h_mTpcEp2ReCtrEast[iCent]->ProjectionY()->Draw();
+      c_TpcEpReCtrDist->cd(2); h_mTpcEp2ReCtrWest[iCent]->ProjectionY()->Draw();
+      c_TpcEpReCtrDist->cd(3); h_mTpcEp2ReCtrFull[iCent]->ProjectionY()->Draw();
+      c_TpcEpReCtrDist->cd(4); h_mTpcEp2ReCtrCorr[iCent]->Draw("colz");
+      c_TpcEpReCtrDist->Update();
+      c_TpcEpReCtrDist->Print(figName.c_str());
 
-    std::string figName = Form("../../figures/%s/EventPlaneMaker/TpcReCtrEpCent%d_%s.pdf",globCons::str_mBeamType[beamType].c_str(),iCent,globCons::str_mBeamType[beamType].c_str());
-    c_TpcEpReCtrDist[iCent]->SaveAs(figName.c_str());
+      c_TpcEpReCtrDist->cd(1); h_mTpcEp3ReCtrEast[iCent]->ProjectionY()->Draw();
+      c_TpcEpReCtrDist->cd(2); h_mTpcEp3ReCtrWest[iCent]->ProjectionY()->Draw();
+      c_TpcEpReCtrDist->cd(3); h_mTpcEp3ReCtrFull[iCent]->ProjectionY()->Draw();
+      c_TpcEpReCtrDist->cd(4); h_mTpcEp3ReCtrCorr[iCent]->Draw("colz");
+      c_TpcEpReCtrDist->Update();
+      c_TpcEpReCtrDist->Print(figName.c_str());
+    }
+    figName = Form("../../figures/%s/EventPlaneMaker/TpcReCtrEp_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_TpcEpReCtrDist->Print(figName.c_str());
   }
 
   string outputFileReCtrEp = Form("../../data/%s/EventPlaneMaker/file_TpcReCtrEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());

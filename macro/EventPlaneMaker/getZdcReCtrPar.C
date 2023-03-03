@@ -6,11 +6,13 @@
 #include "TProfile2D.h"
 #include "TF1.h"
 #include "TCanvas.h"
+#include "TStyle.h"
 
 #include "../../Utility/include/StSpinAlignmentCons.h"
 
 void getZdcReCtrPar(int beamType = 0)
 {
+  gStyle->SetOptStat(0);
   const int mNumVzBin = 2; // 0: vz < 0 | 1: vz >= 0
   const int mNumCentrality = 9;
 
@@ -35,6 +37,34 @@ void getZdcReCtrPar(int beamType = 0)
     p_mZdcQ1ReCtrVertWest[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
     proName = Form("p_mZdcQ1ReCtrHoriWestVz%d",iVz);
     p_mZdcQ1ReCtrHoriWest[iVz] = (TProfile2D*)file_InPut->Get(proName.c_str());
+  }
+
+  {
+    TCanvas *c_ZdcQ1ReCtr = new TCanvas("c_ZdcQ1ReCtr","c_ZdcQ1ReCtr",10,10,800,800);
+    c_ZdcQ1ReCtr->Divide(2,2);
+    for(int iPad = 0; iPad < 4; ++iPad)
+    {
+      c_ZdcQ1ReCtr->cd(iPad+1)->SetLeftMargin(0.15);
+      c_ZdcQ1ReCtr->cd(iPad+1)->SetRightMargin(0.15);
+      c_ZdcQ1ReCtr->cd(iPad+1)->SetBottomMargin(0.15);
+      c_ZdcQ1ReCtr->cd(iPad+1)->SetTicks(1,1);
+      c_ZdcQ1ReCtr->cd(iPad+1)->SetGrid(0,0);
+    }
+
+    std::string figName = Form("../../figures/%s/EventPlaneMaker/ZdcQ1ReCtr_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_ZdcQ1ReCtr->Print(figName.c_str());
+    for(int iVz = 0; iVz < mNumVzBin; ++iVz)
+    {
+      figName = Form("../../figures/%s/EventPlaneMaker/ZdcQ1ReCtr_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+      c_ZdcQ1ReCtr->cd(1)->Clear(); c_ZdcQ1ReCtr->cd(1); p_mZdcQ1ReCtrVertEast[iVz]->Draw("colz");
+      c_ZdcQ1ReCtr->cd(2)->Clear(); c_ZdcQ1ReCtr->cd(2); p_mZdcQ1ReCtrHoriEast[iVz]->Draw("colz");
+      c_ZdcQ1ReCtr->cd(3)->Clear(); c_ZdcQ1ReCtr->cd(3); p_mZdcQ1ReCtrVertWest[iVz]->Draw("colz");
+      c_ZdcQ1ReCtr->cd(4)->Clear(); c_ZdcQ1ReCtr->cd(4); p_mZdcQ1ReCtrHoriWest[iVz]->Draw("colz");
+      c_ZdcQ1ReCtr->Update();
+      c_ZdcQ1ReCtr->Print(figName.c_str());
+    }
+    figName = Form("../../figures/%s/EventPlaneMaker/ZdcQ1ReCtr_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_ZdcQ1ReCtr->Print(figName.c_str());
   }
 
   string outputFile = Form("../../Utility/EventPlaneMaker/%s/ReCenterPar/file_ZdcReCenterPar_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
@@ -68,19 +98,32 @@ void getZdcReCtrPar(int beamType = 0)
     h_mZdcEp1RawCorr[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
   }
 
-  TCanvas *c_ZdcEp1RawDist[mNumCentrality];
-  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string canvName = Form("c_EpdEp1RawDistCent%d",iCent);
-    c_ZdcEp1RawDist[iCent] = new TCanvas(canvName.c_str(),canvName.c_str(),10,10,1600,400);
-    c_ZdcEp1RawDist[iCent]->Divide(4,1);
-    c_ZdcEp1RawDist[iCent]->cd(1); h_mZdcEp1RawEast[iCent]->ProjectionY()->Draw();
-    c_ZdcEp1RawDist[iCent]->cd(2); h_mZdcEp1RawWest[iCent]->ProjectionY()->Draw();
-    c_ZdcEp1RawDist[iCent]->cd(3); h_mZdcEp1RawFull[iCent]->ProjectionY()->Draw();
-    c_ZdcEp1RawDist[iCent]->cd(4); h_mZdcEp1RawCorr[iCent]->Draw("colz");
+    TCanvas *c_ZdcEp1RawDist = new TCanvas("c_ZdcEp1RawDist","c_ZdcEp1RawDist",10,10,800,800);
+    c_ZdcEp1RawDist->Divide(2,2);
+    for(int iPad = 0; iPad < 4; ++iPad)
+    {
+      c_ZdcEp1RawDist->cd(iPad+1)->SetLeftMargin(0.15);
+      c_ZdcEp1RawDist->cd(iPad+1)->SetRightMargin(0.15);
+      c_ZdcEp1RawDist->cd(iPad+1)->SetBottomMargin(0.15);
+      c_ZdcEp1RawDist->cd(iPad+1)->SetTicks(1,1);
+      c_ZdcEp1RawDist->cd(iPad+1)->SetGrid(0,0);
+    }
 
-    std::string figName = Form("../../figures/%s/EventPlaneMaker/ZdcRawEpCent%d_%s.pdf",globCons::str_mBeamType[beamType].c_str(),iCent,globCons::str_mBeamType[beamType].c_str());
-    c_ZdcEp1RawDist[iCent]->SaveAs(figName.c_str());
+    std::string figName = Form("../../figures/%s/EventPlaneMaker/ZdcRawEp_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_ZdcEp1RawDist->Print(figName.c_str());
+    for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+    {
+      figName = Form("../../figures/%s/EventPlaneMaker/ZdcRawEp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+      c_ZdcEp1RawDist->cd(1)->Clear(); c_ZdcEp1RawDist->cd(1); h_mZdcEp1RawEast[iCent]->ProjectionY()->Draw();
+      c_ZdcEp1RawDist->cd(2)->Clear(); c_ZdcEp1RawDist->cd(2); h_mZdcEp1RawWest[iCent]->ProjectionY()->Draw();
+      c_ZdcEp1RawDist->cd(3)->Clear(); c_ZdcEp1RawDist->cd(3); h_mZdcEp1RawFull[iCent]->ProjectionY()->Draw();
+      c_ZdcEp1RawDist->cd(4)->Clear(); c_ZdcEp1RawDist->cd(4); h_mZdcEp1RawCorr[iCent]->Draw("colz");
+      c_ZdcEp1RawDist->Update();
+      c_ZdcEp1RawDist->Print(figName.c_str());
+    }
+    figName = Form("../../figures/%s/EventPlaneMaker/ZdcRawEp_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_ZdcEp1RawDist->Print(figName.c_str());
   }
 
   string outputFileRawEp = Form("../../data/%s/EventPlaneMaker/file_ZdcRawEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());

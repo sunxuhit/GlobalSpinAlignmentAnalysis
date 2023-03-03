@@ -791,10 +791,10 @@ void StTpcEpManager::initTpcResolution()
 
 void StTpcEpManager::fillTpcResolution(double Psi2East, double Psi2West, double Psi3East, double Psi3West)
 {
-  double res2Sub = TMath::Cos(2.0*(Psi2East-Psi2West));
+  double res2Sub = TMath::Cos(2.0*(Psi2West-Psi2East));
   p_mTpcSubEp2Res->Fill((double)mCent9,res2Sub);
 
-  double res3Sub = TMath::Cos(3.0*(Psi3East-Psi3West));
+  double res3Sub = TMath::Cos(3.0*(Psi3West-Psi3East));
   p_mTpcSubEp3Res->Fill((double)mCent9,res3Sub);
 }
 

@@ -6,11 +6,13 @@
 #include "TProfile2D.h"
 #include "TF1.h"
 #include "TCanvas.h"
+#include "TStyle.h"
 
 #include "../../Utility/include/StSpinAlignmentCons.h"
 
 void getZdcShiftParFull(int beamType = 0)
 {
+  gStyle->SetOptStat(0);
   const int mNumVzBin = 2; // 0: vz < 0 | 1: vz >= 0
   const int mNumShiftCorr = 20;
   const int mNumCentrality = 9;
@@ -33,6 +35,36 @@ void getZdcShiftParFull(int beamType = 0)
       p_mZdcQ1ShiftSinFull[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
     }
   }
+
+  {
+    TCanvas *c_ZdcQ1ShiftFull = new TCanvas("c_ZdcQ1ShiftFull","c_ZdcQ1ShiftFull",10,10,800,400);
+    c_ZdcQ1ShiftFull->Divide(2,1);
+    for(int iPad = 0; iPad < 2; ++iPad)
+    {
+      c_ZdcQ1ShiftFull->cd(iPad+1)->SetLeftMargin(0.15);
+      c_ZdcQ1ShiftFull->cd(iPad+1)->SetRightMargin(0.15);
+      c_ZdcQ1ShiftFull->cd(iPad+1)->SetBottomMargin(0.15);
+      c_ZdcQ1ShiftFull->cd(iPad+1)->SetTicks(1,1);
+      c_ZdcQ1ShiftFull->cd(iPad+1)->SetGrid(0,0);
+    }
+
+    std::string figName = Form("../../figures/%s/EventPlaneMaker/ZdcQ1ShiftFull_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_ZdcQ1ShiftFull->Print(figName.c_str());
+    for(int iVz = 0; iVz < mNumVzBin; ++iVz)
+    {
+      for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
+      {
+	figName = Form("../../figures/%s/EventPlaneMaker/ZdcQ1ShiftFull_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+	c_ZdcQ1ShiftFull->cd(1)->Clear(); c_ZdcQ1ShiftFull->cd(1); p_mZdcQ1ShiftCosFull[iVz][iShift]->Draw("colz");
+	c_ZdcQ1ShiftFull->cd(2)->Clear(); c_ZdcQ1ShiftFull->cd(2); p_mZdcQ1ShiftSinFull[iVz][iShift]->Draw("colz");
+	c_ZdcQ1ShiftFull->Update();
+	c_ZdcQ1ShiftFull->Print(figName.c_str());
+      }
+    }
+    figName = Form("../../figures/%s/EventPlaneMaker/ZdcQ1ShiftFull_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_ZdcQ1ShiftFull->Print(figName.c_str());
+  }
+
 
   string outputFile = Form("../../Utility/EventPlaneMaker/%s/ShiftPar/file_ZdcShiftParFull_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   cout << "outputFile: " << outputFile.c_str() << endl;
@@ -65,19 +97,32 @@ void getZdcShiftParFull(int beamType = 0)
     h_mZdcEp1ShiftCorr[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
   }
 
-  TCanvas *c_ZdcEp1ShiftDist[mNumCentrality];
-  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string canvName = Form("c_EpdEp1ShiftDistCent%d",iCent);
-    c_ZdcEp1ShiftDist[iCent] = new TCanvas(canvName.c_str(),canvName.c_str(),10,10,1600,400);
-    c_ZdcEp1ShiftDist[iCent]->Divide(4,1);
-    c_ZdcEp1ShiftDist[iCent]->cd(1); h_mZdcEp1ShiftEast[iCent]->ProjectionY()->Draw();
-    c_ZdcEp1ShiftDist[iCent]->cd(2); h_mZdcEp1ShiftWest[iCent]->ProjectionY()->Draw();
-    c_ZdcEp1ShiftDist[iCent]->cd(3); h_mZdcEp1ShiftFull[iCent]->ProjectionY()->Draw();
-    c_ZdcEp1ShiftDist[iCent]->cd(4); h_mZdcEp1ShiftCorr[iCent]->Draw("colz");
+    TCanvas *c_ZdcEp1ShiftDist = new TCanvas("c_ZdcEp1ShiftDist","c_ZdcEp1ShiftDist",10,10,800,800);
+    c_ZdcEp1ShiftDist->Divide(2,2);
+    for(int iPad = 0; iPad < 4; ++iPad)
+    {
+      c_ZdcEp1ShiftDist->cd(iPad+1)->SetLeftMargin(0.15);
+      c_ZdcEp1ShiftDist->cd(iPad+1)->SetRightMargin(0.15);
+      c_ZdcEp1ShiftDist->cd(iPad+1)->SetBottomMargin(0.15);
+      c_ZdcEp1ShiftDist->cd(iPad+1)->SetTicks(1,1);
+      c_ZdcEp1ShiftDist->cd(iPad+1)->SetGrid(0,0);
+    }
 
-    std::string figName = Form("../../figures/%s/EventPlaneMaker/ZdcShiftEpCent%d_%s.pdf",globCons::str_mBeamType[beamType].c_str(),iCent,globCons::str_mBeamType[beamType].c_str());
-    c_ZdcEp1ShiftDist[iCent]->SaveAs(figName.c_str());
+    std::string figName = Form("../../figures/%s/EventPlaneMaker/ZdcShiftEp_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_ZdcEp1ShiftDist->Print(figName.c_str());
+    for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+    {
+      figName = Form("../../figures/%s/EventPlaneMaker/ZdcShiftEp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+      c_ZdcEp1ShiftDist->cd(1)->Clear(); c_ZdcEp1ShiftDist->cd(1); h_mZdcEp1ShiftEast[iCent]->ProjectionY()->Draw();
+      c_ZdcEp1ShiftDist->cd(2)->Clear(); c_ZdcEp1ShiftDist->cd(2); h_mZdcEp1ShiftWest[iCent]->ProjectionY()->Draw();
+      c_ZdcEp1ShiftDist->cd(3)->Clear(); c_ZdcEp1ShiftDist->cd(3); h_mZdcEp1ShiftFull[iCent]->ProjectionY()->Draw();
+      c_ZdcEp1ShiftDist->cd(4)->Clear(); c_ZdcEp1ShiftDist->cd(4); h_mZdcEp1ShiftCorr[iCent]->Draw("colz");
+      c_ZdcEp1ShiftDist->Update();
+      c_ZdcEp1ShiftDist->Print(figName.c_str());
+    }
+    figName = Form("../../figures/%s/EventPlaneMaker/ZdcShiftEp_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_ZdcEp1ShiftDist->Print(figName.c_str());
   }
 
   string outputFileShiftEp = Form("../../data/%s/EventPlaneMaker/file_ZdcShiftEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
