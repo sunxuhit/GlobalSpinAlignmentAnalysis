@@ -30,8 +30,8 @@ void recoEventPlane(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/pi
   }
   */
 
-  // int nEvents = 10000000000;
-  int nEvents = 10000;
+  int nEvents = 10000000000;
+  // int nEvents = 10000;
 
   gROOT->LoadMacro("$STAR/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");
   loadSharedLibraries();
