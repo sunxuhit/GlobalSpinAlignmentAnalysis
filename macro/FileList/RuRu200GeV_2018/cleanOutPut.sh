@@ -6,16 +6,17 @@ date
 if [ $# -eq 0 ]
 then
   BeamType=RuRu200GeV_2018
-  JobId=EC2EB8071DF271EB3C56314F16373F24 #generate faild list for this Job
-  Task=RunQA
+  JobId=D3B53C35877D55E977CF3EE982004521 #generate faild list for this Job
+  Task=EventPlaneMaker
+  Mode=GainCorr
 
-  FileDirectory="/star/u/sunxuhit/$BeamType/SpinAlignment/$Task/Data"
+  FileDirectory="/star/u/sunxuhit/$BeamType/SpinAlignment/$Task/OutPut"
   OutPutDir="/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/${BeamType}"
   FailedList="$OutPutDir/condor_failed_${Task}_${JobId}.list" # failed condor list
 
   FailedRootFiles="$OutPutDir/condor_rootFailed_${Task}_${JobId}.list"
   cp $FailedList $FailedRootFiles
-  sed -i "s/sched/file_"$BeamType"_"$Task"_/g" $FailedRootFiles
+  sed -i "s/sched/file_"$Mode"_"$BeamType"_/g" $FailedRootFiles
   sed -i "s/list/root/g" $FailedRootFiles
 
   cd $FileDirectory
