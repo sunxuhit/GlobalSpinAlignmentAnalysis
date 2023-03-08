@@ -51,7 +51,7 @@ bool StAnalysisCut::isMinBias(StPicoEvent *picoEvent)
   // std::cout << "day: " << picoEvent->day() << std::endl;
   // std::cout << "triggerIds: " << picoEvent->triggerIds()[0] << std::endl;
   if( (mType == 0 || mType == 1) && globCons::mBeamYear[mType] == picoEvent->year() && !(picoEvent->isTrigger(600001) || picoEvent->isTrigger(600011) || picoEvent->isTrigger(600021) || picoEvent->isTrigger(600031)) ) return false; // ZrZr200GeV_2018 || RuRu200GeV_2018
-  // if( mType == 2 && globCons::mBeamYear[mType] == picoEvent->year() && !(picoEvent->isTrigger(600001) || picoEvent->isTrigger(600011) || picoEvent->isTrigger(600021) || picoEvent->isTrigger(600031)) ) return false; // Fixed Target
+  if( mType == 2 && globCons::mBeamYear[mType] == picoEvent->year() && !(picoEvent->isTrigger(620052)) ) return false; // Fxt3p85GeV_2018
 
   return true;
 }
@@ -90,12 +90,14 @@ bool StAnalysisCut::passEventCut(StPicoEvent *picoEvent)
     return false;
   }
   // vr cut
-  if(sqrt(vx*vx+vy*vy) > anaUtils::mVrMax[mType])
+  const double vxReCtr = vx - anaUtils::mVxCtr[mType];
+  const double vyReCtr = vy - anaUtils::mVyCtr[mType];
+  if(sqrt(vxReCtr*vxReCtr+vyReCtr*vyReCtr) > anaUtils::mVrMax[mType])
   {
     return false;
   }
-  // vz-vzVpd cut only for 200 GeV
-  if(!isFixedTarget() && fabs(vz-vzVpd) > anaUtils::mVzVpdDiffMax[mType])
+  // vz-vzVpd cut only for ZrZr200GeV_2018 & RuRu200GeV_2018
+  if(isIsobar() && fabs(vz-vzVpd) > anaUtils::mVzVpdDiffMax[mType])
   {
     return false;
   }
@@ -147,10 +149,10 @@ bool StAnalysisCut::passTrkQA(StPicoTrack *picoTrack, TVector3 primVtx)
     return false;
   }
 
-  // eta cut
+  // eta cut: for ZrZr200GeV_2018 & RuRu200GeV_2018 [-1.0,1.0] | for Fxt3p85GeV_2018 [-2.0,0.0]
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
-  if(fabs(eta) > anaUtils::mEtaQaMax[mType])
+  if(eta < anaUtils::mEtaQaMin[mType] || eta > anaUtils::mEtaQaMax[mType])
   {
     return false;
   }
@@ -180,10 +182,10 @@ bool StAnalysisCut::passTrkTpcEpFull(StPicoTrack *picoTrack, TVector3 primVtx)
     return false;
   }
 
-  // eta cut
+  // eta cut: for ZrZr200GeV_2018 & RuRu200GeV_2018 [-1.0,1.0] | for Fxt3p85GeV_2018 [-2.0,0.0]
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
-  if(fabs(eta) > anaUtils::mEtaEpMax[mType])
+  if(eta < anaUtils::mEtaEpMin[mType] || eta > anaUtils::mEtaEpMax[mType])
   {
     return false;
   }
@@ -203,8 +205,8 @@ bool StAnalysisCut::passTrkTpcEpEast(StPicoTrack *picoTrack, TVector3 primVtx) /
 
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
-  if(eta < -1.0*anaUtils::mEtaEpMax[mType] || eta > -1.0*anaUtils::mEtaEpGap[mType])
-  { // eta cut: [-anaUtils::mEtaEpMax[mType], -anaUtils::mEtaEpGap[mType]]
+  if(eta < anaUtils::mEtaEpMin[mType] || eta > anaUtils::mEtaEpCtr[mType]-anaUtils::mEtaEpGap[mType])
+  { // eta cut: [anaUtils::mEtaEpMin[mType], anaUtils::mEtaEpCtr[mType]-anaUtils::mEtaEpGap[mType]]
     return false;
   }
 
@@ -215,10 +217,11 @@ bool StAnalysisCut::passTrkTpcEpWest(StPicoTrack *picoTrack, TVector3 primVtx) /
 {
   if(!passTrkTpcEpFull(picoTrack, primVtx)) return false;
 
+  // eta cut: [anaUtils::mEtaEpCtr[mType]+anaUtils::mEtaEpGap[mType], anaUtils::mEtaEpMax[mType]]
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
-  if(eta < anaUtils::mEtaEpGap[mType] || eta > anaUtils::mEtaEpMax[mType])
-  { // eta cut: [anaUtils::mEtaEpGap[mType], anaUtils::mEtaEpMax[mType]]
+  if(eta < anaUtils::mEtaEpCtr[mType]+anaUtils::mEtaEpGap[mType] || eta > anaUtils::mEtaEpMax[mType])
+  { 
     return false;
   }
 
@@ -260,11 +263,11 @@ bool StAnalysisCut::passTrkTpcFlowFull(StPicoTrack *picoTrack, TVector3 primVtx)
     return false;
   }
 
-  // eta cut
+  // eta cut: [anaUtils::mEtaKaonMin[mType], anaUtils::mEtaKaonMax[mType]]
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
-  if(fabs(eta) > anaUtils::mEtaKaonMax[mType])
-  { // eta cut: [-anaUtils::mEtaKaonMax[mType], anaUtils::mEtaKaonMax[mType]]
+  if(eta < anaUtils::mEtaKaonMin[mType] || eta > anaUtils::mEtaKaonMax[mType])
+  { 
     return false;
   }
 
@@ -281,11 +284,11 @@ bool StAnalysisCut::passTrkTpcFlowEast(StPicoTrack *picoTrack, TVector3 primVtx)
 {
   if(!passTrkTpcFlowFull(picoTrack, primVtx)) return false;
 
-  // eta cut
+  // eta cut: [anaUtils::mEtaKaonMin[mType], anaUtils::mEtaKaonCtr[mType]]
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
-  if(eta < -1.0*anaUtils::mEtaKaonMax[mType] || eta > 0.0)
-  { // eta cut: [-anaUtils::mEtaKaonMax[mType], 0.0]
+  if(eta < anaUtils::mEtaKaonMin[mType] || eta > anaUtils::mEtaKaonCtr[mType])
+  {
     return false;
   }
 
@@ -296,11 +299,11 @@ bool StAnalysisCut::passTrkTpcFlowWest(StPicoTrack *picoTrack, TVector3 primVtx)
 {
   if(!passTrkTpcFlowFull(picoTrack, primVtx)) return false;
 
-  // eta cut
+  // eta cut: (mEtaKaonCtr[mType], anaUtils::mEtaKaonMax[mType]]
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
-  if(eta <= 0.0 || eta > anaUtils::mEtaKaonMax[mType])
-  { // eta cut: (0.0, anaUtils::mEtaKaonMax[mType]]
+  if(eta <= anaUtils::mEtaKaonCtr[mType] || eta > anaUtils::mEtaKaonMax[mType])
+  {
     return false;
   }
 
@@ -322,10 +325,10 @@ bool StAnalysisCut::passTrkKaonFull(StPicoTrack *picoTrack, TVector3 primVtx)
     return false;
   }
 
-  // eta cut
+  // eta cut: for ZrZr200GeV_2018 & RuRu200GeV_2018 [-1.0,1.0] | for Fxt3p85GeV_2018 [-2.0,0.0]
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
-  if(fabs(eta) > anaUtils::mEtaKaonMax[mType])
+  if(eta < anaUtils::mEtaKaonMin[mType] || eta > anaUtils::mEtaKaonMax[mType])
   {
     return false;
   }
@@ -350,11 +353,11 @@ bool StAnalysisCut::passTrkKaonEast(StPicoTrack *picoTrack, TVector3 primVtx) //
 {
   if(!passTrkKaonFull(picoTrack, primVtx)) return false;
 
-  // eta cut
+  // eta cut: [-anaUtils::mEtaKaonMax[mType], anaUtils::mEtaKaonCtr[mType]]
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
-  if(eta < -1.0*anaUtils::mEtaKaonMax[mType] || eta > 0.0)
-  { // eta cut: [-anaUtils::mEtaKaonMax[mType], 0.0]
+  if(eta < anaUtils::mEtaKaonMin[mType] || eta > anaUtils::mEtaKaonCtr[mType])
+  { 
     return false;
   }
 
@@ -365,11 +368,11 @@ bool StAnalysisCut::passTrkKaonWest(StPicoTrack *picoTrack, TVector3 primVtx) //
 {
   if(!passTrkKaonFull(picoTrack, primVtx)) return false;
 
-  // eta cut
+  // eta cut: (anaUtils::mEtaKaonCtr[mType], anaUtils::mEtaKaonMax[mType]]
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
-  if(eta <= 0.0 || eta > anaUtils::mEtaKaonMax[mType])
-  { // eta cut: (0.0, anaUtils::mEtaKaonMax[mType]]
+  if(eta <= anaUtils::mEtaKaonCtr[mType] || eta > anaUtils::mEtaKaonMax[mType])
+  {
     return false;
   }
 

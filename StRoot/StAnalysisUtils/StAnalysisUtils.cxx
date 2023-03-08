@@ -7,6 +7,7 @@
 #include "StMessMgr.h"
 
 #include "Utility/include/StSpinAlignmentCons.h"
+#include "StRoot/StAnalysisUtils/StAnalysisCons.h"
 #include "StRoot/StAnalysisUtils/StAnalysisUtils.h"
 
 ClassImp(StAnalysisUtils)
@@ -202,16 +203,23 @@ int StAnalysisUtils::getTriggerBin(StPicoEvent *picoEvent)
     if( picoEvent->isTrigger(600021) ) return 2; // VPDMB-30
     if( picoEvent->isTrigger(600031) ) return 3; // VPDMB-30
   }
+  if( (mType == 2) && globCons::mBeamYear[mType] == picoEvent->year() )
+  { // Fxt3p85GeV_2018
+    if( picoEvent->isTrigger(620052) ) return 0; // bbce_tofmult1
+  }
 
   return -1;
 }
 
 int StAnalysisUtils::getVzBin(double vz)
 {
-  if( mType == 0 || mType == 1 )
-  { // ZrZr200GeV_2018 || RuRu200GeV_2018
-    if(vz >= -35.0 && vz < 0.0) return 0;
-    if(vz >= 0.0 && vz <= 25.0) return 1;
+  if(vz >= anaUtils::mVzMin[mType] && vz < anaUtils::mVzCtr[mType]) 
+  {
+    return 0;
+  }
+  if(vz >= anaUtils::mVzCtr[mType] && vz <= anaUtils::mVzMax[mType]) 
+  {
+    return 1;
   }
 
   return -1;
