@@ -59,13 +59,17 @@ bool StAnalysisCut::isMinBias(StPicoEvent *picoEvent)
 bool StAnalysisCut::isPileUpEvent(double refMult, double numOfBTofMatch, double vz)
 {
   if(this->isIsobar()) return false; // use StRefMultCorr for Isobar runs
+  if(this->isFixedTarget()) 
+  {
+    return false; // under development & always return false for now
+  }
 
   return true;
 }
 
-bool StAnalysisCut::isGoodCentrality(int cent9)
+bool StAnalysisCut::isGoodCent9(int cent9)
 {
-  if(cent9 < 0) return false; // not within 0-80%
+  if(cent9 < 0 || cent9 > 8) return false; // not within 0-80%
 
   return true;
 }

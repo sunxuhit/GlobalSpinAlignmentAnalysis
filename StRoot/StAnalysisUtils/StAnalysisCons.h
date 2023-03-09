@@ -30,9 +30,9 @@ namespace anaUtils
   // track cuts: RunQA
   const double mDcaQaMax[mNumBeamUtils]    = {3.0, 3.0, 3.0}; // use primary tracks run-by-run QA
   const double mEtaQaMin[mNumBeamUtils]    = {-1.0, -1.0, -2.0};
-  const double mEtaQaCtr[mNumBeamUtils]    = {0.0, 0.0, -1.05}; // Temp for Fxt3p85GeV_2018
+  // const double mEtaQaCtr[mNumBeamUtils]    = {0.0, 0.0, -1.05}; // Temp for Fxt3p85GeV_2018
   const double mEtaQaMax[mNumBeamUtils]    = {1.0, 1.0, 0.0};
-  const double mPrimPtQaMin[mNumBeamUtils] = {0.1, 0.1, 0.1}; 
+  const double mPrimPtQaMin[mNumBeamUtils] = {0.2, 0.2, 0.2}; 
 
   // track cuts: TPC Event Plane Maker
   const double mDcaEpMax[mNumBeamUtils]       = {3.0, 3.0, 3.0};

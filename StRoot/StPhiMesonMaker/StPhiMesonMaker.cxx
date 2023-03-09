@@ -184,7 +184,7 @@ int StPhiMesonMaker::Make()
     bool isPileUpEvent = isPileUpEventStAnalysisCut || isPileUpEventStRefMultCorr;
     // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpEventStAnalysisCut = " << isPileUpEventStAnalysisCut << ", isPileUpEventStRefMultCorr = " << isPileUpEventStRefMultCorr << endl;
 
-    if(!isPileUpEvent && mAnaCut->isGoodCentrality(cent9) && mAnaCut->passEventCut(mPicoEvent))
+    if(!isPileUpEvent && mAnaCut->isGoodCent9(cent9) && mAnaCut->passEventCut(mPicoEvent))
     { // apply Event Cuts for anlaysis 
       mZdcEpManager->initZdcEpManager(cent9,runIndex,vzBin); // initialize ZDC EP Manager
       mEpdEpManager->initEpdEpManager(cent9,runIndex,vzBin); // initialize EPD EP Manager
