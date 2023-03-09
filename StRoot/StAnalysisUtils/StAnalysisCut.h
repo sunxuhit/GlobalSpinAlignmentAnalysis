@@ -17,7 +17,7 @@ class StAnalysisCut : public TObject
     virtual ~StAnalysisCut();
 
     // Run Cuts
-    bool isFixedTarget();
+    bool isFxt();
     bool isIsobar();
 
     // Event Cuts

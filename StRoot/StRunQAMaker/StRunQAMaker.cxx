@@ -48,6 +48,7 @@ int StRunQAMaker::Init()
   if(!mRefMultCorr)
   {
     if( mAnaCut->isIsobar() ) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr_Isobar();
+    if( mAnaCut->isFxt() ) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr();
   }
 
   file_mOutPutRunQA= new TFile(str_mOutPutRunQA.c_str(),"RECREATE");

@@ -28,7 +28,7 @@ StAnalysisCut::~StAnalysisCut()
 
 //---------------------------------------------------------------------------------
 // Run Cuts
-bool StAnalysisCut::isFixedTarget()
+bool StAnalysisCut::isFxt()
 {
   if(mType == 0 || mType == 1) return false; // Isobar
 
@@ -59,7 +59,7 @@ bool StAnalysisCut::isMinBias(StPicoEvent *picoEvent)
 bool StAnalysisCut::isPileUpEvent(double refMult, double numOfBTofMatch, double vz)
 {
   if(this->isIsobar()) return false; // use StRefMultCorr for Isobar runs
-  if(this->isFixedTarget()) 
+  if(this->isFxt()) 
   {
     return false; // under development & always return false for now
   }
