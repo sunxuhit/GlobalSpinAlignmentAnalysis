@@ -26,6 +26,8 @@ StRunQAHistoManager::~StRunQAHistoManager()
 //Event QA
 void StRunQAHistoManager::initEventQA()
 {
+  const double mVzQaMin[3] = {-100.0, -100.0, 150.0};
+  const double mVzQaMax[3] = {100.0, 100.0, 250.0};
   for(int iCut = 0; iCut < mNumCuts; ++iCut)
   {
     std::string histName = Form("h_mTriggerId%s",str_mCutStatus[iCut].c_str());
@@ -276,6 +278,7 @@ void StRunQAHistoManager::fillTrackQA_PID(int triggerBin, double mom, short char
 
 void StRunQAHistoManager::fillTrackQA_EpCut(int triggerBin, TVector3 pMom, bool isFull, bool isEast, bool isWest, int cutSelection)
 {
+  const double eta = pMom.Eta();
   if(cutSelection == 0)
   {
     h_mPrimEtaEpFull[cutSelection][triggerBin]->Fill(eta); 
@@ -307,19 +310,20 @@ void StRunQAHistoManager::fillTrackQA_FlowCut(int triggerBin, TVector3 pMom, boo
   }
 }
 
-void StRunQAHistoManager::fillTrackQA_KaonCut(int triggerBin, TVector3 pMom, bool isFull, bool isEast, bool isWest, int cutSelection)
+void StRunQAHistoManager::fillTrackQA_KaonCut(int triggerBin, TVector3 pMom, double nSigKaon, bool isFull, bool isEast, bool isWest, int cutSelection)
 {
+  const double eta = pMom.Eta();
   if(cutSelection == 0)
   {
-    h_mPrimEtaKaonFull[cutSelection][triggerBin]->Fill(eta); 
-    h_mPrimEtaKaonEast[cutSelection][triggerBin]->Fill(eta); 
-    h_mPrimEtaKaonWest[cutSelection][triggerBin]->Fill(eta); 
+    h_mPrimEtaNSigKaonFull[cutSelection][triggerBin]->Fill(eta,nSigKaon); 
+    h_mPrimEtaNSigKaonEast[cutSelection][triggerBin]->Fill(eta,nSigKaon); 
+    h_mPrimEtaNSigKaonWest[cutSelection][triggerBin]->Fill(eta,nSigKaon); 
   }
   else
   {
-    if(isFull) h_mPrimEtaKaonFull[cutSelection][triggerBin]->Fill(eta); 
-    if(isEast) h_mPrimEtaKaonEast[cutSelection][triggerBin]->Fill(eta); 
-    if(isWest) h_mPrimEtaKaonWest[cutSelection][triggerBin]->Fill(eta); 
+    if(isFull) h_mPrimEtaNSigKaonFull[cutSelection][triggerBin]->Fill(eta,nSigKaon); 
+    if(isEast) h_mPrimEtaNSigKaonEast[cutSelection][triggerBin]->Fill(eta,nSigKaon); 
+    if(isWest) h_mPrimEtaNSigKaonWest[cutSelection][triggerBin]->Fill(eta,nSigKaon); 
   }
 }
 

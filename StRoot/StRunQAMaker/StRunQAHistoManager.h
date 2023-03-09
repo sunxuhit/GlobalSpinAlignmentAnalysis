@@ -33,8 +33,6 @@ class StRunQAHistoManager
   private:
     static const int mNumCuts = 2; // 0: before cuts | 1: after cuts
     static const int mNumTriggerBins = 10; // 0-8 for different triggerID | 9 for all triggers
-    static const double mVzQaMin[3] = {-100.0, -100.0, 150.0};
-    static const double mVzQaMax[3] = {100.0, 100.0, 250.0}
 
     // QA Histograms
     // Event Level:
