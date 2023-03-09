@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<job minFilesPerProcess="10" filesPerHour="10" maxFilesPerProcess="20" fileListSyntax="xrootd" simulateSubmission="false">
+<job minFilesPerProcess="10" filesPerHour="1" maxFilesPerProcess="15" fileListSyntax="xrootd" simulateSubmission="false">
 
   <command>
     <!-- starver &#38;library; -->
@@ -16,7 +16,7 @@
     </Package>
   </SandBox>
 
-  <input URL="filelist:&listPath;/pico_xrootd_resubmit_RunQA_2B5E9214220039C2392A095F346625F4.list" />
+  <input URL="filelist:&listPath;/pico_xrootd_resubmit_RunQA_.list" />
 
   <stdout discard="true"/>
   <stdout URL="file:&outPath;/Log/$JOBID.out"/>
