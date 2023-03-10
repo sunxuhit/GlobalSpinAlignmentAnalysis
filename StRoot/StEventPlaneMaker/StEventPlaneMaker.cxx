@@ -75,6 +75,7 @@ int StEventPlaneMaker::Init()
   if(!mRefMultCorr)
   {
     if( mAnaCut->isIsobar() ) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr_Isobar();
+    if( mAnaCut->isFxt() ) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr();
   }
 
   if(mMode == 0)
@@ -264,9 +265,7 @@ int StEventPlaneMaker::Finish()
     {
       file_mOutPutFlow->cd();
       mZdcEpManager->writeZdcFullEpFlow(); // ZDC
-
       mEpdEpManager->writeEpdSubEpFlow(); // EPD
-
       mTpcEpManager->writeTpcSubEpFlow(); // TPC
       file_mOutPutFlow->Close();
     }
@@ -351,8 +350,8 @@ int StEventPlaneMaker::Make()
       return kStErr;
     }
 
-    bool isPileUpEventStAnalysisCut = mAnaCut->isPileUpEvent((double)refMult, (double)nBTofMatch,vz); // alway return false for Isobar
-    bool isPileUpEventStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut((double)refMult, (double)nBTofMatch,vz); // valid for Isobar
+    bool isPileUpEventStAnalysisCut = mAnaCut->isPileUpEvent((double)refMult, (double)nBTofMatch,vz); // alway return false for Isobar & Fxt (for now)
+    bool isPileUpEventStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut((double)refMult, (double)nBTofMatch,vz); // valid for Isobar || NOT for Fxt
     bool isPileUpEvent = isPileUpEventStAnalysisCut || isPileUpEventStRefMultCorr;
     // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpEventStAnalysisCut = " << isPileUpEventStAnalysisCut << ", isPileUpEventStRefMultCorr = " << isPileUpEventStRefMultCorr << endl;
 
@@ -524,7 +523,7 @@ int StEventPlaneMaker::Make()
 	    const double Psi3RawEast = mTpcEpManager->getPsi3RawEast();
 	    const double Psi3RawWest = mTpcEpManager->getPsi3RawWest();
 	    const double Psi3RawFull = mTpcEpManager->getPsi3RawFull();
-	    mTpcEpManager->fillTpcSubEpRaw(Psi2RawEast, Psi2RawWest, Psi2RawFull, Psi3RawEast, Psi3RawWest, Psi3RawFull);
+	    mTpcEpManager->fillTpcSubEpRaw(0.0, 0.0, 0.0, Psi2RawEast, Psi2RawWest, Psi2RawFull, Psi3RawEast, Psi3RawWest, Psi3RawFull);
 	  }
 	}
 	if(mMode == 2) // fill shift correction parameter for ZDC & EPD & TPC Sub EP
@@ -562,7 +561,7 @@ int StEventPlaneMaker::Make()
 	    const double Psi3ReCtrEast = mTpcEpManager->getPsi3ReCtrEast();
 	    const double Psi3ReCtrWest = mTpcEpManager->getPsi3ReCtrWest();
 	    const double Psi3ReCtrFull = mTpcEpManager->getPsi3ReCtrFull();
-	    mTpcEpManager->fillTpcSubEpReCtr(Psi2ReCtrEast, Psi2ReCtrWest, Psi2ReCtrFull, Psi3ReCtrEast, Psi3ReCtrWest, Psi3ReCtrFull);
+	    mTpcEpManager->fillTpcSubEpReCtr(0.0, 0.0, 0.0, Psi2ReCtrEast, Psi2ReCtrWest, Psi2ReCtrFull, Psi3ReCtrEast, Psi3ReCtrWest, Psi3ReCtrFull);
 	    mTpcEpManager->fillTpcShiftEast();
 	    mTpcEpManager->fillTpcShiftWest();
 	    mTpcEpManager->fillTpcShiftFull();
@@ -636,8 +635,8 @@ int StEventPlaneMaker::Make()
 	    const double Psi3ShiftWest = mTpcEpManager->getPsi3ShiftWest(vQ3TpcWest);
 	    const double Psi3ShiftFull = mTpcEpManager->getPsi3ShiftFull(vQ3TpcFull);
 
-	    mTpcEpManager->fillTpcSubEpShift(Psi2ShiftEast, Psi2ShiftWest, Psi2ShiftFull, Psi3ShiftEast, Psi3ShiftWest, Psi3ShiftFull);
-	    mTpcEpManager->fillTpcResolution(Psi2ShiftEast, Psi2ShiftWest, Psi3ShiftEast, Psi3ShiftWest);
+	    mTpcEpManager->fillTpcSubEpShift(0.0, 0.0, 0.0, Psi2ShiftEast, Psi2ShiftWest, Psi2ShiftFull, Psi3ShiftEast, Psi3ShiftWest, Psi3ShiftFull);
+	    mTpcEpManager->fillTpcResolution(0.0, 0.0, 0.0, Psi2ShiftEast, Psi2ShiftWest, Psi3ShiftEast, Psi3ShiftWest);
 	  }
 	}
 	if(mMode == 5) // calculate charged hadron v1 from ZDC & EPD and charged hadron v2 and v3 from TPC

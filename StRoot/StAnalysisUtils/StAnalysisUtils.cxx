@@ -95,7 +95,7 @@ bool StAnalysisUtils::readBadRunList()
 {
   vec_mBadRunId.clear();
 
-  std::string inputfile = Form("Utility/RunIndex/%s/badRunList_%s.txt",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+  std::string inputfile = Form("Utility/FileList/%s/badRunList_%s.txt",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   std::cout << "inputfile = " << inputfile.c_str() << std::endl;
   std::ifstream file_badRunList ( inputfile.c_str() );
   if ( !file_badRunList.is_open() )
