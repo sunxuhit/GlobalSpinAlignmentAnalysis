@@ -636,7 +636,7 @@ int StEventPlaneMaker::Make()
 	    const double Psi3ShiftFull = mTpcEpManager->getPsi3ShiftFull(vQ3TpcFull);
 
 	    mTpcEpManager->fillTpcSubEpShift(0.0, 0.0, 0.0, Psi2ShiftEast, Psi2ShiftWest, Psi2ShiftFull, Psi3ShiftEast, Psi3ShiftWest, Psi3ShiftFull);
-	    mTpcEpManager->fillTpcResolution(0.0, 0.0, 0.0, Psi2ShiftEast, Psi2ShiftWest, Psi3ShiftEast, Psi3ShiftWest);
+	    mTpcEpManager->fillTpcResolution(0.0, 0.0, Psi2ShiftEast, Psi2ShiftWest, Psi3ShiftEast, Psi3ShiftWest);
 	  }
 	}
 	if(mMode == 5) // calculate charged hadron v1 from ZDC & EPD and charged hadron v2 and v3 from TPC
@@ -724,12 +724,12 @@ int StEventPlaneMaker::Make()
 		if(mTpcEpManager->getTpcSubEp2ResVal(cent9) > 0.0)
 		{
 		  const double v2Tpc = TMath::Cos(2.0*(phi-Psi2TpcWest))/mTpcEpManager->getTpcSubEp2ResVal(cent9);
-		  mTpcEpManager->fillTpcSubEpEFlow(pt, v2Tpc, reweight);
+		  mTpcEpManager->fillTpcSubEpV2(pt, v2Tpc, reweight);
 		}
 		if(mTpcEpManager->getTpcSubEp3ResVal(cent9) > 0.0)
 		{
 		  const double v3Tpc = TMath::Cos(3.0*(phi-Psi3TpcWest))/mTpcEpManager->getTpcSubEp3ResVal(cent9);
-		  mTpcEpManager->fillTpcSubEpTFlow(pt, v3Tpc, reweight);
+		  mTpcEpManager->fillTpcSubEpV3(pt, v3Tpc, reweight);
 		}
 	      }
 	      if(mAnaCut->passTrkTpcFlowWest(picoTrack, primVtx)) // neg
@@ -737,12 +737,12 @@ int StEventPlaneMaker::Make()
 		if(mTpcEpManager->getTpcSubEp2ResVal(cent9) > 0.0)
 		{
 		  const double v2Tpc = TMath::Cos(2.0*(phi-Psi2TpcEast))/mTpcEpManager->getTpcSubEp2ResVal(cent9);
-		  mTpcEpManager->fillTpcSubEpEFlow(pt, v2Tpc, reweight);
+		  mTpcEpManager->fillTpcSubEpV2(pt, v2Tpc, reweight);
 		}
 		if(mTpcEpManager->getTpcSubEp3ResVal(cent9) > 0.0)
 		{
 		  const double v3Tpc = TMath::Cos(3.0*(phi-Psi3TpcEast))/mTpcEpManager->getTpcSubEp3ResVal(cent9);
-		  mTpcEpManager->fillTpcSubEpTFlow(pt, v3Tpc, reweight);
+		  mTpcEpManager->fillTpcSubEpV3(pt, v3Tpc, reweight);
 		}
 	      }
 	    }

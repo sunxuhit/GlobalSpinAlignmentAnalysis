@@ -792,7 +792,7 @@ void StTpcEpManager::readTpcShift()
 double StTpcEpManager::getPsi1ShiftEast(TVector2 Q1Vector)
 {
   // TVector2 Q1Vector = getQ1VecReCtrEast();
-  double Psi2Shift = -999.9;
+  double Psi1Shift = -999.9;
   if(Q1Vector.Mod() > 0.0)
   {
     const double Psi1ReCtr = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
@@ -873,7 +873,7 @@ double StTpcEpManager::transPsi1(double Psi1)
   if(Psi1 >  TMath::Pi()) Psi1Corr = Psi1 - TMath::TwoPi();
   if(Psi1 < -TMath::Pi()) Psi1Corr = Psi1 + TMath::TwoPi();
 
-  return Psi2Corr;
+  return Psi1Corr;
 }
 
 bool StTpcEpManager::isPsi1InRange(double Psi1)
@@ -1215,10 +1215,18 @@ void StTpcEpManager::initTpcSubEpFlow()
   }
 }
 
-void StTpcEpManager::fillTpcSubEpFlow(double pt, double v1, double v2, double v3, double reweight)
+void StTpcEpManager::fillTpcSubEpV1(double pt, double v1, double reweight)
 {
     p_mTpcSubEpV1[mCent9]->Fill(pt, v1, reweight);
+}
+
+void StTpcEpManager::fillTpcSubEpV2(double pt, double v2, double reweight)
+{
     p_mTpcSubEpV2[mCent9]->Fill(pt, v2, reweight);
+}
+
+void StTpcEpManager::fillTpcSubEpV3(double pt, double v3, double reweight)
+{
     p_mTpcSubEpV3[mCent9]->Fill(pt, v3, reweight);
 }
 

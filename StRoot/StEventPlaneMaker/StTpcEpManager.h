@@ -84,7 +84,9 @@ class StTpcEpManager : public TObject
     double getTpcSubEp3ResErr(int cent9);
 
     void initTpcSubEpFlow(); // Sub EP
-    void fillTpcSubEpFlow(double pt, double v1, double v2, double v3, double reweight);
+    void fillTpcSubEpV1(double pt, double v1, double reweight);
+    void fillTpcSubEpV2(double pt, double v2, double reweight);
+    void fillTpcSubEpV3(double pt, double v3, double reweight);
     void writeTpcSubEpFlow();
 
     // QVector
