@@ -29,7 +29,7 @@
     <ListLocation>./JOBS/list/</ListLocation>
   </Generator>
 
-  <output fromScratch="*.root" toURL="file:&outPath;/Data/" />
+  <output fromScratch="*.root" toURL="file:&outPath;/OutPut/" />
   <output fromScratch="*.log" toURL="file:&outPath;/Log/" />
 </job>
 
