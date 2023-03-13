@@ -27,6 +27,7 @@ class StEpdEpManager : public TObject
     double getTileWeight(StPicoEpdHit* picoEpdHit);
     double getPhiWeight(StPicoEpdHit* picoEpdHit);
     double getEtaWeight(StPicoEpdHit* picoEpdHit);
+    int getEpdEpGrp(StPicoEpdHit* picoEpdHit);
 
     void addHitRawEast(StPicoEpdHit* picoEpdHit, TVector3 primVtx); // tileWgt
     void addHitRawWest(StPicoEpdHit* picoEpdHit, TVector3 primVtx);
@@ -48,8 +49,10 @@ class StEpdEpManager : public TObject
     void fillEpdReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx);
     void writeEpdReCtr();
     void readEpdReCtr();
-    TVector2 getq1VecCtrEast(); // 1st ReCtr Parameter
-    TVector2 getq1VecCtrWest();
+    TVector2 getq1VecSideCtrEast(); // 1st ReCtr Parameter
+    TVector2 getq1VecSideCtrWest();
+    TVector2 getq1VecGrpCtrEast(int grpId); // 1st ReCtr Parameter
+    TVector2 getq1VecGrpCtrWest(int grpId);
 
     // Shift Correction
     void initEpdShift();
@@ -57,12 +60,18 @@ class StEpdEpManager : public TObject
     void fillEpdShiftWest();
     void writeEpdShift();
     void readEpdShift();
-    double getPsi1ShiftEast(); // 1st shift Psi1
-    double getPsi1ShiftWest();
-    double getPsi1ShiftFull();
-    TVector2 getQ1VecShiftEast();
-    TVector2 getQ1VecShiftWest();
-    TVector2 getQ1VecShiftFull();
+    double getPsi1SideShiftEast(); // 1st shift Psi1
+    double getPsi1SideShiftWest();
+    double getPsi1SideShiftFull();
+    TVector2 getQ1VecSideShiftEast();
+    TVector2 getQ1VecSideShiftWest();
+    TVector2 getQ1VecSideShiftFull();
+    double getPsi1GrpShiftEast(int grpId); // 1st shift Psi1
+    double getPsi1GrpShiftWest(int grpId);
+    double getPsi1GrpShiftFull(int grpId);
+    TVector2 getQ1VecGrpShiftEast(int grpId);
+    TVector2 getQ1VecGrpShiftWest(int grpId);
+    TVector2 getQ1VecGrpShiftFull(int grpId);
     double transPsi1(double Psi1);
     bool isPsi1InRange(double Psi1);
 
@@ -70,18 +79,25 @@ class StEpdEpManager : public TObject
     void fillEpdShiftFull();
     void writeEpdShiftFull();
     void readEpdShiftFull();
-    TVector2 getQ1VecShiftFullCorr();
-    double getPsi1ShiftFullCorr();
+    TVector2 getQ1VecSideShiftFullCorr();
+    double getPsi1SideShiftFullCorr();
+    TVector2 getQ1VecGrpShiftFullCorr(int grpId);
+    double getPsi1GrpShiftFullCorr(int grpId);
 
     // Event Plane Resolution
     void initEpdResolution();
-    void fillEpdResolution(double Psi1East, double Psi1West);
+    void fillEpdSideResolution(double Psi1East, double Psi1West);
+    void fillEpdGrpResolution(double Psi1East, double Psi1West, int grpId);
     void writeEpdResolution();
     void readEpdResolution();
-    double getEpdSubEp1ResVal(int cent9);
-    double getEpdSubEp1ResErr(int cent9);
-    double getEpdFullEp1ResVal(int cent9);
-    double getEpdFullEp1ResErr(int cent9);
+    double getEpdSubEp1SideResVal(int cent9);
+    double getEpdSubEp1SideResErr(int cent9);
+    double getEpdFullEp1SideResVal(int cent9);
+    double getEpdFullEp1SideResErr(int cent9);
+    double getEpdSubEp1GrpResVal(int cent9, int grpId);
+    double getEpdSubEp1GrpResErr(int cent9, int grpId);
+    double getEpdFullEp1GrpResVal(int cent9, int grpId);
+    double getEpdFullEp1GrpResErr(int cent9, int grpId);
 
     // Charged Hadron Directed Flow
     void initEpdSubEpFlow(); // Sub EP
@@ -89,44 +105,68 @@ class StEpdEpManager : public TObject
     void writeEpdSubEpFlow();
 
     // Q1Vector
-    TVector2 getQ1VecRawEast(); // Q1Vector
-    TVector2 getQ1VecRawWest();
-    TVector2 getQ1VecRawFull();
-    TVector2 getQ1VecWgtEast();
-    TVector2 getQ1VecWgtWest();
-    TVector2 getQ1VecWgtFull();
-    TVector2 getQ1VecReCtrEast();
-    TVector2 getQ1VecReCtrWest();
-    TVector2 getQ1VecReCtrFull();
-    double getPsi1RawEast();
-    double getPsi1RawWest();
-    double getPsi1RawFull();
-    double getPsi1WgtEast();
-    double getPsi1WgtWest();
-    double getPsi1WgtFull();
-    double getPsi1ReCtrEast();
-    double getPsi1ReCtrWest();
-    double getPsi1ReCtrFull();
+    TVector2 getQ1VecSideRawEast(); // Q1Vector
+    TVector2 getQ1VecSideRawWest();
+    TVector2 getQ1VecSideRawFull();
+    TVector2 getQ1VecSideWgtEast();
+    TVector2 getQ1VecSideWgtWest();
+    TVector2 getQ1VecSideWgtFull();
+    TVector2 getQ1VecSideReCtrEast();
+    TVector2 getQ1VecSideReCtrWest();
+    TVector2 getQ1VecSideReCtrFull();
+    double getPsi1SideRawEast();
+    double getPsi1SideRawWest();
+    double getPsi1SideRawFull();
+    double getPsi1SideWgtEast();
+    double getPsi1SideWgtWest();
+    double getPsi1SideWgtFull();
+    double getPsi1SideReCtrEast();
+    double getPsi1SideReCtrWest();
+    double getPsi1SideReCtrFull();
+
+    TVector2 getQ1VecGrpRawEast(int grpId); // Q1Vector
+    TVector2 getQ1VecGrpRawWest(int grpId);
+    TVector2 getQ1VecGrpRawFull(int grpId);
+    TVector2 getQ1VecGrpWgtEast(int grpId);
+    TVector2 getQ1VecGrpWgtWest(int grpId);
+    TVector2 getQ1VecGrpWgtFull(int grpId);
+    TVector2 getQ1VecGrpReCtrEast(int grpId);
+    TVector2 getQ1VecGrpReCtrWest(int grpId);
+    TVector2 getQ1VecGrpReCtrFull(int grpId);
+    double getPsi1GrpRawEast(int grpId);
+    double getPsi1GrpRawWest(int grpId);
+    double getPsi1GrpRawFull(int grpId);
+    double getPsi1GrpWgtEast(int grpId);
+    double getPsi1GrpWgtWest(int grpId);
+    double getPsi1GrpWgtFull(int grpId);
+    double getPsi1GrpReCtrEast(int grpId);
+    double getPsi1GrpReCtrWest(int grpId);
+    double getPsi1GrpReCtrFull(int grpId);
 
     // Event Plane Distribution
     void initEpdSubEpRaw(); // raw Sub EP
-    void fillEpdSubEpRaw(double Psi1East, double Psi1West, double Psi1Full);
+    void fillEpdSubEpSideRaw(double Psi1East, double Psi1West, double Psi1Full);
+    void fillEpdSubEpGrpRaw(double Psi1Grp0East, double Psi1Grp0West, double Psi1Grp0Full, double Psi1Grp1East, double Psi1Grp1West, double Psi1Grp1Full);
     void writeEpdSubEpRaw();
 
     void initEpdSubEpWgt(); // phi weighted Sub EP
-    void fillEpdSubEpWgt(double Psi1East, double Psi1West, double Psi1Full);
+    void fillEpdSubEpSideWgt(double Psi1East, double Psi1West, double Psi1Full);
+    void fillEpdSubEpGrpWgt(double Psi1Grp0East, double Psi1Grp0West, double Psi1Grp0Full, double Psi1Grp1East, double Psi1Grp1West, double Psi1Grp1Full);
     void writeEpdSubEpWgt();
 
     void initEpdSubEpReCtr(); // recenter Sub EP
-    void fillEpdSubEpReCtr(double Psi1East, double Psi1West, double Psi1Full);
+    void fillEpdSubEpSideReCtr(double Psi1East, double Psi1West, double Psi1Full);
+    void fillEpdSubEpGrpReCtr(double Psi1Grp0East, double Psi1Grp0West, double Psi1Grp0Full, double Psi1Grp1East, double Psi1Grp1West, double Psi1Grp1Full);
     void writeEpdSubEpReCtr();
 
     void initEpdSubEpShift(); // shift Sub EP
-    void fillEpdSubEpShift(double Psi1East, double Psi1West, double Psi1Full);
+    void fillEpdSubEpSideShift(double Psi1East, double Psi1West, double Psi1Full);
+    void fillEpdSubEpGrpShift(double Psi1Grp0East, double Psi1Grp0West, double Psi1Grp0Full, double Psi1Grp1East, double Psi1Grp1West, double Psi1Grp1Full);
     void writeEpdSubEpShift();
 
     void initEpdFullEpShift(); // shift Sub EP
-    void fillEpdFullEpShift(double Psi1FullCorr);
+    void fillEpdFullEpSideShift(double Psi1FullCorr);
+    void fillEpdFullEpGrpShift(double Psi1Grp0FullCorr, double Psi1Grp1FullCorr);
     void writeEpdFullEpShift();
 
   private:
@@ -137,20 +177,23 @@ class StEpdEpManager : public TObject
     static const int mNumTiles      = 31; // picoEpdHit->tile(): return 1-31 | use tile-1
     static const int mNumRings      = 16; // picoEpdHit->row(): return 1-16 | use ring-1 = > 0: most inner ring (12 tiles), 1-15: 24 tiles
     static const int mNumRingsUsed  = 4;  // rings used in Q1Vector calculation: [0, mNumRingsUsed) | set to 4 to get eta weight then to 16 for EPD EP
+    static const int mNumGroups     = 2;  // Group 0: 0-7 rings | Group 1: 8-15 rings
 
+    // Q1Vector of all EPD rings
     double mQ1WgtSideRawEast, mQ1WgtSideRawWest; // tileWgt only
     double mQ1WgtSideWgtEast, mQ1WgtSideWgtWest; // tileWgt * phiWgt(if avaliable) * etaWgt(if avaliable)
     double mQ1WgtSideReCtrEast, mQ1WgtSideReCtrWest; // tileWgt * phiWgt(if avaliable) * etaWgt(if avaliable)
-    // double mQ1WgtRingRawEast[mNumRings], mQ1WgtRingRawWest[mNumRings]; // tileWgt only for each ring
-    // double mQ1WgtRingWgtEast[mNumRings], mQ1WgtRingWgtWest[mNumRings]; // tileWgt * phiWgt(if avaliable) * etaWgt(if avaliable) for each ring
-    // double mQ1WgtRingReCtrEast[mNumRings], mQ1WgtRingReCtrWest[mNumRings]; // tileWgt * phiWgt(if avaliable) * etaWgt(if avaliable) for each ring
-    
     TVector2 v_mQ1SideRawEast, v_mQ1SideRawWest; // raw Q1 Vector
     TVector2 v_mQ1SideWgtEast, v_mQ1SideWgtWest; // phi&eta weighted Q1 Vector
     TVector2 v_mQ1SideReCtrEast, v_mQ1SideReCtrWest; // phi&eta weighted Q1 Vector
-    // TVector2 v_mQ1RingRawEast[mNumRings], v_mQ1RingRawWest[mNumRings]; // raw Q1 Vector for each ring
-    // TVector2 v_mQ1RingWgtEast[mNumRings], v_mQ1RingWgtWest[mNumRings]; // phi&eta weighted Q1 Vector for each ring
-    // TVector2 v_mQ1RingReCtrEast[mNumRings], v_mQ1RingReCtrWest[mNumRings]; // phi&eta weighted Q1 Vector for each ring
+
+    // Q1Vector of groups of EPD rings
+    double mQ1WgtGrpRawEast[mNumGroups], mQ1WgtGrpRawWest[mNumGroups]; // tileWgt only for each ring
+    double mQ1WgtGrpWgtEast[mNumGroups], mQ1WgtGrpWgtWest[mNumGroups]; // tileWgt * phiWgt(if avaliable) * etaWgt(if avaliable) for each ring
+    double mQ1WgtGrpReCtrEast[mNumGroups], mQ1WgtGrpReCtrWest[mNumGroups]; // tileWgt * phiWgt(if avaliable) * etaWgt(if avaliable) for each ring
+    TVector2 v_mQ1GrpRawEast[mNumGroups], v_mQ1GrpRawWest[mNumGroups]; // raw Q1 Vector for each ring
+    TVector2 v_mQ1GrpWgtEast[mNumGroups], v_mQ1GrpWgtWest[mNumGroups]; // phi&eta weighted Q1 Vector for each ring
+    TVector2 v_mQ1GrpReCtrEast[mNumGroups], v_mQ1GrpReCtrWest[mNumGroups]; // phi&eta weighted Q1 Vector for each ring
 
 
     // phi Weight Correction | x-axis is super sector Id, y-axis is tile Id
@@ -160,53 +203,89 @@ class StEpdEpManager : public TObject
     TH2F *h_mEpdPhiAveWest[mNumCentrality];
 
     // ReCtr Correction | x axis is runIndex, y axis is Centrality
-    TProfile2D *p_mEpdQ1ReCtrXEast[mNumVzBin]; // 1st EP
-    TProfile2D *p_mEpdQ1ReCtrYEast[mNumVzBin];
-    TProfile2D *p_mEpdQ1ReCtrXWest[mNumVzBin];
-    TProfile2D *p_mEpdQ1ReCtrYWest[mNumVzBin];
+    TProfile2D *p_mEpdQ1SideReCtrXEast[mNumVzBin]; // 1st EP
+    TProfile2D *p_mEpdQ1SideReCtrYEast[mNumVzBin];
+    TProfile2D *p_mEpdQ1SideReCtrXWest[mNumVzBin];
+    TProfile2D *p_mEpdQ1SideReCtrYWest[mNumVzBin];
+    TProfile2D *p_mEpdQ1GrpReCtrXEast[mNumVzBin][mNumGroups];
+    TProfile2D *p_mEpdQ1GrpReCtrYEast[mNumVzBin][mNumGroups];
+    TProfile2D *p_mEpdQ1GrpReCtrXWest[mNumVzBin][mNumGroups];
+    TProfile2D *p_mEpdQ1GrpReCtrYWest[mNumVzBin][mNumGroups];
 
     // Shift Correction for East/West | 0 = vertex neg/pos | 1 = shift correction harmonics
-    TProfile2D *p_mEpdQ1ShiftCosEast[mNumVzBin][mNumShiftCorr]; // 1st EP
-    TProfile2D *p_mEpdQ1ShiftSinEast[mNumVzBin][mNumShiftCorr];
-    TProfile2D *p_mEpdQ1ShiftCosWest[mNumVzBin][mNumShiftCorr];
-    TProfile2D *p_mEpdQ1ShiftSinWest[mNumVzBin][mNumShiftCorr];
+    TProfile2D *p_mEpdQ1SideShiftCosEast[mNumVzBin][mNumShiftCorr]; // 1st EP
+    TProfile2D *p_mEpdQ1SideShiftSinEast[mNumVzBin][mNumShiftCorr];
+    TProfile2D *p_mEpdQ1SideShiftCosWest[mNumVzBin][mNumShiftCorr];
+    TProfile2D *p_mEpdQ1SideShiftSinWest[mNumVzBin][mNumShiftCorr];
+    TProfile2D *p_mEpdQ1GrpShiftCosEast[mNumVzBin][mNumShiftCorr][mNumGroups];
+    TProfile2D *p_mEpdQ1GrpShiftSinEast[mNumVzBin][mNumShiftCorr][mNumGroups];
+    TProfile2D *p_mEpdQ1GrpShiftCosWest[mNumVzBin][mNumShiftCorr][mNumGroups];
+    TProfile2D *p_mEpdQ1GrpShiftSinWest[mNumVzBin][mNumShiftCorr][mNumGroups];
 
     // Shift Correction for Full EP
-    TProfile2D *p_mEpdQ1ShiftCosFull[mNumVzBin][mNumShiftCorr];
-    TProfile2D *p_mEpdQ1ShiftSinFull[mNumVzBin][mNumShiftCorr];
+    TProfile2D *p_mEpdQ1SideShiftCosFull[mNumVzBin][mNumShiftCorr];
+    TProfile2D *p_mEpdQ1SideShiftSinFull[mNumVzBin][mNumShiftCorr];
+    TProfile2D *p_mEpdQ1GrpShiftCosFull[mNumVzBin][mNumShiftCorr][mNumGroups];
+    TProfile2D *p_mEpdQ1GrpShiftSinFull[mNumVzBin][mNumShiftCorr][mNumGroups];
 
     // EPD EP Resolution
-    TProfile *p_mEpdSubEp1Res; // 1st EP
-    double mEpdSubEp1ResVal[mNumCentrality];
-    double mEpdSubEp1ResErr[mNumCentrality];
-    double mEpdFullEp1ResVal[mNumCentrality];
-    double mEpdFullEp1ResErr[mNumCentrality];
+    TProfile *p_mEpdSubEp1SideRes; // 1st EP
+    double mEpdSubEp1SideResVal[mNumCentrality];
+    double mEpdSubEp1SideResErr[mNumCentrality];
+    double mEpdFullEp1SideResVal[mNumCentrality];
+    double mEpdFullEp1SideResErr[mNumCentrality];
+    TProfile *p_mEpdSubEp1GrpRes[mNumGroups]; // resolution of same group
+    double mEpdSubEp1GrpResVal[mNumCentrality][mNumGroups];
+    double mEpdSubEp1GrpResErr[mNumCentrality][mNumGroups];
+    double mEpdFullEp1GrpResVal[mNumCentrality][mNumGroups];
+    double mEpdFullEp1GrpResErr[mNumCentrality][mNumGroups];
 
     // Charged Hadron Directed Flow
-    TProfile *p_mEpdSubEpDFlow[mNumCentrality]; // v1 vs. eta
+    TProfile *p_mEpdSubEpV1[mNumCentrality]; // v1 vs. eta
 
     // Event Plane Distribution
-    TH2F *h_mEpdEp1RawEast[mNumCentrality]; // 1st raw EP
-    TH2F *h_mEpdEp1RawWest[mNumCentrality];
-    TH2F *h_mEpdEp1RawFull[mNumCentrality];
-    TH2F *h_mEpdEp1RawCorr[mNumCentrality]; // Psi1East vs Psi1West
+    TH2F *h_mEpdEp1SideRawEast[mNumCentrality]; // 1st raw EP
+    TH2F *h_mEpdEp1SideRawWest[mNumCentrality];
+    TH2F *h_mEpdEp1SideRawFull[mNumCentrality];
+    TH2F *h_mEpdEp1SideRawCorr[mNumCentrality]; // Psi1East vs Psi1West
+    TH2F *h_mEpdEp1GrpRawEast[mNumCentrality][mNumGroups];
+    TH2F *h_mEpdEp1GrpRawWest[mNumCentrality][mNumGroups];
+    TH2F *h_mEpdEp1GrpRawFull[mNumCentrality][mNumGroups];
+    TH2F *h_mEpdEp1GrpRawCorr[mNumCentrality][mNumGroups];
+    TH2F *h_mEpdEp1GrpXRawCorr[mNumCentrality][mNumGroups]; // 0: Psi1Grp0East vs. Psi1Grp1East | 1: Psi1Grp0West vs. Psi1Grp1West
 
-    TH2F *h_mEpdEp1WgtEast[mNumCentrality]; // 1st weighted EP
-    TH2F *h_mEpdEp1WgtWest[mNumCentrality];
-    TH2F *h_mEpdEp1WgtFull[mNumCentrality];
-    TH2F *h_mEpdEp1WgtCorr[mNumCentrality]; // Psi1East vs Psi1West
+    TH2F *h_mEpdEp1SideWgtEast[mNumCentrality]; // 1st weighted EP
+    TH2F *h_mEpdEp1SideWgtWest[mNumCentrality];
+    TH2F *h_mEpdEp1SideWgtFull[mNumCentrality];
+    TH2F *h_mEpdEp1SideWgtCorr[mNumCentrality]; // Psi1East vs Psi1West
+    TH2F *h_mEpdEp1GrpWgtEast[mNumCentrality][mNumGroups];
+    TH2F *h_mEpdEp1GrpWgtWest[mNumCentrality][mNumGroups];
+    TH2F *h_mEpdEp1GrpWgtFull[mNumCentrality][mNumGroups];
+    TH2F *h_mEpdEp1GrpWgtCorr[mNumCentrality][mNumGroups];
+    TH2F *h_mEpdEp1GrpXWgtCorr[mNumCentrality][mNumGroups]; // 0: Psi1Grp0East vs. Psi1Grp1East | 1: Psi1Grp0West vs. Psi1Grp1West
 
-    TH2F *h_mEpdEp1ReCtrEast[mNumCentrality]; // 1st recenter EP
-    TH2F *h_mEpdEp1ReCtrWest[mNumCentrality];
-    TH2F *h_mEpdEp1ReCtrFull[mNumCentrality];
-    TH2F *h_mEpdEp1ReCtrCorr[mNumCentrality]; // Psi1East vs Psi1West
+    TH2F *h_mEpdEp1SideReCtrEast[mNumCentrality]; // 1st recenter EP
+    TH2F *h_mEpdEp1SideReCtrWest[mNumCentrality];
+    TH2F *h_mEpdEp1SideReCtrFull[mNumCentrality];
+    TH2F *h_mEpdEp1SideReCtrCorr[mNumCentrality]; // Psi1East vs Psi1West
+    TH2F *h_mEpdEp1GrpReCtrEast[mNumCentrality][mNumGroups];
+    TH2F *h_mEpdEp1GrpReCtrWest[mNumCentrality][mNumGroups];
+    TH2F *h_mEpdEp1GrpReCtrFull[mNumCentrality][mNumGroups];
+    TH2F *h_mEpdEp1GrpReCtrCorr[mNumCentrality][mNumGroups];
+    TH2F *h_mEpdEp1GrpXReCtrCorr[mNumCentrality][mNumGroups]; // 0: Psi1Grp0East vs. Psi1Grp1East | 1: Psi1Grp0West vs. Psi1Grp1West
 
-    TH2F *h_mEpdEp1ShiftEast[mNumCentrality]; // 1st shift EP
-    TH2F *h_mEpdEp1ShiftWest[mNumCentrality];
-    TH2F *h_mEpdEp1ShiftFull[mNumCentrality];
-    TH2F *h_mEpdEp1ShiftCorr[mNumCentrality]; // Psi1East vs Psi1West
+    TH2F *h_mEpdEp1SideShiftEast[mNumCentrality]; // 1st shift EP
+    TH2F *h_mEpdEp1SideShiftWest[mNumCentrality];
+    TH2F *h_mEpdEp1SideShiftFull[mNumCentrality];
+    TH2F *h_mEpdEp1SideShiftCorr[mNumCentrality]; // Psi1East vs Psi1West
+    TH2F *h_mEpdEp1GrpShiftEast[mNumCentrality][mNumGroups];
+    TH2F *h_mEpdEp1GrpShiftWest[mNumCentrality][mNumGroups];
+    TH2F *h_mEpdEp1GrpShiftFull[mNumCentrality][mNumGroups];
+    TH2F *h_mEpdEp1GrpShiftCorr[mNumCentrality][mNumGroups];
+    TH2F *h_mEpdEp1GrpXShiftCorr[mNumCentrality][mNumGroups]; // 0: Psi1Grp0East vs. Psi1Grp1East | 1: Psi1Grp0West vs. Psi1Grp1West
 
-    TH2F *h_mEpdEp1ShiftFullCorr[mNumCentrality]; // 1st shift full EP
+    TH2F *h_mEpdEp1SideShiftFullCorr[mNumCentrality]; // 1st shift full EP
+    TH2F *h_mEpdEp1GrpShiftFullCorr[mNumCentrality][mNumGroups];
 
     TFile *file_mPhiWgtPar;
     TFile *file_mReCtrPar;
