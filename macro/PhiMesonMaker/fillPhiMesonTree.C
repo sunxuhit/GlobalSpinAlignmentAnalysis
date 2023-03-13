@@ -32,8 +32,8 @@ void fillPhiMesonTree(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/
   }
   */
 
-  // int nEvents = 1000000000;
-  int nEvents = 10000;
+  int nEvents = 1000000000;
+  // int nEvents = 10000;
 
   gROOT->LoadMacro("$STAR/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");
   loadSharedLibraries();
@@ -43,6 +43,7 @@ void fillPhiMesonTree(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/
   gSystem->Load("StRefMultCorr");
   gSystem->Load("StEpdUtil");
   gSystem->Load("StAnalysisUtils");
+  gSystem->Load("StEventPlaneMaker");
   gSystem->Load("StPhiMesonMaker");
 
   chain = new StChain();

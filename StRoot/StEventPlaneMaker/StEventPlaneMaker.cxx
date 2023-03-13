@@ -474,7 +474,7 @@ int StEventPlaneMaker::Make()
 	      mTpcEpManager->fillTpcReCtrFull(picoTrack); // fill TPC ReCenter Parameters Full
 	    }
 	  }
-	  if(mMode == 2 || mMode == 4) // calculate recentered Q2Vector and Q3Vector from TPC
+	  if(mMode == 2 || mMode > 3) // calculate recentered Q2Vector and Q3Vector from TPC
 	  {
 	    if( mAnaCut->passTrkTpcEpEast(picoTrack, primVtx) ) // negative eta
 	    {
