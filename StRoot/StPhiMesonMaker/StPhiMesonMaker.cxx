@@ -243,10 +243,10 @@ int StPhiMesonMaker::Make()
 	  flagZdcEp = 1; // flag for ZDC EP
 	}
 
-	const TVector2 vQ1EpdEast = mEpdEpManager->getQ1VecShiftEast(); // get Shift Corrected Q1Vector from EPD
-	const TVector2 vQ1EpdWest = mEpdEpManager->getQ1VecShiftWest();
-	const TVector2 vQ1EpdFull = mEpdEpManager->getQ1VecShiftFull();
-	const TVector2 vQ1EpdFullCorr = mEpdEpManager->getQ1VecShiftFullCorr();
+	const TVector2 vQ1EpdEast = mEpdEpManager->getQ1VecSideShiftEast(); // get Shift Corrected Q1Vector from EPD
+	const TVector2 vQ1EpdWest = mEpdEpManager->getQ1VecSideShiftWest();
+	const TVector2 vQ1EpdFull = mEpdEpManager->getQ1VecSideShiftFull();
+	const TVector2 vQ1EpdFullCorr = mEpdEpManager->getQ1VecSideShiftFullCorr();
 	int flagEpdEp = 0;
 	if( vQ1EpdEast.Mod() > 0.0 && vQ1EpdWest.Mod() > 0.0 && vQ1EpdFull.Mod() > 0.0 ) // EPD EP
 	{

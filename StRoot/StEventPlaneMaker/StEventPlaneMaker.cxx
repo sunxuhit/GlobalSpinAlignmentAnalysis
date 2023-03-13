@@ -542,12 +542,12 @@ int StEventPlaneMaker::Make()
 	  if( vQ1EpdGrp0East.Mod() > 0.0 && vQ1EpdGrp0West.Mod() > 0.0 && vQ1EpdGrp0Full.Mod() > 0.0 &&
 	      vQ1EpdGrp1East.Mod() > 0.0 && vQ1EpdGrp1West.Mod() > 0.0 && vQ1EpdGrp1Full.Mod() > 0.0 ) // EPD EP
 	  {
-	    const double Psi1Grp0WgtEast = mEpdEpManager->getPsi1Grp0WgtEast(); // EPD EP
-	    const double Psi1Grp0WgtWest = mEpdEpManager->getPsi1Grp0WgtWest();
-	    const double Psi1Grp0WgtFull = mEpdEpManager->getPsi1Grp0WgtFull();
-	    const double Psi1Grp1WgtEast = mEpdEpManager->getPsi1Grp1WgtEast(); // EPD EP
-	    const double Psi1Grp1WgtWest = mEpdEpManager->getPsi1Grp1WgtWest();
-	    const double Psi1Grp1WgtFull = mEpdEpManager->getPsi1Grp1WgtFull();
+	    const double Psi1Grp0WgtEast = mEpdEpManager->getPsi1GrpWgtEast(0); // EPD EP
+	    const double Psi1Grp0WgtWest = mEpdEpManager->getPsi1GrpWgtWest(0);
+	    const double Psi1Grp0WgtFull = mEpdEpManager->getPsi1GrpWgtFull(0);
+	    const double Psi1Grp1WgtEast = mEpdEpManager->getPsi1GrpWgtEast(1); // EPD EP
+	    const double Psi1Grp1WgtWest = mEpdEpManager->getPsi1GrpWgtWest(1);
+	    const double Psi1Grp1WgtFull = mEpdEpManager->getPsi1GrpWgtFull(1);
 	    mEpdEpManager->fillEpdSubEpGrpWgt(Psi1Grp0WgtEast, Psi1Grp0WgtWest, Psi1Grp0WgtFull, Psi1Grp1WgtEast, Psi1Grp1WgtWest, Psi1Grp1WgtFull);
 	  }
 

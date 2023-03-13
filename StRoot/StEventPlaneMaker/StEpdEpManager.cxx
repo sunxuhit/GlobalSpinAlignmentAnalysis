@@ -70,18 +70,18 @@ void StEpdEpManager::clearEpdEpManager()
 
   for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
   {
-    mQ1WgtGrpRawEast[iGrp] = 0.0
-    mQ1WgtGrpRawWest[iGrp] = 0.0
+    mQ1WgtGrpRawEast[iGrp] = 0.0;
+    mQ1WgtGrpRawWest[iGrp] = 0.0;
     v_mQ1GrpRawEast[iGrp].Set(0.0,0.0);
     v_mQ1GrpRawWest[iGrp].Set(0.0,0.0);
 
-    mQ1WgtGrpWgtEast[iGrp] = 0.0
-    mQ1WgtGrpWgtWest[iGrp] = 0.0
+    mQ1WgtGrpWgtEast[iGrp] = 0.0;
+    mQ1WgtGrpWgtWest[iGrp] = 0.0;
     v_mQ1GrpWgtEast[iGrp].Set(0.0,0.0);
     v_mQ1GrpWgtWest[iGrp].Set(0.0,0.0);
 
-    mQ1WgtGrpReCtrEast[iGrp] = 0.0
-    mQ1WgtGrpReCtrWest[iGrp] = 0.0
+    mQ1WgtGrpReCtrEast[iGrp] = 0.0;
+    mQ1WgtGrpReCtrWest[iGrp] = 0.0;
     v_mQ1GrpReCtrEast[iGrp].Set(0.0,0.0);
     v_mQ1GrpReCtrWest[iGrp].Set(0.0,0.0);
   }
@@ -854,11 +854,11 @@ double StEpdEpManager::getPsi1GrpShiftEast(int grpId)
     double deltaPsi1 = 0.0;
     for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
     {
-      const int binCos     = p_mEpdQ1GrpShiftCosEast[mVzBin][iShift][iGrp]->FindBin((double)mRunIndex,(double)mCent9);
-      const double meanCos = p_mEpdQ1GrpShiftCosEast[mVzBin][iShift][iGrp]->GetBinContent(binCos);
+      const int binCos     = p_mEpdQ1GrpShiftCosEast[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+      const double meanCos = p_mEpdQ1GrpShiftCosEast[mVzBin][iShift][grpId]->GetBinContent(binCos);
 
-      const int binSin     = p_mEpdQ1GrpShiftSinEast[mVzBin][iShift][iGrp]->FindBin((double)mRunIndex,(double)mCent9);
-      const double meanSin = p_mEpdQ1GrpShiftSinEast[mVzBin][iShift][iGrp]->GetBinContent(binSin);
+      const int binSin     = p_mEpdQ1GrpShiftSinEast[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+      const double meanSin = p_mEpdQ1GrpShiftSinEast[mVzBin][iShift][grpId]->GetBinContent(binSin);
 
       deltaPsi1 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(((double)iShift+1.0)*Psi1ReCtr)+meanCos*TMath::Sin(((double)iShift+1.0)*Psi1ReCtr));
     }
@@ -1117,11 +1117,11 @@ double StEpdEpManager::getPsi1GrpShiftFullCorr(int grpId)
     double deltaPsi1 = 0.0;
     for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
     {
-      const int binCos     = p_mEpdQ1GrpShiftCosFull[mVzBin][iShift][iGrp]->FindBin((double)mRunIndex,(double)mCent9);
-      const double meanCos = p_mEpdQ1GrpShiftCosFull[mVzBin][iShift][iGrp]->GetBinContent(binCos);
+      const int binCos     = p_mEpdQ1GrpShiftCosFull[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+      const double meanCos = p_mEpdQ1GrpShiftCosFull[mVzBin][iShift][grpId]->GetBinContent(binCos);
 
-      const int binSin     = p_mEpdQ1GrpShiftSinFull[mVzBin][iShift][iGrp]->FindBin((double)mRunIndex,(double)mCent9);
-      const double meanSin = p_mEpdQ1GrpShiftSinFull[mVzBin][iShift][iGrp]->GetBinContent(binSin);
+      const int binSin     = p_mEpdQ1GrpShiftSinFull[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+      const double meanSin = p_mEpdQ1GrpShiftSinFull[mVzBin][iShift][grpId]->GetBinContent(binSin);
 
       deltaPsi1 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(((double)iShift+1.0)*Psi1Shift)+meanCos*TMath::Sin(((double)iShift+1.0)*Psi1Shift));
     }
