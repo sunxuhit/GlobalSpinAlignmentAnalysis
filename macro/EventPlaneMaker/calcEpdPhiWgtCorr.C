@@ -5,17 +5,20 @@
 #include "TH2F.h"
 #include "TF1.h"
 #include "TCanvas.h"
+#include "TStyle.h"
 
 #include "../../Utility/include/StSpinAlignmentCons.h"
 
 void calcEpdPhiWgtCorr(int beamType = 0)
 {
+  gStyle->SetOptStat(0);
+  const int mNumCentrality = 9;
+
   string inputFile = Form("../../data/EventPlaneMaker/%s/file_GainCorr_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *file_InPut = TFile::Open(inputFile.c_str());
   if(!file_InPut->IsOpen()) cout << "inputFile: " << inputFile.c_str() << "is problematic" << endl;
   cout << "inputFile sets to: " << inputFile.c_str() << endl;
 
-  const int mNumCentrality = 9;
   TH2F *h_mEpdPhiWgtEast[mNumCentrality]; // phi wgt
   TH2F *h_mEpdPhiAveEast[mNumCentrality];
   TH2F *h_mEpdPhiWgtWest[mNumCentrality];
@@ -37,29 +40,44 @@ void calcEpdPhiWgtCorr(int beamType = 0)
     h_mEpdPhiAveWest[iCent]->Sumw2();
   }
 
-  TCanvas *c_EpdPhiWgtEast = new TCanvas("c_EpdPhiWgtEast","c_EpdPhiWgtEast",10,10,900,900);
-  c_EpdPhiWgtEast->Divide(3,3);
-  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    c_EpdPhiWgtEast->cd(iCent+1);
-    h_mEpdPhiWgtEast[iCent]->SetStats(0);
-    h_mEpdPhiWgtEast[iCent]->Divide(h_mEpdPhiAveEast[iCent]);
-    h_mEpdPhiWgtEast[iCent]->Draw("colz");
-  }
-  std::string figName = Form("../../figures/EventPlaneMaker/%s/EpdPhiWgtEast_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
-  c_EpdPhiWgtEast->SaveAs(figName.c_str());
+    TCanvas *c_EpdPhiWgt = new TCanvas("c_EpdPhiWgt","c_EpdPhiWgt",10,10,900,900);
+    c_EpdPhiWgt->Divide(3,3);
+    for(int iPad = 0; iPad < 9; ++iPad)
+    {
+      c_EpdPhiWgt->cd(iPad+1)->SetLeftMargin(0.15);
+      c_EpdPhiWgt->cd(iPad+1)->SetRightMargin(0.15);
+      c_EpdPhiWgt->cd(iPad+1)->SetBottomMargin(0.15);
+      c_EpdPhiWgt->cd(iPad+1)->SetTicks(1,1);
+      c_EpdPhiWgt->cd(iPad+1)->SetGrid(0,0);
+    }
+    std::string figName = Form("../../figures/EventPlaneMaker/%s/EpdPhiWgt_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_EpdPhiWgt->Print(figName.c_str());
 
-  TCanvas *c_EpdPhiWgtWest = new TCanvas("c_EpdPhiWgtWest","c_EpdPhiWgtWest",10,10,900,900);
-  c_EpdPhiWgtWest->Divide(3,3);
-  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
-  {
-    c_EpdPhiWgtWest->cd(iCent+1);
-    h_mEpdPhiWgtWest[iCent]->SetStats(0);
-    h_mEpdPhiWgtWest[iCent]->Divide(h_mEpdPhiAveWest[iCent]);
-    h_mEpdPhiWgtWest[iCent]->Draw("colz");
+    for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+    {
+      c_EpdPhiWgt->cd(iCent+1);
+      h_mEpdPhiWgtEast[iCent]->SetStats(0);
+      h_mEpdPhiWgtEast[iCent]->Divide(h_mEpdPhiAveEast[iCent]);
+      h_mEpdPhiWgtEast[iCent]->Draw("colz");
+    }
+    figName = Form("../../figures/EventPlaneMaker/%s/EpdPhiWgt_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_EpdPhiWgt->Update();
+    c_EpdPhiWgt->Print(figName.c_str());
+
+    for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+    {
+      c_EpdPhiWgt->cd(iCent+1);
+      h_mEpdPhiWgtWest[iCent]->SetStats(0);
+      h_mEpdPhiWgtWest[iCent]->Divide(h_mEpdPhiAveWest[iCent]);
+      h_mEpdPhiWgtWest[iCent]->Draw("colz");
+    }
+    c_EpdPhiWgt->Update();
+    c_EpdPhiWgt->Print(figName.c_str());
+
+    figName = Form("../../figures/EventPlaneMaker/%s/EpdPhiWgt_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_EpdPhiWgt->Print(figName.c_str());
   }
-  figName = Form("../../figures/EventPlaneMaker/%s/EpdPhiWgtWest_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
-  c_EpdPhiWgtEast->SaveAs(figName.c_str());
 
   string outputFile = Form("../../Utility/EventPlaneMaker/%s/GainCorrPar/file_EpdPhiWgtPar_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   cout << "outputFile: " << outputFile.c_str() << endl;
@@ -90,19 +108,32 @@ void calcEpdPhiWgtCorr(int beamType = 0)
     h_mEpdEp1RawCorr[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
   }
 
-  TCanvas *c_EpdEp1RawDist[mNumCentrality];
-  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string canvName = Form("c_EpdEp1RawDistCent%d",iCent);
-    c_EpdEp1RawDist[iCent] = new TCanvas(canvName.c_str(),canvName.c_str(),10,10,1600,400);
-    c_EpdEp1RawDist[iCent]->Divide(4,1);
-    c_EpdEp1RawDist[iCent]->cd(1); h_mEpdEp1RawEast[iCent]->ProjectionY()->Draw();
-    c_EpdEp1RawDist[iCent]->cd(2); h_mEpdEp1RawWest[iCent]->ProjectionY()->Draw();
-    c_EpdEp1RawDist[iCent]->cd(3); h_mEpdEp1RawFull[iCent]->ProjectionY()->Draw();
-    c_EpdEp1RawDist[iCent]->cd(4); h_mEpdEp1RawCorr[iCent]->Draw("colz");
+    TCanvas *c_EpdEp1RawDist = new TCanvas("c_EpdEp1RawDist","c_EpdEp1RawDist",10,10,800,800);
+    c_EpdEp1RawDist->Divide(2,2);
+    for(int iPad = 0; iPad < 4; ++iPad)
+    {
+      c_EpdEp1RawDist->cd(iPad+1)->SetLeftMargin(0.15);
+      c_EpdEp1RawDist->cd(iPad+1)->SetRightMargin(0.15);
+      c_EpdEp1RawDist->cd(iPad+1)->SetBottomMargin(0.15);
+      c_EpdEp1RawDist->cd(iPad+1)->SetTicks(1,1);
+      c_EpdEp1RawDist->cd(iPad+1)->SetGrid(0,0);
+    }
 
-    std::string figName = Form("../../figures/EventPlaneMaker/%s/EpdRawEpCent%d_%s.pdf",globCons::str_mBeamType[beamType].c_str(),iCent,globCons::str_mBeamType[beamType].c_str());
-    c_EpdEp1RawDist[iCent]->SaveAs(figName.c_str());
+    std::string figName = Form("../../figures/EventPlaneMaker/%s/EpdRawEp_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_EpdEp1RawDist->Print(figName.c_str());
+    for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+    {
+      figName = Form("../../figures/EventPlaneMaker/%s/EpdRawEp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+      c_EpdEp1RawDist->cd(1)->Clear(); c_EpdEp1RawDist->cd(1); h_mEpdEp1RawEast[iCent]->ProjectionY()->Draw();
+      c_EpdEp1RawDist->cd(2)->Clear(); c_EpdEp1RawDist->cd(2); h_mEpdEp1RawWest[iCent]->ProjectionY()->Draw();
+      c_EpdEp1RawDist->cd(3)->Clear(); c_EpdEp1RawDist->cd(3); h_mEpdEp1RawFull[iCent]->ProjectionY()->Draw();
+      c_EpdEp1RawDist->cd(4)->Clear(); c_EpdEp1RawDist->cd(4); h_mEpdEp1RawCorr[iCent]->Draw("colz");
+      c_EpdEp1RawDist->Update();
+      c_EpdEp1RawDist->Print(figName.c_str());
+    }
+    figName = Form("../../figures/EventPlaneMaker/%s/EpdRawEp_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_EpdEp1RawDist->Print(figName.c_str());
   }
 
   string outputFileRawEp = Form("../../data/EventPlaneMaker/%s/file_EpdRawEpDist_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());

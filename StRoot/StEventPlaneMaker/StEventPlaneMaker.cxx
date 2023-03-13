@@ -398,15 +398,33 @@ int StEventPlaneMaker::Make()
 	  }
 	}
 
-	TVector2 vQ1EpdEast = mEpdEpManager->getQ1VecRawEast(); // get Q1Vector from EPD
-	TVector2 vQ1EpdWest = mEpdEpManager->getQ1VecRawWest();
-	TVector2 vQ1EpdFull = mEpdEpManager->getQ1VecRawFull();
-	if( vQ1EpdEast.Mod() > 0.0 && vQ1EpdWest.Mod() > 0.0 && vQ1EpdFull.Mod() > 0.0 ) // EPD EP
+	TVector2 vQ1EpdSideEast = mEpdEpManager->getQ1VecSideRawEast(); // get Q1Vector from EPD
+	TVector2 vQ1EpdSideWest = mEpdEpManager->getQ1VecSideRawWest();
+	TVector2 vQ1EpdSideFull = mEpdEpManager->getQ1VecSideRawFull();
+	if( vQ1EpdSideEast.Mod() > 0.0 && vQ1EpdSideWest.Mod() > 0.0 && vQ1EpdSideFull.Mod() > 0.0 ) // EPD EP
 	{
-	  const double Psi1RawEast = mEpdEpManager->getPsi1RawEast();
-	  const double Psi1RawWest = mEpdEpManager->getPsi1RawWest();
-	  const double Psi1RawFull = mEpdEpManager->getPsi1RawFull();
-	  mEpdEpManager->fillEpdSubEpRaw(Psi1RawEast,Psi1RawWest,Psi1RawFull);
+	  const double Psi1SideRawEast = mEpdEpManager->getPsi1SideRawEast();
+	  const double Psi1SideRawWest = mEpdEpManager->getPsi1SideRawWest();
+	  const double Psi1SideRawFull = mEpdEpManager->getPsi1SideRawFull();
+	  mEpdEpManager->fillEpdSubEpSideRaw(Psi1SideRawEast,Psi1SideRawWest,Psi1SideRawFull);
+	}
+
+	TVector2 vQ1EpdGrp0East = mEpdEpManager->getQ1VecGrpRawEast(0); // get Q1Vector from EPD groups
+	TVector2 vQ1EpdGrp0West = mEpdEpManager->getQ1VecGrpRawWest(0);
+	TVector2 vQ1EpdGrp0Full = mEpdEpManager->getQ1VecGrpRawFull(0);
+	TVector2 vQ1EpdGrp1East = mEpdEpManager->getQ1VecGrpRawEast(1); // get Q1Vector from EPD groups
+	TVector2 vQ1EpdGrp1West = mEpdEpManager->getQ1VecGrpRawWest(1);
+	TVector2 vQ1EpdGrp1Full = mEpdEpManager->getQ1VecGrpRawFull(1);
+	if( vQ1EpdGrp0East.Mod() > 0.0 && vQ1EpdGrp0West.Mod() > 0.0 && vQ1EpdGrp0Full.Mod() > 0.0 &&
+	    vQ1EpdGrp1East.Mod() > 0.0 && vQ1EpdGrp1West.Mod() > 0.0 && vQ1EpdGrp1Full.Mod() > 0.0) // EPD EP
+	{
+	  const double Psi1Grp0RawEast = mEpdEpManager->getPsi1GrpRawEast(0);
+	  const double Psi1Grp0RawWest = mEpdEpManager->getPsi1GrpRawWest(0);
+	  const double Psi1Grp0RawFull = mEpdEpManager->getPsi1GrpRawFull(0);
+	  const double Psi1Grp1RawEast = mEpdEpManager->getPsi1GrpRawEast(1);
+	  const double Psi1Grp1RawWest = mEpdEpManager->getPsi1GrpRawWest(1);
+	  const double Psi1Grp1RawFull = mEpdEpManager->getPsi1GrpRawFull(1);
+	  mEpdEpManager->fillEpdSubEpGrpRaw(Psi1Grp0RawEast,Psi1Grp0RawWest,Psi1Grp0RawFull,Psi1Grp1RawEast,Psi1Grp1RawWest,Psi1Grp1RawFull);
 	}
       }
       if(mMode > 0)
@@ -429,12 +447,14 @@ int StEventPlaneMaker::Make()
 	    if( mAnaCut->passHitEpdEpEast(picoEpdHit) ) // negative eta
 	    {
 	      mEpdEpManager->addHitWgtEast(picoEpdHit, primVtx);
-	      mEpdEpManager->fillEpdReCtrEast(picoEpdHit, primVtx); // fill EPD ReCenter Parameters East
+	      mEpdEpManager->fillEpdSideReCtrEast(picoEpdHit, primVtx); // fill EPD ReCenter Parameters East
+	      mEpdEpManager->fillEpdGrpReCtrEast(picoEpdHit, primVtx); // fill EPD ReCenter Parameters East
 	    }
 	    if( mAnaCut->passHitEpdEpWest(picoEpdHit) ) // positive eta
 	    {
 	      mEpdEpManager->addHitWgtWest(picoEpdHit, primVtx);
-	      mEpdEpManager->fillEpdReCtrWest(picoEpdHit, primVtx); // fill EPD ReCenter Parameters West
+	      mEpdEpManager->fillEpdSideReCtrWest(picoEpdHit, primVtx); // fill EPD ReCenter Parameters West
+	      mEpdEpManager->fillEpdGrpReCtrWest(picoEpdHit, primVtx); // fill EPD ReCenter Parameters West
 	    }
 	  }
 	  else // calculate phi & eta weighted (if avaliable) and recentered Q1Vector from EPD
@@ -502,28 +522,49 @@ int StEventPlaneMaker::Make()
 	    mZdcEpManager->fillZdcReCtrWest(vQ1ZdcWest);
 	  }
 
-	  TVector2 vQ1EpdEast = mEpdEpManager->getQ1VecWgtEast(); // get Q1Vector from EPD
-	  TVector2 vQ1EpdWest = mEpdEpManager->getQ1VecWgtWest();
-	  TVector2 vQ1EpdFull = mEpdEpManager->getQ1VecWgtFull();
-	  if( vQ1EpdEast.Mod() > 0.0 && vQ1EpdWest.Mod() > 0.0 && vQ1EpdFull.Mod() > 0.0 ) // EPD EP
+	  TVector2 vQ1EpdSideEast = mEpdEpManager->getQ1VecSideWgtEast(); // get Q1Vector from EPD
+	  TVector2 vQ1EpdSideWest = mEpdEpManager->getQ1VecSideWgtWest();
+	  TVector2 vQ1EpdSideFull = mEpdEpManager->getQ1VecSideWgtFull();
+	  if( vQ1EpdSideEast.Mod() > 0.0 && vQ1EpdSideWest.Mod() > 0.0 && vQ1EpdSideFull.Mod() > 0.0 ) // EPD EP
 	  {
-	    const double Psi1WgtEast = mEpdEpManager->getPsi1WgtEast(); // EPD EP
-	    const double Psi1WgtWest = mEpdEpManager->getPsi1WgtWest();
-	    const double Psi1WgtFull = mEpdEpManager->getPsi1WgtFull();
-	    mEpdEpManager->fillEpdSubEpWgt(Psi1WgtEast, Psi1WgtWest, Psi1WgtFull);
+	    const double Psi1SideWgtEast = mEpdEpManager->getPsi1SideWgtEast(); // EPD EP
+	    const double Psi1SideWgtWest = mEpdEpManager->getPsi1SideWgtWest();
+	    const double Psi1SideWgtFull = mEpdEpManager->getPsi1SideWgtFull();
+	    mEpdEpManager->fillEpdSubEpSideWgt(Psi1SideWgtEast, Psi1SideWgtWest, Psi1SideWgtFull);
+	  }
+
+	  TVector2 vQ1EpdGrp0East = mEpdEpManager->getQ1VecGrpWgtEast(0); // get Q1Vector from EPD groups
+	  TVector2 vQ1EpdGrp0West = mEpdEpManager->getQ1VecGrpWgtWest(0);
+	  TVector2 vQ1EpdGrp0Full = mEpdEpManager->getQ1VecGrpWgtFull(0);
+	  TVector2 vQ1EpdGrp1East = mEpdEpManager->getQ1VecGrpWgtEast(1);
+	  TVector2 vQ1EpdGrp1West = mEpdEpManager->getQ1VecGrpWgtWest(1);
+	  TVector2 vQ1EpdGrp1Full = mEpdEpManager->getQ1VecGrpWgtFull(1);
+	  if( vQ1EpdGrp0East.Mod() > 0.0 && vQ1EpdGrp0West.Mod() > 0.0 && vQ1EpdGrp0Full.Mod() > 0.0 &&
+	      vQ1EpdGrp1East.Mod() > 0.0 && vQ1EpdGrp1West.Mod() > 0.0 && vQ1EpdGrp1Full.Mod() > 0.0 ) // EPD EP
+	  {
+	    const double Psi1Grp0WgtEast = mEpdEpManager->getPsi1Grp0WgtEast(); // EPD EP
+	    const double Psi1Grp0WgtWest = mEpdEpManager->getPsi1Grp0WgtWest();
+	    const double Psi1Grp0WgtFull = mEpdEpManager->getPsi1Grp0WgtFull();
+	    const double Psi1Grp1WgtEast = mEpdEpManager->getPsi1Grp1WgtEast(); // EPD EP
+	    const double Psi1Grp1WgtWest = mEpdEpManager->getPsi1Grp1WgtWest();
+	    const double Psi1Grp1WgtFull = mEpdEpManager->getPsi1Grp1WgtFull();
+	    mEpdEpManager->fillEpdSubEpGrpWgt(Psi1Grp0WgtEast, Psi1Grp0WgtWest, Psi1Grp0WgtFull, Psi1Grp1WgtEast, Psi1Grp1WgtWest, Psi1Grp1WgtFull);
 	  }
 
 	  const int numTrackRawEast = mTpcEpManager->getNumTrkRawEast(); // TPC EP
 	  const int numTrackRawWest = mTpcEpManager->getNumTrkRawWest();
 	  if(mAnaCut->passNumTrkTpcSubEpRaw(numTrackRawEast, numTrackRawWest))
 	  {
+	    const double Psi1RawEast = mTpcEpManager->getPsi1RawEast();
+	    const double Psi1RawWest = mTpcEpManager->getPsi1RawWest();
+	    const double Psi1RawFull = mTpcEpManager->getPsi1RawFull();
 	    const double Psi2RawEast = mTpcEpManager->getPsi2RawEast();
 	    const double Psi2RawWest = mTpcEpManager->getPsi2RawWest();
 	    const double Psi2RawFull = mTpcEpManager->getPsi2RawFull();
 	    const double Psi3RawEast = mTpcEpManager->getPsi3RawEast();
 	    const double Psi3RawWest = mTpcEpManager->getPsi3RawWest();
 	    const double Psi3RawFull = mTpcEpManager->getPsi3RawFull();
-	    mTpcEpManager->fillTpcSubEpRaw(0.0, 0.0, 0.0, Psi2RawEast, Psi2RawWest, Psi2RawFull, Psi3RawEast, Psi3RawWest, Psi3RawFull);
+	    mTpcEpManager->fillTpcSubEpRaw(Psi1RawEast, Psi1RawWest, Psi1RawFull, Psi2RawEast, Psi2RawWest, Psi2RawFull, Psi3RawEast, Psi3RawWest, Psi3RawFull);
 	  }
 	}
 	if(mMode == 2) // fill shift correction parameter for ZDC & EPD & TPC Sub EP
@@ -538,30 +579,53 @@ int StEventPlaneMaker::Make()
 	    mZdcEpManager->fillZdcShiftWest(vQ1ZdcWest);
 	  }
 
-	  TVector2 vQ1EpdEast = mEpdEpManager->getQ1VecReCtrEast(); // get Q1Vector from EPD
-	  TVector2 vQ1EpdWest = mEpdEpManager->getQ1VecReCtrWest();
-	  TVector2 vQ1EpdFull = mEpdEpManager->getQ1VecReCtrFull();
-	  if( vQ1EpdEast.Mod() > 0.0 && vQ1EpdWest.Mod() > 0.0 && vQ1EpdFull.Mod() > 0.0 ) // EPD EP
+	  TVector2 vQ1EpdSideEast = mEpdEpManager->getQ1VecSideReCtrEast(); // get Q1Vector from EPD
+	  TVector2 vQ1EpdSideWest = mEpdEpManager->getQ1VecSideReCtrWest();
+	  TVector2 vQ1EpdSideFull = mEpdEpManager->getQ1VecSideReCtrFull();
+	  if( vQ1EpdSideEast.Mod() > 0.0 && vQ1EpdSideWest.Mod() > 0.0 && vQ1EpdSideFull.Mod() > 0.0 ) // EPD EP
 	  {
-	    const double Psi1ReCtrEast = mEpdEpManager->getPsi1ReCtrEast(); // EPD EP
-	    const double Psi1ReCtrWest = mEpdEpManager->getPsi1ReCtrWest();
-	    const double Psi1ReCtrFull = mEpdEpManager->getPsi1ReCtrFull();
-	    mEpdEpManager->fillEpdSubEpReCtr(Psi1ReCtrEast, Psi1ReCtrWest, Psi1ReCtrFull);
-	    mEpdEpManager->fillEpdShiftEast();
-	    mEpdEpManager->fillEpdShiftWest();
+	    const double Psi1SideReCtrEast = mEpdEpManager->getPsi1SideReCtrEast(); // EPD EP
+	    const double Psi1SideReCtrWest = mEpdEpManager->getPsi1SideReCtrWest();
+	    const double Psi1SideReCtrFull = mEpdEpManager->getPsi1SideReCtrFull();
+	    mEpdEpManager->fillEpdSubEpSideReCtr(Psi1SideReCtrEast, Psi1SideReCtrWest, Psi1SideReCtrFull);
+	    mEpdEpManager->fillEpdSideShiftEast();
+	    mEpdEpManager->fillEpdSideShiftWest();
+	  }
+
+	  TVector2 vQ1EpdGrp0East = mEpdEpManager->getQ1VecGrpReCtrEast(0); // get Q1Vector from EPD groups
+	  TVector2 vQ1EpdGrp0West = mEpdEpManager->getQ1VecGrpReCtrWest(0);
+	  TVector2 vQ1EpdGrp0Full = mEpdEpManager->getQ1VecGrpReCtrFull(0);
+	  TVector2 vQ1EpdGrp1East = mEpdEpManager->getQ1VecGrpReCtrEast(1);
+	  TVector2 vQ1EpdGrp1West = mEpdEpManager->getQ1VecGrpReCtrWest(1);
+	  TVector2 vQ1EpdGrp1Full = mEpdEpManager->getQ1VecGrpReCtrFull(1);
+	  if( vQ1EpdGrp0East.Mod() > 0.0 && vQ1EpdGrp0West.Mod() > 0.0 && vQ1EpdGrp0Full.Mod() > 0.0 &&
+	      vQ1EpdGrp1East.Mod() > 0.0 && vQ1EpdGrp1West.Mod() > 0.0 && vQ1EpdGrp1Full.Mod() > 0.0 ) // EPD EP
+	  {
+	    const double Psi1Grp0ReCtrEast = mEpdEpManager->getPsi1GrpReCtrEast(0); // EPD EP
+	    const double Psi1Grp0ReCtrWest = mEpdEpManager->getPsi1GrpReCtrWest(0);
+	    const double Psi1Grp0ReCtrFull = mEpdEpManager->getPsi1GrpReCtrFull(0);
+	    const double Psi1Grp1ReCtrEast = mEpdEpManager->getPsi1GrpReCtrEast(1);
+	    const double Psi1Grp1ReCtrWest = mEpdEpManager->getPsi1GrpReCtrWest(1);
+	    const double Psi1Grp1ReCtrFull = mEpdEpManager->getPsi1GrpReCtrFull(1);
+	    mEpdEpManager->fillEpdSubEpGrpReCtr(Psi1Grp0ReCtrEast, Psi1Grp0ReCtrWest, Psi1Grp0ReCtrFull, Psi1Grp1ReCtrEast, Psi1Grp1ReCtrWest, Psi1Grp1ReCtrFull);
+	    mEpdEpManager->fillEpdGrpShiftEast();
+	    mEpdEpManager->fillEpdGrpShiftWest();
 	  }
 
 	  const int numTrkReCtrEast = mTpcEpManager->getNumTrkReCtrEast(); // TPC EP
 	  const int numTrkReCtrWest = mTpcEpManager->getNumTrkReCtrWest();
 	  if(mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest))
 	  {
+	    const double Psi1ReCtrEast = mTpcEpManager->getPsi1ReCtrEast();
+	    const double Psi1ReCtrWest = mTpcEpManager->getPsi1ReCtrWest();
+	    const double Psi1ReCtrFull = mTpcEpManager->getPsi1ReCtrFull();
 	    const double Psi2ReCtrEast = mTpcEpManager->getPsi2ReCtrEast();
 	    const double Psi2ReCtrWest = mTpcEpManager->getPsi2ReCtrWest();
 	    const double Psi2ReCtrFull = mTpcEpManager->getPsi2ReCtrFull();
 	    const double Psi3ReCtrEast = mTpcEpManager->getPsi3ReCtrEast();
 	    const double Psi3ReCtrWest = mTpcEpManager->getPsi3ReCtrWest();
 	    const double Psi3ReCtrFull = mTpcEpManager->getPsi3ReCtrFull();
-	    mTpcEpManager->fillTpcSubEpReCtr(0.0, 0.0, 0.0, Psi2ReCtrEast, Psi2ReCtrWest, Psi2ReCtrFull, Psi3ReCtrEast, Psi3ReCtrWest, Psi3ReCtrFull);
+	    mTpcEpManager->fillTpcSubEpReCtr(Psi1ReCtrEast, Psi1ReCtrWest, Psi1ReCtrFull, Psi2ReCtrEast, Psi2ReCtrWest, Psi2ReCtrFull, Psi3ReCtrEast, Psi3ReCtrWest, Psi3ReCtrFull);
 	    mTpcEpManager->fillTpcShiftEast();
 	    mTpcEpManager->fillTpcShiftWest();
 	    mTpcEpManager->fillTpcShiftFull();
@@ -578,16 +642,35 @@ int StEventPlaneMaker::Make()
 	    mZdcEpManager->fillZdcShiftFull(vQ1ZdcFull);
 	  }
 
-	  TVector2 vQ1EpdEast = mEpdEpManager->getQ1VecShiftEast(); // get Q1Vector from EPD
-	  TVector2 vQ1EpdWest = mEpdEpManager->getQ1VecShiftWest();
-	  TVector2 vQ1EpdFull = mEpdEpManager->getQ1VecShiftFull();
-	  if( vQ1EpdEast.Mod() > 0.0 && vQ1EpdWest.Mod() > 0.0 && vQ1EpdFull.Mod() > 0.0 ) // EPD EP
+	  TVector2 vQ1EpdSideEast = mEpdEpManager->getQ1VecSideShiftEast(); // get Q1Vector from EPD
+	  TVector2 vQ1EpdSideWest = mEpdEpManager->getQ1VecSideShiftWest();
+	  TVector2 vQ1EpdSideFull = mEpdEpManager->getQ1VecSideShiftFull();
+	  if( vQ1EpdSideEast.Mod() > 0.0 && vQ1EpdSideWest.Mod() > 0.0 && vQ1EpdSideFull.Mod() > 0.0 ) // EPD EP
 	  {
-	    const double Psi1ShiftEast = mEpdEpManager->getPsi1ShiftEast(); // EPD EP
-	    const double Psi1ShiftWest = mEpdEpManager->getPsi1ShiftWest();
-	    const double Psi1ShiftFull = mEpdEpManager->getPsi1ShiftFull();
-	    mEpdEpManager->fillEpdSubEpShift(Psi1ShiftEast, Psi1ShiftWest, Psi1ShiftFull);
-	    mEpdEpManager->fillEpdShiftFull();
+	    const double Psi1SideShiftEast = mEpdEpManager->getPsi1SideShiftEast(); // EPD EP
+	    const double Psi1SideShiftWest = mEpdEpManager->getPsi1SideShiftWest();
+	    const double Psi1SideShiftFull = mEpdEpManager->getPsi1SideShiftFull();
+	    mEpdEpManager->fillEpdSubEpSideShift(Psi1SideShiftEast, Psi1SideShiftWest, Psi1SideShiftFull);
+	    mEpdEpManager->fillEpdSideShiftFull();
+	  }
+
+	  TVector2 vQ1EpdGrp0East = mEpdEpManager->getQ1VecGrpShiftEast(0); // get Q1Vector from EPD groups
+	  TVector2 vQ1EpdGrp0West = mEpdEpManager->getQ1VecGrpShiftWest(0);
+	  TVector2 vQ1EpdGrp0Full = mEpdEpManager->getQ1VecGrpShiftFull(0);
+	  TVector2 vQ1EpdGrp1East = mEpdEpManager->getQ1VecGrpShiftEast(1);
+	  TVector2 vQ1EpdGrp1West = mEpdEpManager->getQ1VecGrpShiftWest(1);
+	  TVector2 vQ1EpdGrp1Full = mEpdEpManager->getQ1VecGrpShiftFull(1);
+	  if( vQ1EpdGrp0East.Mod() > 0.0 && vQ1EpdGrp0West.Mod() > 0.0 && vQ1EpdGrp0Full.Mod() > 0.0 &&
+	      vQ1EpdGrp1East.Mod() > 0.0 && vQ1EpdGrp1West.Mod() > 0.0 && vQ1EpdGrp1Full.Mod() > 0.0 ) // EPD EP
+	  {
+	    const double Psi1Grp0ShiftEast = mEpdEpManager->getPsi1GrpShiftEast(0); // EPD EP
+	    const double Psi1Grp0ShiftWest = mEpdEpManager->getPsi1GrpShiftWest(0);
+	    const double Psi1Grp0ShiftFull = mEpdEpManager->getPsi1GrpShiftFull(0);
+	    const double Psi1Grp1ShiftEast = mEpdEpManager->getPsi1GrpShiftEast(1);
+	    const double Psi1Grp1ShiftWest = mEpdEpManager->getPsi1GrpShiftWest(1);
+	    const double Psi1Grp1ShiftFull = mEpdEpManager->getPsi1GrpShiftFull(1);
+	    mEpdEpManager->fillEpdSubEpGrpShift(Psi1Grp0ShiftEast, Psi1Grp0ShiftWest, Psi1Grp0ShiftFull, Psi1Grp1ShiftEast, Psi1Grp1ShiftWest, Psi1Grp1ShiftFull);
+	    mEpdEpManager->fillEpdGrpShiftFull();
 	  }
 	}
 	if(mMode == 4) // fill event plane resolution for ZDC-SMD & EPD & TPC Sub EP
@@ -602,25 +685,53 @@ int StEventPlaneMaker::Make()
 	    mZdcEpManager->fillZdcResolution(vQ1ZdcEast,vQ1ZdcWest);
 	  }
 
-	  TVector2 vQ1EpdEast     = mEpdEpManager->getQ1VecShiftEast(); // get Q1Vector from EPD
-	  TVector2 vQ1EpdWest     = mEpdEpManager->getQ1VecShiftWest();
-	  TVector2 vQ1EpdFull     = mEpdEpManager->getQ1VecShiftFull();
-	  TVector2 vQ1EpdFullCorr = mEpdEpManager->getQ1VecShiftFullCorr();
-	  if( vQ1EpdEast.Mod() > 0.0 && vQ1EpdWest.Mod() > 0.0 && vQ1EpdFull.Mod() > 0.0 ) // EPD EP
+	  TVector2 vQ1EpdSideEast     = mEpdEpManager->getQ1VecSideShiftEast(); // get Q1Vector from EPD
+	  TVector2 vQ1EpdSideWest     = mEpdEpManager->getQ1VecSideShiftWest();
+	  TVector2 vQ1EpdSideFull     = mEpdEpManager->getQ1VecSideShiftFull();
+	  TVector2 vQ1EpdSideFullCorr = mEpdEpManager->getQ1VecSideShiftFullCorr();
+	  if( vQ1EpdSideEast.Mod() > 0.0 && vQ1EpdSideWest.Mod() > 0.0 && vQ1EpdSideFull.Mod() > 0.0 ) // EPD EP
 	  {
-	    const double Psi1ShiftEast     = mEpdEpManager->getPsi1ShiftEast(); // EPD EP
-	    const double Psi1ShiftWest     = mEpdEpManager->getPsi1ShiftWest();
-	    const double Psi1ShiftFull     = mEpdEpManager->getPsi1ShiftFull();
-	    const double Psi1ShiftFullCorr = mEpdEpManager->getPsi1ShiftFullCorr();
-	    mEpdEpManager->fillEpdSubEpShift(Psi1ShiftEast, Psi1ShiftWest, Psi1ShiftFull);
-	    mEpdEpManager->fillEpdFullEpShift(Psi1ShiftFullCorr);
-	    mEpdEpManager->fillEpdResolution(Psi1ShiftEast, Psi1ShiftWest);
+	    const double Psi1SideShiftEast     = mEpdEpManager->getPsi1SideShiftEast(); // EPD EP
+	    const double Psi1SideShiftWest     = mEpdEpManager->getPsi1SideShiftWest();
+	    const double Psi1SideShiftFull     = mEpdEpManager->getPsi1SideShiftFull();
+	    const double Psi1SideShiftFullCorr = mEpdEpManager->getPsi1SideShiftFullCorr();
+	    mEpdEpManager->fillEpdSubEpSideShift(Psi1SideShiftEast, Psi1SideShiftWest, Psi1SideShiftFull);
+	    mEpdEpManager->fillEpdFullEpSideShift(Psi1SideShiftFullCorr);
+	    mEpdEpManager->fillEpdSideResolution(Psi1SideShiftEast, Psi1SideShiftWest);
+	  }
+
+	  TVector2 vQ1EpdGrp0East     = mEpdEpManager->getQ1VecGrpShiftEast(0); // get Q1Vector from EPD
+	  TVector2 vQ1EpdGrp0West     = mEpdEpManager->getQ1VecGrpShiftWest(0);
+	  TVector2 vQ1EpdGrp0Full     = mEpdEpManager->getQ1VecGrpShiftFull(0);
+	  TVector2 vQ1EpdGrp0FullCorr = mEpdEpManager->getQ1VecGrpShiftFullCorr(0);
+	  TVector2 vQ1EpdGrp1East     = mEpdEpManager->getQ1VecGrpShiftEast(1); // get Q1Vector from EPD
+	  TVector2 vQ1EpdGrp1West     = mEpdEpManager->getQ1VecGrpShiftWest(1);
+	  TVector2 vQ1EpdGrp1Full     = mEpdEpManager->getQ1VecGrpShiftFull(1);
+	  TVector2 vQ1EpdGrp1FullCorr = mEpdEpManager->getQ1VecGrpShiftFullCorr(1);
+	  if( vQ1EpdGrp0East.Mod() > 0.0 && vQ1EpdGrp0West.Mod() > 0.0 && vQ1EpdGrp0Full.Mod() > 0.0 &&
+	      vQ1EpdGrp1East.Mod() > 0.0 && vQ1EpdGrp1West.Mod() > 0.0 && vQ1EpdGrp1Full.Mod() > 0.0 ) // EPD EP
+	  {
+	    const double Psi1Grp0ShiftEast     = mEpdEpManager->getPsi1GrpShiftEast(0); // EPD EP
+	    const double Psi1Grp0ShiftWest     = mEpdEpManager->getPsi1GrpShiftWest(0);
+	    const double Psi1Grp0ShiftFull     = mEpdEpManager->getPsi1GrpShiftFull(0);
+	    const double Psi1Grp0ShiftFullCorr = mEpdEpManager->getPsi1GrpShiftFullCorr(0);
+	    const double Psi1Grp1ShiftEast     = mEpdEpManager->getPsi1GrpShiftEast(1);
+	    const double Psi1Grp1ShiftWest     = mEpdEpManager->getPsi1GrpShiftWest(1);
+	    const double Psi1Grp1ShiftFull     = mEpdEpManager->getPsi1GrpShiftFull(1);
+	    const double Psi1Grp1ShiftFullCorr = mEpdEpManager->getPsi1GrpShiftFullCorr(1);
+	    mEpdEpManager->fillEpdSubEpGrpShift(Psi1Grp0ShiftEast, Psi1Grp0ShiftWest, Psi1Grp0ShiftFull, Psi1Grp1ShiftEast, Psi1Grp1ShiftWest, Psi1Grp1ShiftFull);
+	    mEpdEpManager->fillEpdFullEpGrpShift(Psi1Grp0ShiftFullCorr,Psi1Grp1ShiftFullCorr);
+	    mEpdEpManager->fillEpdGrpResolution(Psi1Grp0ShiftEast, Psi1Grp0ShiftWest,0);
+	    mEpdEpManager->fillEpdGrpResolution(Psi1Grp1ShiftEast, Psi1Grp1ShiftWest,1);
 	  }
 
 	  const int numTrkReCtrEast = mTpcEpManager->getNumTrkReCtrEast(); // TPC EP
 	  const int numTrkReCtrWest = mTpcEpManager->getNumTrkReCtrWest();
 	  if(mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest))
 	  {
+	    const TVector2 vQ1TpcEast = mTpcEpManager->getQ1VecReCtrEast();
+	    const TVector2 vQ1TpcWest = mTpcEpManager->getQ1VecReCtrWest();
+	    const TVector2 vQ1TpcFull = mTpcEpManager->getQ1VecReCtrFull();
 	    const TVector2 vQ2TpcEast = mTpcEpManager->getQ2VecReCtrEast();
 	    const TVector2 vQ2TpcWest = mTpcEpManager->getQ2VecReCtrWest();
 	    const TVector2 vQ2TpcFull = mTpcEpManager->getQ2VecReCtrFull();
@@ -628,6 +739,9 @@ int StEventPlaneMaker::Make()
 	    const TVector2 vQ3TpcWest = mTpcEpManager->getQ3VecReCtrWest();
 	    const TVector2 vQ3TpcFull = mTpcEpManager->getQ3VecReCtrFull();
 
+	    const double Psi1ShiftEast = mTpcEpManager->getPsi1ShiftEast(vQ1TpcEast);
+	    const double Psi1ShiftWest = mTpcEpManager->getPsi1ShiftWest(vQ1TpcWest);
+	    const double Psi1ShiftFull = mTpcEpManager->getPsi1ShiftFull(vQ1TpcFull);
 	    const double Psi2ShiftEast = mTpcEpManager->getPsi2ShiftEast(vQ2TpcEast);
 	    const double Psi2ShiftWest = mTpcEpManager->getPsi2ShiftWest(vQ2TpcWest);
 	    const double Psi2ShiftFull = mTpcEpManager->getPsi2ShiftFull(vQ2TpcFull);
@@ -635,8 +749,8 @@ int StEventPlaneMaker::Make()
 	    const double Psi3ShiftWest = mTpcEpManager->getPsi3ShiftWest(vQ3TpcWest);
 	    const double Psi3ShiftFull = mTpcEpManager->getPsi3ShiftFull(vQ3TpcFull);
 
-	    mTpcEpManager->fillTpcSubEpShift(0.0, 0.0, 0.0, Psi2ShiftEast, Psi2ShiftWest, Psi2ShiftFull, Psi3ShiftEast, Psi3ShiftWest, Psi3ShiftFull);
-	    mTpcEpManager->fillTpcResolution(0.0, 0.0, Psi2ShiftEast, Psi2ShiftWest, Psi3ShiftEast, Psi3ShiftWest);
+	    mTpcEpManager->fillTpcSubEpShift(Psi1ShiftEast, Psi1ShiftWest, Psi1ShiftFull, Psi2ShiftEast, Psi2ShiftWest, Psi2ShiftFull, Psi3ShiftEast, Psi3ShiftWest, Psi3ShiftFull);
+	    mTpcEpManager->fillTpcResolution(Psi1ShiftEast, Psi1ShiftWest, Psi2ShiftEast, Psi2ShiftWest, Psi3ShiftEast, Psi3ShiftWest);
 	  }
 	}
 	if(mMode == 5) // calculate charged hadron v1 from ZDC & EPD and charged hadron v2 and v3 from TPC
@@ -657,7 +771,7 @@ int StEventPlaneMaker::Make()
 	      const double eta = primMom.PseudoRapidity();
 	      const double phi = primMom.Phi(); // -pi to pi
 
-	      if(mZdcEpManager->getZdcFullEpResVal(cent9) > 0.0)
+	      if(mAnaCut->passTrkTpcFlowFull(picoTrack, primVtx) && mZdcEpManager->getZdcFullEpResVal(cent9) > 0.0)
 	      {
 		const double v1Zdc = TMath::Cos(1.0*(phi-Psi1ZdcFull))/mZdcEpManager->getZdcFullEpResVal(cent9);
 		mZdcEpManager->fillZdcFullEpDFlow(eta, pt, v1Zdc, reweight);
@@ -665,13 +779,13 @@ int StEventPlaneMaker::Make()
 	    }
 	  }
 
-	  TVector2 vQ1EpdEast = mEpdEpManager->getQ1VecShiftEast(); // get Q1Vector from EPD
-	  TVector2 vQ1EpdWest = mEpdEpManager->getQ1VecShiftWest();
-	  TVector2 vQ1EpdFull = mEpdEpManager->getQ1VecShiftFull();
-	  if( vQ1EpdEast.Mod() > 0.0 && vQ1EpdWest.Mod() > 0.0 && vQ1EpdFull.Mod() > 0.0 ) // EPD EP
+	  TVector2 vQ1EpdSideEast = mEpdEpManager->getQ1VecSideShiftEast(); // get Q1Vector from EPD
+	  TVector2 vQ1EpdSideWest = mEpdEpManager->getQ1VecSideShiftWest();
+	  TVector2 vQ1EpdSideFull = mEpdEpManager->getQ1VecSideShiftFull();
+	  if( vQ1EpdSideEast.Mod() > 0.0 && vQ1EpdSideWest.Mod() > 0.0 && vQ1EpdSideFull.Mod() > 0.0 ) // EPD EP
 	  {
-	    const double Psi1EpdEast = mEpdEpManager->getPsi1ShiftEast(); // EPD EP
-	    const double Psi1EpdWest = mEpdEpManager->getPsi1ShiftWest();
+	    const double Psi1SideEpdEast = mEpdEpManager->getPsi1SideShiftEast(); // EPD EP
+	    const double Psi1SideEpdWest = mEpdEpManager->getPsi1SideShiftWest();
 	    for(unsigned int iEpdHit = 0; iEpdHit < nEpdHits; ++iEpdHit)
 	    { // charged hadron v1 from EPD
 	      StPicoEpdHit *picoEpdHit = (StPicoEpdHit*)mPicoDst->epdHit(iEpdHit); 
@@ -681,29 +795,32 @@ int StEventPlaneMaker::Make()
 	      const double eta = EpdVector.PseudoRapidity();
 	      const double phi = EpdVector.Phi(); // -pi to pi
 
-	      if( mAnaCut->passHitEpdFlowEast(picoEpdHit) && mEpdEpManager->getEpdSubEp1ResVal(cent9) > 0.0 ) // negative eta
+	      if( mAnaCut->passHitEpdFlowEast(picoEpdHit) && mEpdEpManager->getEpdSubEp1SideResVal(cent9) > 0.0 ) // negative eta
 	      {
-		const double v1Epd = TMath::Cos(1.0*(phi-Psi1EpdWest))/mEpdEpManager->getEpdSubEp1ResVal(cent9);
+		const double v1Epd = TMath::Cos(1.0*(phi-Psi1SideEpdWest))/mEpdEpManager->getEpdSubEp1SideResVal(cent9);
 		mEpdEpManager->fillEpdSubEpDFlow(eta, v1Epd, reweight);
 	      }
-	      if( mAnaCut->passHitEpdFlowWest(picoEpdHit) && mEpdEpManager->getEpdSubEp1ResVal(cent9) > 0.0  ) // positive eta
+	      if( mAnaCut->passHitEpdFlowWest(picoEpdHit) && mEpdEpManager->getEpdSubEp1SideResVal(cent9) > 0.0  ) // positive eta
 	      {
-		const double v1Epd = TMath::Cos(1.0*(phi-Psi1EpdEast))/mEpdEpManager->getEpdSubEp1ResVal(cent9);
+		const double v1Epd = TMath::Cos(1.0*(phi-Psi1SideEpdEast))/mEpdEpManager->getEpdSubEp1SideResVal(cent9);
 		mEpdEpManager->fillEpdSubEpDFlow(eta, v1Epd, reweight);
 	      }
 	    }
 	  }
 
-
 	  const int numTrkReCtrEast = mTpcEpManager->getNumTrkReCtrEast(); // TPC EP
 	  const int numTrkReCtrWest = mTpcEpManager->getNumTrkReCtrWest();
 	  if(mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest))
 	  { // charged hadron v2 and v3 from TPC
+	    const TVector2 vQ1TpcEast = mTpcEpManager->getQ1VecReCtrEast();
+	    const TVector2 vQ1TpcWest = mTpcEpManager->getQ1VecReCtrWest();
 	    const TVector2 vQ2TpcEast = mTpcEpManager->getQ2VecReCtrEast();
 	    const TVector2 vQ2TpcWest = mTpcEpManager->getQ2VecReCtrWest();
 	    const TVector2 vQ3TpcEast = mTpcEpManager->getQ3VecReCtrEast();
 	    const TVector2 vQ3TpcWest = mTpcEpManager->getQ3VecReCtrWest();
 
+	    const double Psi1TpcEast = mTpcEpManager->getPsi1ShiftEast(vQ1TpcEast); // -pi to pi
+	    const double Psi1TpcWest = mTpcEpManager->getPsi1ShiftWest(vQ1TpcWest);
 	    const double Psi2TpcEast = mTpcEpManager->getPsi2ShiftEast(vQ2TpcEast); // -pi/2 to pi/2
 	    const double Psi2TpcWest = mTpcEpManager->getPsi2ShiftWest(vQ2TpcWest);
 	    const double Psi3TpcEast = mTpcEpManager->getPsi3ShiftEast(vQ3TpcEast); // -pi/3 to pi/3
@@ -721,6 +838,11 @@ int StEventPlaneMaker::Make()
 
 	      if(mAnaCut->passTrkTpcFlowEast(picoTrack, primVtx)) // neg
 	      { // correlate track from East to EP from West
+		if(mTpcEpManager->getTpcSubEp1ResVal(cent9) > 0.0)
+		{
+		  const double v1Tpc = TMath::Cos(1.0*(phi-Psi1TpcWest))/mTpcEpManager->getTpcSubEp1ResVal(cent9);
+		  mTpcEpManager->fillTpcSubEpV1(pt, v1Tpc, reweight);
+		}
 		if(mTpcEpManager->getTpcSubEp2ResVal(cent9) > 0.0)
 		{
 		  const double v2Tpc = TMath::Cos(2.0*(phi-Psi2TpcWest))/mTpcEpManager->getTpcSubEp2ResVal(cent9);
@@ -734,6 +856,11 @@ int StEventPlaneMaker::Make()
 	      }
 	      if(mAnaCut->passTrkTpcFlowWest(picoTrack, primVtx)) // neg
 	      { // correlate track from West to EP from East
+		if(mTpcEpManager->getTpcSubEp1ResVal(cent9) > 0.0)
+		{
+		  const double v1Tpc = TMath::Cos(1.0*(phi-Psi1TpcEast))/mTpcEpManager->getTpcSubEp1ResVal(cent9);
+		  mTpcEpManager->fillTpcSubEpV1(pt, v1Tpc, reweight);
+		}
 		if(mTpcEpManager->getTpcSubEp2ResVal(cent9) > 0.0)
 		{
 		  const double v2Tpc = TMath::Cos(2.0*(phi-Psi2TpcEast))/mTpcEpManager->getTpcSubEp2ResVal(cent9);
@@ -757,4 +884,3 @@ int StEventPlaneMaker::Make()
 
   return kStOK;
 }
-

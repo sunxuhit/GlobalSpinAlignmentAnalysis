@@ -38,8 +38,8 @@ void StPhiMesonTree::initPhiTree()
 
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string histName = Form("h_mPhiMass2Cent%d",iCent);
-    h_mPhiMass2[iCent] = new TH2F(histName.c_str(),histName.c_str(),20,0.2,5.0,200,0.98,1.08);
+    std::string histName = Form("h_mInvMassPhiCent%d",iCent);
+    h_mInvMassPhi[iCent] = new TH2F(histName.c_str(),histName.c_str(),20,0.2,5.0,200,0.98,1.08);
     for(int iVz = 0; iVz < mNumMixVzBin; ++iVz)
     {
       for(int iPsi = 0; iPsi < mNumMixPsiBin; ++iPsi)
@@ -61,7 +61,7 @@ void StPhiMesonTree::writePhiTree()
 {
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    h_mPhiMass2[iCent]->Write();
+    h_mInvMassPhi[iCent]->Write();
   }
   t_mPhiMesonTree->Write("",TObject::kOverwrite);
 }
@@ -287,7 +287,7 @@ void StPhiMesonTree::recoPhi(int cent9, int vzBin, int PsiBin) // reconstruct ph
 	  mPhiMesonTrack->setNHitsFitKm(map_mNHitsFitKm[phiMixKey][iTrkKm]); // K-
 	  mPhiMesonTrack->setFlagKp(iEvt); // K+
 	  mPhiMesonTrack->setFlagKm(iEvt); // K-
-	  h_mPhiMass2[cent9]->Fill(ptPhi,invMassPhi); // Fill histogram with InvMassAB information
+	  h_mInvMassPhi[cent9]->Fill(ptPhi,invMassPhi); // Fill histogram with InvMassAB information
 	}
       }
     }
@@ -373,7 +373,7 @@ void StPhiMesonTree::mixPhi(int cent9, int vzBin, int PsiBin) // reconstruct phi
 	    mPhiMesonTrack->setNHitsFitKm(map_mNHitsFitKm[phiMixKeyB][iTrkKm]); // K- from EvtB
 	    mPhiMesonTrack->setFlagKp(iEvtA); // K+ from EvtA
 	    mPhiMesonTrack->setFlagKm(iEvtB); // K- from EvtB
-	    h_mPhiMass2[cent9]->Fill(ptPhi,invMassPhi); // Fill histogram with InvMassAB information
+	    h_mInvMassPhi[cent9]->Fill(ptPhi,invMassPhi); // Fill histogram with InvMassAB information
 	  }
 	}
       }
@@ -412,7 +412,7 @@ void StPhiMesonTree::mixPhi(int cent9, int vzBin, int PsiBin) // reconstruct phi
 	    mPhiMesonTrack->setNHitsFitKm(map_mNHitsFitKm[phiMixKeyA][iTrkKm]); // K- from EvtA
 	    mPhiMesonTrack->setFlagKp(iEvtB); // K+ from EvtB
 	    mPhiMesonTrack->setFlagKm(iEvtA); // K- from EvtA
-	    h_mPhiMass2[cent9]->Fill(ptPhi,invMassPhi); // Fill histogram with InvMassAB information
+	    h_mInvMassPhi[cent9]->Fill(ptPhi,invMassPhi); // Fill histogram with InvMassAB information
 	  }
 	}
       }

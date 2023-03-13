@@ -106,7 +106,7 @@ class StPhiMesonTree : public TObject
     std::map<int, std::vector<double> > map_mNHitsFitKp;
     std::map<int, std::vector<double> > map_mNHitsFitKm;
 
-    TH2F *h_mPhiMass2[mNumCentrality];
+    TH2F *h_mInvMassPhi[mNumCentrality]; // pt vs. invMassPhi
 
     // set QVector
     int mFlagZdcEp, mFlagEpdEp, mFlagTpcEp;

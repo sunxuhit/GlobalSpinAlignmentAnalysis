@@ -45,8 +45,10 @@ class StEpdEpManager : public TObject
 
     // ReCenter Correction
     void initEpdReCtr();
-    void fillEpdReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx);
-    void fillEpdReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx);
+    void fillEpdSideReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx);
+    void fillEpdSideReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx);
+    void fillEpdGrpReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx);
+    void fillEpdGrpReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx);
     void writeEpdReCtr();
     void readEpdReCtr();
     TVector2 getq1VecSideCtrEast(); // 1st ReCtr Parameter
@@ -56,8 +58,10 @@ class StEpdEpManager : public TObject
 
     // Shift Correction
     void initEpdShift();
-    void fillEpdShiftEast();
-    void fillEpdShiftWest();
+    void fillEpdSideShiftEast();
+    void fillEpdSideShiftWest();
+    void fillEpdGrpShiftEast();
+    void fillEpdGrpShiftWest();
     void writeEpdShift();
     void readEpdShift();
     double getPsi1SideShiftEast(); // 1st shift Psi1
@@ -76,7 +80,8 @@ class StEpdEpManager : public TObject
     bool isPsi1InRange(double Psi1);
 
     void initEpdShiftFull(); // Full
-    void fillEpdShiftFull();
+    void fillEpdSideShiftFull();
+    void fillEpdGrpShiftFull();
     void writeEpdShiftFull();
     void readEpdShiftFull();
     TVector2 getQ1VecSideShiftFullCorr();
@@ -105,7 +110,7 @@ class StEpdEpManager : public TObject
     void writeEpdSubEpFlow();
 
     // Q1Vector
-    TVector2 getQ1VecSideRawEast(); // Q1Vector
+    TVector2 getQ1VecSideRawEast(); // Q1Vector for full EPD
     TVector2 getQ1VecSideRawWest();
     TVector2 getQ1VecSideRawFull();
     TVector2 getQ1VecSideWgtEast();
@@ -124,7 +129,7 @@ class StEpdEpManager : public TObject
     double getPsi1SideReCtrWest();
     double getPsi1SideReCtrFull();
 
-    TVector2 getQ1VecGrpRawEast(int grpId); // Q1Vector
+    TVector2 getQ1VecGrpRawEast(int grpId); // Q1Vector for each group
     TVector2 getQ1VecGrpRawWest(int grpId);
     TVector2 getQ1VecGrpRawFull(int grpId);
     TVector2 getQ1VecGrpWgtEast(int grpId);

@@ -406,7 +406,7 @@ void StEpdEpManager::initEpdReCtr()
   }
 }
 
-void StEpdEpManager::fillEpdReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
+void StEpdEpManager::fillEpdSideReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
   const double tileWgt = getTileWeight(picoEpdHit);
   const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
@@ -423,16 +423,9 @@ void StEpdEpManager::fillEpdReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx
     p_mEpdQ1SideReCtrXEast[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1x,wgt);
     p_mEpdQ1SideReCtrYEast[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1y,wgt);
   }
-
-  const int grpId = getEpdEpGrp(picoEpdHit);
-  if(grpId >= 0)
-  {
-    p_mEpdQ1GrpReCtrXEast[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,q1x,wgt);
-    p_mEpdQ1GrpReCtrYEast[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,q1y,wgt);
-  }
 }
 
-void StEpdEpManager::fillEpdReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
+void StEpdEpManager::fillEpdSideReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
   const double tileWgt = getTileWeight(picoEpdHit);
   const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
@@ -449,6 +442,37 @@ void StEpdEpManager::fillEpdReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx
     p_mEpdQ1SideReCtrXWest[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1x,wgt);
     p_mEpdQ1SideReCtrYWest[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1y,wgt);
   }
+}
+
+void StEpdEpManager::fillEpdGrpReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
+{
+  const double tileWgt = getTileWeight(picoEpdHit);
+  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  const double wgt     = tileWgt * phiWgt * etaWgt;
+
+  const TVector2 q1Vector = calq1Vector(picoEpdHit,primVtx);
+  const double q1x = q1Vector.X();
+  const double q1y = q1Vector.Y();
+
+  const int grpId = getEpdEpGrp(picoEpdHit);
+  if(grpId >= 0)
+  {
+    p_mEpdQ1GrpReCtrXEast[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,q1x,wgt);
+    p_mEpdQ1GrpReCtrYEast[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,q1y,wgt);
+  }
+}
+
+void StEpdEpManager::fillEpdGrpReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
+{
+  const double tileWgt = getTileWeight(picoEpdHit);
+  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  const double wgt     = tileWgt * phiWgt * etaWgt;
+
+  const TVector2 q1Vector = calq1Vector(picoEpdHit,primVtx);
+  const double q1x = q1Vector.X();
+  const double q1y = q1Vector.Y();
 
   const int grpId = getEpdEpGrp(picoEpdHit);
   if(grpId >= 0)
@@ -595,7 +619,7 @@ void StEpdEpManager::initEpdShift()
   }
 }
 
-void StEpdEpManager::fillEpdShiftEast()
+void StEpdEpManager::fillEpdSideShiftEast()
 {
   TVector2 Q1VecSide = getQ1VecSideReCtrEast();
   if(Q1VecSide.Mod() > 0.0)
@@ -609,7 +633,26 @@ void StEpdEpManager::fillEpdShiftEast()
       p_mEpdQ1SideShiftSinEast[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
     }
   }
+}
 
+void StEpdEpManager::fillEpdSideShiftWest()
+{
+  TVector2 Q1Vector = getQ1VecSideReCtrWest();
+  if(Q1Vector.Mod() > 0.0)
+  {
+    const double Psi1 = TMath::ATan2(Q1Vector.Y(),Q1Vector.X());
+    for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
+    {
+      const double Psi1Cos = TMath::Cos(((double)iShift+1.0)*Psi1);
+      const double Psi1Sin = TMath::Sin(((double)iShift+1.0)*Psi1);
+      p_mEpdQ1SideShiftCosWest[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
+      p_mEpdQ1SideShiftSinWest[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
+    }
+  }
+}
+
+void StEpdEpManager::fillEpdGrpShiftEast()
+{
   for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
   {
     TVector2 Q1VecGrp = getQ1VecGrpReCtrEast(iGrp);
@@ -624,21 +667,8 @@ void StEpdEpManager::fillEpdShiftEast()
   }
 }
 
-void StEpdEpManager::fillEpdShiftWest()
+void StEpdEpManager::fillEpdGrpShiftWest()
 {
-  TVector2 Q1Vector = getQ1VecSideReCtrWest();
-  if(Q1Vector.Mod() > 0.0)
-  {
-    const double Psi1 = TMath::ATan2(Q1Vector.Y(),Q1Vector.X());
-    for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
-    {
-      const double Psi1Cos = TMath::Cos(((double)iShift+1.0)*Psi1);
-      const double Psi1Sin = TMath::Sin(((double)iShift+1.0)*Psi1);
-      p_mEpdQ1SideShiftCosWest[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
-      p_mEpdQ1SideShiftSinWest[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
-    }
-  }
-
   for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
   {
     TVector2 Q1VecGrp = getQ1VecGrpReCtrWest(iGrp);
@@ -961,7 +991,7 @@ void StEpdEpManager::initEpdShiftFull()
   }
 }
 
-void StEpdEpManager::fillEpdShiftFull()
+void StEpdEpManager::fillEpdSideShiftFull()
 {
   TVector2 Q1VecSide = getQ1VecSideShiftFull();
   if(Q1VecSide.Mod() > 0.0)
@@ -975,7 +1005,10 @@ void StEpdEpManager::fillEpdShiftFull()
       p_mEpdQ1SideShiftSinFull[mVzBin][iShift]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
     }
   }
+}
 
+void StEpdEpManager::fillEpdGrpShiftFull()
+{
   for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
   {
     TVector2 Q1VecGrp = getQ1VecGrpShiftFull(iGrp);
