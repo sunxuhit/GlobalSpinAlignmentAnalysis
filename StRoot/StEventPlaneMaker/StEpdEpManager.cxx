@@ -1307,23 +1307,23 @@ double StEpdEpManager::getEpdFullEp1GrpResErr(int cent9, int grpId)
 // Charged Hadron Directed Flow
 void StEpdEpManager::initEpdSubEpFlow()
 {
-  for(int i_cent = 0; i_cent < 9; ++i_cent)
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string proName = Form("p_mEpdSubEpV1Cent%d",i_cent);
-    p_mEpdSubEpV1[i_cent] = new TProfile(proName.c_str(),proName.c_str(),40,-6.0,6.0);
+    std::string proName = Form("p_mEpdSubEpV1Cent%d",iCent);
+    p_mEpdSubEpV1[iCent] = new TProfile(proName.c_str(),proName.c_str(),100,-10.0,10.0);
   }
 }
 
-void StEpdEpManager::fillEpdSubEpDFlow(double eta, double v1, double reweight)
+void StEpdEpManager::fillEpdSubEpV1(double eta, double v1, double reweight)
 {
   p_mEpdSubEpV1[mCent9]->Fill(eta, v1, reweight);
 }
 
 void StEpdEpManager::writeEpdSubEpFlow()
 {
-  for(int i_cent = 0; i_cent < 9; ++i_cent)
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    p_mEpdSubEpV1[i_cent]->Write();
+    p_mEpdSubEpV1[iCent]->Write();
   }
 }
 //---------------------------------------------------------------------------------

@@ -1204,14 +1204,14 @@ double StTpcEpManager::getTpcSubEp3ResErr(int cent9)
 // Charged Hadron Elliptic and Triangular FLow
 void StTpcEpManager::initTpcSubEpFlow()
 {
-  for(int i_cent = 0; i_cent < 9; ++i_cent)
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string proName = Form("p_mTpcSubEpV1Cent%d",i_cent);
-    p_mTpcSubEpV1[i_cent] = new TProfile(proName.c_str(),proName.c_str(),50,0.0,10.0);
-    proName = Form("p_mTpcSubEpV2Cent%d",i_cent);
-    p_mTpcSubEpV2[i_cent] = new TProfile(proName.c_str(),proName.c_str(),50,0.0,10.0);
-    proName = Form("p_mTpcSubEpV3Cent%d",i_cent);
-    p_mTpcSubEpV3[i_cent] = new TProfile(proName.c_str(),proName.c_str(),50,0.0,10.0);
+    std::string proName = Form("p_mTpcSubEpV1Cent%d",iCent);
+    p_mTpcSubEpV1[iCent] = new TProfile(proName.c_str(),proName.c_str(),50,0.0,10.0);
+    proName = Form("p_mTpcSubEpV2Cent%d",iCent);
+    p_mTpcSubEpV2[iCent] = new TProfile(proName.c_str(),proName.c_str(),50,0.0,10.0);
+    proName = Form("p_mTpcSubEpV3Cent%d",iCent);
+    p_mTpcSubEpV3[iCent] = new TProfile(proName.c_str(),proName.c_str(),50,0.0,10.0);
   }
 }
 
@@ -1232,11 +1232,11 @@ void StTpcEpManager::fillTpcSubEpV3(double pt, double v3, double reweight)
 
 void StTpcEpManager::writeTpcSubEpFlow()
 {
-  for(int i_cent = 0; i_cent < 9; ++i_cent)
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    p_mTpcSubEpV1[i_cent]->Write();
-    p_mTpcSubEpV2[i_cent]->Write();
-    p_mTpcSubEpV3[i_cent]->Write();
+    p_mTpcSubEpV1[iCent]->Write();
+    p_mTpcSubEpV2[iCent]->Write();
+    p_mTpcSubEpV3[iCent]->Write();
   }
 }
 //---------------------------------------------------------------------------------

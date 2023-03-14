@@ -53,7 +53,7 @@ class StEpdEpManager : public TObject
     void readEpdReCtr();
     TVector2 getq1VecSideCtrEast(); // 1st ReCtr Parameter
     TVector2 getq1VecSideCtrWest();
-    TVector2 getq1VecGrpCtrEast(int grpId); // 1st ReCtr Parameter
+    TVector2 getq1VecGrpCtrEast(int grpId);
     TVector2 getq1VecGrpCtrWest(int grpId);
 
     // Shift Correction
@@ -70,7 +70,7 @@ class StEpdEpManager : public TObject
     TVector2 getQ1VecSideShiftEast();
     TVector2 getQ1VecSideShiftWest();
     TVector2 getQ1VecSideShiftFull();
-    double getPsi1GrpShiftEast(int grpId); // 1st shift Psi1
+    double getPsi1GrpShiftEast(int grpId);
     double getPsi1GrpShiftWest(int grpId);
     double getPsi1GrpShiftFull(int grpId);
     TVector2 getQ1VecGrpShiftEast(int grpId);
@@ -106,7 +106,7 @@ class StEpdEpManager : public TObject
 
     // Charged Hadron Directed Flow
     void initEpdSubEpFlow(); // Sub EP
-    void fillEpdSubEpDFlow(double eta, double v1, double reweight);
+    void fillEpdSubEpV1(double eta, double v1, double reweight);
     void writeEpdSubEpFlow();
 
     // Q1Vector

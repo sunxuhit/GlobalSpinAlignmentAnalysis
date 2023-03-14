@@ -69,9 +69,8 @@ void plotQA_InvMass(int beamType = 0)
 
     h_mInvMassPhiMEDist[iCent]->Scale(yieldInteSE/yieldInteME);
 
-    h_mInvMassPhiSEDist[iCent]->SetSt
     h_mInvMassPhiSEDist[iCent]->SetMarkerStyle(24);
-    h_mInvMassPhiSEDist[iCent]->SetMarkerSize(1.5);
+    h_mInvMassPhiSEDist[iCent]->SetMarkerSize(1.0);
     h_mInvMassPhiSEDist[iCent]->SetMarkerColor(kGray+3);
     h_mInvMassPhiSEDist[iCent]->Draw("pE");
     h_mInvMassPhiMEDist[iCent]->SetFillColor(2);

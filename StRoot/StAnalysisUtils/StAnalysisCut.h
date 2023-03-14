@@ -3,6 +3,7 @@
 
 #include "TObject.h"
 #include "TString.h"
+#include "TVector2.h"
 #include "TVector3.h"
 
 class StPicoDst;
@@ -50,6 +51,11 @@ class StAnalysisCut : public TObject
     bool passHitEpdEpWest(StPicoEpdHit *picoEpdHit);
     bool passHitEpdFlowEast(StPicoEpdHit *picoEpdHit);
     bool passHitEpdFlowWest(StPicoEpdHit *picoEpdHit);
+    bool passQVecEpdSide(TVector2 Q1VecEast, TVector2 Q1VecWest, TVector2 Q1VecFull);
+    bool passQVecEpdGrp(TVector2 Q1VecEast, TVector2 Q1VecWest, TVector2 Q1VecFull, int grpId);
+
+    // ZDC Hit Cuts for ZDC EP
+    bool passQVecZdc(TVector2 Q1VecEast, TVector2 Q1VecWest, TVector2 Q1VecFull);
 
   private:
     const int mType;

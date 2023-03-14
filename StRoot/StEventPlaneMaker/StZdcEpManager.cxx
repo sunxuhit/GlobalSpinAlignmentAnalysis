@@ -632,26 +632,26 @@ double StZdcEpManager::getZdcFullEpResErr(int cent9)
 // Charged Hadron Directed Flow
 void StZdcEpManager::initZdcFullEpFlow()
 {
-  for(int i_cent = 0; i_cent < 9; ++i_cent)
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string proName = Form("p_mZdcFullEpDFlowCent%d",i_cent);
-    p_mZdcFullEpDFlow[i_cent] = new TProfile(proName.c_str(),proName.c_str(),40,-6.0,6.0);
+    std::string proName = Form("p_mZdcFullEpV1Cent%d",iCent);
+    p_mZdcFullEpV1[iCent] = new TProfile(proName.c_str(),proName.c_str(),100,-10.0,10.0);
   }
 }
 
-void StZdcEpManager::fillZdcFullEpDFlow(double eta, double pt, double v1, double reweight)
+void StZdcEpManager::fillZdcFullEpV1(double eta, double pt, double v1, double reweight)
 {
   if(pt > 0.15 && pt < 2.0)
   { // pT cut for comparison
-    p_mZdcFullEpDFlow[mCent9]->Fill(eta, v1, reweight);
+    p_mZdcFullEpV1[mCent9]->Fill(eta, v1, reweight);
   }
 }
 
 void StZdcEpManager::writeZdcFullEpFlow()
 {
-  for(int i_cent = 0; i_cent < 9; ++i_cent)
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    p_mZdcFullEpDFlow[i_cent]->Write();
+    p_mZdcFullEpV1[iCent]->Write();
   }
 }
 //---------------------------------------------------------------------------------
