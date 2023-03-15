@@ -436,3 +436,50 @@ bool StAnalysisCut::passHitEpdFlowWest(StPicoEpdHit *picoEpdHit) // pos
 
   return true;
 }
+
+bool StAnalysisCut::passQVecEpdSide(TVector2 Q1VecEast, TVector2 Q1VecWest, TVector2 Q1VecFull)
+{
+  if(isIsobar() && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
+  {
+    return true;
+  }
+  if(isFxt() && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
+  {
+    return true;
+  }
+
+  return false;
+}
+
+bool StAnalysisCut::passQVecEpdGrp(TVector2 Q1VecEast, TVector2 Q1VecWest, TVector2 Q1VecFull, int grpId)
+{
+  if(isIsobar() && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
+  {
+    return true;
+  }
+  if(isFxt() && grpId == 0 && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
+  {
+    return true;
+  }
+  if(isFxt() && grpId == 1 && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
+  {
+    return true;
+  }
+
+  return false;
+}
+//---------------------------------------------------------------------------------
+// Hit Cuts for ZDC EP
+bool StAnalysisCut::passQVecZdc(TVector2 Q1VecEast, TVector2 Q1VecWest, TVector2 Q1VecFull)
+{
+  if(isIsobar() && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
+  {
+    return true;
+  }
+  if(isFxt() && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
+  {
+    return true;
+  }
+
+  return false;
+}

@@ -651,35 +651,29 @@ void StEpdEpManager::fillEpdSideShiftWest()
   }
 }
 
-void StEpdEpManager::fillEpdGrpShiftEast()
+void StEpdEpManager::fillEpdGrpShiftEast(int grpId)
 {
-  for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+  TVector2 Q1VecGrp = getQ1VecGrpReCtrEast(grpId);
+  const double Psi1 = TMath::ATan2(Q1VecGrp.Y(),Q1VecGrp.X()); // -pi to pi
+  for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
   {
-    TVector2 Q1VecGrp = getQ1VecGrpReCtrEast(iGrp);
-    const double Psi1 = TMath::ATan2(Q1VecGrp.Y(),Q1VecGrp.X()); // -pi to pi
-    for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
-    {
-      const double Psi1Cos = TMath::Cos(((double)iShift+1.0)*Psi1);
-      const double Psi1Sin = TMath::Sin(((double)iShift+1.0)*Psi1);
-      p_mEpdQ1GrpShiftCosEast[mVzBin][iShift][iGrp]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
-      p_mEpdQ1GrpShiftSinEast[mVzBin][iShift][iGrp]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
-    }
+    const double Psi1Cos = TMath::Cos(((double)iShift+1.0)*Psi1);
+    const double Psi1Sin = TMath::Sin(((double)iShift+1.0)*Psi1);
+    p_mEpdQ1GrpShiftCosEast[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
+    p_mEpdQ1GrpShiftSinEast[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
   }
 }
 
-void StEpdEpManager::fillEpdGrpShiftWest()
+void StEpdEpManager::fillEpdGrpShiftWest(int grpId)
 {
-  for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+  TVector2 Q1VecGrp = getQ1VecGrpReCtrWest(grpId);
+  const double Psi1 = TMath::ATan2(Q1VecGrp.Y(),Q1VecGrp.X()); // -pi to pi
+  for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
   {
-    TVector2 Q1VecGrp = getQ1VecGrpReCtrWest(iGrp);
-    const double Psi1 = TMath::ATan2(Q1VecGrp.Y(),Q1VecGrp.X()); // -pi to pi
-    for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
-    {
-      const double Psi1Cos = TMath::Cos(((double)iShift+1.0)*Psi1);
-      const double Psi1Sin = TMath::Sin(((double)iShift+1.0)*Psi1);
-      p_mEpdQ1GrpShiftCosWest[mVzBin][iShift][iGrp]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
-      p_mEpdQ1GrpShiftSinWest[mVzBin][iShift][iGrp]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
-    }
+    const double Psi1Cos = TMath::Cos(((double)iShift+1.0)*Psi1);
+    const double Psi1Sin = TMath::Sin(((double)iShift+1.0)*Psi1);
+    p_mEpdQ1GrpShiftCosWest[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
+    p_mEpdQ1GrpShiftSinWest[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
   }
 }
 
@@ -1007,21 +1001,18 @@ void StEpdEpManager::fillEpdSideShiftFull()
   }
 }
 
-void StEpdEpManager::fillEpdGrpShiftFull()
+void StEpdEpManager::fillEpdGrpShiftFull(int grpId)
 {
-  for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+  TVector2 Q1VecGrp = getQ1VecGrpShiftFull(grpId);
+  if(Q1VecGrp.Mod() > 0.0)
   {
-    TVector2 Q1VecGrp = getQ1VecGrpShiftFull(iGrp);
-    if(Q1VecGrp.Mod() > 0.0)
+    const double Psi1 = TMath::ATan2(Q1VecGrp.Y(),Q1VecGrp.X());
+    for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
     {
-      const double Psi1 = TMath::ATan2(Q1VecGrp.Y(),Q1VecGrp.X());
-      for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
-      {
-	const double Psi1Cos = TMath::Cos(((double)iShift+1.0)*Psi1);
-	const double Psi1Sin = TMath::Sin(((double)iShift+1.0)*Psi1);
-	p_mEpdQ1GrpShiftCosFull[mVzBin][iShift][iGrp]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
-	p_mEpdQ1GrpShiftSinFull[mVzBin][iShift][iGrp]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
-      }
+      const double Psi1Cos = TMath::Cos(((double)iShift+1.0)*Psi1);
+      const double Psi1Sin = TMath::Sin(((double)iShift+1.0)*Psi1);
+      p_mEpdQ1GrpShiftCosFull[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
+      p_mEpdQ1GrpShiftSinFull[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
     }
   }
 }
@@ -1819,8 +1810,6 @@ void StEpdEpManager::initEpdSubEpRaw()
       h_mEpdEp1GrpRawFull[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
       histName = Form("h_mEpdEp1Grp%dRawCorrCent%d",iGrp,iCent);
       h_mEpdEp1GrpRawCorr[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
-      histName = Form("h_mEpdEp1GrpX%dRawCorrCent%d",iGrp,iCent);
-      h_mEpdEp1GrpXRawCorr[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
     }
   }
 }
@@ -1833,20 +1822,12 @@ void StEpdEpManager::fillEpdSubEpSideRaw(double Psi1East, double Psi1West, doubl
   h_mEpdEp1SideRawCorr[mCent9]->Fill(Psi1East,Psi1West);
 }
 
-void StEpdEpManager::fillEpdSubEpGrpRaw(double Psi1Grp0East, double Psi1Grp0West, double Psi1Grp0Full, double Psi1Grp1East, double Psi1Grp1West, double Psi1Grp1Full)
+void StEpdEpManager::fillEpdSubEpGrpRaw(double Psi1East, double Psi1West, double Psi1Full, int grpId)
 {
-  h_mEpdEp1GrpRawEast[mCent9][0]->Fill(mRunIndex,Psi1Grp0East);
-  h_mEpdEp1GrpRawWest[mCent9][0]->Fill(mRunIndex,Psi1Grp0West);
-  h_mEpdEp1GrpRawFull[mCent9][0]->Fill(mRunIndex,Psi1Grp0Full);
-  h_mEpdEp1GrpRawCorr[mCent9][0]->Fill(Psi1Grp0East,Psi1Grp0West);
-
-  h_mEpdEp1GrpRawEast[mCent9][1]->Fill(mRunIndex,Psi1Grp1East);
-  h_mEpdEp1GrpRawWest[mCent9][1]->Fill(mRunIndex,Psi1Grp1West);
-  h_mEpdEp1GrpRawFull[mCent9][1]->Fill(mRunIndex,Psi1Grp1Full);
-  h_mEpdEp1GrpRawCorr[mCent9][1]->Fill(Psi1Grp1East,Psi1Grp1West);
-
-  h_mEpdEp1GrpXRawCorr[mCent9][0]->Fill(Psi1Grp0East,Psi1Grp1East);
-  h_mEpdEp1GrpXRawCorr[mCent9][1]->Fill(Psi1Grp0West,Psi1Grp1West);
+  h_mEpdEp1GrpRawEast[mCent9][grpId]->Fill(mRunIndex,Psi1East);
+  h_mEpdEp1GrpRawWest[mCent9][grpId]->Fill(mRunIndex,Psi1West);
+  h_mEpdEp1GrpRawFull[mCent9][grpId]->Fill(mRunIndex,Psi1Full);
+  h_mEpdEp1GrpRawCorr[mCent9][grpId]->Fill(Psi1East,Psi1West);
 }
 
 void StEpdEpManager::writeEpdSubEpRaw()
@@ -1863,7 +1844,6 @@ void StEpdEpManager::writeEpdSubEpRaw()
       h_mEpdEp1GrpRawWest[iCent][iGrp]->Write();
       h_mEpdEp1GrpRawFull[iCent][iGrp]->Write();
       h_mEpdEp1GrpRawCorr[iCent][iGrp]->Write();
-      h_mEpdEp1GrpXRawCorr[iCent][iGrp]->Write();
     }
   }
 }
@@ -1891,8 +1871,6 @@ void StEpdEpManager::initEpdSubEpWgt()
       h_mEpdEp1GrpWgtFull[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
       histName = Form("h_mEpdEp1Grp%dWgtCorrCent%d",iGrp,iCent);
       h_mEpdEp1GrpWgtCorr[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
-      histName = Form("h_mEpdEp1GrpX%dWgtCorrCent%d",iGrp,iCent);
-      h_mEpdEp1GrpXWgtCorr[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
     }
   }
 }
@@ -1905,20 +1883,12 @@ void StEpdEpManager::fillEpdSubEpSideWgt(double Psi1East, double Psi1West, doubl
   h_mEpdEp1SideWgtCorr[mCent9]->Fill(Psi1East,Psi1West);
 }
 
-void StEpdEpManager::fillEpdSubEpGrpWgt(double Psi1Grp0East, double Psi1Grp0West, double Psi1Grp0Full, double Psi1Grp1East, double Psi1Grp1West, double Psi1Grp1Full)
+void StEpdEpManager::fillEpdSubEpGrpWgt(double Psi1East, double Psi1West, double Psi1Full, int grpId)
 {
-  h_mEpdEp1GrpWgtEast[mCent9][0]->Fill(mRunIndex,Psi1Grp0East);
-  h_mEpdEp1GrpWgtWest[mCent9][0]->Fill(mRunIndex,Psi1Grp0West);
-  h_mEpdEp1GrpWgtFull[mCent9][0]->Fill(mRunIndex,Psi1Grp0Full);
-  h_mEpdEp1GrpWgtCorr[mCent9][0]->Fill(Psi1Grp0East,Psi1Grp0West);
-
-  h_mEpdEp1GrpWgtEast[mCent9][1]->Fill(mRunIndex,Psi1Grp1East);
-  h_mEpdEp1GrpWgtWest[mCent9][1]->Fill(mRunIndex,Psi1Grp1West);
-  h_mEpdEp1GrpWgtFull[mCent9][1]->Fill(mRunIndex,Psi1Grp1Full);
-  h_mEpdEp1GrpWgtCorr[mCent9][1]->Fill(Psi1Grp1East,Psi1Grp1West);
-
-  h_mEpdEp1GrpXWgtCorr[mCent9][0]->Fill(Psi1Grp0East,Psi1Grp1East);
-  h_mEpdEp1GrpXWgtCorr[mCent9][1]->Fill(Psi1Grp0West,Psi1Grp1West);
+  h_mEpdEp1GrpWgtEast[mCent9][grpId]->Fill(mRunIndex,Psi1East);
+  h_mEpdEp1GrpWgtWest[mCent9][grpId]->Fill(mRunIndex,Psi1West);
+  h_mEpdEp1GrpWgtFull[mCent9][grpId]->Fill(mRunIndex,Psi1Full);
+  h_mEpdEp1GrpWgtCorr[mCent9][grpId]->Fill(Psi1East,Psi1West);
 }
 
 void StEpdEpManager::writeEpdSubEpWgt()
@@ -1935,7 +1905,6 @@ void StEpdEpManager::writeEpdSubEpWgt()
       h_mEpdEp1GrpWgtWest[iCent][iGrp]->Write();
       h_mEpdEp1GrpWgtFull[iCent][iGrp]->Write();
       h_mEpdEp1GrpWgtCorr[iCent][iGrp]->Write();
-      h_mEpdEp1GrpXWgtCorr[iCent][iGrp]->Write();
     }
   }
 }
@@ -1963,8 +1932,6 @@ void StEpdEpManager::initEpdSubEpReCtr()
       h_mEpdEp1GrpReCtrFull[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
       histName = Form("h_mEpdEp1Grp%dReCtrCorrCent%d",iGrp,iCent);
       h_mEpdEp1GrpReCtrCorr[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
-      histName = Form("h_mEpdEp1GrpX%dReCtrCorrCent%d",iGrp,iCent);
-      h_mEpdEp1GrpXReCtrCorr[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
     }
   }
 }
@@ -1977,20 +1944,12 @@ void StEpdEpManager::fillEpdSubEpSideReCtr(double Psi1East, double Psi1West, dou
   h_mEpdEp1SideReCtrCorr[mCent9]->Fill(Psi1East,Psi1West);
 }
 
-void StEpdEpManager::fillEpdSubEpGrpReCtr(double Psi1Grp0East, double Psi1Grp0West, double Psi1Grp0Full, double Psi1Grp1East, double Psi1Grp1West, double Psi1Grp1Full)
+void StEpdEpManager::fillEpdSubEpGrpReCtr(double Psi1East, double Psi1West, double Psi1Full, int grpId)
 {
-  h_mEpdEp1GrpReCtrEast[mCent9][0]->Fill(mRunIndex,Psi1Grp0East);
-  h_mEpdEp1GrpReCtrWest[mCent9][0]->Fill(mRunIndex,Psi1Grp0West);
-  h_mEpdEp1GrpReCtrFull[mCent9][0]->Fill(mRunIndex,Psi1Grp0Full);
-  h_mEpdEp1GrpReCtrCorr[mCent9][0]->Fill(Psi1Grp0East,Psi1Grp0West);
-
-  h_mEpdEp1GrpReCtrEast[mCent9][1]->Fill(mRunIndex,Psi1Grp1East);
-  h_mEpdEp1GrpReCtrWest[mCent9][1]->Fill(mRunIndex,Psi1Grp1West);
-  h_mEpdEp1GrpReCtrFull[mCent9][1]->Fill(mRunIndex,Psi1Grp1Full);
-  h_mEpdEp1GrpReCtrCorr[mCent9][1]->Fill(Psi1Grp1East,Psi1Grp1West);
-
-  h_mEpdEp1GrpXReCtrCorr[mCent9][0]->Fill(Psi1Grp0East,Psi1Grp1East);
-  h_mEpdEp1GrpXReCtrCorr[mCent9][1]->Fill(Psi1Grp0West,Psi1Grp1West);
+  h_mEpdEp1GrpReCtrEast[mCent9][grpId]->Fill(mRunIndex,Psi1East);
+  h_mEpdEp1GrpReCtrWest[mCent9][grpId]->Fill(mRunIndex,Psi1West);
+  h_mEpdEp1GrpReCtrFull[mCent9][grpId]->Fill(mRunIndex,Psi1Full);
+  h_mEpdEp1GrpReCtrCorr[mCent9][grpId]->Fill(Psi1East,Psi1West);
 }
 
 void StEpdEpManager::writeEpdSubEpReCtr()
@@ -2007,7 +1966,6 @@ void StEpdEpManager::writeEpdSubEpReCtr()
       h_mEpdEp1GrpReCtrWest[iCent][iGrp]->Write();
       h_mEpdEp1GrpReCtrFull[iCent][iGrp]->Write();
       h_mEpdEp1GrpReCtrCorr[iCent][iGrp]->Write();
-      h_mEpdEp1GrpXReCtrCorr[iCent][iGrp]->Write();
     }
   }
 }
@@ -2035,8 +1993,6 @@ void StEpdEpManager::initEpdSubEpShift()
       h_mEpdEp1GrpShiftFull[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
       histName = Form("h_mEpdEp1Grp%dShiftCorrCent%d",iGrp,iCent);
       h_mEpdEp1GrpShiftCorr[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
-      histName = Form("h_mEpdEp1GrpX%dShiftCorrCent%d",iGrp,iCent);
-      h_mEpdEp1GrpXShiftCorr[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
     }
   }
 }
@@ -2049,20 +2005,12 @@ void StEpdEpManager::fillEpdSubEpSideShift(double Psi1East, double Psi1West, dou
   h_mEpdEp1SideShiftCorr[mCent9]->Fill(Psi1East,Psi1West);
 }
 
-void StEpdEpManager::fillEpdSubEpGrpShift(double Psi1Grp0East, double Psi1Grp0West, double Psi1Grp0Full, double Psi1Grp1East, double Psi1Grp1West, double Psi1Grp1Full)
+void StEpdEpManager::fillEpdSubEpGrpShift(double Psi1East, double Psi1West, double Psi1Full, int grpId)
 {
-  h_mEpdEp1GrpShiftEast[mCent9][0]->Fill(mRunIndex,Psi1Grp0East);
-  h_mEpdEp1GrpShiftWest[mCent9][0]->Fill(mRunIndex,Psi1Grp0West);
-  h_mEpdEp1GrpShiftFull[mCent9][0]->Fill(mRunIndex,Psi1Grp0Full);
-  h_mEpdEp1GrpShiftCorr[mCent9][0]->Fill(Psi1Grp0East,Psi1Grp0West);
-
-  h_mEpdEp1GrpShiftEast[mCent9][1]->Fill(mRunIndex,Psi1Grp1East);
-  h_mEpdEp1GrpShiftWest[mCent9][1]->Fill(mRunIndex,Psi1Grp1West);
-  h_mEpdEp1GrpShiftFull[mCent9][1]->Fill(mRunIndex,Psi1Grp1Full);
-  h_mEpdEp1GrpShiftCorr[mCent9][1]->Fill(Psi1Grp1East,Psi1Grp1West);
-
-  h_mEpdEp1GrpXShiftCorr[mCent9][0]->Fill(Psi1Grp0East,Psi1Grp1East);
-  h_mEpdEp1GrpXShiftCorr[mCent9][1]->Fill(Psi1Grp0West,Psi1Grp1West);
+  h_mEpdEp1GrpShiftEast[mCent9][grpId]->Fill(mRunIndex,Psi1Grp0East);
+  h_mEpdEp1GrpShiftWest[mCent9][grpId]->Fill(mRunIndex,Psi1Grp0West);
+  h_mEpdEp1GrpShiftFull[mCent9][grpId]->Fill(mRunIndex,Psi1Grp0Full);
+  h_mEpdEp1GrpShiftCorr[mCent9][grpId]->Fill(Psi1Grp0East,Psi1Grp0West);
 }
 
 void StEpdEpManager::writeEpdSubEpShift()
@@ -2079,7 +2027,6 @@ void StEpdEpManager::writeEpdSubEpShift()
       h_mEpdEp1GrpShiftWest[iCent][iGrp]->Write();
       h_mEpdEp1GrpShiftFull[iCent][iGrp]->Write();
       h_mEpdEp1GrpShiftCorr[iCent][iGrp]->Write();
-      h_mEpdEp1GrpXShiftCorr[iCent][iGrp]->Write();
     }
   }
 }
@@ -2104,10 +2051,9 @@ void StEpdEpManager::fillEpdFullEpSideShift(double Psi1FullCorr)
   h_mEpdEp1SideShiftFullCorr[mCent9]->Fill(mRunIndex,Psi1FullCorr);
 }
 
-void StEpdEpManager::fillEpdFullEpGrpShift(double Psi1Grp0FullCorr, double Psi1Grp1FullCorr)
+void StEpdEpManager::fillEpdFullEpGrpShift(double Psi1FullCorr, int grpId)
 {
-  h_mEpdEp1GrpShiftFullCorr[mCent9][0]->Fill(mRunIndex,Psi1Grp0FullCorr);
-  h_mEpdEp1GrpShiftFullCorr[mCent9][1]->Fill(mRunIndex,Psi1Grp1FullCorr);
+  h_mEpdEp1GrpShiftFullCorr[mCent9][grpId]->Fill(mRunIndex,Psi1FullCorr);
 }
 
 void StEpdEpManager::writeEpdFullEpShift()
