@@ -96,7 +96,6 @@ class StTpcEpManager : public TObject
     TVector2 getQ1VecReCtrEast();
     TVector2 getQ1VecReCtrWest();
     TVector2 getQ1VecReCtrFull();
-
     double getPsi1RawEast();
     double getPsi1RawWest();
     double getPsi1RawFull();
@@ -110,7 +109,6 @@ class StTpcEpManager : public TObject
     TVector2 getQ2VecReCtrEast();
     TVector2 getQ2VecReCtrWest();
     TVector2 getQ2VecReCtrFull();
-
     double getPsi2RawEast();
     double getPsi2RawWest();
     double getPsi2RawFull();
@@ -124,7 +122,6 @@ class StTpcEpManager : public TObject
     TVector2 getQ3VecReCtrEast();
     TVector2 getQ3VecReCtrWest();
     TVector2 getQ3VecReCtrFull();
-
     double getPsi3RawEast();
     double getPsi3RawWest();
     double getPsi3RawFull();

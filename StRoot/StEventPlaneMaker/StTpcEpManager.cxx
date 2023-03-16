@@ -1243,7 +1243,7 @@ void StTpcEpManager::writeTpcSubEpFlow()
 // QVector
 TVector2 StTpcEpManager::getQ1VecRawEast()
 {
-  return v_mQ1RawEast;
+  return -1.0*v_mQ1RawEast; // flip the sign for Q1VecEast
 }
 
 TVector2 StTpcEpManager::getQ1VecRawWest()
@@ -1258,7 +1258,7 @@ TVector2 StTpcEpManager::getQ1VecRawFull()
 
 TVector2 StTpcEpManager::getQ1VecReCtrEast()
 {
-  return v_mQ1ReCtrEast;
+  return -1.0*v_mQ1ReCtrEast; // flip the sign for Q1VecEast
 }
 
 TVector2 StTpcEpManager::getQ1VecReCtrWest()
