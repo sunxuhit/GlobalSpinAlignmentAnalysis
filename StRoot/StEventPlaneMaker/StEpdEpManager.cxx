@@ -2007,10 +2007,10 @@ void StEpdEpManager::fillEpdSubEpSideShift(double Psi1East, double Psi1West, dou
 
 void StEpdEpManager::fillEpdSubEpGrpShift(double Psi1East, double Psi1West, double Psi1Full, int grpId)
 {
-  h_mEpdEp1GrpShiftEast[mCent9][grpId]->Fill(mRunIndex,Psi1Grp0East);
-  h_mEpdEp1GrpShiftWest[mCent9][grpId]->Fill(mRunIndex,Psi1Grp0West);
-  h_mEpdEp1GrpShiftFull[mCent9][grpId]->Fill(mRunIndex,Psi1Grp0Full);
-  h_mEpdEp1GrpShiftCorr[mCent9][grpId]->Fill(Psi1Grp0East,Psi1Grp0West);
+  h_mEpdEp1GrpShiftEast[mCent9][grpId]->Fill(mRunIndex,Psi1East);
+  h_mEpdEp1GrpShiftWest[mCent9][grpId]->Fill(mRunIndex,Psi1West);
+  h_mEpdEp1GrpShiftFull[mCent9][grpId]->Fill(mRunIndex,Psi1Full);
+  h_mEpdEp1GrpShiftCorr[mCent9][grpId]->Fill(Psi1East,Psi1West);
 }
 
 void StEpdEpManager::writeEpdSubEpShift()

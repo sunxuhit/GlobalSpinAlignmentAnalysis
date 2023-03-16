@@ -688,13 +688,14 @@ int StEventPlaneMaker::Make()
 	    mEpdEpManager->fillEpdSideResolution(Psi1SideShiftEast, Psi1SideShiftWest);
 	  }
 
-	  TVector2 vQ1EpdGrpEast[mNumGroups], vQ1EpdGrpWest[mNumGroups], vQ1EpdGrpFull[mNumGroups];
+	  TVector2 vQ1EpdGrpEast[mNumGroups], vQ1EpdGrpWest[mNumGroups], vQ1EpdGrpFull[mNumGroups]; 
+	  // TVector2 vQ1EpdGrpFullCorr[mNumGroups];
 	  for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
 	  {
-	    TVector2 vQ1EpdGrpEast[iGrp]     = mEpdEpManager->getQ1VecGrpShiftEast(iGrp); // get Q1Vector from EPD
-	    TVector2 vQ1EpdGrpWest[iGrp]     = mEpdEpManager->getQ1VecGrpShiftWest(iGrp);
-	    TVector2 vQ1EpdGrpFull[iGrp]     = mEpdEpManager->getQ1VecGrpShiftFull(iGrp);
-	    TVector2 vQ1EpdGrpFullCorr[iGrp] = mEpdEpManager->getQ1VecGrpShiftFullCorr(iGrp);
+	    vQ1EpdGrpEast[iGrp]     = mEpdEpManager->getQ1VecGrpShiftEast(iGrp); // get Q1Vector from EPD
+	    vQ1EpdGrpWest[iGrp]     = mEpdEpManager->getQ1VecGrpShiftWest(iGrp);
+	    vQ1EpdGrpFull[iGrp]     = mEpdEpManager->getQ1VecGrpShiftFull(iGrp);
+	    // vQ1EpdGrpFullCorr[iGrp] = mEpdEpManager->getQ1VecGrpShiftFullCorr(iGrp);
 	    if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[iGrp],vQ1EpdGrpWest[iGrp],vQ1EpdGrpFull[iGrp],iGrp) ) // EPD EP
 	    {
 	      const double Psi1GrpShiftEast     = mEpdEpManager->getPsi1GrpShiftEast(iGrp);
@@ -756,7 +757,7 @@ int StEventPlaneMaker::Make()
 	      if(mAnaCut->passTrkTpcFlowFull(picoTrack, primVtx))
 	      {
 		const double v1Zdc = TMath::Cos(1.0*(phi-Psi1ZdcFull))/mZdcEpManager->getZdcFullEpResVal(cent9);
-		mZdcEpManager->fillZdcFullEpDFlow(eta, pt, v1Zdc, reweight);
+		mZdcEpManager->fillZdcFullEpV1(eta, pt, v1Zdc, reweight);
 	      }
 	    }
 	  }
@@ -780,12 +781,12 @@ int StEventPlaneMaker::Make()
 	      if( mAnaCut->passHitEpdFlowEast(picoEpdHit) ) // negative eta
 	      {
 		const double v1Epd = TMath::Cos(1.0*(phi-Psi1SideEpdWest))/mEpdEpManager->getEpdSubEp1SideResVal(cent9);
-		mEpdEpManager->fillEpdSubEpDFlow(eta, v1Epd, reweight);
+		mEpdEpManager->fillEpdSubEpV1(eta, v1Epd, reweight);
 	      }
 	      if( mAnaCut->passHitEpdFlowWest(picoEpdHit) ) // positive eta
 	      {
 		const double v1Epd = TMath::Cos(1.0*(phi-Psi1SideEpdEast))/mEpdEpManager->getEpdSubEp1SideResVal(cent9);
-		mEpdEpManager->fillEpdSubEpDFlow(eta, v1Epd, reweight);
+		mEpdEpManager->fillEpdSubEpV1(eta, v1Epd, reweight);
 	      }
 	    }
 	    for(unsigned int iTrack = 0; iTrack < nTracks; ++iTrack)	  
@@ -798,15 +799,16 @@ int StEventPlaneMaker::Make()
 	      const double eta = primMom.PseudoRapidity();
 	      const double phi = primMom.Phi(); // -pi to pi
 
-	      if(mAnaCut->passTrkTpcFlowEast(picoTrack, primVtx) ) // neg
+	      // keep the same pt cuts as charged v1 from ZDC
+	      if(mAnaCut->passTrkTpcFlowEast(picoTrack, primVtx) && pt > 0.15 && pt < 2.0) // negative eta
 	      { // correlate track from East to EP from West EPD
 		const double v1Epd = TMath::Cos(1.0*(phi-Psi1SideEpdWest))/mEpdEpManager->getEpdSubEp1SideResVal(cent9);
-		mEpdEpManager->fillEpdSubEpDFlow(eta, v1Epd, reweight);
+		mEpdEpManager->fillEpdSubEpV1(eta, v1Epd, reweight);
 	      }
-	      if(mAnaCut->passTrkTpcFlowWest(picoTrack, primVtx) ) // neg
+	      if(mAnaCut->passTrkTpcFlowWest(picoTrack, primVtx) && pt > 0.15 && pt < 2.0 ) // positive eta
 	      { // correlate track from West to EP from East EPD
 		const double v1Epd = TMath::Cos(1.0*(phi-Psi1SideEpdEast))/mEpdEpManager->getEpdSubEp1SideResVal(cent9);
-		mEpdEpManager->fillEpdSubEpDFlow(eta, v1Epd, reweight);
+		mEpdEpManager->fillEpdSubEpV1(eta, v1Epd, reweight);
 	      }
 	    }
 	  }
@@ -839,7 +841,7 @@ int StEventPlaneMaker::Make()
 	      // const double eta = primMom.PseudoRapidity();
 	      const double phi = primMom.Phi(); // -pi to pi
 
-	      if(mAnaCut->passTrkTpcFlowEast(picoTrack, primVtx)) // neg
+	      if(mAnaCut->passTrkTpcFlowEast(picoTrack, primVtx)) // negative eta
 	      { // correlate track from East to EP from West
 		if(mTpcEpManager->getTpcSubEp1ResVal(cent9) > 0.0)
 		{
@@ -857,7 +859,7 @@ int StEventPlaneMaker::Make()
 		  mTpcEpManager->fillTpcSubEpV3(pt, v3Tpc, reweight);
 		}
 	      }
-	      if(mAnaCut->passTrkTpcFlowWest(picoTrack, primVtx)) // neg
+	      if(mAnaCut->passTrkTpcFlowWest(picoTrack, primVtx)) // positive eta
 	      { // correlate track from West to EP from East
 		if(mTpcEpManager->getTpcSubEp1ResVal(cent9) > 0.0)
 		{
