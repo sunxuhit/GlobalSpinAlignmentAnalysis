@@ -16,7 +16,7 @@ static const int numTriggerBins = 10; // 0-8 for different triggerID | 9 for all
 
 void plotRunQA_Event(int beamType = 0)
 {
-  string inputfile = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/%s/RunQA/file_%s_RunQA.root",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  string inputfile = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/RunQA/%s/file_%s_RunQA.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
   TH1F *h_mRefMult[numCuts][numTriggerBins];
   TH1F *h_mGRefMult[numCuts][numTriggerBins];
@@ -115,21 +115,23 @@ void plotRunQA_Event(int beamType = 0)
 
     c_EventQA[iCut]->cd(1);
     c_EventQA[iCut]->cd(1)->SetLogy();
-    if(beamType == 0)h_mRefMult[iCut][9]->Draw("hE");
-    if(beamType != 0)h_mRefMult[iCut][9]->Draw("hE");
+    // if(beamType == 0) h_mRefMult[iCut][9]->Draw("hE");
+    // if(beamType != 0) h_mRefMult[iCut][9]->Draw("hE");
+    h_mRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,200.0);
+    h_mRefMult[iCut][9]->Draw("hE");
 
     c_EventQA[iCut]->cd(2);
     c_EventQA[iCut]->cd(2)->SetLogz();
     if(beamType == 0)
     {
-      h_mTofMatchRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,800.0);
-      h_mTofMatchRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,800.0);
+      h_mTofMatchRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,200.0);
+      h_mTofMatchRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,200.0);
       h_mTofMatchRefMult[iCut][9]->Draw("colz");
     }
     if(beamType != 0)
     {
-      h_mTofMatchRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,800.0);
-      h_mTofMatchRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,800.0);
+      h_mTofMatchRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,200.0);
+      h_mTofMatchRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,200.0);
       h_mTofMatchRefMult[iCut][9]->Draw("colz");
     }
 
@@ -137,12 +139,14 @@ void plotRunQA_Event(int beamType = 0)
     c_EventQA[iCut]->cd(3)->SetLogz();
     if(beamType == 0)
     {
-      h_mTofHitsRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,800.0);
+      h_mTofHitsRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,500.0);
+      h_mTofHitsRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,500.0);
       h_mTofHitsRefMult[iCut][9]->Draw("colz");
     }
     if(beamType != 0)
     {
-      h_mTofHitsRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,800.0);
+      h_mTofHitsRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,500.0);
+      h_mTofHitsRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,500.0);
       h_mTofHitsRefMult[iCut][9]->Draw("colz");
     }
 
@@ -166,7 +170,7 @@ void plotRunQA_Event(int beamType = 0)
     // c_EventQA[iCut]->cd(8)->SetLogy();
     h_mDiffVzVzVpd[iCut][9]->Draw();
 
-    string FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_EventQA%s_%s.pdf",globCons::mBeamType[beamType].c_str(),CutStatus[iCut].c_str(),globCons::mBeamType[beamType].c_str());
+    string FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/RunQA/%s/c_EventQA%s_%s.pdf",globCons::str_mBeamType[beamType].c_str(),CutStatus[iCut].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_EventQA[iCut]->SaveAs(FigName.c_str());
   }
 }

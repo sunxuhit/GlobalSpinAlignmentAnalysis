@@ -16,7 +16,7 @@ class StRunQAHistoManager
     //--------------QA---------------
     void initEventQA();
     void fillEventQA_RefMult(int triggerBin, int refMult, int grefMult, int cent9, double reweight, int tofHits, int tofMatch, int cutSelection);
-    void fillEventQA_Vertex(int triggerBin, double vx, double vy, double vz, double vzVpd, int cutSelection);
+    void fillEventQA_Vertex(int triggerBin, double vx, double vy, double vz, double vzVpd, int vzBin, int cutSelection);
     void fillEventQA_Trigger(int triggerBin, int cutSelection);
     void writeEventQA();
 
@@ -49,6 +49,7 @@ class StRunQAHistoManager
     TH1F *h_mDiffVzVzVpd[mNumCuts][mNumTriggerBins];
     TH1F *h_mVertexZ[mNumCuts][mNumTriggerBins];
     TH2F *h_mVertexXY[mNumCuts][mNumTriggerBins];
+    TH1F *h_mVzVzBin[mNumCuts][mNumTriggerBins];
     // Track Level:
     TH1F *h_mPrimPt[mNumCuts][mNumTriggerBins];
     TH1F *h_mPrimPhi[mNumCuts][mNumTriggerBins];

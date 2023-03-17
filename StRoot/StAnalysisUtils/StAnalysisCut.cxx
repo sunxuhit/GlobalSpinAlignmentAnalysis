@@ -28,19 +28,20 @@ StAnalysisCut::~StAnalysisCut()
 
 //---------------------------------------------------------------------------------
 // Run Cuts
-bool StAnalysisCut::isFxt()
-{
-  if(mType == 0 || mType == 1) return false; // Isobar
-
-  return true; // Fixed Target
-}
-
 bool StAnalysisCut::isIsobar()
 {
   if(mType == 0 || mType == 1) return true; // Isobar
 
   return false; // Fixed Target
 }
+
+bool StAnalysisCut::isFxt3p85GeV_2018()
+{
+  if(mType == 2) return true; // Fxt3p85GeV_2018
+
+  return false; // Isobar
+}
+
 //---------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------
@@ -59,7 +60,7 @@ bool StAnalysisCut::isMinBias(StPicoEvent *picoEvent)
 bool StAnalysisCut::isPileUpEvent(double refMult, double numOfBTofMatch, double vz)
 {
   if(this->isIsobar()) return false; // use StRefMultCorr for Isobar runs
-  if(this->isFxt()) 
+  if(this->isFxt3p85GeV_2018()) 
   {
     return false; // under development & always return false for now
   }
@@ -142,6 +143,7 @@ bool StAnalysisCut::passTrkBasic(StPicoTrack *picoTrack)
 bool StAnalysisCut::passTrkQA(StPicoTrack *picoTrack, TVector3 primVtx)
 {
   if(!passTrkBasic(picoTrack)) return false;
+  if(!picoTrack->isPrimary()) return false; // require primary tracks only
 
   const double vx = primVtx.x();
   const double vy = primVtx.y();
@@ -175,6 +177,7 @@ bool StAnalysisCut::passTrkQA(StPicoTrack *picoTrack, TVector3 primVtx)
 bool StAnalysisCut::passTrkTpcEpFull(StPicoTrack *picoTrack, TVector3 primVtx)
 {
   if(!passTrkBasic(picoTrack)) return false;
+  if(!picoTrack->isPrimary()) return false; // require primary tracks only
 
   const double vx = primVtx.x();
   const double vy = primVtx.y();
@@ -256,6 +259,7 @@ bool StAnalysisCut::passNumTrkTpcSubEpReCtr(int numTrackEast, int numTrackWest)
 bool StAnalysisCut::passTrkTpcFlowFull(StPicoTrack *picoTrack, TVector3 primVtx) // neg
 {
   if(!passTrkBasic(picoTrack)) return false;
+  if(!picoTrack->isPrimary()) return false; // require primary tracks only
 
   const double vx = primVtx.x();
   const double vy = primVtx.y();
@@ -318,6 +322,7 @@ bool StAnalysisCut::passTrkTpcFlowWest(StPicoTrack *picoTrack, TVector3 primVtx)
 bool StAnalysisCut::passTrkKaonFull(StPicoTrack *picoTrack, TVector3 primVtx)
 {
   if(!passTrkBasic(picoTrack)) return false;
+  if(!picoTrack->isPrimary()) return false; // require primary tracks only
 
   const double vx = primVtx.x();
   const double vy = primVtx.y();
@@ -443,7 +448,7 @@ bool StAnalysisCut::passQVecEpdSide(TVector2 Q1VecEast, TVector2 Q1VecWest, TVec
   {
     return true;
   }
-  if(isFxt() && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
+  if(isFxt3p85GeV_2018() && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
   {
     return true;
   }
@@ -457,11 +462,11 @@ bool StAnalysisCut::passQVecEpdGrp(TVector2 Q1VecEast, TVector2 Q1VecWest, TVect
   {
     return true;
   }
-  if(isFxt() && grpId == 0 && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
+  if(isFxt3p85GeV_2018() && grpId == 0 && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
   {
     return true;
   }
-  if(isFxt() && grpId == 1 && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
+  if(isFxt3p85GeV_2018() && grpId == 1 && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
   {
     return true;
   }
@@ -476,7 +481,7 @@ bool StAnalysisCut::passQVecZdc(TVector2 Q1VecEast, TVector2 Q1VecWest, TVector2
   {
     return true;
   }
-  if(isFxt() && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
+  if(isFxt3p85GeV_2018() && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
   {
     return true;
   }

@@ -18,8 +18,8 @@ class StAnalysisCut : public TObject
     virtual ~StAnalysisCut();
 
     // Run Cuts
-    bool isFxt();
     bool isIsobar();
+    bool isFxt3p85GeV_2018();
 
     // Event Cuts
     bool isMinBias(StPicoEvent *picoEvent);

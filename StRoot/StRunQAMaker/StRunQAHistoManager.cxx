@@ -70,6 +70,9 @@ void StRunQAHistoManager::initEventQA()
 
       histName = Form("h_mDiffVzVzVpd%sTrigger%d",str_mCutStatus[iCut].c_str(),iTrig);
       h_mDiffVzVzVpd[iCut][iTrig] = new TH1F(histName.c_str(),histName.c_str(),201,-10.05,10.05);
+
+      histName = Form("h_mVzVzBin%sTrigger%d",str_mCutStatus[iCut].c_str(),iTrig);
+      h_mVzVzBin[iCut][iTrig] = new TH2F(histName.c_str(),histName.c_str(),200,mVzQaMin[mType],mVzQaMax[mType], 11, -5.5, 5.5);
     }
   }
 }
@@ -97,19 +100,21 @@ void StRunQAHistoManager::fillEventQA_RefMult(int triggerBin, int refMult, int g
   h_mTofHitsGRefMult[cutSelection][mNumTriggerBins-1]->Fill(tofHits,grefMult);
 }
 
-void StRunQAHistoManager::fillEventQA_Vertex(int triggerBin, double vx, double vy, double vz, double vzVpd, int cutSelection)
+void StRunQAHistoManager::fillEventQA_Vertex(int triggerBin, double vx, double vy, double vz, double vzVpd, int vzBin ,int cutSelection)
 {
   // for a specific triggerBin
   h_mVertexXY[cutSelection][triggerBin]->Fill(vx,vy);
   h_mVertexZ[cutSelection][triggerBin]->Fill(vz);
   h_mVzVzVpd[cutSelection][triggerBin]->Fill(vz,vzVpd);
   h_mDiffVzVzVpd[cutSelection][triggerBin]->Fill(vz-vzVpd);
+  h_mVzVzBin[cutSelection][triggerBin]->Fill(vz, vzBin);
 
   // for all triggers
   h_mVertexXY[cutSelection][mNumTriggerBins-1]->Fill(vx,vy);
   h_mVertexZ[cutSelection][mNumTriggerBins-1]->Fill(vz);
   h_mVzVzVpd[cutSelection][mNumTriggerBins-1]->Fill(vz,vzVpd);
   h_mDiffVzVzVpd[cutSelection][mNumTriggerBins-1]->Fill(vz-vzVpd);
+  h_mVzVzBin[cutSelection][triggerBin]->Fill(vz, vzBin);
 }
 
 void StRunQAHistoManager::fillEventQA_Trigger(int triggerBin, int cutSelection)
@@ -137,6 +142,7 @@ void StRunQAHistoManager::writeEventQA()
       h_mVertexZ[iCut][iTrig]->Write();
       h_mVzVzVpd[iCut][iTrig]->Write();
       h_mDiffVzVzVpd[iCut][iTrig]->Write();
+      h_mVzVzBin[iCut][iTrig]->Write();
     }
   }
 }
