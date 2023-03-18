@@ -27,6 +27,7 @@ using namespace std ;
 // Default constructor
 StPileupUtil::StPileupUtil() {
 
+   kBadEventCentrality = 0; kBadEventPileup = 0;
    m_refMultPrim=0; m_nch = 0; m_nmipsum = 0;
 }
 
@@ -86,14 +87,19 @@ int StPileupUtil::read() {
 
 int StPileupUtil::initEvent(const StPicoDst* pico) {
 
+   kBadEventCentrality = 0;
+   kBadEventPileup = 0;
+
    StPicoEvent* picoEvent = (StPicoEvent*)pico->event();
    if( !picoEvent ){
       std::cout << " No PicoEvent! Skip! " << std::endl;
-      return 1; kBadEventCentrality = 1; kBadEventPileup = 1;
+      kBadEventCentrality = 1; kBadEventPileup = 1;
+      return 1; 
    }
 
    if (!isGoodEvent(picoEvent)) {
-      return 1; kBadEventCentrality = 1; kBadEventPileup = 1;
+      kBadEventCentrality = 1; kBadEventPileup = 1;
+      return 1; 
    }
 
    m_refMultPrim = 0;
@@ -111,7 +117,7 @@ int StPileupUtil::initEvent(const StPicoDst* pico) {
    }
 
    Int_t nepdHits = pico->numberOfEpdHits();
-   if(nepdHits < 75) {return 1; kBadEventPileup = 1;}
+   if(nepdHits < 75) {kBadEventPileup = 1; return 1; }
    
    for(Int_t iHit=0; iHit<nepdHits; iHit++){
       StPicoEpdHit *epdHit = pico->epdHit(iHit);
