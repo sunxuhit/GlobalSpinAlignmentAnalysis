@@ -9,8 +9,9 @@ class StPicoEvent;
 
 StChain *chain;
 
-void RunQA(const char *inputFile="Utility/FileList/ZrZr200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int beamType = 0)
+// void RunQA(const char *inputFile="Utility/FileList/ZrZr200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int beamType = 0)
 // void RunQA(const char *inputFile="Utility/FileList/RuRu200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int beamType = 1)
+void RunQA(const char *inputFile="Utility/FileList/Fxt3p85GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int beamType = 2)
 {
   // mBeamType[NumBeamType] = {"ZrZr200GeV_2018","RuRu200GeV_2018"};
 
@@ -30,7 +31,7 @@ void RunQA(const char *inputFile="Utility/FileList/ZrZr200GeV_2018/pico_xrootd_l
   */
 
   Int_t nEvents = 10000000000;
-  // Int_t nEvents = 10000;
+  // Int_t nEvents = 100000;
 
   gROOT->LoadMacro("$STAR/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");
   loadSharedLibraries();
@@ -38,6 +39,8 @@ void RunQA(const char *inputFile="Utility/FileList/ZrZr200GeV_2018/pico_xrootd_l
   gSystem->Load("StPicoEvent");
   gSystem->Load("StPicoDstMaker");
   gSystem->Load("StRefMultCorr");
+  gSystem->Load("StEpdUtil");
+  gSystem->Load("StPileupUtil");
   gSystem->Load("StAnalysisUtils");
   gSystem->Load("StRunQAMaker");
 
