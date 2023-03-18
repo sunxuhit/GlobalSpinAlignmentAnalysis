@@ -11,6 +11,7 @@
 #include "StPicoEvent/StPicoTrack.h"
 #include "StRoot/StRefMultCorr/StRefMultCorr.h"
 #include "StRoot/StRefMultCorr/CentralityMaker.h"
+#include "StRoot/StPileupUtil/StPileupUtil.h"
 
 #include "Utility/include/StSpinAlignmentCons.h"
 #include "StRoot/StAnalysisUtils/StAnalysisUtils.h"
@@ -24,9 +25,10 @@ ClassImp(StRunQAMaker)
 //-----------------------------------------------------------------------------
 StRunQAMaker::StRunQAMaker(const char* name, StPicoDstMaker *picoMaker, string jobId, int beamType) : StMaker(name), mType(beamType)
 {
-  mPicoDstMaker = picoMaker;
-  mPicoDst = NULL;
-  mRefMultCorr = NULL;
+  mPicoDstMaker      = picoMaker;
+  mPicoDst           = NULL;
+  mRefMultCorr       = NULL;
+  mPileupUtilFxt3p85 = NULL;
 
   // mType = beamType;
   str_mOutPutRunQA = Form("./file_%s_RunQA_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
@@ -48,7 +50,12 @@ int StRunQAMaker::Init()
   if(!mRefMultCorr)
   {
     if( mAnaCut->isIsobar() ) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr_Isobar();
-    if( mAnaCut->isFxt() ) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr();
+    if( mAnaCut->isFxt3p85GeV_2018() ) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr();
+  }
+  if(mAnaCut->isFxt3p85GeV_2018() && !mPileupUtilFxt3p85)
+  {
+    mPileupUtilFxt3p85 = new StPileupUtil();
+    mPileupUtilFxt3p85->init();
   }
 
   file_mOutPutRunQA= new TFile(str_mOutPutRunQA.c_str(),"RECREATE");
@@ -107,7 +114,7 @@ int StRunQAMaker::Make()
   {
     // Event Information
     const int runId        = mPicoEvent->runId();
-    const int refMult      = mPicoEvent->refMult();
+    int refMult            = mPicoEvent->refMult(); 
     const int grefMult     = mPicoEvent->grefMult();
     const TVector3 primVtx = mPicoEvent->primaryVertex();
     const double vx        = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
@@ -116,8 +123,8 @@ int StRunQAMaker::Make()
     const double vzVpd     = mPicoEvent->vzVpd();
     const double zdcX      = mPicoEvent->ZDCx();
     // const unsigned short nBTofHits  = mPicoEvent->btofTrayMultiplicity();
-    const unsigned int nBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
     const unsigned short nBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
+    const unsigned int nBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
     const unsigned int nTracks      = mPicoDst->numberOfTracks(); // get number of tracks
 
     // StRefMultCorr Cut & centrality
@@ -129,16 +136,17 @@ int StRunQAMaker::Make()
 
     mRefMultCorr->init(runId);
     mRefMultCorr->initEvent(refMult,vz,zdcX);
-    /*
-    if(mRefMultCorr->isBadRun(runId))
-    {
-      LOG_ERROR << "Bad Run from StRefMultCorr! Skip!" << endm;
-      return kStErr;
-    }
-    */
+    int cent9     = mRefMultCorr->getCentralityBin9(); // get Centrality9
+    double refWgt = mRefMultCorr->getWeight(); // get Centrality reweight
 
-    const int cent9       = mRefMultCorr->getCentralityBin9(); // get Centrality9
-    const double reweight = mRefMultCorr->getWeight(); // get Centrality reweight
+    if(mAnaCut->isFxt3p85GeV_2018()) // only for Fxt3p85GeV_2018
+    { 
+      mPileupUtilFxt3p85->initEvent(mPicoDst);
+      refMult = mPileupUtilFxt3p85->get_refMultPrim();
+      cent9   = mPileupUtilFxt3p85->get_centrality9();
+      refWgt  = mPileupUtilFxt3p85->get_centralityWeight();
+    }
+
     const int runIndex    = mAnaUtils->findRunIndex(runId); // find run index for a specific run
     const int triggerBin  = mAnaUtils->getTriggerBin(mPicoEvent);
     const int vzBin       = mAnaUtils->getVzBin(vz); // 0 for [vzMin,vzCtr) || 1 for [vzCtr,vzMax]
@@ -149,21 +157,22 @@ int StRunQAMaker::Make()
       return kStErr;
     }
 
-    bool isPileUpEventStAnalysisCut = mAnaCut->isPileUpEvent((double)refMult, (double)nBTofMatch,vz); // alway return false for Isobar & Fxt (for now)
-    bool isPileUpEventStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut((double)refMult, (double)nBTofMatch,vz); // valid for Isobar | NOT for Fxt
-    bool isPileUpEvent = isPileUpEventStAnalysisCut || isPileUpEventStRefMultCorr;
-    // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpEventStAnalysisCut = " << isPileUpEventStAnalysisCut << ", isPileUpEventStRefMultCorr = " << isPileUpEventStRefMultCorr << endl;
+    bool isPileUpStAnalysisCut = mAnaCut->isPileUpEvent((double)refMult, (double)nBTofMatch,vz); // alway return false for Isobar & Fxt3p85GeV_2018
+    bool isPileUpStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut((double)refMult, (double)nBTofMatch,vz); // valid for Isobar
+    if(mAnaCut->isFxt3p85GeV_2018()) isPileUpStRefMultCorr = mPileupUtilFxt3p85->isPileupEPD(); // valid only for Fxt3p85GeV_2018
+    bool isPileUpEvent = isPileUpStAnalysisCut || isPileUpStRefMultCorr;
+    // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpStAnalysisCut = " << isPileUpStAnalysisCut << ", isPileUpStRefMultCorr = " << isPileUpStRefMultCorr << endl;
 
     // fill QA before event cuts
     mRunQAProManager->fillRunQA_Event(triggerBin,runIndex,refMult,grefMult,zdcX,vx,vy,vz,0);
-    mRunQAHistoManager->fillEventQA_RefMult(triggerBin,refMult,grefMult,cent9,reweight,nBTofHits,nBTofMatch,0); // wo event cut
+    mRunQAHistoManager->fillEventQA_RefMult(triggerBin,refMult,grefMult,cent9,refWgt,nBTofHits,nBTofMatch,0); // wo event cut
     mRunQAHistoManager->fillEventQA_Vertex(triggerBin,vx,vy,vz,vzVpd,vzBin,0);
     mRunQAHistoManager->fillEventQA_Trigger(triggerBin,0);
 
     if(!isPileUpEvent && mAnaCut->passEventCut(mPicoEvent) && mAnaCut->isGoodCent9(cent9))
     { // apply Event Cuts for anlaysis 
       mRunQAProManager->fillRunQA_Event(triggerBin,runIndex,refMult,grefMult,zdcX,vx,vy,vz,1);
-      mRunQAHistoManager->fillEventQA_RefMult(triggerBin,refMult,grefMult,cent9,reweight,nBTofHits,nBTofMatch,1); // with event cut
+      mRunQAHistoManager->fillEventQA_RefMult(triggerBin,refMult,grefMult,cent9,refWgt,nBTofHits,nBTofMatch,1); // with event cut
       mRunQAHistoManager->fillEventQA_Vertex(triggerBin,vx,vy,vz,vzVpd,vzBin,1);
       mRunQAHistoManager->fillEventQA_Trigger(triggerBin,1);
 

@@ -29,6 +29,7 @@ class StRunQAMaker : public StMaker {
     StPicoDst      *mPicoDst;
     StPicoEvent    *mPicoEvent;
     StRefMultCorr  *mRefMultCorr;
+    StPileupUtil   *mPileupUtilFxt3p85; // from Xionghong He (Developed by Sooraj Radhakrishnan & only for Fxt3p85GeV_2018)
 
     StAnalysisUtils     *mAnaUtils; // Analysis Module
     StAnalysisCut       *mAnaCut;

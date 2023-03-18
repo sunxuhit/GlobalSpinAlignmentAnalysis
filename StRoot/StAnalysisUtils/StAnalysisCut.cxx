@@ -60,10 +60,7 @@ bool StAnalysisCut::isMinBias(StPicoEvent *picoEvent)
 bool StAnalysisCut::isPileUpEvent(double refMult, double numOfBTofMatch, double vz)
 {
   if(this->isIsobar()) return false; // use StRefMultCorr for Isobar runs
-  if(this->isFxt3p85GeV_2018()) 
-  {
-    return false; // under development & always return false for now
-  }
+  if(this->isFxt3p85GeV_2018()) return false; // use StPileupUtil for Fxt3p85GeV_2018
 
   return true;
 }
@@ -109,7 +106,10 @@ bool StAnalysisCut::passEventCut(StPicoEvent *picoEvent)
 
   // nTofMatch > 2
   const unsigned short numOfBTofMatch = picoEvent->nBTOFMatch(); // get number of tof match points
-  if(numOfBTofMatch <= anaUtils::mMatchedToFMin[mType]) return false;
+  if(isIsobar() && numOfBTofMatch <= anaUtils::mMatchedToFMin[mType]) 
+  {
+    return false;
+  }
 
   return true;
 }
