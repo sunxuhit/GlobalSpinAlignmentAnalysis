@@ -49,7 +49,7 @@ class StRunQAHistoManager
     TH1F *h_mDiffVzVzVpd[mNumCuts][mNumTriggerBins];
     TH1F *h_mVertexZ[mNumCuts][mNumTriggerBins];
     TH2F *h_mVertexXY[mNumCuts][mNumTriggerBins];
-    TH1F *h_mVzVzBin[mNumCuts][mNumTriggerBins];
+    TH2F *h_mVzVzBin[mNumCuts][mNumTriggerBins];
     // Track Level:
     TH1F *h_mPrimPt[mNumCuts][mNumTriggerBins];
     TH1F *h_mPrimPhi[mNumCuts][mNumTriggerBins];

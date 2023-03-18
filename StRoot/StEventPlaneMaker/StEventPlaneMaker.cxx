@@ -75,7 +75,7 @@ int StEventPlaneMaker::Init()
   if(!mRefMultCorr)
   {
     if( mAnaCut->isIsobar() ) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr_Isobar();
-    if( mAnaCut->isFxt() ) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr();
+    if( mAnaCut->isFxt3p85GeV_2018() ) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr();
   }
 
   if(mMode == 0)

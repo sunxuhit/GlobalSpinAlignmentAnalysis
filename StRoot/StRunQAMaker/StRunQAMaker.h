@@ -8,6 +8,7 @@ class StPicoDstMaker;
 class StPicoDst;
 class StPicoEvent;
 class StRefMultCorr;
+class StPileupUtil;
 
 class StAnalysisUtils;
 class StAnalysisCut;
