@@ -21,6 +21,7 @@ StRoot/StRefMultCorr/CVS/
 */*.swp
 */temp_gccflags.c
 */*_C.*
+!StRoot/StPileupUtil/*.root
 
 Utility/FileList/*/*.list
 !Utility/FileList/*/runNumber*.list
