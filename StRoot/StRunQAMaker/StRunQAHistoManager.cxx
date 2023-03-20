@@ -190,7 +190,7 @@ void StRunQAHistoManager::initTrackQA()
       h_mMomDEdx[iCut][iTrig] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,400,0,40);
 
       histName = Form("h_mMass2Mom%sTrigger%d",str_mCutStatus[iCut].c_str(),iTrig);
-      h_mMomMass2[iCut][iTrig] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,200,-0.3,1.7);
+      h_mMomMass2[iCut][iTrig] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,1100,-0.5,10.5);
 
       histName = Form("h_mBetaMom%sTrigger%d",str_mCutStatus[iCut].c_str(),iTrig);
       h_mMomBeta[iCut][iTrig] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,300,0.0,3.0);

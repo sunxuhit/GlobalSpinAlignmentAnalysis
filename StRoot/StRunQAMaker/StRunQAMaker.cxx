@@ -14,6 +14,7 @@
 #include "StRoot/StPileupUtil/StPileupUtil.h"
 
 #include "Utility/include/StSpinAlignmentCons.h"
+#include "StRoot/StAnalysisUtils/StAnalysisCons.h"
 #include "StRoot/StAnalysisUtils/StAnalysisUtils.h"
 #include "StRoot/StAnalysisUtils/StAnalysisCut.h"
 #include "StRoot/StRunQAMaker/StRunQAMaker.h"
@@ -122,6 +123,8 @@ int StRunQAMaker::Make()
     const double vz        = mPicoEvent->primaryVertex().z();
     const double vzVpd     = mPicoEvent->vzVpd();
     const double zdcX      = mPicoEvent->ZDCx();
+    const double vxReCtr   = vx - anaUtils::mVxCtr[mType];
+    const double vyReCtr   = vy - anaUtils::mVyCtr[mType];
     // const unsigned short nBTofHits  = mPicoEvent->btofTrayMultiplicity();
     const unsigned short nBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
     const unsigned int nBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
@@ -164,16 +167,16 @@ int StRunQAMaker::Make()
     // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpStAnalysisCut = " << isPileUpStAnalysisCut << ", isPileUpStRefMultCorr = " << isPileUpStRefMultCorr << endl;
 
     // fill QA before event cuts
-    mRunQAProManager->fillRunQA_Event(triggerBin,runIndex,refMult,grefMult,zdcX,vx,vy,vz,0);
+    mRunQAProManager->fillRunQA_Event(triggerBin,runIndex,refMult,grefMult,zdcX,vxReCtr,vyReCtr,vz,0);
     mRunQAHistoManager->fillEventQA_RefMult(triggerBin,refMult,grefMult,cent9,refWgt,nBTofHits,nBTofMatch,0); // wo event cut
-    mRunQAHistoManager->fillEventQA_Vertex(triggerBin,vx,vy,vz,vzVpd,vzBin,0);
+    mRunQAHistoManager->fillEventQA_Vertex(triggerBin,vxReCtr,vyReCtr,vz,vzVpd,vzBin,0);
     mRunQAHistoManager->fillEventQA_Trigger(triggerBin,0);
 
     if(!isPileUpEvent && mAnaCut->passEventCut(mPicoEvent) && mAnaCut->isGoodCent9(cent9))
     { // apply Event Cuts for anlaysis 
-      mRunQAProManager->fillRunQA_Event(triggerBin,runIndex,refMult,grefMult,zdcX,vx,vy,vz,1);
+      mRunQAProManager->fillRunQA_Event(triggerBin,runIndex,refMult,grefMult,zdcX,vxReCtr,vyReCtr,vz,1);
       mRunQAHistoManager->fillEventQA_RefMult(triggerBin,refMult,grefMult,cent9,refWgt,nBTofHits,nBTofMatch,1); // with event cut
-      mRunQAHistoManager->fillEventQA_Vertex(triggerBin,vx,vy,vz,vzVpd,vzBin,1);
+      mRunQAHistoManager->fillEventQA_Vertex(triggerBin,vxReCtr,vyReCtr,vz,vzVpd,vzBin,1);
       mRunQAHistoManager->fillEventQA_Trigger(triggerBin,1);
 
       for(unsigned int iTrack = 0; iTrack < nTracks; iTrack++) // track loop

@@ -14,7 +14,7 @@ static const string CutStatus[2] = {"Bf","Af"};
 static const int numCuts = 2; // 0: before cuts | 1: after cuts
 static const int numTriggerBins = 10; // 0-8 for different triggerID | 9 for all triggers
 
-void plotRunQA_Event(int beamType = 0)
+void plotEvtQA(int beamType = 2)
 {
   string inputfile = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/RunQA/%s/file_%s_RunQA.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
@@ -97,80 +97,77 @@ void plotRunQA_Event(int beamType = 0)
     }
   }
 
-  TCanvas *c_EventQA[numCuts];
+  TCanvas *c_EventQA = new TCanvas("c_EventQA","c_EventQA",10,10,1600,800);
+  c_EventQA->Divide(4,2);
+  for(int i_pad = 0; i_pad < 8; ++i_pad)
+  {
+    c_EventQA->cd(i_pad+1);
+    c_EventQA->cd(i_pad+1)->SetLeftMargin(0.1);
+    c_EventQA->cd(i_pad+1)->SetRightMargin(0.1);
+    c_EventQA->cd(i_pad+1)->SetBottomMargin(0.1);
+    c_EventQA->cd(i_pad+1)->SetGrid(0,0);
+    c_EventQA->cd(i_pad+1)->SetTicks(1,1);
+  }
+  std::string figName = Form("../../figures/RunQA/%s/EvtQA_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_EventQA->Print(figName.c_str());
+
   for(int iCut = 0; iCut < numCuts; ++iCut)
   {
-    string CanName = Form("c_EventQA_%s",CutStatus[iCut].c_str());
-    c_EventQA[iCut] = new TCanvas(CanName.c_str(),CanName.c_str(),10,10,1600,800);
-    c_EventQA[iCut]->Divide(4,2);
-    for(int i_pad = 0; i_pad < 8; ++i_pad)
-    {
-      c_EventQA[iCut]->cd(i_pad+1);
-      c_EventQA[iCut]->cd(i_pad+1)->SetLeftMargin(0.1);
-      c_EventQA[iCut]->cd(i_pad+1)->SetRightMargin(0.1);
-      c_EventQA[iCut]->cd(i_pad+1)->SetBottomMargin(0.1);
-      c_EventQA[iCut]->cd(i_pad+1)->SetGrid(0,0);
-      c_EventQA[iCut]->cd(i_pad+1)->SetTicks(1,1);
-    }
-
-    c_EventQA[iCut]->cd(1);
-    c_EventQA[iCut]->cd(1)->SetLogy();
-    // if(beamType == 0) h_mRefMult[iCut][9]->Draw("hE");
-    // if(beamType != 0) h_mRefMult[iCut][9]->Draw("hE");
-    h_mRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,200.0);
+    c_EventQA->cd(1);
+    c_EventQA->cd(1)->Clear();
+    c_EventQA->cd(1)->SetLogy();
+    h_mRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,500.0);
+    if(beamType == 2) h_mRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,300.0);
     h_mRefMult[iCut][9]->Draw("hE");
 
-    c_EventQA[iCut]->cd(2);
-    c_EventQA[iCut]->cd(2)->SetLogz();
-    if(beamType == 0)
-    {
-      h_mTofMatchRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,200.0);
-      h_mTofMatchRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,200.0);
-      h_mTofMatchRefMult[iCut][9]->Draw("colz");
-    }
-    if(beamType != 0)
-    {
-      h_mTofMatchRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,200.0);
-      h_mTofMatchRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,200.0);
-      h_mTofMatchRefMult[iCut][9]->Draw("colz");
-    }
+    c_EventQA->cd(2);
+    c_EventQA->cd(2)->Clear();
+    c_EventQA->cd(2)->SetLogz();
+    h_mTofMatchRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,500.0);
+    h_mTofMatchRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,500.0);
+    if(beamType == 2) h_mTofMatchRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,300.0);
+    if(beamType == 2) h_mTofMatchRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,300.0);
+    h_mTofMatchRefMult[iCut][9]->Draw("colz");
 
-    c_EventQA[iCut]->cd(3);
-    c_EventQA[iCut]->cd(3)->SetLogz();
-    if(beamType == 0)
-    {
-      h_mTofHitsRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,500.0);
-      h_mTofHitsRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,500.0);
-      h_mTofHitsRefMult[iCut][9]->Draw("colz");
-    }
-    if(beamType != 0)
-    {
-      h_mTofHitsRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,500.0);
-      h_mTofHitsRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,500.0);
-      h_mTofHitsRefMult[iCut][9]->Draw("colz");
-    }
+    c_EventQA->cd(3);
+    c_EventQA->cd(3)->Clear();
+    c_EventQA->cd(3)->SetLogz();
+    h_mTofHitsRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,500.0);
+    h_mTofHitsRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,500.0);
+    if(beamType == 2) h_mTofHitsRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,300.0);
+    if(beamType == 2) h_mTofHitsRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,300.0);
+    h_mTofHitsRefMult[iCut][9]->Draw("colz");
 
-    c_EventQA[iCut]->cd(4);
-    c_EventQA[iCut]->cd(4)->SetLogy();
+    c_EventQA->cd(4);
+    c_EventQA->cd(4)->Clear();
+    c_EventQA->cd(4)->SetLogy();
     h_mCentrality9[iCut][9]->Draw("hE");
 
-    c_EventQA[iCut]->cd(5);
-    c_EventQA[iCut]->cd(5)->SetLogz();
+    c_EventQA->cd(5);
+    c_EventQA->cd(5)->Clear();
+    c_EventQA->cd(5)->SetLogz();
     h_mVertexXY[iCut][9]->Draw("colz");
 
-    c_EventQA[iCut]->cd(6);
-    // c_EventQA[iCut]->cd(6)->SetLogy();
+    c_EventQA->cd(6);
+    c_EventQA->cd(6)->Clear();
+    c_EventQA->cd(6)->SetLogy();
     h_mVertexZ[iCut][9]->Draw();
 
-    c_EventQA[iCut]->cd(7);
-    c_EventQA[iCut]->cd(7)->SetLogz();
+    c_EventQA->cd(7);
+    c_EventQA->cd(7)->Clear();
+    c_EventQA->cd(7)->SetLogz();
     h_mVzVzVpd[iCut][9]->Draw("colz");
 
-    c_EventQA[iCut]->cd(8);
-    // c_EventQA[iCut]->cd(8)->SetLogy();
+    c_EventQA->cd(8);
+    c_EventQA->cd(8)->Clear();
+    // c_EventQA->cd(8)->SetLogy();
     h_mDiffVzVzVpd[iCut][9]->Draw();
 
-    string FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/RunQA/%s/c_EventQA%s_%s.pdf",globCons::str_mBeamType[beamType].c_str(),CutStatus[iCut].c_str(),globCons::str_mBeamType[beamType].c_str());
-    c_EventQA[iCut]->SaveAs(FigName.c_str());
+    figName = Form("../../figures/RunQA/%s/EvtQA_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_EventQA->Update();
+    c_EventQA->Print(figName.c_str());
   }
+
+  figName = Form("../../figures/RunQA/%s/EvtQA_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_EventQA->Print(figName.c_str());
 }
