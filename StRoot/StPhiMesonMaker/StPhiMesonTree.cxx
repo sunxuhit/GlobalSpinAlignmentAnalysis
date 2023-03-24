@@ -169,7 +169,7 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
 
     if(mAnaCut->passTrkKaonFull(picoTrack, primVtx))
     {
-      double mass2 = mAnaUtils->getPrimaryMass2(picoDst, iTrk);
+      double mass2 = mAnaUtils->getPrimMass2(picoDst, iTrk);
       int charge = static_cast<int>(picoTrack->charge());
       TVector3 primMom = picoTrack->pMom();
 

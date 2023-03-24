@@ -9,7 +9,7 @@ then
   JobId=33CD03E2749A129BF5688C2682C98EB5 #generate faild list for this Job
   Task=RunQA
 
-  FileDirectory="/star/u/sunxuhit/$BeamType/SpinAlignment/$Task/Data"
+  FileDirectory="/star/u/sunxuhit/$BeamType/SpinAlignment/$Task/OutPut"
   OutPutDir="/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/${BeamType}"
   FailedList="$OutPutDir/condor_failed_${Task}_${JobId}.list" # failed condor list
 

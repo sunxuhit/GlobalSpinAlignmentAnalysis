@@ -63,11 +63,16 @@ namespace anaUtils
   const double mMipEpdEpMin[mNumBeamUtils] = {0.3, 0.3, 0.3};
 
   // constants used in StPhiMesonMaker
-  const double mMassPion = 0.13957;
-  const double mMassKaon = 0.49368;
-  const double mMassProton = 0.93827;
-  const double mMassPhiMin = 0.98;
-  const double mMassPhiMax = 1.08;
+  const double mMassPion     = 0.139570;
+  const double mMassKaon     = 0.493677;
+  const double mMassProton   = 0.938272;
+  const double mMassDeuteron = 1.875613;
+  const double mMassPhi      = 1.019455;
+  const double mMassPhiMin   = 0.98;
+  const double mMassPhiMax   = 1.08;
+
+  // rapidity of center of mass system
+  const double mRapCtrM[mNumBeamType] = {0.0, 0.0, -1.045};
 }
 
 #endif

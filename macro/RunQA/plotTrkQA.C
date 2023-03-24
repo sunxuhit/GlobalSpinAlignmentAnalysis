@@ -7,6 +7,7 @@
 #include "TF1.h"
 #include "TLegend.h"
 #include "../../Utility/include/StSpinAlignmentCons.h"
+#include "../../StRoot/StAnalysisUtils/StAnalysisCons.h"
 
 using namespace std;
 
@@ -249,16 +250,19 @@ void plotTrkQA(int beamType = 2)
     c_TrackQA->cd(iCut*3+1)->Clear();
     c_TrackQA->cd(iCut*3+1)->SetLogy();
     h_mPrimEtaEpFull[iCut][0]->GetXaxis()->SetTitle("prim #eta");
+    h_mPrimEtaEpFull[iCut][0]->GetXaxis()->SetRangeUser(anaUtils::mEtaEpMin[beamType]-0.5, anaUtils::mEtaEpMax[beamType]+0.5);
     h_mPrimEtaEpFull[iCut][0]->Draw("hE");
 
     c_TrackQA->cd(iCut*3+2);
     c_TrackQA->cd(iCut*3+2)->Clear();
     h_mPrimEtaEpEast[iCut][0]->GetXaxis()->SetTitle("prim #eta");
+    h_mPrimEtaEpEast[iCut][0]->GetXaxis()->SetRangeUser(anaUtils::mEtaEpMin[beamType]-0.5, anaUtils::mEtaEpMax[beamType]+0.5);
     h_mPrimEtaEpEast[iCut][0]->Draw("hE");
 
     c_TrackQA->cd(iCut*3+3);
     c_TrackQA->cd(iCut*3+3)->Clear();;
     h_mPrimEtaEpWest[iCut][0]->GetXaxis()->SetTitle("prim #eta");
+    h_mPrimEtaEpWest[iCut][0]->GetXaxis()->SetRangeUser(anaUtils::mEtaEpMin[beamType]-0.5, anaUtils::mEtaEpMax[beamType]+0.5);
     h_mPrimEtaEpWest[iCut][0]->Draw("hE");
   }
   figName = Form("../../figures/RunQA/%s/TrkQA_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
@@ -271,16 +275,19 @@ void plotTrkQA(int beamType = 2)
     c_TrackQA->cd(iCut*3+1)->Clear();
     c_TrackQA->cd(iCut*3+1)->SetLogy();
     h_mPrimEtaFlowFull[iCut][0]->GetXaxis()->SetTitle("prim #eta");
+    h_mPrimEtaFlowFull[iCut][0]->GetXaxis()->SetRangeUser(anaUtils::mEtaKaonMin[beamType]-0.5, anaUtils::mEtaKaonMax[beamType]+0.5);
     h_mPrimEtaFlowFull[iCut][0]->Draw("hE");
 
     c_TrackQA->cd(iCut*3+2);
     c_TrackQA->cd(iCut*3+2)->Clear();
     h_mPrimEtaFlowEast[iCut][0]->GetXaxis()->SetTitle("prim #eta");
+    h_mPrimEtaFlowEast[iCut][0]->GetXaxis()->SetRangeUser(anaUtils::mEtaKaonMin[beamType]-0.5, anaUtils::mEtaKaonMax[beamType]+0.5);
     h_mPrimEtaFlowEast[iCut][0]->Draw("hE");
 
     c_TrackQA->cd(iCut*3+3);
     c_TrackQA->cd(iCut*3+3)->Clear();;
     h_mPrimEtaFlowWest[iCut][0]->GetXaxis()->SetTitle("prim #eta");
+    h_mPrimEtaFlowWest[iCut][0]->GetXaxis()->SetRangeUser(anaUtils::mEtaKaonMin[beamType]-0.5, anaUtils::mEtaKaonMax[beamType]+0.5);
     h_mPrimEtaFlowWest[iCut][0]->Draw("hE");
   }
   figName = Form("../../figures/RunQA/%s/TrkQA_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
@@ -294,6 +301,7 @@ void plotTrkQA(int beamType = 2)
     c_TrackQA->cd(iCut*3+1)->SetLogy(0);;
     h_mPrimEtaNSigKaonFull[iCut][0]->GetXaxis()->SetTitle("prim #eta");
     h_mPrimEtaNSigKaonFull[iCut][0]->GetYaxis()->SetTitle("n#sigma_{K}");
+    h_mPrimEtaNSigKaonFull[iCut][0]->GetXaxis()->SetRangeUser(anaUtils::mEtaKaonMin[beamType]-0.5, anaUtils::mEtaKaonMax[beamType]+0.5);
     h_mPrimEtaNSigKaonFull[iCut][0]->Draw("colz");
 
     c_TrackQA->cd(iCut*3+2);
@@ -301,6 +309,7 @@ void plotTrkQA(int beamType = 2)
     c_TrackQA->cd(iCut*3+2)->SetLogy(0);;
     h_mPrimEtaNSigKaonEast[iCut][0]->GetXaxis()->SetTitle("prim #eta");
     h_mPrimEtaNSigKaonEast[iCut][0]->GetYaxis()->SetTitle("n#sigma_{K}");
+    h_mPrimEtaNSigKaonEast[iCut][0]->GetXaxis()->SetRangeUser(anaUtils::mEtaKaonMin[beamType]-0.5, anaUtils::mEtaKaonMax[beamType]+0.5);
     h_mPrimEtaNSigKaonEast[iCut][0]->Draw("colz");
 
     c_TrackQA->cd(iCut*3+3);
@@ -308,6 +317,7 @@ void plotTrkQA(int beamType = 2)
     c_TrackQA->cd(iCut*3+3)->SetLogy(0);;
     h_mPrimEtaNSigKaonWest[iCut][0]->GetXaxis()->SetTitle("prim #eta");
     h_mPrimEtaNSigKaonWest[iCut][0]->GetYaxis()->SetTitle("n#sigma_{K}");
+    h_mPrimEtaNSigKaonWest[iCut][0]->GetXaxis()->SetRangeUser(anaUtils::mEtaKaonMin[beamType]-0.5, anaUtils::mEtaKaonMax[beamType]+0.5);
     h_mPrimEtaNSigKaonWest[iCut][0]->Draw("colz");
   }
   figName = Form("../../figures/RunQA/%s/TrkQA_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());

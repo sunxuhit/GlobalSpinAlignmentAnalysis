@@ -12,6 +12,8 @@ namespace globCons
   const int mNumRunIndex[mNumBeamType]          = {1500, 1500, 300}; // total number of runIndex
   const int mRunIndexLo[mNumBeamType]           = {0,    2500, 0}; 
   const int mRunIndexHi[mNumBeamType]           = {1500, 4000, 300};
+
+  // const double mRapCtrM[mNumBeamType]           = {0.0, 0.0, -1.045};
 }
 
 #endif

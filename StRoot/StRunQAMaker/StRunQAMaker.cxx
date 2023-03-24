@@ -5,6 +5,7 @@
 #include "TVector3.h"
 #include "TString.h"
 
+#include "StMessMgr.h"
 #include "StPicoDstMaker/StPicoDstMaker.h"
 #include "StPicoEvent/StPicoDst.h"
 #include "StPicoEvent/StPicoEvent.h"
@@ -14,7 +15,6 @@
 #include "StRoot/StPileupUtil/StPileupUtil.h"
 
 #include "Utility/include/StSpinAlignmentCons.h"
-#include "StRoot/StAnalysisUtils/StAnalysisCons.h"
 #include "StRoot/StAnalysisUtils/StAnalysisUtils.h"
 #include "StRoot/StAnalysisUtils/StAnalysisCut.h"
 #include "StRoot/StRunQAMaker/StRunQAMaker.h"
@@ -123,9 +123,8 @@ int StRunQAMaker::Make()
     const double vz        = mPicoEvent->primaryVertex().z();
     const double vzVpd     = mPicoEvent->vzVpd();
     const double zdcX      = mPicoEvent->ZDCx();
-    const double vxReCtr   = vx - anaUtils::mVxCtr[mType];
-    const double vyReCtr   = vy - anaUtils::mVyCtr[mType];
-    // const unsigned short nBTofHits  = mPicoEvent->btofTrayMultiplicity();
+    const double vxReCtr   = mAnaUtils->getVxRectr(vx);
+    const double vyReCtr   = mAnaUtils->getVyRectr(vy);
     const unsigned short nBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
     const unsigned int nBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
     const unsigned int nTracks      = mPicoDst->numberOfTracks(); // get number of tracks
@@ -172,7 +171,7 @@ int StRunQAMaker::Make()
     mRunQAHistoManager->fillEventQA_Vertex(triggerBin,vxReCtr,vyReCtr,vz,vzVpd,vzBin,0);
     mRunQAHistoManager->fillEventQA_Trigger(triggerBin,0);
 
-    if(!isPileUpEvent && mAnaCut->passEventCut(mPicoEvent) && mAnaCut->isGoodCent9(cent9))
+    if(!isPileUpEvent && mAnaCut->isGoodCent9(cent9) && mAnaCut->passEventCut(mPicoEvent))
     { // apply Event Cuts for anlaysis 
       mRunQAProManager->fillRunQA_Event(triggerBin,runIndex,refMult,grefMult,zdcX,vxReCtr,vyReCtr,vz,1);
       mRunQAHistoManager->fillEventQA_RefMult(triggerBin,refMult,grefMult,cent9,refWgt,nBTofHits,nBTofMatch,1); // with event cut
@@ -195,7 +194,7 @@ int StRunQAMaker::Make()
 	const short charge    = picoTrack->charge();
 	const double nSigKaon = picoTrack->nSigmaKaon();
 	const double beta     = mAnaUtils->getBeta(mPicoDst,iTrack);
-	const double mass2    = mAnaUtils->getPrimaryMass2(mPicoDst,iTrack);
+	const double mass2    = mAnaUtils->getPrimMass2(mPicoDst,iTrack);
 
 	mRunQAHistoManager->fillTrackQA_Kinematics(triggerBin,primMom,globMom, 0); // wo track cut
 	mRunQAHistoManager->fillTrackQA_Quliaty(triggerBin,gDCA,nHitsFit,nHitsMax,nHitsDEdx,0);

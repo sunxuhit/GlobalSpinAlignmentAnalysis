@@ -6,6 +6,7 @@
 #include <TVector3.h>
 #include <TMath.h>
 
+#include "StMessMgr.h"
 #include "StPicoDstMaker/StPicoDstMaker.h"
 #include "StPicoEvent/StPicoDst.h"
 #include "StPicoEvent/StPicoEvent.h"

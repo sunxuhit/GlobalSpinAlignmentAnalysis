@@ -57,6 +57,9 @@ class StAnalysisCut : public TObject
     // ZDC Hit Cuts for ZDC EP
     bool passQVecZdc(TVector2 Q1VecEast, TVector2 Q1VecWest, TVector2 Q1VecFull);
 
+    // only used for deuteron flow comparison in Fxt3p85GeV_2018
+    bool passTrkDeuFlow(double pMag, double deuteronZ);
+
   private:
     const int mType;
 

@@ -6,12 +6,13 @@
 #include "TVector2.h"
 #include "TVector3.h"
 
-class StPicoEpdHit;
-class StEpdGeom;
 class TFile;
 class TProfile2D;
 class TProfile;
 class TH2F;
+
+class StPicoEpdHit;
+class StEpdGeom;
 
 class StEpdEpManager : public TObject
 {
@@ -182,7 +183,7 @@ class StEpdEpManager : public TObject
     static const int mNumTiles      = 31; // picoEpdHit->tile(): return 1-31 | use tile-1
     static const int mNumRings      = 16; // picoEpdHit->row(): return 1-16 | use ring-1 = > 0: most inner ring (12 tiles), 1-15: 24 tiles
     static const int mNumRingsUsed  = 4;  // rings used in Q1Vector calculation: [0, mNumRingsUsed) | set to 4 to get eta weight then to 16 for EPD EP
-    static const int mNumGroups     = 2;  // Group 0: 0-7 rings | Group 1: 8-15 rings
+    static const int mNumRingsGrps  = 2;  // Group 0: 0-7 rings | Group 1: 8-15 rings
 
     // Q1Vector of all EPD rings
     double mQ1WgtSideRawEast, mQ1WgtSideRawWest; // tileWgt only
@@ -193,12 +194,12 @@ class StEpdEpManager : public TObject
     TVector2 v_mQ1SideReCtrEast, v_mQ1SideReCtrWest; // phi&eta weighted Q1 Vector
 
     // Q1Vector of groups of EPD rings
-    double mQ1WgtGrpRawEast[mNumGroups], mQ1WgtGrpRawWest[mNumGroups]; // tileWgt only for each ring
-    double mQ1WgtGrpWgtEast[mNumGroups], mQ1WgtGrpWgtWest[mNumGroups]; // tileWgt * phiWgt(if avaliable) * etaWgt(if avaliable) for each ring
-    double mQ1WgtGrpReCtrEast[mNumGroups], mQ1WgtGrpReCtrWest[mNumGroups]; // tileWgt * phiWgt(if avaliable) * etaWgt(if avaliable) for each ring
-    TVector2 v_mQ1GrpRawEast[mNumGroups], v_mQ1GrpRawWest[mNumGroups]; // raw Q1 Vector for each ring
-    TVector2 v_mQ1GrpWgtEast[mNumGroups], v_mQ1GrpWgtWest[mNumGroups]; // phi&eta weighted Q1 Vector for each ring
-    TVector2 v_mQ1GrpReCtrEast[mNumGroups], v_mQ1GrpReCtrWest[mNumGroups]; // phi&eta weighted Q1 Vector for each ring
+    double mQ1WgtGrpRawEast[mNumRingsGrps], mQ1WgtGrpRawWest[mNumRingsGrps]; // tileWgt only for each ring
+    double mQ1WgtGrpWgtEast[mNumRingsGrps], mQ1WgtGrpWgtWest[mNumRingsGrps]; // tileWgt * phiWgt(if avaliable) * etaWgt(if avaliable) for each ring
+    double mQ1WgtGrpReCtrEast[mNumRingsGrps], mQ1WgtGrpReCtrWest[mNumRingsGrps]; // tileWgt * phiWgt(if avaliable) * etaWgt(if avaliable) for each ring
+    TVector2 v_mQ1GrpRawEast[mNumRingsGrps], v_mQ1GrpRawWest[mNumRingsGrps]; // raw Q1 Vector for each ring
+    TVector2 v_mQ1GrpWgtEast[mNumRingsGrps], v_mQ1GrpWgtWest[mNumRingsGrps]; // phi&eta weighted Q1 Vector for each ring
+    TVector2 v_mQ1GrpReCtrEast[mNumRingsGrps], v_mQ1GrpReCtrWest[mNumRingsGrps]; // phi&eta weighted Q1 Vector for each ring
 
     // phi Weight Correction | x-axis is super sector Id, y-axis is tile Id
     TH2F *h_mEpdPhiWgtEast[mNumCentrality];
@@ -211,26 +212,26 @@ class StEpdEpManager : public TObject
     TProfile2D *p_mEpdQ1SideReCtrYEast[mNumVzBin];
     TProfile2D *p_mEpdQ1SideReCtrXWest[mNumVzBin];
     TProfile2D *p_mEpdQ1SideReCtrYWest[mNumVzBin];
-    TProfile2D *p_mEpdQ1GrpReCtrXEast[mNumVzBin][mNumGroups];
-    TProfile2D *p_mEpdQ1GrpReCtrYEast[mNumVzBin][mNumGroups];
-    TProfile2D *p_mEpdQ1GrpReCtrXWest[mNumVzBin][mNumGroups];
-    TProfile2D *p_mEpdQ1GrpReCtrYWest[mNumVzBin][mNumGroups];
+    TProfile2D *p_mEpdQ1GrpReCtrXEast[mNumVzBin][mNumRingsGrps];
+    TProfile2D *p_mEpdQ1GrpReCtrYEast[mNumVzBin][mNumRingsGrps];
+    TProfile2D *p_mEpdQ1GrpReCtrXWest[mNumVzBin][mNumRingsGrps];
+    TProfile2D *p_mEpdQ1GrpReCtrYWest[mNumVzBin][mNumRingsGrps];
 
     // Shift Correction for East/West | 0 = vertex neg/pos | 1 = shift correction harmonics
     TProfile2D *p_mEpdQ1SideShiftCosEast[mNumVzBin][mNumShiftCorr]; // 1st EP
     TProfile2D *p_mEpdQ1SideShiftSinEast[mNumVzBin][mNumShiftCorr];
     TProfile2D *p_mEpdQ1SideShiftCosWest[mNumVzBin][mNumShiftCorr];
     TProfile2D *p_mEpdQ1SideShiftSinWest[mNumVzBin][mNumShiftCorr];
-    TProfile2D *p_mEpdQ1GrpShiftCosEast[mNumVzBin][mNumShiftCorr][mNumGroups];
-    TProfile2D *p_mEpdQ1GrpShiftSinEast[mNumVzBin][mNumShiftCorr][mNumGroups];
-    TProfile2D *p_mEpdQ1GrpShiftCosWest[mNumVzBin][mNumShiftCorr][mNumGroups];
-    TProfile2D *p_mEpdQ1GrpShiftSinWest[mNumVzBin][mNumShiftCorr][mNumGroups];
+    TProfile2D *p_mEpdQ1GrpShiftCosEast[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
+    TProfile2D *p_mEpdQ1GrpShiftSinEast[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
+    TProfile2D *p_mEpdQ1GrpShiftCosWest[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
+    TProfile2D *p_mEpdQ1GrpShiftSinWest[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
 
     // Shift Correction for Full EP
     TProfile2D *p_mEpdQ1SideShiftCosFull[mNumVzBin][mNumShiftCorr];
     TProfile2D *p_mEpdQ1SideShiftSinFull[mNumVzBin][mNumShiftCorr];
-    TProfile2D *p_mEpdQ1GrpShiftCosFull[mNumVzBin][mNumShiftCorr][mNumGroups];
-    TProfile2D *p_mEpdQ1GrpShiftSinFull[mNumVzBin][mNumShiftCorr][mNumGroups];
+    TProfile2D *p_mEpdQ1GrpShiftCosFull[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
+    TProfile2D *p_mEpdQ1GrpShiftSinFull[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
 
     // EPD EP Resolution
     TProfile *p_mEpdSubEp1SideRes; // 1st EP
@@ -238,11 +239,11 @@ class StEpdEpManager : public TObject
     double mEpdSubEp1SideResErr[mNumCentrality];
     double mEpdFullEp1SideResVal[mNumCentrality];
     double mEpdFullEp1SideResErr[mNumCentrality];
-    TProfile *p_mEpdSubEp1GrpRes[mNumGroups]; // resolution of same group
-    double mEpdSubEp1GrpResVal[mNumCentrality][mNumGroups];
-    double mEpdSubEp1GrpResErr[mNumCentrality][mNumGroups];
-    double mEpdFullEp1GrpResVal[mNumCentrality][mNumGroups];
-    double mEpdFullEp1GrpResErr[mNumCentrality][mNumGroups];
+    TProfile *p_mEpdSubEp1GrpRes[mNumRingsGrps]; // resolution of same group
+    double mEpdSubEp1GrpResVal[mNumCentrality][mNumRingsGrps];
+    double mEpdSubEp1GrpResErr[mNumCentrality][mNumRingsGrps];
+    double mEpdFullEp1GrpResVal[mNumCentrality][mNumRingsGrps];
+    double mEpdFullEp1GrpResErr[mNumCentrality][mNumRingsGrps];
 
     // Charged Hadron Directed Flow
     TProfile *p_mEpdSubEpV1[mNumCentrality]; // v1 vs. eta
@@ -252,44 +253,44 @@ class StEpdEpManager : public TObject
     TH2F *h_mEpdEp1SideRawWest[mNumCentrality];
     TH2F *h_mEpdEp1SideRawFull[mNumCentrality];
     TH2F *h_mEpdEp1SideRawCorr[mNumCentrality]; // Psi1East vs Psi1West
-    TH2F *h_mEpdEp1GrpRawEast[mNumCentrality][mNumGroups];
-    TH2F *h_mEpdEp1GrpRawWest[mNumCentrality][mNumGroups];
-    TH2F *h_mEpdEp1GrpRawFull[mNumCentrality][mNumGroups];
-    TH2F *h_mEpdEp1GrpRawCorr[mNumCentrality][mNumGroups];
-    // TH2F *h_mEpdEp1GrpXRawCorr[mNumCentrality][mNumGroups]; // 0: Psi1Grp0East vs. Psi1Grp1East | 1: Psi1Grp0West vs. Psi1Grp1West
+    TH2F *h_mEpdEp1GrpRawEast[mNumCentrality][mNumRingsGrps];
+    TH2F *h_mEpdEp1GrpRawWest[mNumCentrality][mNumRingsGrps];
+    TH2F *h_mEpdEp1GrpRawFull[mNumCentrality][mNumRingsGrps];
+    TH2F *h_mEpdEp1GrpRawCorr[mNumCentrality][mNumRingsGrps];
+    // TH2F *h_mEpdEp1GrpXRawCorr[mNumCentrality][mNumRingsGrps]; // 0: Psi1Grp0East vs. Psi1Grp1East | 1: Psi1Grp0West vs. Psi1Grp1West
 
     TH2F *h_mEpdEp1SideWgtEast[mNumCentrality]; // 1st weighted EP
     TH2F *h_mEpdEp1SideWgtWest[mNumCentrality];
     TH2F *h_mEpdEp1SideWgtFull[mNumCentrality];
     TH2F *h_mEpdEp1SideWgtCorr[mNumCentrality]; // Psi1East vs Psi1West
-    TH2F *h_mEpdEp1GrpWgtEast[mNumCentrality][mNumGroups];
-    TH2F *h_mEpdEp1GrpWgtWest[mNumCentrality][mNumGroups];
-    TH2F *h_mEpdEp1GrpWgtFull[mNumCentrality][mNumGroups];
-    TH2F *h_mEpdEp1GrpWgtCorr[mNumCentrality][mNumGroups];
-    // TH2F *h_mEpdEp1GrpXWgtCorr[mNumCentrality][mNumGroups]; // 0: Psi1Grp0East vs. Psi1Grp1East | 1: Psi1Grp0West vs. Psi1Grp1West
+    TH2F *h_mEpdEp1GrpWgtEast[mNumCentrality][mNumRingsGrps];
+    TH2F *h_mEpdEp1GrpWgtWest[mNumCentrality][mNumRingsGrps];
+    TH2F *h_mEpdEp1GrpWgtFull[mNumCentrality][mNumRingsGrps];
+    TH2F *h_mEpdEp1GrpWgtCorr[mNumCentrality][mNumRingsGrps];
+    // TH2F *h_mEpdEp1GrpXWgtCorr[mNumCentrality][mNumRingsGrps]; // 0: Psi1Grp0East vs. Psi1Grp1East | 1: Psi1Grp0West vs. Psi1Grp1West
 
     TH2F *h_mEpdEp1SideReCtrEast[mNumCentrality]; // 1st recenter EP
     TH2F *h_mEpdEp1SideReCtrWest[mNumCentrality];
     TH2F *h_mEpdEp1SideReCtrFull[mNumCentrality];
     TH2F *h_mEpdEp1SideReCtrCorr[mNumCentrality]; // Psi1East vs Psi1West
-    TH2F *h_mEpdEp1GrpReCtrEast[mNumCentrality][mNumGroups];
-    TH2F *h_mEpdEp1GrpReCtrWest[mNumCentrality][mNumGroups];
-    TH2F *h_mEpdEp1GrpReCtrFull[mNumCentrality][mNumGroups];
-    TH2F *h_mEpdEp1GrpReCtrCorr[mNumCentrality][mNumGroups];
-    // TH2F *h_mEpdEp1GrpXReCtrCorr[mNumCentrality][mNumGroups]; // 0: Psi1Grp0East vs. Psi1Grp1East | 1: Psi1Grp0West vs. Psi1Grp1West
+    TH2F *h_mEpdEp1GrpReCtrEast[mNumCentrality][mNumRingsGrps];
+    TH2F *h_mEpdEp1GrpReCtrWest[mNumCentrality][mNumRingsGrps];
+    TH2F *h_mEpdEp1GrpReCtrFull[mNumCentrality][mNumRingsGrps];
+    TH2F *h_mEpdEp1GrpReCtrCorr[mNumCentrality][mNumRingsGrps];
+    // TH2F *h_mEpdEp1GrpXReCtrCorr[mNumCentrality][mNumRingsGrps]; // 0: Psi1Grp0East vs. Psi1Grp1East | 1: Psi1Grp0West vs. Psi1Grp1West
 
     TH2F *h_mEpdEp1SideShiftEast[mNumCentrality]; // 1st shift EP
     TH2F *h_mEpdEp1SideShiftWest[mNumCentrality];
     TH2F *h_mEpdEp1SideShiftFull[mNumCentrality];
     TH2F *h_mEpdEp1SideShiftCorr[mNumCentrality]; // Psi1East vs Psi1West
-    TH2F *h_mEpdEp1GrpShiftEast[mNumCentrality][mNumGroups];
-    TH2F *h_mEpdEp1GrpShiftWest[mNumCentrality][mNumGroups];
-    TH2F *h_mEpdEp1GrpShiftFull[mNumCentrality][mNumGroups];
-    TH2F *h_mEpdEp1GrpShiftCorr[mNumCentrality][mNumGroups];
-    // TH2F *h_mEpdEp1GrpXShiftCorr[mNumCentrality][mNumGroups]; // 0: Psi1Grp0East vs. Psi1Grp1East | 1: Psi1Grp0West vs. Psi1Grp1West
+    TH2F *h_mEpdEp1GrpShiftEast[mNumCentrality][mNumRingsGrps];
+    TH2F *h_mEpdEp1GrpShiftWest[mNumCentrality][mNumRingsGrps];
+    TH2F *h_mEpdEp1GrpShiftFull[mNumCentrality][mNumRingsGrps];
+    TH2F *h_mEpdEp1GrpShiftCorr[mNumCentrality][mNumRingsGrps];
+    // TH2F *h_mEpdEp1GrpXShiftCorr[mNumCentrality][mNumRingsGrps]; // 0: Psi1Grp0East vs. Psi1Grp1East | 1: Psi1Grp0West vs. Psi1Grp1West
 
     TH2F *h_mEpdEp1SideShiftFullCorr[mNumCentrality]; // 1st shift full EP
-    TH2F *h_mEpdEp1GrpShiftFullCorr[mNumCentrality][mNumGroups];
+    TH2F *h_mEpdEp1GrpShiftFullCorr[mNumCentrality][mNumRingsGrps];
 
     TFile *file_mPhiWgtPar;
     TFile *file_mReCtrPar;

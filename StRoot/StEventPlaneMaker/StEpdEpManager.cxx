@@ -1,4 +1,3 @@
-#include "StMessMgr.h"
 #include "TMath.h"
 #include "TString.h"
 #include "TFile.h"
@@ -68,7 +67,7 @@ void StEpdEpManager::clearEpdEpManager()
   v_mQ1SideReCtrEast.Set(0.0,0.0);
   v_mQ1SideReCtrWest.Set(0.0,0.0);
 
-  for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+  for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
   {
     mQ1WgtGrpRawEast[iGrp] = 0.0;
     mQ1WgtGrpRawWest[iGrp] = 0.0;
@@ -391,7 +390,7 @@ void StEpdEpManager::initEpdReCtr()
     proName = Form("p_mEpdQ1SideReCtrYWestVz%d",iVz);
     p_mEpdQ1SideReCtrYWest[iVz] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
-    for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
       proName = Form("p_mEpdQ1Grp%dReCtrXEastVz%d",iGrp,iVz); // 1st EP
       p_mEpdQ1GrpReCtrXEast[iVz][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
@@ -490,7 +489,7 @@ void StEpdEpManager::writeEpdReCtr()
     p_mEpdQ1SideReCtrYEast[iVz]->Write();
     p_mEpdQ1SideReCtrXWest[iVz]->Write();
     p_mEpdQ1SideReCtrYWest[iVz]->Write();
-    for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
       p_mEpdQ1GrpReCtrXEast[iVz][iGrp]->Write();
       p_mEpdQ1GrpReCtrYEast[iVz][iGrp]->Write();
@@ -516,7 +515,7 @@ void StEpdEpManager::readEpdReCtr()
     p_mEpdQ1SideReCtrXWest[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
     proName = Form("p_mEpdQ1SideReCtrYWestVz%d",iVz);
     p_mEpdQ1SideReCtrYWest[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
-    for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
       proName = Form("p_mEpdQ1Grp%dReCtrXEastVz%d",iGrp,iVz); // 1st EP
       p_mEpdQ1GrpReCtrXEast[iVz][iGrp] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
@@ -603,7 +602,7 @@ void StEpdEpManager::initEpdShift()
       p_mEpdQ1SideShiftCosWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
       proName = Form("p_mEpdQ1SideShiftSin%dWestVz%d",iShift,iVz);
       p_mEpdQ1SideShiftSinWest[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-      for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+      for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
       {
 	proName = Form("p_mEpdQ1Grp%dShiftCos%dEastVz%d",iGrp,iShift,iVz); // 1st EP
 	p_mEpdQ1GrpShiftCosEast[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
@@ -687,7 +686,7 @@ void StEpdEpManager::writeEpdShift()
       p_mEpdQ1SideShiftSinEast[iVz][iShift]->Write();
       p_mEpdQ1SideShiftCosWest[iVz][iShift]->Write();
       p_mEpdQ1SideShiftSinWest[iVz][iShift]->Write();
-      for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+      for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
       {
 	p_mEpdQ1GrpShiftCosEast[iVz][iShift][iGrp]->Write();
 	p_mEpdQ1GrpShiftSinEast[iVz][iShift][iGrp]->Write();
@@ -716,7 +715,7 @@ void StEpdEpManager::readEpdShift()
       p_mEpdQ1SideShiftCosWest[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
       proName = Form("p_mEpdQ1SideShiftSin%dWestVz%d",iShift,iVz);
       p_mEpdQ1SideShiftSinWest[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
-      for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+      for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
       {
 	proName = Form("p_mEpdQ1Grp%dShiftCos%dEastVz%d",iGrp,iShift,iVz); // 1st EP
 	p_mEpdQ1GrpShiftCosEast[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
@@ -974,7 +973,7 @@ void StEpdEpManager::initEpdShiftFull()
       p_mEpdQ1SideShiftCosFull[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
       proName = Form("p_mEpdQ1SideShiftSin%dFullVz%d",iShift,iVz);
       p_mEpdQ1SideShiftSinFull[iVz][iShift] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-      for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+      for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
       {
 	proName = Form("p_mEpdQ1Grp%dShiftCos%dFullVz%d",iGrp,iShift,iVz);
 	p_mEpdQ1GrpShiftCosFull[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
@@ -1025,7 +1024,7 @@ void StEpdEpManager::writeEpdShiftFull()
     {
       p_mEpdQ1SideShiftCosFull[iVz][iShift]->Write();
       p_mEpdQ1SideShiftSinFull[iVz][iShift]->Write();
-      for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+      for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
       {
 	p_mEpdQ1GrpShiftCosFull[iVz][iShift][iGrp]->Write();
 	p_mEpdQ1GrpShiftSinFull[iVz][iShift][iGrp]->Write();
@@ -1047,7 +1046,7 @@ void StEpdEpManager::readEpdShiftFull()
       p_mEpdQ1SideShiftCosFull[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
       proName = Form("p_mEpdQ1SideShiftSin%dFullVz%d",iShift,iVz);
       p_mEpdQ1SideShiftSinFull[iVz][iShift] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
-      for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+      for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
       {
 	proName = Form("p_mEpdQ1Grp%dShiftCos%dFullVz%d",iGrp,iShift,iVz);
 	p_mEpdQ1GrpShiftCosFull[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
@@ -1142,7 +1141,7 @@ TVector2 StEpdEpManager::getQ1VecGrpShiftFullCorr(int grpId)
 void StEpdEpManager::initEpdResolution()
 {
   p_mEpdSubEp1SideRes = new TProfile("p_mEpdSubEp1SideRes","p_mEpdSubEp1SideRes",mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-  for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+  for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
   {
     std::string proName = Form("p_mEpdSubEp1Grp%dRes",iGrp);
     p_mEpdSubEp1GrpRes[iGrp] = new TProfile(proName.c_str(),proName.c_str(),mNumCentrality,-0.5,(double)mNumCentrality-0.5);
@@ -1164,7 +1163,7 @@ void StEpdEpManager::fillEpdGrpResolution(double Psi1East, double Psi1West, int 
 void StEpdEpManager::writeEpdResolution()
 {
   p_mEpdSubEp1SideRes->Write();
-  for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+  for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
   {
     p_mEpdSubEp1GrpRes[iGrp]->Write();
   }
@@ -1175,7 +1174,7 @@ void StEpdEpManager::readEpdResolution()
   std::string inputFile = Form("Utility/EventPlaneMaker/%s/Resolution/file_EpdEpResolution_%s.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   file_mResolution = TFile::Open(inputFile.c_str());
   p_mEpdSubEp1SideRes = (TProfile*)file_mResolution->Get("p_mEpdSubEp1SideRes");
-  for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+  for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
   {
     std::string proName = Form("p_mEpdSubEp1Grp%dRes",iGrp);
     p_mEpdSubEp1GrpRes[iGrp] = (TProfile*)file_mResolution->Get(proName.c_str());
@@ -1187,7 +1186,7 @@ void StEpdEpManager::readEpdResolution()
     mEpdSubEp1SideResErr[iCent]  = 0.0;
     mEpdFullEp1SideResVal[iCent] = 0.0;
     mEpdFullEp1SideResErr[iCent] = 0.0;
-    for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
       mEpdSubEp1GrpResVal[iCent][iGrp]  = 0.0;
       mEpdSubEp1GrpResErr[iCent][iGrp]  = 0.0;
@@ -1224,7 +1223,7 @@ void StEpdEpManager::readEpdResolution()
     mEpdFullEp1SideResVal[iCent] = valRes1Full;
     mEpdFullEp1SideResErr[iCent] = errRes1Full;
 
-    for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
       valRes1Sub  = -999.9;
       errRes1Sub  = 1.0;
@@ -1800,7 +1799,7 @@ void StEpdEpManager::initEpdSubEpRaw()
     h_mEpdEp1SideRawFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mEpdEp1SideRawCorrCent%d",iCent);
     h_mEpdEp1SideRawCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
-    for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
       histName = Form("h_mEpdEp1Grp%dRawEastCent%d",iGrp,iCent);
       h_mEpdEp1GrpRawEast[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
@@ -1838,7 +1837,7 @@ void StEpdEpManager::writeEpdSubEpRaw()
     h_mEpdEp1SideRawWest[iCent]->Write();
     h_mEpdEp1SideRawFull[iCent]->Write();
     h_mEpdEp1SideRawCorr[iCent]->Write();
-    for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
       h_mEpdEp1GrpRawEast[iCent][iGrp]->Write();
       h_mEpdEp1GrpRawWest[iCent][iGrp]->Write();
@@ -1861,7 +1860,7 @@ void StEpdEpManager::initEpdSubEpWgt()
     h_mEpdEp1SideWgtFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mEpdEp1SideWgtCorrCent%d",iCent);
     h_mEpdEp1SideWgtCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
-    for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
       histName = Form("h_mEpdEp1Grp%dWgtEastCent%d",iGrp,iCent);
       h_mEpdEp1GrpWgtEast[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
@@ -1899,7 +1898,7 @@ void StEpdEpManager::writeEpdSubEpWgt()
     h_mEpdEp1SideWgtWest[iCent]->Write();
     h_mEpdEp1SideWgtFull[iCent]->Write();
     h_mEpdEp1SideWgtCorr[iCent]->Write();
-    for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
       h_mEpdEp1GrpWgtEast[iCent][iGrp]->Write();
       h_mEpdEp1GrpWgtWest[iCent][iGrp]->Write();
@@ -1922,7 +1921,7 @@ void StEpdEpManager::initEpdSubEpReCtr()
     h_mEpdEp1SideReCtrFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mEpdEp1SideReCtrCorrCent%d",iCent);
     h_mEpdEp1SideReCtrCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
-    for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
       histName = Form("h_mEpdEp1Grp%dReCtrEastCent%d",iGrp,iCent);
       h_mEpdEp1GrpReCtrEast[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
@@ -1960,7 +1959,7 @@ void StEpdEpManager::writeEpdSubEpReCtr()
     h_mEpdEp1SideReCtrWest[iCent]->Write();
     h_mEpdEp1SideReCtrFull[iCent]->Write();
     h_mEpdEp1SideReCtrCorr[iCent]->Write();
-    for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
       h_mEpdEp1GrpReCtrEast[iCent][iGrp]->Write();
       h_mEpdEp1GrpReCtrWest[iCent][iGrp]->Write();
@@ -1983,7 +1982,7 @@ void StEpdEpManager::initEpdSubEpShift()
     h_mEpdEp1SideShiftFull[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mEpdEp1SideShiftCorrCent%d",iCent);
     h_mEpdEp1SideShiftCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
-    for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
       histName = Form("h_mEpdEp1Grp%dShiftEastCent%d",iGrp,iCent);
       h_mEpdEp1GrpShiftEast[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
@@ -2021,7 +2020,7 @@ void StEpdEpManager::writeEpdSubEpShift()
     h_mEpdEp1SideShiftWest[iCent]->Write();
     h_mEpdEp1SideShiftFull[iCent]->Write();
     h_mEpdEp1SideShiftCorr[iCent]->Write();
-    for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
       h_mEpdEp1GrpShiftEast[iCent][iGrp]->Write();
       h_mEpdEp1GrpShiftWest[iCent][iGrp]->Write();
@@ -2038,7 +2037,7 @@ void StEpdEpManager::initEpdFullEpShift()
   {
     std::string histName = Form("h_mEpdEp1SideShiftFullCorrCent%d",iCent); // 1st EP
     h_mEpdEp1SideShiftFullCorr[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
-    for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
       histName = Form("h_mEpdEp1Grp%dShiftFullCorrCent%d",iGrp,iCent);
       h_mEpdEp1GrpShiftFullCorr[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
@@ -2061,7 +2060,7 @@ void StEpdEpManager::writeEpdFullEpShift()
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     h_mEpdEp1SideShiftFullCorr[iCent]->Write();
-    for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
       h_mEpdEp1GrpShiftFullCorr[iCent][iGrp]->Write();
     }

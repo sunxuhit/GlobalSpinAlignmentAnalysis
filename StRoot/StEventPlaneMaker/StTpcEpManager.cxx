@@ -1,4 +1,3 @@
-#include "StMessMgr.h"
 #include "TMath.h"
 #include "TString.h"
 #include "TFile.h"

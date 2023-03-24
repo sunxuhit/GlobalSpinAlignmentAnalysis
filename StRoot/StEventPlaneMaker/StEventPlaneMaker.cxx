@@ -2,10 +2,12 @@
 
 #include <TH1F.h>
 #include <TH2F.h>
+#include <TProfile.h>
 #include <TFile.h>
 #include <TVector3.h>
 #include <TMath.h>
 
+#include "StMessMgr.h"
 #include "StPicoDstMaker/StPicoDstMaker.h"
 #include "StPicoEvent/StPicoDst.h"
 #include "StPicoEvent/StPicoEvent.h"
@@ -13,13 +15,16 @@
 #include "StPicoEvent/StPicoEpdHit.h"
 #include "StRefMultCorr/StRefMultCorr.h"
 #include "StRefMultCorr/CentralityMaker.h"
+#include "StRoot/StPileupUtil/StPileupUtil.h"
 
 #include "Utility/include/StSpinAlignmentCons.h"
+#include "StRoot/StAnalysisUtils/StAnalysisCons.h"
 #include "StRoot/StAnalysisUtils/StAnalysisUtils.h"
 #include "StRoot/StAnalysisUtils/StAnalysisCut.h"
 #include "StRoot/StEventPlaneMaker/StZdcEpManager.h"
 #include "StRoot/StEventPlaneMaker/StEpdEpManager.h"
 #include "StRoot/StEventPlaneMaker/StTpcEpManager.h"
+#include "StRoot/StEventPlaneMaker/StMixEpManager.h"
 #include "StRoot/StEventPlaneMaker/StEventPlaneMaker.h"
 
 ClassImp(StEventPlaneMaker)
@@ -27,11 +32,10 @@ ClassImp(StEventPlaneMaker)
 //-----------------------------------------------------------------------------
 StEventPlaneMaker::StEventPlaneMaker(const char* name, StPicoDstMaker *picoMaker, const string jobId, const int mode, const int beamType) : StMaker(name), mMode(mode), mType(beamType)
 {
-  mPicoDstMaker = picoMaker;
-  mPicoDst = NULL;
-  mRefMultCorr = NULL;
-  // mMode = Mode;
-  // mType = beamType;
+  mPicoDstMaker      = picoMaker;
+  mPicoDst           = NULL;
+  mRefMultCorr       = NULL;
+  mPileupUtilFxt3p85 = NULL;
 
   if(mMode == 0) // fill Gain Correction for ZDC & phi Weight for EPD
   {
@@ -68,6 +72,7 @@ int StEventPlaneMaker::Init()
   mZdcEpManager = new StZdcEpManager(mType); // initialize ZDC EP Manager
   mEpdEpManager = new StEpdEpManager(mType); // initialize EPD EP Manager
   mTpcEpManager = new StTpcEpManager(mType); // initialize TPC EP Manager
+  mMixEpManager = new StMixEpManager(mType); // initialize Mix EP Manager
   mAnaCut       = new StAnalysisCut(mType);
   mAnaUtils     = new StAnalysisUtils(mType);
   mAnaUtils->initRunIndex(); // initialize std::map for run index
@@ -76,6 +81,11 @@ int StEventPlaneMaker::Init()
   {
     if( mAnaCut->isIsobar() ) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr_Isobar();
     if( mAnaCut->isFxt3p85GeV_2018() ) mRefMultCorr = CentralityMaker::instance()->getRefMultCorr();
+  }
+  if(mAnaCut->isFxt3p85GeV_2018() && !mPileupUtilFxt3p85)
+  {
+    mPileupUtilFxt3p85 = new StPileupUtil();
+    mPileupUtilFxt3p85->init();
   }
 
   if(mMode == 0)
@@ -155,6 +165,8 @@ int StEventPlaneMaker::Init()
     mTpcEpManager->readTpcShift();
     mTpcEpManager->initTpcResolution();
     mTpcEpManager->initTpcSubEpShift();
+
+    mMixEpManager->initMixEpRes(); // Mix
   }
   if(mMode == 5)
   { // calculate charged hadron v1 from ZDC & EPD and charged hadron v2 and v3 from TPC
@@ -177,6 +189,9 @@ int StEventPlaneMaker::Init()
     mTpcEpManager->readTpcShift();
     mTpcEpManager->readTpcResolution();
     mTpcEpManager->initTpcSubEpFlow();
+
+    mMixEpManager->readMixEpRes();
+    mMixEpManager->initMixSubEpFlow();
   }
 
   return kStOK;
@@ -256,6 +271,8 @@ int StEventPlaneMaker::Finish()
 
       mTpcEpManager->writeTpcResolution(); // TPC
       mTpcEpManager->writeTpcSubEpShift();
+
+      mMixEpManager->writeMixEpRes();
       file_mOutPutResolution->Close();
     }
   }
@@ -267,6 +284,7 @@ int StEventPlaneMaker::Finish()
       mZdcEpManager->writeZdcFullEpFlow(); // ZDC
       mEpdEpManager->writeEpdSubEpFlow(); // EPD
       mTpcEpManager->writeTpcSubEpFlow(); // TPC
+      mMixEpManager->writeMixSubEpFlow(); // TPC
       file_mOutPutFlow->Close();
     }
   }
@@ -304,19 +322,16 @@ int StEventPlaneMaker::Make()
   {
     // Event Information
     const int runId        = mPicoEvent->runId();
-    const int refMult      = mPicoEvent->refMult();
-    // const int grefMult     = mPicoEvent->grefMult();
+    int refMult            = mPicoEvent->refMult();
     const TVector3 primVtx = mPicoEvent->primaryVertex();
-    // const double vx        = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
-    // const double vy        = mPicoEvent->primaryVertex().y();
-    const double vz        = mPicoEvent->primaryVertex().z();
-    // const double vzVpd     = mPicoEvent->vzVpd();
+    const double primVz    = mPicoEvent->primaryVertex().z();
     const double zdcX      = mPicoEvent->ZDCx();
-    // const unsigned short nBTofHits  = mPicoEvent->btofTrayMultiplicity();
-    // const unsigned int nBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
     const unsigned short nBTofMatch = mPicoEvent->nBTOFMatch();     // get number of tof match points
     const unsigned int nTracks      = mPicoDst->numberOfTracks();   // get number of tracks
     const unsigned int nEpdHits     = mPicoDst->numberOfEpdHits();  // get number of EPD hits
+    const int runIndex = mAnaUtils->findRunIndex(runId); // find run index for a specific run
+    const int vzBin    = mAnaUtils->getVzBin(primVz); // 0 for -vz || 1 for +vz
+    // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
 
     // StRefMultCorr Cut & centrality
     if(!mRefMultCorr)
@@ -325,8 +340,19 @@ int StEventPlaneMaker::Make()
       return kStErr;
     }
 
+    // get centrality9 and reweight
     mRefMultCorr->init(runId);
-    mRefMultCorr->initEvent(refMult,vz,zdcX);
+    mRefMultCorr->initEvent(refMult,primVz,zdcX);
+    int cent9     = mRefMultCorr->getCentralityBin9(); // get Centrality9
+    double refWgt = mRefMultCorr->getWeight(); // get weight
+    if(mAnaCut->isFxt3p85GeV_2018()) // only for Fxt3p85GeV_2018
+    { 
+      mPileupUtilFxt3p85->initEvent(mPicoDst);
+      refMult = mPileupUtilFxt3p85->get_refMultPrim();
+      cent9   = mPileupUtilFxt3p85->get_centrality9();
+      refWgt  = mPileupUtilFxt3p85->get_centralityWeight();
+    }
+
     if(mRefMultCorr->isBadRun(runId))
     {
       LOG_ERROR << "Bad Run from StRefMultCorr! Skip!" << endm;
@@ -337,29 +363,25 @@ int StEventPlaneMaker::Make()
       LOG_ERROR << "Bad Run from StAnalysisUtils! Skip!" << endm;
       return kStErr;
     }
-
-    const int cent9       = mRefMultCorr->getCentralityBin9(); // get Centrality9
-    const double reweight = mRefMultCorr->getWeight(); // get weight
-    const int runIndex    = mAnaUtils->findRunIndex(runId); // find run index for a specific run
-    // const int triggerBin  = mAnaUtils->getTriggerBin(mPicoEvent);
-    const int vzBin       = mAnaUtils->getVzBin(vz); // 0 for -vz || 1 for +vz
-    // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
     if(runIndex < 0)
     {
       LOG_ERROR << "Could not find this run Index from StAnalysisUtils! Skip!" << endm;
       return kStErr;
     }
 
-    bool isPileUpEventStAnalysisCut = mAnaCut->isPileUpEvent((double)refMult, (double)nBTofMatch,vz); // alway return false for Isobar & Fxt (for now)
-    bool isPileUpEventStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut((double)refMult, (double)nBTofMatch,vz); // valid for Isobar || NOT for Fxt
-    bool isPileUpEvent = isPileUpEventStAnalysisCut || isPileUpEventStRefMultCorr;
-    // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpEventStAnalysisCut = " << isPileUpEventStAnalysisCut << ", isPileUpEventStRefMultCorr = " << isPileUpEventStRefMultCorr << endl;
+    bool isPileUpStAnalysisCut = mAnaCut->isPileUpEvent((double)refMult, (double)nBTofMatch,primVz); // alway return false for Isobar & Fxt3p85GeV_2018
+    bool isPileUpStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut((double)refMult, (double)nBTofMatch,primVz); // valid for Isobar
+    if(mAnaCut->isFxt3p85GeV_2018()) isPileUpStRefMultCorr = mPileupUtilFxt3p85->isPileupEPD(); // valid only for Fxt3p85GeV_2018
+    bool isPileUpEvent = isPileUpStAnalysisCut || isPileUpStRefMultCorr;
+    // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpStAnalysisCut = " << isPileUpStAnalysisCut << ", isPileUpStRefMultCorr = " << isPileUpStRefMultCorr << endl;
 
     if(!isPileUpEvent && mAnaCut->isGoodCent9(cent9) && mAnaCut->passEventCut(mPicoEvent))
     { // apply Event Cuts for anlaysis 
       mZdcEpManager->initZdcEpManager(cent9,runIndex,vzBin); // initialize ZDC EP Manager
       mEpdEpManager->initEpdEpManager(cent9,runIndex,vzBin); // initialize EPD EP Manager
       mTpcEpManager->initTpcEpManager(cent9,runIndex,vzBin); // initialize TPC EP Manager
+      mMixEpManager->initMixEpManager(cent9);                // initialize Mix EP Manager
+
       if(mMode == 0)
       { // fill Gain Correction Factors for ZDC
 	for(int iSlat = 0; iSlat < 8; ++iSlat) // read in raw ADC value from ZDC-SMD
@@ -409,8 +431,8 @@ int StEventPlaneMaker::Make()
 	  mEpdEpManager->fillEpdSubEpSideRaw(Psi1SideRawEast,Psi1SideRawWest,Psi1SideRawFull);
 	}
 
-	TVector2 vQ1EpdGrpEast[mNumGroups], vQ1EpdGrpWest[mNumGroups], vQ1EpdGrpFull[mNumGroups];
-	for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+	TVector2 vQ1EpdGrpEast[mNumRingsGrps], vQ1EpdGrpWest[mNumRingsGrps], vQ1EpdGrpFull[mNumRingsGrps];
+	for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
 	{
 	  vQ1EpdGrpEast[iGrp] = mEpdEpManager->getQ1VecGrpRawEast(iGrp); // get Q1Vector from EPD groups
 	  vQ1EpdGrpWest[iGrp] = mEpdEpManager->getQ1VecGrpRawWest(iGrp);
@@ -530,8 +552,8 @@ int StEventPlaneMaker::Make()
 	    mEpdEpManager->fillEpdSubEpSideWgt(Psi1SideWgtEast, Psi1SideWgtWest, Psi1SideWgtFull);
 	  }
 
-	  TVector2 vQ1EpdGrpEast[mNumGroups], vQ1EpdGrpWest[mNumGroups], vQ1EpdGrpFull[mNumGroups];
-	  for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+	  TVector2 vQ1EpdGrpEast[mNumRingsGrps], vQ1EpdGrpWest[mNumRingsGrps], vQ1EpdGrpFull[mNumRingsGrps];
+	  for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
 	  {
 	    vQ1EpdGrpEast[iGrp] = mEpdEpManager->getQ1VecGrpWgtEast(iGrp); // get Q1Vector from EPD groups
 	    vQ1EpdGrpWest[iGrp] = mEpdEpManager->getQ1VecGrpWgtWest(iGrp);
@@ -586,8 +608,8 @@ int StEventPlaneMaker::Make()
 	    mEpdEpManager->fillEpdSideShiftWest();
 	  }
 
-	  TVector2 vQ1EpdGrpEast[mNumGroups], vQ1EpdGrpWest[mNumGroups], vQ1EpdGrpFull[mNumGroups];
-	  for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+	  TVector2 vQ1EpdGrpEast[mNumRingsGrps], vQ1EpdGrpWest[mNumRingsGrps], vQ1EpdGrpFull[mNumRingsGrps];
+	  for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
 	  {
 	    vQ1EpdGrpEast[iGrp] = mEpdEpManager->getQ1VecGrpReCtrEast(iGrp); // get Q1Vector from EPD groups
 	    vQ1EpdGrpWest[iGrp] = mEpdEpManager->getQ1VecGrpReCtrWest(iGrp);
@@ -645,8 +667,8 @@ int StEventPlaneMaker::Make()
 	    mEpdEpManager->fillEpdSideShiftFull();
 	  }
 
-	  TVector2 vQ1EpdGrpEast[mNumGroups], vQ1EpdGrpWest[mNumGroups], vQ1EpdGrpFull[mNumGroups];
-	  for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+	  TVector2 vQ1EpdGrpEast[mNumRingsGrps], vQ1EpdGrpWest[mNumRingsGrps], vQ1EpdGrpFull[mNumRingsGrps];
+	  for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
 	  {
 	    vQ1EpdGrpEast[iGrp] = mEpdEpManager->getQ1VecGrpShiftEast(iGrp); // get Q1Vector from EPD groups
 	    vQ1EpdGrpWest[iGrp] = mEpdEpManager->getQ1VecGrpShiftWest(iGrp);
@@ -688,9 +710,9 @@ int StEventPlaneMaker::Make()
 	    mEpdEpManager->fillEpdSideResolution(Psi1SideShiftEast, Psi1SideShiftWest);
 	  }
 
-	  TVector2 vQ1EpdGrpEast[mNumGroups], vQ1EpdGrpWest[mNumGroups], vQ1EpdGrpFull[mNumGroups]; 
-	  // TVector2 vQ1EpdGrpFullCorr[mNumGroups];
-	  for(int iGrp = 0; iGrp < mNumGroups; ++iGrp)
+	  TVector2 vQ1EpdGrpEast[mNumRingsGrps], vQ1EpdGrpWest[mNumRingsGrps], vQ1EpdGrpFull[mNumRingsGrps]; 
+	  // TVector2 vQ1EpdGrpFullCorr[mNumRingsGrps];
+	  for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
 	  {
 	    vQ1EpdGrpEast[iGrp]     = mEpdEpManager->getQ1VecGrpShiftEast(iGrp); // get Q1Vector from EPD
 	    vQ1EpdGrpWest[iGrp]     = mEpdEpManager->getQ1VecGrpShiftWest(iGrp);
@@ -735,6 +757,24 @@ int StEventPlaneMaker::Make()
 	    mTpcEpManager->fillTpcSubEpShift(Psi1ShiftEast, Psi1ShiftWest, Psi1ShiftFull, Psi2ShiftEast, Psi2ShiftWest, Psi2ShiftFull, Psi3ShiftEast, Psi3ShiftWest, Psi3ShiftFull);
 	    mTpcEpManager->fillTpcResolution(Psi1ShiftEast, Psi1ShiftWest, Psi2ShiftEast, Psi2ShiftWest, Psi3ShiftEast, Psi3ShiftWest);
 	  }
+
+	  if(mAnaCut->isFxt3p85GeV_2018()) // 3-sub events method
+	  {
+	    if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[0],vQ1EpdGrpWest[0],vQ1EpdGrpFull[0],0) &&
+		mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[1],vQ1EpdGrpWest[1],vQ1EpdGrpFull[1],1) &&
+		mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest) )
+	    {
+	      const double Psi1EpdGrp0East = mEpdEpManager->getPsi1GrpShiftEast(0); // Psi1 from EPD Grp 0
+	      const double Psi1EpdGrp1East = mEpdEpManager->getPsi1GrpShiftEast(1); // Psi1 from EPD Grp 1
+
+	      const TVector2 vQ1TpcEast = mTpcEpManager->getQ1VecReCtrEast();
+	      const TVector2 vQ1TpcWest = mTpcEpManager->getQ1VecReCtrWest();
+	      const double Psi1TpcEast = mTpcEpManager->getPsi1ShiftEast(vQ1TpcEast); // Psi1 from TPC East
+	      const double Psi1TpcWest = mTpcEpManager->getPsi1ShiftWest(vQ1TpcWest); // Psi1 from TPC West 
+
+	      mMixEpManager->fillMixEpRes(Psi1EpdGrp0East,Psi1EpdGrp1East,Psi1TpcEast,Psi1TpcWest);
+	    }
+	  }
 	}
 	if(mMode == 5) // calculate charged hadron v1 from ZDC & EPD and charged hadron v2 and v3 from TPC
 	{
@@ -757,7 +797,7 @@ int StEventPlaneMaker::Make()
 	      if(mAnaCut->passTrkTpcFlowFull(picoTrack, primVtx))
 	      {
 		const double v1Zdc = TMath::Cos(1.0*(phi-Psi1ZdcFull))/mZdcEpManager->getZdcFullEpResVal(cent9);
-		mZdcEpManager->fillZdcFullEpV1(eta, pt, v1Zdc, reweight);
+		mZdcEpManager->fillZdcFullEpV1(eta, pt, v1Zdc, refWgt);
 	      }
 	    }
 	  }
@@ -781,12 +821,12 @@ int StEventPlaneMaker::Make()
 	      if( mAnaCut->passHitEpdFlowEast(picoEpdHit) ) // negative eta
 	      {
 		const double v1Epd = TMath::Cos(1.0*(phi-Psi1SideEpdWest))/mEpdEpManager->getEpdSubEp1SideResVal(cent9);
-		mEpdEpManager->fillEpdSubEpV1(eta, v1Epd, reweight);
+		mEpdEpManager->fillEpdSubEpV1(eta, v1Epd, refWgt);
 	      }
 	      if( mAnaCut->passHitEpdFlowWest(picoEpdHit) ) // positive eta
 	      {
 		const double v1Epd = TMath::Cos(1.0*(phi-Psi1SideEpdEast))/mEpdEpManager->getEpdSubEp1SideResVal(cent9);
-		mEpdEpManager->fillEpdSubEpV1(eta, v1Epd, reweight);
+		mEpdEpManager->fillEpdSubEpV1(eta, v1Epd, refWgt);
 	      }
 	    }
 	    for(unsigned int iTrack = 0; iTrack < nTracks; ++iTrack)	  
@@ -803,12 +843,12 @@ int StEventPlaneMaker::Make()
 	      if(mAnaCut->passTrkTpcFlowEast(picoTrack, primVtx) && pt > 0.15 && pt < 2.0) // negative eta
 	      { // correlate track from East to EP from West EPD
 		const double v1Epd = TMath::Cos(1.0*(phi-Psi1SideEpdWest))/mEpdEpManager->getEpdSubEp1SideResVal(cent9);
-		mEpdEpManager->fillEpdSubEpV1(eta, v1Epd, reweight);
+		mEpdEpManager->fillEpdSubEpV1(eta, v1Epd, refWgt);
 	      }
 	      if(mAnaCut->passTrkTpcFlowWest(picoTrack, primVtx) && pt > 0.15 && pt < 2.0 ) // positive eta
 	      { // correlate track from West to EP from East EPD
 		const double v1Epd = TMath::Cos(1.0*(phi-Psi1SideEpdEast))/mEpdEpManager->getEpdSubEp1SideResVal(cent9);
-		mEpdEpManager->fillEpdSubEpV1(eta, v1Epd, reweight);
+		mEpdEpManager->fillEpdSubEpV1(eta, v1Epd, refWgt);
 	      }
 	    }
 	  }
@@ -846,17 +886,17 @@ int StEventPlaneMaker::Make()
 		if(mTpcEpManager->getTpcSubEp1ResVal(cent9) > 0.0)
 		{
 		  const double v1Tpc = TMath::Cos(1.0*(phi-Psi1TpcWest))/mTpcEpManager->getTpcSubEp1ResVal(cent9);
-		  mTpcEpManager->fillTpcSubEpV1(pt, v1Tpc, reweight);
+		  mTpcEpManager->fillTpcSubEpV1(pt, v1Tpc, refWgt);
 		}
 		if(mTpcEpManager->getTpcSubEp2ResVal(cent9) > 0.0)
 		{
 		  const double v2Tpc = TMath::Cos(2.0*(phi-Psi2TpcWest))/mTpcEpManager->getTpcSubEp2ResVal(cent9);
-		  mTpcEpManager->fillTpcSubEpV2(pt, v2Tpc, reweight);
+		  mTpcEpManager->fillTpcSubEpV2(pt, v2Tpc, refWgt);
 		}
 		if(mTpcEpManager->getTpcSubEp3ResVal(cent9) > 0.0)
 		{
 		  const double v3Tpc = TMath::Cos(3.0*(phi-Psi3TpcWest))/mTpcEpManager->getTpcSubEp3ResVal(cent9);
-		  mTpcEpManager->fillTpcSubEpV3(pt, v3Tpc, reweight);
+		  mTpcEpManager->fillTpcSubEpV3(pt, v3Tpc, refWgt);
 		}
 	      }
 	      if(mAnaCut->passTrkTpcFlowWest(picoTrack, primVtx)) // positive eta
@@ -864,17 +904,53 @@ int StEventPlaneMaker::Make()
 		if(mTpcEpManager->getTpcSubEp1ResVal(cent9) > 0.0)
 		{
 		  const double v1Tpc = TMath::Cos(1.0*(phi-Psi1TpcEast))/mTpcEpManager->getTpcSubEp1ResVal(cent9);
-		  mTpcEpManager->fillTpcSubEpV1(pt, v1Tpc, reweight);
+		  mTpcEpManager->fillTpcSubEpV1(pt, v1Tpc, refWgt);
 		}
 		if(mTpcEpManager->getTpcSubEp2ResVal(cent9) > 0.0)
 		{
 		  const double v2Tpc = TMath::Cos(2.0*(phi-Psi2TpcEast))/mTpcEpManager->getTpcSubEp2ResVal(cent9);
-		  mTpcEpManager->fillTpcSubEpV2(pt, v2Tpc, reweight);
+		  mTpcEpManager->fillTpcSubEpV2(pt, v2Tpc, refWgt);
 		}
 		if(mTpcEpManager->getTpcSubEp3ResVal(cent9) > 0.0)
 		{
 		  const double v3Tpc = TMath::Cos(3.0*(phi-Psi3TpcEast))/mTpcEpManager->getTpcSubEp3ResVal(cent9);
-		  mTpcEpManager->fillTpcSubEpV3(pt, v3Tpc, reweight);
+		  mTpcEpManager->fillTpcSubEpV3(pt, v3Tpc, refWgt);
+		}
+	      }
+	    }
+	  }
+
+	  if(mAnaCut->isFxt3p85GeV_2018()) // 3-sub events method
+	  {
+	    TVector2 vQ1EpdGrpEast[mNumRingsGrps], vQ1EpdGrpWest[mNumRingsGrps], vQ1EpdGrpFull[mNumRingsGrps]; 
+	    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
+	    {
+	      vQ1EpdGrpEast[iGrp] = mEpdEpManager->getQ1VecGrpShiftEast(iGrp); // get Q1Vector from EPD
+	      vQ1EpdGrpWest[iGrp] = mEpdEpManager->getQ1VecGrpShiftWest(iGrp);
+	      vQ1EpdGrpFull[iGrp] = mEpdEpManager->getQ1VecGrpShiftFull(iGrp);
+	    }
+
+	    if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[0],vQ1EpdGrpWest[0],vQ1EpdGrpFull[0],0) &&
+		mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[1],vQ1EpdGrpWest[1],vQ1EpdGrpFull[1],1) &&
+		mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest) )
+	    {
+	      const double Psi1EpdGrp0East = mEpdEpManager->getPsi1GrpShiftEast(0); // Psi1 from EPD Grp 0
+	      for(unsigned int iTrack = 0; iTrack < nTracks; ++iTrack)	  
+	      { // calculate charged charged hadron v2 & v3 int TPC w.r.t TPC
+		StPicoTrack *picoTrack = (StPicoTrack*)mPicoDst->track(iTrack);
+		if(!picoTrack) continue;
+
+		const TVector3 primMom = picoTrack->pMom(); // primary Momentum
+		const double phi = primMom.Phi(); // -pi to pi
+		const double pMag  = primMom.Mag();
+		const double yLab = mAnaUtils->getRapidityLab(picoTrack, 1234); // calculate deuteron rapidity in lab frame
+		const double deuteronZ = mAnaUtils->calcNSigmaZ(1.0,anaUtils::mMassDeuteron,pMag,picoTrack->dEdx()); // assume every track is deutron
+
+		if(mAnaCut->passTrkDeuFlow(pMag,deuteronZ))
+		{
+		  const double yCMS = mAnaUtils->getRapidityCMS(yLab);
+		  const double v1Epd = TMath::Cos(1.0*(phi-Psi1EpdGrp0East))/mMixEpManager->getMixSubEp1ResVal(cent9,0);
+		  mMixEpManager->fillMixSubEpDeuV1(yCMS, v1Epd, refWgt);
 		}
 	      }
 	    }
@@ -884,6 +960,7 @@ int StEventPlaneMaker::Make()
       mZdcEpManager->clearZdcEpManager();
       mEpdEpManager->clearEpdEpManager();
       mTpcEpManager->clearTpcEpManager();
+      mMixEpManager->clearMixEpManager();
     }
   }
 

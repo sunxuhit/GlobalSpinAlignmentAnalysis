@@ -92,8 +92,8 @@ bool StAnalysisCut::passEventCut(StPicoEvent *picoEvent)
     return false;
   }
   // vr cut
-  const double vxReCtr = vx - anaUtils::mVxCtr[mType];
-  const double vyReCtr = vy - anaUtils::mVyCtr[mType];
+  const double vxReCtr = vx - anaUtils::mVxCtr[mType]; // equal to StAnalysisUtils::getVxReCtr
+  const double vyReCtr = vy - anaUtils::mVyCtr[mType]; // equal to StAnalysisUtils::getVyReCtr
   if(sqrt(vxReCtr*vxReCtr+vyReCtr*vyReCtr) > anaUtils::mVrMax[mType])
   {
     return false;
@@ -462,12 +462,12 @@ bool StAnalysisCut::passQVecEpdGrp(TVector2 Q1VecEast, TVector2 Q1VecWest, TVect
   {
     return true;
   }
-  if(isFxt3p85GeV_2018() && grpId == 0 && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
-  {
+  if(isFxt3p85GeV_2018() && grpId == 0 && Q1VecEast.Mod() > 0.0)
+  { // only require East EPD for FXT
     return true;
   }
-  if(isFxt3p85GeV_2018() && grpId == 1 && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
-  {
+  if(isFxt3p85GeV_2018() && grpId == 1 && Q1VecEast.Mod() > 0.0)
+  { // only require East EPD for FXT
     return true;
   }
 
@@ -481,10 +481,59 @@ bool StAnalysisCut::passQVecZdc(TVector2 Q1VecEast, TVector2 Q1VecWest, TVector2
   {
     return true;
   }
-  if(isFxt3p85GeV_2018() && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
-  {
+  if(isFxt3p85GeV_2018() && Q1VecEast.Mod() > 0.0)
+  { // only require East EPD for FXT && NOT really used in FXT
     return true;
   }
+
+  return false;
+}
+
+// only used for deuteron flow comparison in Fxt3p85GeV_2018
+bool StAnalysisCut::passTrkDeuFlow(double pMag, double deuteronZ)
+{
+  double pBins[51] = {
+    0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4,
+    1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.1, 2.2, 2.3, 2.4,
+    2.5, 2.6, 2.7, 2.8, 2.9, 3, 3.1, 3.2, 3.3, 3.4,
+    3.5, 3.6, 3.7, 3.8, 3.9, 4, 4.1, 4.2, 4.3, 4.4,
+    4.5, 4.6, 4.7, 4.8, 4.9, 5, 5.1, 5.2, 5.3, 5.4, 200};
+
+  int theBin = -1;
+
+  for(int no=0; no<50; no++) {
+    if(pMag>=pBins[no] && pMag<pBins[no+1]) {
+      theBin = no;}
+  }
+
+  if(theBin == -1) return false;
+
+  double zMeans[50] = {
+    -0.0832867, -0.0557943, -0.0302878, -0.0154656, 0.00222155, 0.0147798, 0.0243567, 0.0327773, 0.0387324, 0.0372758  ,
+    0.0461688 , 0.061474  , 0.057022  , 0.0480333 , 0.0454707 , 0.0466773, 0.0473922, 0.0470951, 0.0481996, 0.0468892  ,
+    0.0464752 , 0.0473581 , 0.0467947 , 0.0465219 , 0.0474517 , 0.0474816, 0.0454535, 0.0349253, 0.0282318, 0.0248662  ,
+    0.0246939 , 0.0265303 , 0.0284592 , 0.0294229 , 0.0296879 , 0.0322723, 0.0364428, 0.0406073, 0.0451247, 0.0497799  ,
+    0.0550221 , 0.061172  , 0.0669082 , 0.0711066 , 0.0890019 , 0.0902058, 0.0907085, 0.0915537, 0.0914749, 0.0874104};
+
+  double dsigma = deuteronZ - zMeans[theBin];
+
+  // default z cuts
+  double lowZ[30] = {
+    -0.27 , -0.27 , -0.27 , -0.27 , -0.27 , -0.27 , -0.27 , -0.27 , -0.27 , -0.24,
+    -0.22, -0.20, -0.18, -0.16, -0.13, -0.11, -0.09, -0.07, -0.05, -0.04  ,
+    -0.04, -0.03, -0.02, -0.01, -0.02, -0.04, -0.06, -0.08, -0.1 , -0.12};
+
+  double highZ[30] = {
+    0.27 , 0.27 , 0.27 , 0.27 , 0.27 , 0.27 , 0.27 , 0.27 , 0.27 , 0.27,
+    0.27, 0.27, 0.27, 0.26, 0.25, 0.24, 0.22, 0.21, 0.19, 0.17,
+    0.14, 0.13, 0.12, 0.11, 0.13, 0.13, 0.12, 0.11, 0.09, 0.08};
+
+  if(pMag<0.8 && dsigma>=-0.3 && dsigma<0.3)
+    return true;
+  else if(pMag>=0.8 && pMag<3.2 && dsigma>lowZ[theBin-3] && dsigma<highZ[theBin-3])
+    return true;
+  else if(pMag>=3.2 && dsigma>=-0.4 && dsigma<0.4 && mMass2<=4.8 && mMass2>=2.8)
+    return true;
 
   return false;
 }

@@ -197,31 +197,31 @@ void StRunQAHistoManager::initTrackQA()
 
       // test StAnalysisCuts
       histName = Form("h_mPrimEtaEpFull%sTrigger%d",str_mCutStatus[iCut].c_str(),iTrig);
-      h_mPrimEtaEpFull[iCut][iTrig] = new TH1F(histName.c_str(),histName.c_str(),201,-10.05,10.05);
+      h_mPrimEtaEpFull[iCut][iTrig] = new TH1F(histName.c_str(),histName.c_str(),402,-10.05,10.05);
 
       histName = Form("h_mPrimEtaEpEast%sTrigger%d",str_mCutStatus[iCut].c_str(),iTrig);
-      h_mPrimEtaEpEast[iCut][iTrig] = new TH1F(histName.c_str(),histName.c_str(),201,-10.05,10.05);
+      h_mPrimEtaEpEast[iCut][iTrig] = new TH1F(histName.c_str(),histName.c_str(),402,-10.05,10.05);
 
       histName = Form("h_mPrimEtaEpWest%sTrigger%d",str_mCutStatus[iCut].c_str(),iTrig);
-      h_mPrimEtaEpWest[iCut][iTrig] = new TH1F(histName.c_str(),histName.c_str(),201,-10.05,10.05);
+      h_mPrimEtaEpWest[iCut][iTrig] = new TH1F(histName.c_str(),histName.c_str(),402,-10.05,10.05);
 
       histName = Form("h_mPrimEtaFlowFull%sTrigger%d",str_mCutStatus[iCut].c_str(),iTrig);
-      h_mPrimEtaFlowFull[iCut][iTrig] = new TH1F(histName.c_str(),histName.c_str(),201,-10.05,10.05);
+      h_mPrimEtaFlowFull[iCut][iTrig] = new TH1F(histName.c_str(),histName.c_str(),402,-10.05,10.05);
 
       histName = Form("h_mPrimEtaFlowEast%sTrigger%d",str_mCutStatus[iCut].c_str(),iTrig);
-      h_mPrimEtaFlowEast[iCut][iTrig] = new TH1F(histName.c_str(),histName.c_str(),201,-10.05,10.05);
+      h_mPrimEtaFlowEast[iCut][iTrig] = new TH1F(histName.c_str(),histName.c_str(),402,-10.05,10.05);
 
       histName = Form("h_mPrimEtaFlowWest%sTrigger%d",str_mCutStatus[iCut].c_str(),iTrig);
-      h_mPrimEtaFlowWest[iCut][iTrig] = new TH1F(histName.c_str(),histName.c_str(),201,-10.05,10.05);
+      h_mPrimEtaFlowWest[iCut][iTrig] = new TH1F(histName.c_str(),histName.c_str(),402,-10.05,10.05);
 
       histName = Form("h_mPrimEtaNSigKaonFull%sTrigger%d",str_mCutStatus[iCut].c_str(),iTrig);
-      h_mPrimEtaNSigKaonFull[iCut][iTrig] = new TH2F(histName.c_str(),histName.c_str(),201,-10.05,10.05,201,-10.05,10.05);
+      h_mPrimEtaNSigKaonFull[iCut][iTrig] = new TH2F(histName.c_str(),histName.c_str(),402,-10.05,10.05,201,-10.05,10.05);
 
       histName = Form("h_mPrimEtaNSigKaonEast%sTrigger%d",str_mCutStatus[iCut].c_str(),iTrig);
-      h_mPrimEtaNSigKaonEast[iCut][iTrig] = new TH2F(histName.c_str(),histName.c_str(),201,-10.05,10.05,201,-10.05,10.05);
+      h_mPrimEtaNSigKaonEast[iCut][iTrig] = new TH2F(histName.c_str(),histName.c_str(),402,-10.05,10.05,201,-10.05,10.05);
 
       histName = Form("h_mPrimEtaNSigKaonWest%sTrigger%d",str_mCutStatus[iCut].c_str(),iTrig);
-      h_mPrimEtaNSigKaonWest[iCut][iTrig] = new TH2F(histName.c_str(),histName.c_str(),201,-10.05,10.05,201,-10.05,10.05);
+      h_mPrimEtaNSigKaonWest[iCut][iTrig] = new TH2F(histName.c_str(),histName.c_str(),402,-10.05,10.05,201,-10.05,10.05);
     }
   }
 }

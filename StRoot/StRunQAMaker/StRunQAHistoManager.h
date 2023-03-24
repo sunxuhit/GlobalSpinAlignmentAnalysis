@@ -64,8 +64,8 @@ class StRunQAHistoManager
     TH2F *h_mMomDEdx[mNumCuts][mNumTriggerBins];
     TH2F *h_mMomMass2[mNumCuts][mNumTriggerBins];
     TH2F *h_mMomBeta[mNumCuts][mNumTriggerBins];
-
-    TH1F *h_mPrimEtaEpFull[mNumCuts][mNumTriggerBins]; // test StAnalysisCuts
+    // test StAnalysisCuts
+    TH1F *h_mPrimEtaEpFull[mNumCuts][mNumTriggerBins];
     TH1F *h_mPrimEtaEpEast[mNumCuts][mNumTriggerBins];
     TH1F *h_mPrimEtaEpWest[mNumCuts][mNumTriggerBins];
     TH1F *h_mPrimEtaFlowFull[mNumCuts][mNumTriggerBins];
