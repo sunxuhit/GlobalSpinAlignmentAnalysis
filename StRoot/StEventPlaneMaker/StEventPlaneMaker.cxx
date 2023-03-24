@@ -941,12 +941,13 @@ int StEventPlaneMaker::Make()
 		if(!picoTrack) continue;
 
 		const TVector3 primMom = picoTrack->pMom(); // primary Momentum
-		const double phi = primMom.Phi(); // -pi to pi
-		const double pMag  = primMom.Mag();
-		const double yLab = mAnaUtils->getRapidityLab(picoTrack, 1234); // calculate deuteron rapidity in lab frame
+		const double phi       = primMom.Phi(); // -pi to pi
+		const double pMag      = primMom.Mag();
+		const double yLab      = mAnaUtils->getRapidityLab(picoTrack, 1234); // calculate deuteron rapidity in lab frame
 		const double deuteronZ = mAnaUtils->calcNSigmaZ(1.0,anaUtils::mMassDeuteron,pMag,picoTrack->dEdx()); // assume every track is deutron
+		const double mass2     = mAnaUtils->getPrimMass2(mPicoDst,iTrack);
 
-		if(mAnaCut->passTrkDeuFlow(pMag,deuteronZ))
+		if(mAnaCut->passTrkDeuFlow(pMag,deuteronZ,mass2))
 		{
 		  const double yCMS = mAnaUtils->getRapidityCMS(yLab);
 		  const double v1Epd = TMath::Cos(1.0*(phi-Psi1EpdGrp0East))/mMixEpManager->getMixSubEp1ResVal(cent9,0);

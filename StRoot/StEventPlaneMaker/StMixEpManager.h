@@ -19,8 +19,8 @@ class StMixEpManager : public TObject
     void fillMixEpRes(double Psi1EpdGrp0, double Psi1EpdGrp1, double Psi1TpcEast, double Psi1TpcWest);
     void writeMixEpRes();
     void readMixEpRes();
-    double getMixSubEp1ResVal(int cent9, int grpId)
-    double getMixSubEp1ResErr(int cent9, int grpId)
+    double getMixSubEp1ResVal(int cent9, int grpId);
+    double getMixSubEp1ResErr(int cent9, int grpId);
 
     // Deuteron Directed Flow
     void initMixSubEpFlow(); // Sub EP

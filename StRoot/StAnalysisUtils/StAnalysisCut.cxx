@@ -490,7 +490,7 @@ bool StAnalysisCut::passQVecZdc(TVector2 Q1VecEast, TVector2 Q1VecWest, TVector2
 }
 
 // only used for deuteron flow comparison in Fxt3p85GeV_2018
-bool StAnalysisCut::passTrkDeuFlow(double pMag, double deuteronZ)
+bool StAnalysisCut::passTrkDeuFlow(double pMag, double deuteronZ, double mass2)
 {
   double pBins[51] = {
     0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4,
@@ -532,7 +532,7 @@ bool StAnalysisCut::passTrkDeuFlow(double pMag, double deuteronZ)
     return true;
   else if(pMag>=0.8 && pMag<3.2 && dsigma>lowZ[theBin-3] && dsigma<highZ[theBin-3])
     return true;
-  else if(pMag>=3.2 && dsigma>=-0.4 && dsigma<0.4 && mMass2<=4.8 && mMass2>=2.8)
+  else if(pMag>=3.2 && dsigma>=-0.4 && dsigma<0.4 && mass2<=4.8 && mass2>=2.8)
     return true;
 
   return false;

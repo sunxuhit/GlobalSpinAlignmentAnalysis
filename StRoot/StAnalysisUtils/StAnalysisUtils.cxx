@@ -228,14 +228,14 @@ int StAnalysisUtils::getVzBin(double vz)
 
 double StAnalysisUtils::getVxReCtr(double vx)
 {
-  double vxReCtr = vx - anaUtils::mVxCtr[mType]
+  double vxReCtr = vx - anaUtils::mVxCtr[mType];
 
   return vxReCtr;
 }
 
 double StAnalysisUtils::getVyReCtr(double vy)
 {
-  double vyReCtr = vy - anaUtils::mVyCtr[mType]
+  double vyReCtr = vy - anaUtils::mVyCtr[mType];
 
   return vyReCtr;
 }
@@ -251,12 +251,12 @@ double StAnalysisUtils::getRapidityLab(StPicoTrack *picoTrack, int pid)
   if(pid == 333)   mass = anaUtils::mMassPhi; // deutrons 
 
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
-  const primPmag = primMom.Mag();
-  const primPz = primMom.Pz();
+  const double primPmag = primMom.Mag();
+  const double primPz = primMom.Pz();
   if(mass > 0.0)
   {
     const double eLab = TMath::Sqrt(primPmag*primPmag+mass*mass);
-    double rapLab = 0.5*TMath::Log((eLab+primPz)/(eLab-primPz));
+    rapLab = 0.5*TMath::Log((eLab+primPz)/(eLab-primPz));
   }
 
   return rapLab;
@@ -264,7 +264,7 @@ double StAnalysisUtils::getRapidityLab(StPicoTrack *picoTrack, int pid)
 
 double StAnalysisUtils::getRapidityCMS(double rapLab)
 {
-  double rapCtrM = rapLab - anaUtils::mRapCtrM[mType]
+  double rapCtrM = rapLab - anaUtils::mRapCtrM[mType];
 
   return rapCtrM;
 }
@@ -275,7 +275,7 @@ double StAnalysisUtils::calcNSigmaZ(int charge, double mass, double pMag, double
   double dEdxExp = charge*charge*(TMath::Exp(Bichsel::Instance()->GetMostProbableZM(TMath::Log10(pMag*TMath::Abs(charge)/mass), 1)));
   //if(charge==1) dEdxExp = charge*charge*Bichsel::Instance()->GetI70M(TMath::Log10(p*TMath::Abs(charge)/mass));
   //if(charge==2) dEdxExp = charge*charge*Bichsel::Instance()->GetI70M(TMath::Log10(p*TMath::Abs(charge)/mass), 2.321928);
-  sigma = TMath::Log(dedx/dEdxExp);
+  sigma = TMath::Log(dEdx/dEdxExp);
 
   return sigma;
 }

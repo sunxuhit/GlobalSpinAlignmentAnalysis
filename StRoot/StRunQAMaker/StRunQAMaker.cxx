@@ -123,8 +123,8 @@ int StRunQAMaker::Make()
     const double vz        = mPicoEvent->primaryVertex().z();
     const double vzVpd     = mPicoEvent->vzVpd();
     const double zdcX      = mPicoEvent->ZDCx();
-    const double vxReCtr   = mAnaUtils->getVxRectr(vx);
-    const double vyReCtr   = mAnaUtils->getVyRectr(vy);
+    const double vxReCtr   = mAnaUtils->getVxReCtr(vx);
+    const double vyReCtr   = mAnaUtils->getVyReCtr(vy);
     const unsigned short nBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
     const unsigned int nBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
     const unsigned int nTracks      = mPicoDst->numberOfTracks(); // get number of tracks

@@ -58,7 +58,7 @@ class StAnalysisCut : public TObject
     bool passQVecZdc(TVector2 Q1VecEast, TVector2 Q1VecWest, TVector2 Q1VecFull);
 
     // only used for deuteron flow comparison in Fxt3p85GeV_2018
-    bool passTrkDeuFlow(double pMag, double deuteronZ);
+    bool passTrkDeuFlow(double pMag, double deuteronZ, double mass2);
 
   private:
     const int mType;

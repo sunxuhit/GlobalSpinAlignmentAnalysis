@@ -72,7 +72,7 @@ namespace anaUtils
   const double mMassPhiMax   = 1.08;
 
   // rapidity of center of mass system
-  const double mRapCtrM[mNumBeamType] = {0.0, 0.0, -1.045};
+  const double mRapCtrM[mNumBeamUtils] = {0.0, 0.0, -1.045};
 }
 
 #endif
