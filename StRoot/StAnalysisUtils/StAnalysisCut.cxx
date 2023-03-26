@@ -448,8 +448,8 @@ bool StAnalysisCut::passQVecEpdSide(TVector2 Q1VecEast, TVector2 Q1VecWest, TVec
   {
     return true;
   }
-  if(isFxt3p85GeV_2018() && Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() > 0.0 && Q1VecFull.Mod() > 0.0)
-  {
+  if(isFxt3p85GeV_2018() && Q1VecEast.Mod() > 0.0)
+  { // only require East EPD for FXT
     return true;
   }
 
