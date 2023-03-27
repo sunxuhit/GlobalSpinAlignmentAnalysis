@@ -154,11 +154,6 @@ void StEpdEpManager::initMixSubEpRaw()
     h_mEpdEp1Grp0RawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mEpdEp1Grp1RawEastCent%d",iCent);
     h_mEpdEp1Grp1RawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
-
-    histName = Form("h_mTpcEp1RawEastCent%d",iCent); // TPC 1st EP
-    h_mTpcEp1RawEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
-    histName = Form("h_mTpcEp1RawWestCent%d",iCent);
-    h_mTpcEp1RawWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
     {
       histName = Form("h_mMixEp1Grp%dRawCent%d",iGrp,iCent);
@@ -171,8 +166,6 @@ void StEpdEpManager::fillMixSubEpRaw(double Psi1EpdGrp0, double Psi1EpdGrp1, dou
 {
     h_mEpdEp1Grp0RawEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp0);
     h_mEpdEp1Grp1RawEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp1);
-    h_mTpcEp1RawEast[mCent9]->Fill(mRunIndex, Psi1TpcEast);
-    h_mTpcEp1RawWest[mCent9]->Fill(mRunIndex, Psi1TpcWest);
 
     h_mMixEp1RawCorr[mCent9][0]->Fill(Psi1EpdGrp0, Psi1TpcEast); // 0: EpdEpGrp0 vs. TpcEpEast
     h_mMixEp1RawCorr[mCent9][1]->Fill(Psi1EpdGrp0, Psi1TpcWest); // 1: EpdEpGrp0 vs. TpcEpWest
@@ -189,8 +182,6 @@ void StEpdEpManager::writeMixSubEpRaw()
   {
     h_mEpdEp1Grp0RawEast[iCent]->Write();
     h_mEpdEp1Grp1RawEast[iCent]->Write();
-    h_mTpcEp1RawEast[iCent]->Write();
-    h_mTpcEp1RawWest[iCent]->Write();
     for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
     {
       h_mMixEp1RawCorr[iCent][iGrp]->Write();
@@ -206,11 +197,6 @@ void StEpdEpManager::initMixSubEpReCtr()
     h_mEpdEp1Grp0ReCtrEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mEpdEp1Grp1ReCtrEastCent%d",iCent);
     h_mEpdEp1Grp1ReCtrEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
-
-    histName = Form("h_mTpcEp1ReCtrEastCent%d",iCent); // TPC 1st EP
-    h_mTpcEp1ReCtrEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
-    histName = Form("h_mTpcEp1ReCtrWestCent%d",iCent);
-    h_mTpcEp1ReCtrWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
     {
       histName = Form("h_mMixEp1Grp%dReCtrCent%d",iGrp,iCent);
@@ -223,8 +209,6 @@ void StEpdEpManager::fillMixSubEpReCtr(double Psi1EpdGrp0, double Psi1EpdGrp1, d
 {
     h_mEpdEp1Grp0ReCtrEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp0);
     h_mEpdEp1Grp1ReCtrEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp1);
-    h_mTpcEp1ReCtrEast[mCent9]->Fill(mRunIndex, Psi1TpcEast);
-    h_mTpcEp1ReCtrWest[mCent9]->Fill(mRunIndex, Psi1TpcWest);
 
     h_mMixEp1ReCtrCorr[mCent9][0]->Fill(Psi1EpdGrp0, Psi1TpcEast); // 0: EpdEpGrp0 vs. TpcEpEast
     h_mMixEp1ReCtrCorr[mCent9][1]->Fill(Psi1EpdGrp0, Psi1TpcWest); // 1: EpdEpGrp0 vs. TpcEpWest
@@ -241,8 +225,6 @@ void StEpdEpManager::writeMixSubEpReCtr()
   {
     h_mEpdEp1Grp0ReCtrEast[iCent]->Write();
     h_mEpdEp1Grp1ReCtrEast[iCent]->Write();
-    h_mTpcEp1ReCtrEast[iCent]->Write();
-    h_mTpcEp1ReCtrWest[iCent]->Write();
     for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
     {
       h_mMixEp1ReCtrCorr[iCent][iGrp]->Write();
@@ -258,11 +240,6 @@ void StEpdEpManager::initMixSubEpShift()
     h_mEpdEp1Grp0ShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     histName = Form("h_mEpdEp1Grp1ShiftEastCent%d",iCent);
     h_mEpdEp1Grp1ShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
-
-    histName = Form("h_mTpcEp1ShiftEastCent%d",iCent); // TPC 1st EP
-    h_mTpcEp1ShiftEast[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
-    histName = Form("h_mTpcEp1ShiftWestCent%d",iCent);
-    h_mTpcEp1ShiftWest[iCent] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
     for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
     {
       histName = Form("h_mMixEp1Grp%dShiftCent%d",iGrp,iCent);
@@ -275,8 +252,6 @@ void StEpdEpManager::fillMixSubEpShift(double Psi1EpdGrp0, double Psi1EpdGrp1, d
 {
     h_mEpdEp1Grp0ShiftEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp0);
     h_mEpdEp1Grp1ShiftEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp1);
-    h_mTpcEp1ShiftEast[mCent9]->Fill(mRunIndex, Psi1TpcEast);
-    h_mTpcEp1ShiftWest[mCent9]->Fill(mRunIndex, Psi1TpcWest);
 
     h_mMixEp1ShiftCorr[mCent9][0]->Fill(Psi1EpdGrp0, Psi1TpcEast); // 0: EpdEpGrp0 vs. TpcEpEast
     h_mMixEp1ShiftCorr[mCent9][1]->Fill(Psi1EpdGrp0, Psi1TpcWest); // 1: EpdEpGrp0 vs. TpcEpWest
@@ -293,8 +268,6 @@ void StEpdEpManager::writeMixSubEpShift()
   {
     h_mEpdEp1Grp0ShiftEast[iCent]->Write();
     h_mEpdEp1Grp1ShiftEast[iCent]->Write();
-    h_mTpcEp1ShiftEast[iCent]->Write();
-    h_mTpcEp1ShiftWest[iCent]->Write();
     for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
     {
       h_mMixEp1ShiftCorr[iCent][iGrp]->Write();

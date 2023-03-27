@@ -57,24 +57,18 @@ class StMixEpManager : public TObject
     // Event Plane Distribution
     TH2F *h_mEpdEp1Grp0RawEast[mNumCentrality]; // 1st raw EP
     TH2F *h_mEpdEp1Grp1RawEast[mNumCentrality];
-    TH2F *h_mTpcEp1RawEast[mNumCentrality];
-    TH2F *h_mTpcEp1RawWest[mNumCentrality];
     TH2F *h_mMixEp1RawCorr[mNumCentrality][mNumEpGroup]; 
     // 0: EpdEpGrp0 vs. TpcEpEast | 1: EpdEpGrp0 vs. TpcEpWest | 2: EpdEpGrp1 vs. TpcEpEast
     // 3: EpdEpGrp1 vs. TpcEpWest | 4: EpdEpGrp0 vs. EpdEpGrp1 | 5: TpcEpEast vs. TpcEpWest
 
     TH2F *h_mEpdEp1Grp0ReCtrEast[mNumCentrality]; // 1st recenter EP
     TH2F *h_mEpdEp1Grp1ReCtrEast[mNumCentrality];
-    TH2F *h_mTpcEp1ReCtrEast[mNumCentrality];
-    TH2F *h_mTpcEp1ReCtrWest[mNumCentrality];
     TH2F *h_mMixEp1ReCtrCorr[mNumCentrality][mNumEpGroup]; 
     // 0: EpdEpGrp0 vs. TpcEpEast | 1: EpdEpGrp0 vs. TpcEpWest | 2: EpdEpGrp1 vs. TpcEpEast
     // 3: EpdEpGrp1 vs. TpcEpWest | 4: EpdEpGrp0 vs. EpdEpGrp1 | 5: TpcEpEast vs. TpcEpWest
 
     TH2F *h_mEpdEp1Grp0ShiftEast[mNumCentrality]; // 1st recenter EP
     TH2F *h_mEpdEp1Grp1ShiftEast[mNumCentrality];
-    TH2F *h_mTpcEp1ShiftEast[mNumCentrality];
-    TH2F *h_mTpcEp1ShiftWest[mNumCentrality];
     TH2F *h_mMixEp1ShiftCorr[mNumCentrality][mNumEpGroup]; 
     // 0: EpdEpGrp0 vs. TpcEpEast | 1: EpdEpGrp0 vs. TpcEpWest | 2: EpdEpGrp1 vs. TpcEpEast
     // 3: EpdEpGrp1 vs. TpcEpWest | 4: EpdEpGrp0 vs. EpdEpGrp1 | 5: TpcEpEast vs. TpcEpWest
