@@ -10,7 +10,7 @@
 
 #include "../../Utility/include/StSpinAlignmentCons.h"
 
-void getEpdReCtrPar(int beamType = 1)
+void getEpdReCtrPar(int beamType = 2)
 {
   gStyle->SetOptStat(0);
   const int mNumVzBin = 2; // 0: vz < 0 | 1: vz >= 0

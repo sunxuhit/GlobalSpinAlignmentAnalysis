@@ -28,14 +28,25 @@ class StEpdEpManager : public TObject
     double getTileWeight(StPicoEpdHit* picoEpdHit);
     double getPhiWeight(StPicoEpdHit* picoEpdHit);
     double getEtaWeight(StPicoEpdHit* picoEpdHit);
-    int getEpdEpGrp(StPicoEpdHit* picoEpdHit);
+    int getEpdEpGrp(StPicoEpdHit* picoEpdHit); // used in FXT
+    double transPsi1(double Psi1);
+    bool isPsi1InRange(double Psi1);
 
-    void addHitRawEast(StPicoEpdHit* picoEpdHit, TVector3 primVtx); // tileWgt
-    void addHitRawWest(StPicoEpdHit* picoEpdHit, TVector3 primVtx);
-    void addHitWgtEast(StPicoEpdHit* picoEpdHit, TVector3 primVtx); // tileWgt * phiWgt * etaWgt
-    void addHitWgtWest(StPicoEpdHit* picoEpdHit, TVector3 primVtx);
-    void addHitReCtrEast(StPicoEpdHit* picoEpdHit, TVector3 primVtx); // tileWgt * phiWgt * etaWgt
-    void addHitReCtrWest(StPicoEpdHit* picoEpdHit, TVector3 primVtx);
+    // Calculate Q1Vector
+    // QVector of each Side & used in IsoBar
+    void addHitSideRawEast(StPicoEpdHit* picoEpdHit, TVector3 primVtx); // tileWgt
+    void addHitSideRawWest(StPicoEpdHit* picoEpdHit, TVector3 primVtx);
+    void addHitSideWgtEast(StPicoEpdHit* picoEpdHit, TVector3 primVtx); // tileWgt * phiWgt * etaWgt
+    void addHitSideWgtWest(StPicoEpdHit* picoEpdHit, TVector3 primVtx);
+    void addHitSideReCtrEast(StPicoEpdHit* picoEpdHit, TVector3 primVtx); // tileWgt * phiWgt * etaWgt
+    void addHitSideReCtrWest(StPicoEpdHit* picoEpdHit, TVector3 primVtx);
+    // QVector of each Group on each Side & used in FXT
+    void addHitGrpRawEast(StPicoEpdHit* picoEpdHit, TVector3 primVtx); // tileWgt
+    void addHitGrpRawWest(StPicoEpdHit* picoEpdHit, TVector3 primVtx);
+    void addHitGrpWgtEast(StPicoEpdHit* picoEpdHit, TVector3 primVtx); // tileWgt * phiWgt * etaWgt
+    void addHitGrpWgtWest(StPicoEpdHit* picoEpdHit, TVector3 primVtx);
+    void addHitGrpReCtrEast(StPicoEpdHit* picoEpdHit, TVector3 primVtx); // tileWgt * phiWgt * etaWgt
+    void addHitGrpReCtrWest(StPicoEpdHit* picoEpdHit, TVector3 primVtx);
 
     // phi Weight Correction
     void initEpdPhiWgt();
@@ -45,34 +56,42 @@ class StEpdEpManager : public TObject
     void readEpdPhiWgt();
 
     // ReCenter Correction
-    void initEpdReCtr();
+    // each Side & used in IsoBar
+    void initEpdSideReCtr();
     void fillEpdSideReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx);
     void fillEpdSideReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx);
+    void writeEpdSideReCtr();
+    void readEpdSideReCtr();
+    TVector2 getq1VecSideCtrEast();
+    TVector2 getq1VecSideCtrWest();
+    // each Group on each Side & used in FXT
+    void initEpdGrpReCtr();
     void fillEpdGrpReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx);
     void fillEpdGrpReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx);
-    void writeEpdReCtr();
-    void readEpdReCtr();
-    TVector2 getq1VecSideCtrEast(); // 1st ReCtr Parameter
-    TVector2 getq1VecSideCtrWest();
-    TVector2 getq1VecGrpCtrEast(int grpId);
+    void writeEpdGrpReCtr();
+    void readEpdGrpReCtr();
+    TVector2 getq1VecGrpCtrEast(int grpId); // FXT
     TVector2 getq1VecGrpCtrWest(int grpId);
 
-    // Shift Correction
-    void initEpdShift();
+    // Shift Correction for sub EP
+    // each Side & used in IsoBar
+    void initEpdSideShift();
     void fillEpdSideShiftEast();
     void fillEpdSideShiftWest();
-    void fillEpdGrpShiftEast(int grpId);
-    void fillEpdGrpShiftWest(int grpId);
-    void writeEpdShift();
-    void readEpdShift();
+    void writeEpdSideShift();
+    void readEpdSideShift();
     double getPsi1SideShiftEast(); // 1st shift Psi1
     double getPsi1SideShiftWest();
     double getPsi1SideShiftFull();
     double getPsi1GrpShiftEast(int grpId);
     double getPsi1GrpShiftWest(int grpId);
     double getPsi1GrpShiftFull(int grpId);
-    double transPsi1(double Psi1);
-    bool isPsi1InRange(double Psi1);
+    // each Group on each Side & used in FXT
+    void initEpdGrpShift();
+    void fillEpdGrpShiftEast(int grpId);
+    void fillEpdGrpShiftWest(int grpId);
+    void writeEpdGrpShift();
+    void readEpdGrpShift();
     TVector2 getQ1VecSideShiftEast();
     TVector2 getQ1VecSideShiftWest();
     TVector2 getQ1VecSideShiftFull();
@@ -80,32 +99,43 @@ class StEpdEpManager : public TObject
     TVector2 getQ1VecGrpShiftWest(int grpId);
     TVector2 getQ1VecGrpShiftFull(int grpId);
 
-    void initEpdShiftFull(); // Full
+    // Shift Correction for full EP
+    // each Side & used in IsoBar
+    void initEpdSideShiftFull();
     void fillEpdSideShiftFull();
-    void fillEpdGrpShiftFull(int grpId);
-    void writeEpdShiftFull();
-    void readEpdShiftFull();
+    void writeEpdSideShiftFull();
+    void readEpdSideShiftFull();
     double getPsi1SideShiftFullCorr();
-    double getPsi1GrpShiftFullCorr(int grpId);
     TVector2 getQ1VecSideShiftFullCorr();
+    // each Group on each Side & used in FXT
+    void initEpdGrpShiftFull();
+    void fillEpdGrpShiftFull(int grpId);
+    void writeEpdGrpShiftFull();
+    void readEpdGrpShiftFull();
+    double getPsi1GrpShiftFullCorr(int grpId);
     TVector2 getQ1VecGrpShiftFullCorr(int grpId);
 
     // Event Plane Resolution
-    void initEpdResolution();
+    // each Side & used in IsoBar
+    void initEpdSideResolution();
     void fillEpdSideResolution(double Psi1East, double Psi1West);
-    void fillEpdGrpResolution(double Psi1East, double Psi1West, int grpId);
-    void writeEpdResolution();
-    void readEpdResolution();
+    void writeEpdSideResolution();
+    void readEpdSideResolution();
     double getEpdSubEp1SideResVal(int cent9);
     double getEpdSubEp1SideResErr(int cent9);
     double getEpdFullEp1SideResVal(int cent9);
     double getEpdFullEp1SideResErr(int cent9);
+    // each Group on each Side & used in FXT
+    void initEpdGrpResolution();
+    void fillEpdGrpResolution(double Psi1East, double Psi1West, int grpId);
+    void writeEpdGrpResolution();
+    void readEpdGrpResolution();
     double getEpdSubEp1GrpResVal(int cent9, int grpId);
     double getEpdSubEp1GrpResErr(int cent9, int grpId);
     double getEpdFullEp1GrpResVal(int cent9, int grpId);
     double getEpdFullEp1GrpResErr(int cent9, int grpId);
 
-    // Charged Hadron Directed Flow
+    // Charged Hadron Directed Flow w.r.t. EPD Side
     void initEpdSubEpFlow(); // Sub EP
     void fillEpdSubEpV1(double eta, double v1, double reweight);
     void writeEpdSubEpFlow();
@@ -150,30 +180,40 @@ class StEpdEpManager : public TObject
     double getPsi1GrpReCtrFull(int grpId);
 
     // Event Plane Distribution
-    void initEpdSubEpRaw(); // raw Sub EP
+    void initEpdSubEpSideRaw(); // raw Sub EP
     void fillEpdSubEpSideRaw(double Psi1East, double Psi1West, double Psi1Full);
+    void writeEpdSubEpSideRaw();
+    void initEpdSubEpGrpRaw();
     void fillEpdSubEpGrpRaw(double Psi1East, double Psi1West, double Psi1Full, int grpId);
-    void writeEpdSubEpRaw();
+    void writeEpdSubEpGrpRaw();
 
-    void initEpdSubEpWgt(); // phi weighted Sub EP
+    void initEpdSubEpSideWgt(); // phi weighted Sub EP
     void fillEpdSubEpSideWgt(double Psi1East, double Psi1West, double Psi1Full);
+    void writeEpdSubEpSideWgt();
+    void initEpdSubEpGrpWgt();
     void fillEpdSubEpGrpWgt(double Psi1East, double Psi1West, double Psi1Full, int grpId);
-    void writeEpdSubEpWgt();
+    void writeEpdSubEpGrpWgt();
 
-    void initEpdSubEpReCtr(); // recenter Sub EP
+    void initEpdSubEpSideReCtr(); // recenter Sub EP
     void fillEpdSubEpSideReCtr(double Psi1East, double Psi1West, double Psi1Full);
+    void writeEpdSubEpSideReCtr();
+    void initEpdSubEpGrpReCtr();
     void fillEpdSubEpGrpReCtr(double Psi1East, double Psi1West, double Psi1Full, int grpId);
-    void writeEpdSubEpReCtr();
+    void writeEpdSubEpGrpReCtr();
 
-    void initEpdSubEpShift(); // shift Sub EP
+    void initEpdSubEpSideShift(); // shift Sub EP
     void fillEpdSubEpSideShift(double Psi1East, double Psi1West, double Psi1Full);
+    void writeEpdSubEpSideShift();
+    void initEpdSubEpGrpShift();
     void fillEpdSubEpGrpShift(double Psi1East, double Psi1West, double Psi1Full, int grpId);
-    void writeEpdSubEpShift();
+    void writeEpdSubEpGrpShift();
 
-    void initEpdFullEpShift(); // shift Sub EP
+    void initEpdFullEpSideShift(); // shift Sub EP
     void fillEpdFullEpSideShift(double Psi1FullCorr);
+    void writeEpdFullEpSideShift();
+    void initEpdFullEpGrpShift();
     void fillEpdFullEpGrpShift(double Psi1FullCorr, int grpId);
-    void writeEpdFullEpShift();
+    void writeEpdFullEpGrpShift();
 
   private:
     static const int mNumVzBin      = 2;  // 0: vz < 0 | 1: vz >= 0

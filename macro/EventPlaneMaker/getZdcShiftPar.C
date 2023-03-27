@@ -10,7 +10,7 @@
 
 #include "../../Utility/include/StSpinAlignmentCons.h"
 
-void getZdcShiftPar(int beamType = 0)
+void getZdcShiftPar(int beamType = 2)
 {
   gStyle->SetOptStat(0);
   const int mNumVzBin = 2; // 0: vz < 0 | 1: vz >= 0
