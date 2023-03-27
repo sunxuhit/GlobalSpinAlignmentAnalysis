@@ -146,7 +146,7 @@ void StMixEpManager::writeMixSubEpFlow()
 }
 //---------------------------------------------------------------------------------
 // Event Plane Distribution
-void StEpdEpManager::initMixSubEpRaw()
+void StMixEpManager::initMixSubEpRaw()
 {
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
@@ -167,23 +167,22 @@ void StEpdEpManager::initMixSubEpRaw()
   }
 }
 
-void StEpdEpManager::fillMixSubEpRaw(double Psi1EpdGrp0, double Psi1EpdGrp1, double Psi1TpcEast, double Psi1TpcWest)
+void StMixEpManager::fillMixSubEpRaw(double Psi1EpdGrp0, double Psi1EpdGrp1, double Psi1TpcEast, double Psi1TpcWest)
 {
-    h_mEpdEp1Grp0RawEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp0);
-    h_mEpdEp1Grp1RawEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp1);
-    h_mTpcEp1RawEast[mCent9]->Fill(mRunIndex, Psi1TpcEast);
-    h_mTpcEp1RawWest[mCent9]->Fill(mRunIndex, Psi1TpcWest);
+  h_mEpdEp1Grp0RawEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp0);
+  h_mEpdEp1Grp1RawEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp1);
+  h_mTpcEp1RawEast[mCent9]->Fill(mRunIndex, Psi1TpcEast);
+  h_mTpcEp1RawWest[mCent9]->Fill(mRunIndex, Psi1TpcWest);
 
-    h_mMixEp1RawCorr[mCent9][0]->Fill(Psi1EpdGrp0, Psi1TpcEast); // 0: EpdEpGrp0 vs. TpcEpEast
-    h_mMixEp1RawCorr[mCent9][1]->Fill(Psi1EpdGrp0, Psi1TpcWest); // 1: EpdEpGrp0 vs. TpcEpWest
-    h_mMixEp1RawCorr[mCent9][2]->Fill(Psi1EpdGrp1, Psi1TpcEast); // 2: EpdEpGrp1 vs. TpcEpEast
-    h_mMixEp1RawCorr[mCent9][3]->Fill(Psi1EpdGrp1, Psi1TpcWest); // 3: EpdEpGrp1 vs. TpcEpWest
-    h_mMixEp1RawCorr[mCent9][4]->Fill(Psi1EpdGrp0, Psi1EpdGrp1); // 4: EpdEpGrp0 vs. EpdEpGrp1
-    h_mMixEp1RawCorr[mCent9][5]->Fill(Psi1TpcEast, Psi1TpcWest); // 5: TpcEpEast vs. TpcEpWest
-  }
+  h_mMixEp1RawCorr[mCent9][0]->Fill(Psi1EpdGrp0, Psi1TpcEast); // 0: EpdEpGrp0 vs. TpcEpEast
+  h_mMixEp1RawCorr[mCent9][1]->Fill(Psi1EpdGrp0, Psi1TpcWest); // 1: EpdEpGrp0 vs. TpcEpWest
+  h_mMixEp1RawCorr[mCent9][2]->Fill(Psi1EpdGrp1, Psi1TpcEast); // 2: EpdEpGrp1 vs. TpcEpEast
+  h_mMixEp1RawCorr[mCent9][3]->Fill(Psi1EpdGrp1, Psi1TpcWest); // 3: EpdEpGrp1 vs. TpcEpWest
+  h_mMixEp1RawCorr[mCent9][4]->Fill(Psi1EpdGrp0, Psi1EpdGrp1); // 4: EpdEpGrp0 vs. EpdEpGrp1
+  h_mMixEp1RawCorr[mCent9][5]->Fill(Psi1TpcEast, Psi1TpcWest); // 5: TpcEpEast vs. TpcEpWest
 }
 
-void StEpdEpManager::writeMixSubEpRaw()
+void StMixEpManager::writeMixSubEpRaw()
 {
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
@@ -198,7 +197,7 @@ void StEpdEpManager::writeMixSubEpRaw()
   }
 }
 
-void StEpdEpManager::initMixSubEpReCtr()
+void StMixEpManager::initMixSubEpReCtr()
 {
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
@@ -219,23 +218,22 @@ void StEpdEpManager::initMixSubEpReCtr()
   }
 }
 
-void StEpdEpManager::fillMixSubEpReCtr(double Psi1EpdGrp0, double Psi1EpdGrp1, double Psi1TpcEast, double Psi1TpcWest)
+void StMixEpManager::fillMixSubEpReCtr(double Psi1EpdGrp0, double Psi1EpdGrp1, double Psi1TpcEast, double Psi1TpcWest)
 {
-    h_mEpdEp1Grp0ReCtrEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp0);
-    h_mEpdEp1Grp1ReCtrEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp1);
-    h_mTpcEp1ReCtrEast[mCent9]->Fill(mRunIndex, Psi1TpcEast);
-    h_mTpcEp1ReCtrWest[mCent9]->Fill(mRunIndex, Psi1TpcWest);
+  h_mEpdEp1Grp0ReCtrEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp0);
+  h_mEpdEp1Grp1ReCtrEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp1);
+  h_mTpcEp1ReCtrEast[mCent9]->Fill(mRunIndex, Psi1TpcEast);
+  h_mTpcEp1ReCtrWest[mCent9]->Fill(mRunIndex, Psi1TpcWest);
 
-    h_mMixEp1ReCtrCorr[mCent9][0]->Fill(Psi1EpdGrp0, Psi1TpcEast); // 0: EpdEpGrp0 vs. TpcEpEast
-    h_mMixEp1ReCtrCorr[mCent9][1]->Fill(Psi1EpdGrp0, Psi1TpcWest); // 1: EpdEpGrp0 vs. TpcEpWest
-    h_mMixEp1ReCtrCorr[mCent9][2]->Fill(Psi1EpdGrp1, Psi1TpcEast); // 2: EpdEpGrp1 vs. TpcEpEast
-    h_mMixEp1ReCtrCorr[mCent9][3]->Fill(Psi1EpdGrp1, Psi1TpcWest); // 3: EpdEpGrp1 vs. TpcEpWest
-    h_mMixEp1ReCtrCorr[mCent9][4]->Fill(Psi1EpdGrp0, Psi1EpdGrp1); // 4: EpdEpGrp0 vs. EpdEpGrp1
-    h_mMixEp1ReCtrCorr[mCent9][5]->Fill(Psi1TpcEast, Psi1TpcWest); // 5: TpcEpEast vs. TpcEpWest
-  }
+  h_mMixEp1ReCtrCorr[mCent9][0]->Fill(Psi1EpdGrp0, Psi1TpcEast); // 0: EpdEpGrp0 vs. TpcEpEast
+  h_mMixEp1ReCtrCorr[mCent9][1]->Fill(Psi1EpdGrp0, Psi1TpcWest); // 1: EpdEpGrp0 vs. TpcEpWest
+  h_mMixEp1ReCtrCorr[mCent9][2]->Fill(Psi1EpdGrp1, Psi1TpcEast); // 2: EpdEpGrp1 vs. TpcEpEast
+  h_mMixEp1ReCtrCorr[mCent9][3]->Fill(Psi1EpdGrp1, Psi1TpcWest); // 3: EpdEpGrp1 vs. TpcEpWest
+  h_mMixEp1ReCtrCorr[mCent9][4]->Fill(Psi1EpdGrp0, Psi1EpdGrp1); // 4: EpdEpGrp0 vs. EpdEpGrp1
+  h_mMixEp1ReCtrCorr[mCent9][5]->Fill(Psi1TpcEast, Psi1TpcWest); // 5: TpcEpEast vs. TpcEpWest
 }
 
-void StEpdEpManager::writeMixSubEpReCtr()
+void StMixEpManager::writeMixSubEpReCtr()
 {
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
@@ -250,7 +248,7 @@ void StEpdEpManager::writeMixSubEpReCtr()
   }
 }
 
-void StEpdEpManager::initMixSubEpShift()
+void StMixEpManager::initMixSubEpShift()
 {
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
@@ -271,23 +269,22 @@ void StEpdEpManager::initMixSubEpShift()
   }
 }
 
-void StEpdEpManager::fillMixSubEpShift(double Psi1EpdGrp0, double Psi1EpdGrp1, double Psi1TpcEast, double Psi1TpcWest)
+void StMixEpManager::fillMixSubEpShift(double Psi1EpdGrp0, double Psi1EpdGrp1, double Psi1TpcEast, double Psi1TpcWest)
 {
-    h_mEpdEp1Grp0ShiftEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp0);
-    h_mEpdEp1Grp1ShiftEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp1);
-    h_mTpcEp1ShiftEast[mCent9]->Fill(mRunIndex, Psi1TpcEast);
-    h_mTpcEp1ShiftWest[mCent9]->Fill(mRunIndex, Psi1TpcWest);
+  h_mEpdEp1Grp0ShiftEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp0);
+  h_mEpdEp1Grp1ShiftEast[mCent9]->Fill(mRunIndex, Psi1EpdGrp1);
+  h_mTpcEp1ShiftEast[mCent9]->Fill(mRunIndex, Psi1TpcEast);
+  h_mTpcEp1ShiftWest[mCent9]->Fill(mRunIndex, Psi1TpcWest);
 
-    h_mMixEp1ShiftCorr[mCent9][0]->Fill(Psi1EpdGrp0, Psi1TpcEast); // 0: EpdEpGrp0 vs. TpcEpEast
-    h_mMixEp1ShiftCorr[mCent9][1]->Fill(Psi1EpdGrp0, Psi1TpcWest); // 1: EpdEpGrp0 vs. TpcEpWest
-    h_mMixEp1ShiftCorr[mCent9][2]->Fill(Psi1EpdGrp1, Psi1TpcEast); // 2: EpdEpGrp1 vs. TpcEpEast
-    h_mMixEp1ShiftCorr[mCent9][3]->Fill(Psi1EpdGrp1, Psi1TpcWest); // 3: EpdEpGrp1 vs. TpcEpWest
-    h_mMixEp1ShiftCorr[mCent9][4]->Fill(Psi1EpdGrp0, Psi1EpdGrp1); // 4: EpdEpGrp0 vs. EpdEpGrp1
-    h_mMixEp1ShiftCorr[mCent9][5]->Fill(Psi1TpcEast, Psi1TpcWest); // 5: TpcEpEast vs. TpcEpWest
-  }
+  h_mMixEp1ShiftCorr[mCent9][0]->Fill(Psi1EpdGrp0, Psi1TpcEast); // 0: EpdEpGrp0 vs. TpcEpEast
+  h_mMixEp1ShiftCorr[mCent9][1]->Fill(Psi1EpdGrp0, Psi1TpcWest); // 1: EpdEpGrp0 vs. TpcEpWest
+  h_mMixEp1ShiftCorr[mCent9][2]->Fill(Psi1EpdGrp1, Psi1TpcEast); // 2: EpdEpGrp1 vs. TpcEpEast
+  h_mMixEp1ShiftCorr[mCent9][3]->Fill(Psi1EpdGrp1, Psi1TpcWest); // 3: EpdEpGrp1 vs. TpcEpWest
+  h_mMixEp1ShiftCorr[mCent9][4]->Fill(Psi1EpdGrp0, Psi1EpdGrp1); // 4: EpdEpGrp0 vs. EpdEpGrp1
+  h_mMixEp1ShiftCorr[mCent9][5]->Fill(Psi1TpcEast, Psi1TpcWest); // 5: TpcEpEast vs. TpcEpWest
 }
 
-void StEpdEpManager::writeMixSubEpShift()
+void StMixEpManager::writeMixSubEpShift()
 {
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
