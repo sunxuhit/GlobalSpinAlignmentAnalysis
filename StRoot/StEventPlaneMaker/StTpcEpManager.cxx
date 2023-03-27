@@ -15,6 +15,8 @@
 #include "StRoot/StAnalysisUtils/StAnalysisCons.h"
 #include "StRoot/StEventPlaneMaker/StTpcEpManager.h"
 
+#include <iostream>
+
 ClassImp(StTpcEpManager)
 
 //---------------------------------------------------------------------------------
@@ -339,19 +341,19 @@ void StTpcEpManager::readTpcReCtr()
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)
   {
     std::string proName = Form("p_mTpcQ1ReCtrXEastVz%d",iVz); // 1st EP
-    p_mTpcQ2ReCtrXEast[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+    p_mTpcQ1ReCtrXEast[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
     proName = Form("p_mTpcQ1ReCtrYEastVz%d",iVz);
-    p_mTpcQ2ReCtrYEast[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+    p_mTpcQ1ReCtrYEast[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
 
     proName = Form("p_mTpcQ1ReCtrXWestVz%d",iVz);
-    p_mTpcQ2ReCtrXWest[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+    p_mTpcQ1ReCtrXWest[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
     proName = Form("p_mTpcQ1ReCtrYWestVz%d",iVz);
-    p_mTpcQ2ReCtrYWest[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+    p_mTpcQ1ReCtrYWest[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
 
     proName = Form("p_mTpcQ1ReCtrXFullVz%d",iVz);
-    p_mTpcQ2ReCtrXFull[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+    p_mTpcQ1ReCtrXFull[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
     proName = Form("p_mTpcQ1ReCtrYFullVz%d",iVz);
-    p_mTpcQ2ReCtrYFull[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+    p_mTpcQ1ReCtrYFull[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
 
     proName = Form("p_mTpcQ2ReCtrXEastVz%d",iVz); // 2nd EP
     p_mTpcQ2ReCtrXEast[iVz] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());

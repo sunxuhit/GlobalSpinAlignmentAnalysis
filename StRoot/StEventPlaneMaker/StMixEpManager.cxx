@@ -34,6 +34,8 @@ StMixEpManager::~StMixEpManager()
 void StMixEpManager::clearMixEpManager()
 {
   mCent9 = -1;
+  mRunIndex = -1;
+  mVzBin = -1;
 }
 
 void StMixEpManager::initMixEpManager(int cent9, int runIndex, int vzBin)

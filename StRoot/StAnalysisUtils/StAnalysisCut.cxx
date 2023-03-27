@@ -228,7 +228,7 @@ bool StAnalysisCut::passTrkTpcEpWest(StPicoTrack *picoTrack, TVector3 primVtx) /
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double eta = primMom.PseudoRapidity();
   if(eta < anaUtils::mEtaEpCtr[mType]+anaUtils::mEtaEpGap[mType] || eta > anaUtils::mEtaEpMax[mType])
-  { 
+  { // eta cut: [anaUtils::mEtaEpCtr[mType]+anaUtils::mEtaEpGap[mType], anaUtils::mEtaEpMax[mType]]
     return false;
   }
 

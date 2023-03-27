@@ -539,6 +539,7 @@ int StEventPlaneMaker::Make()
 	  }
 	}
 
+
 	if(mMode == 1) // fill recenter correction parameter for ZDC & EPD & TPC Sub EP
 	{
 	  TVector2 vQ1ZdcEast = mZdcEpManager->getQ1VecEast(mMode); // get Q1Vector from ZDC
@@ -682,7 +683,7 @@ int StEventPlaneMaker::Make()
 	      const double Psi1TpcEast = mTpcEpManager->getPsi1ReCtrEast(); // Psi1 from TPC East
 	      const double Psi1TpcWest = mTpcEpManager->getPsi1ReCtrWest(); // Psi1 from TPC West
 
-	      mMixEpManager->fillMixSubEpRaw(Psi1EpdGrp0East,Psi1EpdGrp1East,Psi1TpcEast,Psi1TpcWest);
+	      mMixEpManager->fillMixSubEpReCtr(Psi1EpdGrp0East,Psi1EpdGrp1East,Psi1TpcEast,Psi1TpcWest);
 	    }
 	  }
 	}
