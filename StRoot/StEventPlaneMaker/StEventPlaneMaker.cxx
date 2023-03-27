@@ -602,8 +602,8 @@ int StEventPlaneMaker::Make()
 	      const double Psi1EpdGrp0East = mEpdEpManager->getPsi1GrpWgtEast(0); // Psi1 from EPD Grp 0
 	      const double Psi1EpdGrp1East = mEpdEpManager->getPsi1GrpWgtEast(1); // Psi1 from EPD Grp 1
 
-	      const double Psi1RawEast = mTpcEpManager->getPsi1RawEast(); // Psi1 from TPC East
-	      const double Psi1RawWest = mTpcEpManager->getPsi1RawWest(); // Psi1 from TPC West
+	      const double Psi1TpcEast = mTpcEpManager->getPsi1RawEast(); // Psi1 from TPC East
+	      const double Psi1TpcWest = mTpcEpManager->getPsi1RawWest(); // Psi1 from TPC West
 
 	      mMixEpManager->fillMixSubEpRaw(Psi1EpdGrp0East,Psi1EpdGrp1East,Psi1TpcEast,Psi1TpcWest);
 	    }
