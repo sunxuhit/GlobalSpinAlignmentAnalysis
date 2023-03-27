@@ -109,6 +109,8 @@ int StEventPlaneMaker::Init()
 
     mTpcEpManager->initTpcReCtr(); // TPC
     mTpcEpManager->initTpcSubEpRaw();
+
+    mMixEpManager->initMixSubEpRaw();
   }
   if(mMode == 2)
   { // fill Shift Correction Parameters for ZDC & EPD & TPC Sub EP
@@ -126,6 +128,8 @@ int StEventPlaneMaker::Init()
     mTpcEpManager->readTpcReCtr(); // TPC
     mTpcEpManager->initTpcShift();
     mTpcEpManager->initTpcSubEpReCtr();
+
+    mMixEpManager->initMixSubEpReCtr();
   }
   if(mMode == 3)
   { // fill Shift Correction Parameters for ZDC & EPD Full EP
@@ -167,6 +171,7 @@ int StEventPlaneMaker::Init()
     mTpcEpManager->initTpcSubEpShift();
 
     mMixEpManager->initMixEpRes(); // Mix
+    mMixEpManager->initMixSubEpShift();
   }
   if(mMode == 5)
   { // calculate charged hadron v1 from ZDC & EPD and charged hadron v2 and v3 from TPC
@@ -224,6 +229,8 @@ int StEventPlaneMaker::Finish()
 
       mTpcEpManager->writeTpcReCtr(); // TPC
       mTpcEpManager->writeTpcSubEpRaw();
+
+      mMixEpManager->writeMixSubEpRaw(); // Mix
       file_mOutPutReCenterPar->Close();
     }
   }
@@ -240,6 +247,8 @@ int StEventPlaneMaker::Finish()
 
       mTpcEpManager->writeTpcShift(); // TPC
       mTpcEpManager->writeTpcSubEpReCtr();
+
+      mMixEpManager->writeMixSubEpReCtr(); // Mix
       file_mOutPutShiftPar->Close();
     }
   }
@@ -272,7 +281,8 @@ int StEventPlaneMaker::Finish()
       mTpcEpManager->writeTpcResolution(); // TPC
       mTpcEpManager->writeTpcSubEpShift();
 
-      mMixEpManager->writeMixEpRes();
+      mMixEpManager->writeMixEpRes(); // Mix
+      mMixEpManager->writeMixSubEpShift();
       file_mOutPutResolution->Close();
     }
   }
@@ -380,7 +390,7 @@ int StEventPlaneMaker::Make()
       mZdcEpManager->initZdcEpManager(cent9,runIndex,vzBin); // initialize ZDC EP Manager
       mEpdEpManager->initEpdEpManager(cent9,runIndex,vzBin); // initialize EPD EP Manager
       mTpcEpManager->initTpcEpManager(cent9,runIndex,vzBin); // initialize TPC EP Manager
-      mMixEpManager->initMixEpManager(cent9);                // initialize Mix EP Manager
+      mMixEpManager->initMixEpManager(cent9,runIndex,vzBin); // initialize Mix EP Manager
 
       if(mMode == 0)
       { // fill Gain Correction Factors for ZDC
@@ -567,9 +577,9 @@ int StEventPlaneMaker::Make()
 	    }
 	  }
 
-	  const int numTrackRawEast = mTpcEpManager->getNumTrkRawEast(); // TPC EP
-	  const int numTrackRawWest = mTpcEpManager->getNumTrkRawWest();
-	  if(mAnaCut->passNumTrkTpcSubEpRaw(numTrackRawEast, numTrackRawWest))
+	  const int numTrkRawEast = mTpcEpManager->getNumTrkRawEast(); // TPC EP
+	  const int numTrkRawWest = mTpcEpManager->getNumTrkRawWest();
+	  if(mAnaCut->passNumTrkTpcSubEpRaw(numTrkRawEast, numTrkRawWest))
 	  {
 	    const double Psi1RawEast = mTpcEpManager->getPsi1RawEast(); // 1st EP
 	    const double Psi1RawWest = mTpcEpManager->getPsi1RawWest();
@@ -581,6 +591,22 @@ int StEventPlaneMaker::Make()
 	    const double Psi3RawWest = mTpcEpManager->getPsi3RawWest();
 	    const double Psi3RawFull = mTpcEpManager->getPsi3RawFull();
 	    mTpcEpManager->fillTpcSubEpRaw(Psi1RawEast, Psi1RawWest, Psi1RawFull, Psi2RawEast, Psi2RawWest, Psi2RawFull, Psi3RawEast, Psi3RawWest, Psi3RawFull);
+	  }
+
+	  if(mAnaCut->isFxt3p85GeV_2018()) // 3-sub events method
+	  {
+	    if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[0],vQ1EpdGrpWest[0],vQ1EpdGrpFull[0],0) &&
+		mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[1],vQ1EpdGrpWest[1],vQ1EpdGrpFull[1],1) &&
+		mAnaCut->passNumTrkTpcSubEpRaw(numTrkRawEast, numTrkRawWest) )
+	    {
+	      const double Psi1EpdGrp0East = mEpdEpManager->getPsi1GrpWgtEast(0); // Psi1 from EPD Grp 0
+	      const double Psi1EpdGrp1East = mEpdEpManager->getPsi1GrpWgtEast(1); // Psi1 from EPD Grp 1
+
+	      const double Psi1RawEast = mTpcEpManager->getPsi1RawEast(); // Psi1 from TPC East
+	      const double Psi1RawWest = mTpcEpManager->getPsi1RawWest(); // Psi1 from TPC West
+
+	      mMixEpManager->fillMixSubEpRaw(Psi1EpdGrp0East,Psi1EpdGrp1East,Psi1TpcEast,Psi1TpcWest);
+	    }
 	  }
 	}
 	if(mMode == 2) // fill shift correction parameter for ZDC & EPD & TPC Sub EP
@@ -642,6 +668,22 @@ int StEventPlaneMaker::Make()
 	    mTpcEpManager->fillTpcShiftEast();
 	    mTpcEpManager->fillTpcShiftWest();
 	    mTpcEpManager->fillTpcShiftFull();
+	  }
+
+	  if(mAnaCut->isFxt3p85GeV_2018()) // 3-sub events method
+	  {
+	    if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[0],vQ1EpdGrpWest[0],vQ1EpdGrpFull[0],0) &&
+		mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[1],vQ1EpdGrpWest[1],vQ1EpdGrpFull[1],1) &&
+		mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest) )
+	    {
+	      const double Psi1EpdGrp0East = mEpdEpManager->getPsi1GrpReCtrEast(0); // Psi1 from EPD Grp 0
+	      const double Psi1EpdGrp1East = mEpdEpManager->getPsi1GrpReCtrEast(1); // Psi1 from EPD Grp 1
+
+	      const double Psi1TpcEast = mTpcEpManager->getPsi1ReCtrEast(); // Psi1 from TPC East
+	      const double Psi1TpcWest = mTpcEpManager->getPsi1ReCtrWest(); // Psi1 from TPC West
+
+	      mMixEpManager->fillMixSubEpRaw(Psi1EpdGrp0East,Psi1EpdGrp1East,Psi1TpcEast,Psi1TpcWest);
+	    }
 	  }
 	}
 	if(mMode == 3) // fill shift correction parameter for ZDC & EPD Full EP
@@ -773,6 +815,7 @@ int StEventPlaneMaker::Make()
 	      const double Psi1TpcWest = mTpcEpManager->getPsi1ShiftWest(vQ1TpcWest); // Psi1 from TPC West 
 
 	      mMixEpManager->fillMixEpRes(Psi1EpdGrp0East,Psi1EpdGrp1East,Psi1TpcEast,Psi1TpcWest);
+	      mMixEpManager->fillMixSubEpShift(Psi1EpdGrp0East,Psi1EpdGrp1East,Psi1TpcEast,Psi1TpcWest);
 	    }
 	  }
 	}
