@@ -27,6 +27,11 @@ class StMixEpManager : public TObject
     void fillMixSubEpDeuV1(double rap, double v1, double reweight);
     void writeMixSubEpFlow();
 
+    // Event Plane Distribution
+    void initMixSubEp();
+    void fillMixSubEp(double Psi1EpdGrp0, double Psi1EpdGrp1, double Psi1TpcEast, double Psi1TpcWest);
+    void writeMixSubEp();
+
   private:
     static const int mNumCentrality = 9;  // 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%
     static const int mNumEpGroup    = 6;  
