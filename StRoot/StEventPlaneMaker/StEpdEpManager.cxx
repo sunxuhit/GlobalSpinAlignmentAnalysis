@@ -1392,12 +1392,12 @@ void StEpdEpManager::readEpdGrpResolution()
   {
     for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
-      valRes1Sub  = -999.9;
-      errRes1Sub  = 1.0;
-      valRes1Full = -999.9;
-      errRes1Full = 1.0;
-      valRes1Raw  = p_mEpdSubEp1GrpRes[iGrp]->GetBinContent(iCent+1);
-      errRes1Raw  = p_mEpdSubEp1GrpRes[iGrp]->GetBinError(iCent+1);
+      double valRes1Sub  = -999.9;
+      double errRes1Sub  = 1.0;
+      double valRes1Full = -999.9;
+      double errRes1Full = 1.0;
+      double valRes1Raw  = p_mEpdSubEp1GrpRes[iGrp]->GetBinContent(iCent+1);
+      double errRes1Raw  = p_mEpdSubEp1GrpRes[iGrp]->GetBinError(iCent+1);
       if(valRes1Raw > 0)
       {
 	valRes1Sub = TMath::Sqrt(valRes1Raw);

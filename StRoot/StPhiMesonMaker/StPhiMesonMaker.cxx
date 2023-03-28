@@ -66,10 +66,10 @@ int StPhiMesonMaker::Init()
   mZdcEpManager->readZdcResolution();
 
   mEpdEpManager->readEpdPhiWgt(); // EPD
-  mEpdEpManager->readEpdReCtr();
-  mEpdEpManager->readEpdShift();
-  mEpdEpManager->readEpdShiftFull();
-  mEpdEpManager->readEpdResolution();
+  mEpdEpManager->readEpdSideReCtr();
+  mEpdEpManager->readEpdSideShift();
+  mEpdEpManager->readEpdSideShiftFull();
+  mEpdEpManager->readEpdSideResolution();
 
   mTpcEpManager->readTpcReCtr(); // TPC
   mTpcEpManager->readTpcShift();
@@ -206,11 +206,11 @@ int StPhiMesonMaker::Make()
 
 	if( mAnaCut->passHitEpdEpEast(picoEpdHit) ) // negative eta
 	{
-	  mEpdEpManager->addHitReCtrEast(picoEpdHit, primVtx);
+	  mEpdEpManager->addHitSideReCtrEast(picoEpdHit, primVtx);
 	}
 	if( mAnaCut->passHitEpdEpWest(picoEpdHit) ) // positive eta
 	{
-	  mEpdEpManager->addHitReCtrWest(picoEpdHit, primVtx);
+	  mEpdEpManager->addHitSideReCtrWest(picoEpdHit, primVtx);
 	}
       }
 
