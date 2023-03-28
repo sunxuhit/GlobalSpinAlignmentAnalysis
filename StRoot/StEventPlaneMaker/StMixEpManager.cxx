@@ -57,19 +57,12 @@ void StMixEpManager::initMixEpRes()
 
 void StMixEpManager::fillMixEpRes(double Psi1EpdGrp0, double Psi1EpdGrp1, double Psi1TpcEast, double Psi1TpcWest)
 {
-  double subRes1Grp0 = TMath::Cos(Psi1EpdGrp0-Psi1EpdGrp1)*TMath::Cos(Psi1EpdGrp0-Psi1TpcWest)/TMath::Cos(Psi1EpdGrp1-Psi1TpcWest);
-  double subRes1Grp1 = TMath::Cos(Psi1EpdGrp0-Psi1EpdGrp1)*TMath::Cos(Psi1EpdGrp0-Psi1TpcEast)/TMath::Cos(Psi1EpdGrp1-Psi1TpcEast);
-  double subRes1Grp2 = TMath::Cos(Psi1EpdGrp0-Psi1TpcEast)*TMath::Cos(Psi1EpdGrp0-Psi1TpcWest)/TMath::Cos(Psi1TpcEast-Psi1TpcWest);
-  p_mMixSubEp1Res[0]->Fill((double)mCent9,subRes1Grp0); // 0: EpdEpGrp0 vs. EpdEpGrp1 && TpcEpWest => default
-  p_mMixSubEp1Res[1]->Fill((double)mCent9,subRes1Grp1); // 1: EpdEpGrp0 vs. EpdEpGrp1 && TpcEpEast
-  p_mMixSubEp1Res[2]->Fill((double)mCent9,subRes1Grp2); // 2: EpdEpGrp0 vs. TpcEpEast && TpcEpWest
-
-  double subRes1Grp3 = TMath::Cos(Psi1EpdGrp1-Psi1EpdGrp0)*TMath::Cos(Psi1EpdGrp1-Psi1TpcWest)/TMath::Cos(Psi1EpdGrp0-Psi1TpcWest);
-  double subRes1Grp4 = TMath::Cos(Psi1EpdGrp1-Psi1EpdGrp0)*TMath::Cos(Psi1EpdGrp1-Psi1TpcEast)/TMath::Cos(Psi1EpdGrp0-Psi1TpcEast);
-  double subRes1Grp5 = TMath::Cos(Psi1EpdGrp1-Psi1TpcEast)*TMath::Cos(Psi1EpdGrp1-Psi1TpcWest)/TMath::Cos(Psi1TpcEast-Psi1TpcWest);
-  p_mMixSubEp1Res[3]->Fill((double)mCent9,subRes1Grp3); // 3: EpdEpGrp1 vs. EpdEpGrp0 && TpcEpWest => main Systematic
-  p_mMixSubEp1Res[4]->Fill((double)mCent9,subRes1Grp4); // 4: EpdEpGrp1 vs. EpdEpGrp0 && TpcEpEast
-  p_mMixSubEp1Res[5]->Fill((double)mCent9,subRes1Grp5); // 5: EpdEpGrp1 vs. TpcEpEast && TpcEpWest
+  p_mMixSubEp1Res[0]->Fill((double)mCent9,TMath::Cos(Psi1EpdGrp0-Psi1TpcEast)); // 0: EpdEpGrp0 vs. TpcEpEast
+  p_mMixSubEp1Res[1]->Fill((double)mCent9,TMath::Cos(Psi1EpdGrp0-Psi1TpcWest)); // 1: EpdEpGrp0 vs. TpcEpWest
+  p_mMixSubEp1Res[2]->Fill((double)mCent9,TMath::Cos(Psi1EpdGrp1-Psi1TpcEast)); // 2: EpdEpGrp1 vs. TpcEpEast
+  p_mMixSubEp1Res[3]->Fill((double)mCent9,TMath::Cos(Psi1EpdGrp1-Psi1TpcWest)); // 3: EpdEpGrp1 vs. TpcEpWest
+  p_mMixSubEp1Res[4]->Fill((double)mCent9,TMath::Cos(Psi1EpdGrp0-Psi1EpdGrp1)); // 4: EpdEpGrp0 vs. EpdEpGrp1
+  p_mMixSubEp1Res[5]->Fill((double)mCent9,TMath::Cos(Psi1TpcEast-Psi1TpcWest)); // 5: TpcEpEast vs. TpcEpWest
 }
 
 void StMixEpManager::writeMixEpRes()
@@ -90,6 +83,47 @@ void StMixEpManager::readMixEpRes()
     p_mMixSubEp1Res[iGrp] = (TProfile*)file_mResolution->Get(proName.c_str())->Clone();
   }
 
+  double valMixEp[mNumCentrality][mNumEpGroup];
+  double errMixEp[mNumCentrality][mNumEpGroup];
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
+    {
+      valMixEp[iCent][iGrp] = p_mMixSubEp1Res[iGrp]->GetBinContent(iCent+1);
+      errMixEp[iCent][iGrp] = p_mMixSubEp1Res[iGrp]->GetBinError(iCent+1);
+    }
+  }
+
+  // double subRes1Grp0 = TMath::Cos(Psi1EpdGrp0-Psi1EpdGrp1)*TMath::Cos(Psi1EpdGrp0-Psi1TpcWest)/TMath::Cos(Psi1EpdGrp1-Psi1TpcWest);
+  // double subRes1Grp1 = TMath::Cos(Psi1EpdGrp0-Psi1EpdGrp1)*TMath::Cos(Psi1EpdGrp0-Psi1TpcEast)/TMath::Cos(Psi1EpdGrp1-Psi1TpcEast);
+  // double subRes1Grp2 = TMath::Cos(Psi1EpdGrp0-Psi1TpcEast)*TMath::Cos(Psi1EpdGrp0-Psi1TpcWest)/TMath::Cos(Psi1TpcEast-Psi1TpcWest);
+  // double subRes1Grp3 = TMath::Cos(Psi1EpdGrp1-Psi1EpdGrp0)*TMath::Cos(Psi1EpdGrp1-Psi1TpcWest)/TMath::Cos(Psi1EpdGrp0-Psi1TpcWest);
+  // double subRes1Grp4 = TMath::Cos(Psi1EpdGrp1-Psi1EpdGrp0)*TMath::Cos(Psi1EpdGrp1-Psi1TpcEast)/TMath::Cos(Psi1EpdGrp0-Psi1TpcEast);
+  // double subRes1Grp5 = TMath::Cos(Psi1EpdGrp1-Psi1TpcEast)*TMath::Cos(Psi1EpdGrp1-Psi1TpcWest)/TMath::Cos(Psi1TpcEast-Psi1TpcWest);
+
+  // 0: EpdEpGrp0 vs. EpdEpGrp1 && TpcEpWest (default) | 1: EpdEpGrp0 vs. EpdEpGrp1 && TpcEpEast | 2: EpdEpGrp0 vs. TpcEpEast && TpcEpWest
+  // 3: EpdEpGrp1 vs. EpdEpGrp0 && TpcEpWest (mainSys) | 4: EpdEpGrp1 vs. EpdEpGrp0 && TpcEpEast | 5: EpdEpGrp1 vs. TpcEpEast && TpcEpWest
+  double valRes1Temp[mNumCentrality][mNumEpGroup];
+  double errRes1Temp[mNumCentrality][mNumEpGroup];
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
+    {
+      valRes1Temp[iCent][0] = valMixEp[iCent][4]*valMixEp[iCent][1]/valMixEp[iCent][3];
+      valRes1Temp[iCent][1] = valMixEp[iCent][4]*valMixEp[iCent][0]/valMixEp[iCent][2];
+      valRes1Temp[iCent][2] = valMixEp[iCent][0]*valMixEp[iCent][1]/valMixEp[iCent][5];
+      valRes1Temp[iCent][3] = valMixEp[iCent][4]*valMixEp[iCent][3]/valMixEp[iCent][1];
+      valRes1Temp[iCent][4] = valMixEp[iCent][4]*valMixEp[iCent][2]/valMixEp[iCent][0];
+      valRes1Temp[iCent][5] = valMixEp[iCent][2]*valMixEp[iCent][3]/valMixEp[iCent][5];
+      errRes1Temp[iCent][0] = propMixEpResErr(valMixEp[iCent][4],errMixEp[iCent][4],valMixEp[iCent][1],errMixEp[iCent][1],valMixEp[iCent][3],errMixEp[iCent][3]);
+      errRes1Temp[iCent][1] = propMixEpResErr(valMixEp[iCent][4],errMixEp[iCent][4],valMixEp[iCent][0],errMixEp[iCent][0],valMixEp[iCent][2],errMixEp[iCent][2]);
+      errRes1Temp[iCent][2] = propMixEpResErr(valMixEp[iCent][0],errMixEp[iCent][0],valMixEp[iCent][1],errMixEp[iCent][1],valMixEp[iCent][5],errMixEp[iCent][5]);
+      errRes1Temp[iCent][3] = propMixEpResErr(valMixEp[iCent][4],errMixEp[iCent][4],valMixEp[iCent][3],errMixEp[iCent][3],valMixEp[iCent][1],errMixEp[iCent][1]);
+      errRes1Temp[iCent][4] = propMixEpResErr(valMixEp[iCent][4],errMixEp[iCent][4],valMixEp[iCent][2],errMixEp[iCent][2],valMixEp[iCent][0],errMixEp[iCent][0]);
+      errRes1Temp[iCent][5] = propMixEpResErr(valMixEp[iCent][2],errMixEp[iCent][2],valMixEp[iCent][3],errMixEp[iCent][3],valMixEp[iCent][5],errMixEp[iCent][5]);
+    }
+  }
+
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
@@ -98,15 +132,15 @@ void StMixEpManager::readMixEpRes()
       mMixSubEp1ResErr[iCent][iGrp]  = 0.0;
     }
   }
-
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
     {
       double valRes1Sub  = -999.9;
       double errRes1Sub  = 1.0;
-      double valRes1Raw  = p_mMixSubEp1Res[iGrp]->GetBinContent(iCent+1);
-      double errRes1Raw  = p_mMixSubEp1Res[iGrp]->GetBinError(iCent+1);
+      double valRes1Raw = valRes1Temp[iCent][iGrp];
+      double errRes1Raw = errRes1Temp[iCent][iGrp];
+
       if(valRes1Raw > 0)
       {
 	valRes1Sub = TMath::Sqrt(valRes1Raw);
@@ -116,8 +150,21 @@ void StMixEpManager::readMixEpRes()
       mMixSubEp1ResErr[iCent][iGrp]  = errRes1Sub;
     }
   }
-
   file_mResolution->Close();
+}
+
+double StMixEpManager::propMixEpResErr(double valA, double sigA, double valB, double sigB, double valC, double sigC)
+{ // return the error of valA*valB/valC
+  double errA = sigA/valA;
+  double errB = sigB/valB;
+  double errC = sigC/valC;
+  double valAxB = valA*valB;
+  double sigAxB = valAxB*TMath::Sqrt(errA*errA+errB*errB); // valA*valB*sqrt((sigA/valA)^2+(sigB/valB)^2)
+  double errAB = sigAxB/valAxB;
+
+  double sigABdivC = valAxB/valC*TMath::Sqrt(errAB*errAB+errC*errC); // valAB/valC*sqrt((sigAB/valAB)^2+(sigC/valC)^2);
+
+  return sigABdivC;
 }
 
 double StMixEpManager::getMixSubEp1ResVal(int cent9, int grpId)

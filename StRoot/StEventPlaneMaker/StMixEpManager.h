@@ -19,6 +19,7 @@ class StMixEpManager : public TObject
     void fillMixEpRes(double Psi1EpdGrp0, double Psi1EpdGrp1, double Psi1TpcEast, double Psi1TpcWest);
     void writeMixEpRes();
     void readMixEpRes();
+    double propMixEpResErr(double valA, double sigA, double valB, double sigB, double valC, double sigC); // return the error of valSubResA*valSubResB/valSubResC
     double getMixSubEp1ResVal(int cent9, int grpId);
     double getMixSubEp1ResErr(int cent9, int grpId);
 
@@ -41,13 +42,15 @@ class StMixEpManager : public TObject
     void writeMixSubEpShift();
 
   private:
-    static const int mNumCentrality = 9;  // 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%
+    static const int mNumCentrality = 9; // 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%
     static const int mNumEpGroup    = 6;  
-    // 0: EpdEpGrp0 vs. EpdEpGrp1 && TpcEpWest (default) | 1: EpdEpGrp0 vs. EpdEpGrp1 && TpcEpEast | 2: EpdEpGrp0 vs. TpcEpEast && TpcEpWest
-    // 3: EpdEpGrp1 vs. EpdEpGrp0 && TpcEpWest (mainSys) | 4: EpdEpGrp1 vs. EpdEpGrp0 && TpcEpEast | 5: EpdEpGrp1 vs. TpcEpEast && TpcEpWest
 
     // EPD EP Resolution
+    // 0: EpdEpGrp0 vs. TpcEpEast | 1: EpdEpGrp0 vs. TpcEpWest | 2: EpdEpGrp1 vs. TpcEpEast
+    // 3: EpdEpGrp1 vs. TpcEpWest | 4: EpdEpGrp0 vs. EpdEpGrp1 | 5: TpcEpEast vs. TpcEpWest
     TProfile *p_mMixSubEp1Res[mNumEpGroup]; // 1st EP
+    // 0: EpdEpGrp0 vs. EpdEpGrp1 && TpcEpWest (default) | 1: EpdEpGrp0 vs. EpdEpGrp1 && TpcEpEast | 2: EpdEpGrp0 vs. TpcEpEast && TpcEpWest
+    // 3: EpdEpGrp1 vs. EpdEpGrp0 && TpcEpWest (mainSys) | 4: EpdEpGrp1 vs. EpdEpGrp0 && TpcEpEast | 5: EpdEpGrp1 vs. TpcEpEast && TpcEpWest
     double mMixSubEp1ResVal[mNumCentrality][mNumEpGroup];
     double mMixSubEp1ResErr[mNumCentrality][mNumEpGroup];
 
