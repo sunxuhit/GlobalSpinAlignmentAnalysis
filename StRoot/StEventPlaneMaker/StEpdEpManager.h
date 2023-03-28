@@ -136,9 +136,9 @@ class StEpdEpManager : public TObject
     double getEpdFullEp1GrpResErr(int cent9, int grpId);
 
     // Charged Hadron Directed Flow w.r.t. EPD Side
-    void initEpdSubEpFlow(); // Sub EP
-    void fillEpdSubEpV1(double eta, double v1, double reweight);
-    void writeEpdSubEpFlow();
+    void initEpdSubEpSideFlow(); // Sub EP
+    void fillEpdSubEpSideV1(double eta, double v1, double reweight);
+    void writeEpdSubEpSideFlow();
 
     // Q1Vector
     TVector2 getQ1VecSideRawEast(); // Q1Vector for full EPD
@@ -286,7 +286,7 @@ class StEpdEpManager : public TObject
     double mEpdFullEp1GrpResErr[mNumCentrality][mNumRingsGrps];
 
     // Charged Hadron Directed Flow
-    TProfile *p_mEpdSubEpV1[mNumCentrality]; // v1 vs. eta
+    TProfile *p_mEpdSubEpSideV1[mNumCentrality]; // v1 vs. eta
 
     // Event Plane Distribution
     TH2F *h_mEpdEp1SideRawEast[mNumCentrality]; // 1st raw EP
