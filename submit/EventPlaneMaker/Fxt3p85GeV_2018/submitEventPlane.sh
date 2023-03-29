@@ -4,10 +4,10 @@ codePath=/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis
 
 ##########Beam Type Selection##########
 mode=0 # 0: gain & phi wgt | 1: sub EP recenter | 2: sub EP shift | 3: full EP shift | 4: resolution | 5: flow
-beamType=0  # ZrZr200GeV_2018
-library=SL20c
-listPath=/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/ZrZr200GeV_2018
-outPath=/star/data01/pwg/sunxuhit/ZrZr200GeV_2018/SpinAlignment/EventPlaneMaker
+beamType=2  # Fxt3p85GeV_2018
+library=SL20d
+listPath=/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/Fxt3p85GeV_2018
+outPath=/star/data01/pwg/sunxuhit/Fxt3p85GeV_2018/SpinAlignment/EventPlaneMaker
 ##########Beam Type Selection##########
 
 mkdir -p JOBS/report

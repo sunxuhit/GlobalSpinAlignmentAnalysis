@@ -15,7 +15,7 @@ mkdir -p JOBS/csh
 mkdir -p JOBS/list
 
 ##########Test Production##########
-# star-submit-template -template testEventPlaneTemp.xml -entities mode=$mode,beamType=$beamType,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath
+star-submit-template -template testEventPlaneTemp.xml -entities mode=$mode,beamType=$beamType,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath
 ##########Test Production##########
 
 ##########Full Production##########
@@ -23,5 +23,5 @@ mkdir -p JOBS/list
 ##########Full Production##########
 
 ##########Re-Submit##########
-star-submit-template -template resubmitEventPlaneTemp.xml -entities mode=$mode,beamType=$beamType,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath
+# star-submit-template -template resubmitEventPlaneTemp.xml -entities mode=$mode,beamType=$beamType,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath
 ##########Re-Submit##########

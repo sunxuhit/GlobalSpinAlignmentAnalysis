@@ -16,9 +16,9 @@
     </Package>
   </SandBox>
 
-  <input URL="filelist:&listPath;/pico_xrootd_resubmit_EventPlaneMaker_E1FA2F3D99752635F196A53CEEF40ED4.list" />
+  <input URL="filelist:&listPath;/pico_xrootd_resubmit_EventPlaneMaker_.list" />
 
-  <stdout discard="true"/>
+  <!-- <stdout discard="true"/> -->
   <stdout URL="file:&outPath;/Log/$JOBID.out"/>
   <stderr URL="file:&outPath;/Log/$JOBID.err"/>
 
