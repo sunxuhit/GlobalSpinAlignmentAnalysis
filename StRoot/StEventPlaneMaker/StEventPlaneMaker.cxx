@@ -167,7 +167,8 @@ int StEventPlaneMaker::Init()
       mEpdEpManager->initEpdSideShiftFull();
       mEpdEpManager->initEpdSubEpSideShift();
     }
-    if(mAnaCut->isFxt3p85GeV_2018()) 
+    /*
+    if(mAnaCut->isFxt3p85GeV_2018()) // Don't need Full EPD EP for FXT
     {
       mEpdEpManager->readEpdPhiWgt(); // EPD
       mEpdEpManager->readEpdGrpReCtr();
@@ -175,6 +176,7 @@ int StEventPlaneMaker::Init()
       mEpdEpManager->initEpdGrpShiftFull();
       mEpdEpManager->initEpdSubEpGrpShift();
     }
+    */
   }
   if(mMode == 4)
   { // fill Event Plane Resolution for ZDC & EPD & TPC Sub EP
@@ -201,10 +203,10 @@ int StEventPlaneMaker::Init()
       mEpdEpManager->readEpdPhiWgt(); // EPD
       mEpdEpManager->readEpdGrpReCtr();
       mEpdEpManager->readEpdGrpShift();
-      mEpdEpManager->readEpdGrpShiftFull();
+      // mEpdEpManager->readEpdGrpShiftFull(); // Don't need Full EPD EP for FXT
       mEpdEpManager->initEpdGrpResolution();
       mEpdEpManager->initEpdSubEpGrpShift();
-      mEpdEpManager->initEpdFullEpGrpShift();
+      // mEpdEpManager->initEpdFullEpGrpShift(); // Don't need Full EPD EP for FXT
       mMixEpManager->initMixEpRes(); // Mix
       mMixEpManager->initMixSubEpShift();
     }
@@ -329,11 +331,13 @@ int StEventPlaneMaker::Finish()
 	mEpdEpManager->writeEpdSideShiftFull(); // EPD
 	mEpdEpManager->writeEpdSubEpSideShift();
       }
+      /*
       if(mAnaCut->isFxt3p85GeV_2018()) 
       {
 	mEpdEpManager->writeEpdGrpShiftFull(); // EPD
 	mEpdEpManager->writeEpdSubEpGrpShift();
       }
+      */
       file_mOutPutShiftPar->Close();
     }
   }
@@ -355,7 +359,7 @@ int StEventPlaneMaker::Finish()
       {
 	mEpdEpManager->writeEpdGrpResolution(); // EPD
 	mEpdEpManager->writeEpdSubEpGrpShift();
-	mEpdEpManager->writeEpdFullEpGrpShift();
+	// mEpdEpManager->writeEpdFullEpGrpShift(); // Don't need Full EPD EP for FXT
 	mMixEpManager->writeMixEpRes(); // Mix
 	mMixEpManager->writeMixSubEpShift();
       }
@@ -852,6 +856,7 @@ int StEventPlaneMaker::Make()
 	  }
 	}
 
+	/*
 	if( mAnaCut->isFxt3p85GeV_2018() )
 	{
 	  TVector2 vQ1EpdGrpEast[mNumRingsGrps], vQ1EpdGrpWest[mNumRingsGrps], vQ1EpdGrpFull[mNumRingsGrps];
@@ -870,6 +875,7 @@ int StEventPlaneMaker::Make()
 	    }
 	  }
 	}
+	*/
       }
       if(mMode == 4) // fill event plane resolution for ZDC-SMD & EPD & TPC Sub EP
       {
@@ -944,9 +950,9 @@ int StEventPlaneMaker::Make()
 	      const double Psi1GrpShiftEast     = mEpdEpManager->getPsi1GrpShiftEast(iGrp);
 	      const double Psi1GrpShiftWest     = mEpdEpManager->getPsi1GrpShiftWest(iGrp);
 	      const double Psi1GrpShiftFull     = mEpdEpManager->getPsi1GrpShiftFull(iGrp);
-	      const double Psi1GrpShiftFullCorr = mEpdEpManager->getPsi1GrpShiftFullCorr(iGrp);
+	      // const double Psi1GrpShiftFullCorr = mEpdEpManager->getPsi1GrpShiftFullCorr(iGrp);
 	      mEpdEpManager->fillEpdSubEpGrpShift(Psi1GrpShiftEast, Psi1GrpShiftWest, Psi1GrpShiftFull, iGrp);
-	      mEpdEpManager->fillEpdFullEpGrpShift(Psi1GrpShiftFullCorr,iGrp);
+	      // mEpdEpManager->fillEpdFullEpGrpShift(Psi1GrpShiftFullCorr,iGrp); // Don't need Full EPD EP for FXT
 	      mEpdEpManager->fillEpdGrpResolution(Psi1GrpShiftEast, Psi1GrpShiftWest, iGrp);
 	    }
 	  }

@@ -9,7 +9,7 @@
 
 #include "../../Utility/include/StSpinAlignmentCons.h"
 
-void getTpcShiftPar(int beamType = 2)
+void getTpcShiftPar(int beamType = 0)
 {
   const int mNumVzBin = 2; // 0: vz < 0 | 1: vz >= 0
   const int mNumShiftCorr = 20;
@@ -111,30 +111,30 @@ void getTpcShiftPar(int beamType = 2)
       for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
       {
 	figName = Form("../../figures/EventPlaneMaker/%s/TpcQVecShift_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
-	c_TpcQVecShift->cd(1)->Clear(); c_TpcQVecShift->cd(1); p_mTpcQ1ShiftCosEast[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(2)->Clear(); c_TpcQVecShift->cd(2); p_mTpcQ1ShiftSinEast[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(3)->Clear(); c_TpcQVecShift->cd(3); p_mTpcQ1ShiftCosWest[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(4)->Clear(); c_TpcQVecShift->cd(4); p_mTpcQ1ShiftSinWest[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(5)->Clear(); c_TpcQVecShift->cd(5); p_mTpcQ1ShiftCosFull[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(6)->Clear(); c_TpcQVecShift->cd(6); p_mTpcQ1ShiftSinFull[iVz][iShift]->Draw("colz");
+	c_TpcQVecShift->cd(1)->Clear(); c_TpcQVecShift->cd(1); p_mTpcQ1ShiftCosEast[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(2)->Clear(); c_TpcQVecShift->cd(2); p_mTpcQ1ShiftSinEast[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(3)->Clear(); c_TpcQVecShift->cd(3); p_mTpcQ1ShiftCosWest[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(4)->Clear(); c_TpcQVecShift->cd(4); p_mTpcQ1ShiftSinWest[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(5)->Clear(); c_TpcQVecShift->cd(5); p_mTpcQ1ShiftCosFull[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(6)->Clear(); c_TpcQVecShift->cd(6); p_mTpcQ1ShiftSinFull[iVz][iShift]->DrawCopy("colz");
 	c_TpcQVecShift->Update();
 	c_TpcQVecShift->Print(figName.c_str());
 
-	c_TpcQVecShift->cd(1)->Clear(); c_TpcQVecShift->cd(1); p_mTpcQ2ShiftCosEast[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(2)->Clear(); c_TpcQVecShift->cd(2); p_mTpcQ2ShiftSinEast[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(3)->Clear(); c_TpcQVecShift->cd(3); p_mTpcQ2ShiftCosWest[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(4)->Clear(); c_TpcQVecShift->cd(4); p_mTpcQ2ShiftSinWest[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(5)->Clear(); c_TpcQVecShift->cd(5); p_mTpcQ2ShiftCosFull[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(6)->Clear(); c_TpcQVecShift->cd(6); p_mTpcQ2ShiftSinFull[iVz][iShift]->Draw("colz");
+	c_TpcQVecShift->cd(1)->Clear(); c_TpcQVecShift->cd(1); p_mTpcQ2ShiftCosEast[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(2)->Clear(); c_TpcQVecShift->cd(2); p_mTpcQ2ShiftSinEast[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(3)->Clear(); c_TpcQVecShift->cd(3); p_mTpcQ2ShiftCosWest[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(4)->Clear(); c_TpcQVecShift->cd(4); p_mTpcQ2ShiftSinWest[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(5)->Clear(); c_TpcQVecShift->cd(5); p_mTpcQ2ShiftCosFull[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(6)->Clear(); c_TpcQVecShift->cd(6); p_mTpcQ2ShiftSinFull[iVz][iShift]->DrawCopy("colz");
 	c_TpcQVecShift->Update();
 	c_TpcQVecShift->Print(figName.c_str());
 
-	c_TpcQVecShift->cd(1)->Clear(); c_TpcQVecShift->cd(1); p_mTpcQ3ShiftCosEast[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(2)->Clear(); c_TpcQVecShift->cd(2); p_mTpcQ3ShiftSinEast[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(3)->Clear(); c_TpcQVecShift->cd(3); p_mTpcQ3ShiftCosWest[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(4)->Clear(); c_TpcQVecShift->cd(4); p_mTpcQ3ShiftSinWest[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(5)->Clear(); c_TpcQVecShift->cd(5); p_mTpcQ3ShiftCosFull[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(6)->Clear(); c_TpcQVecShift->cd(6); p_mTpcQ3ShiftSinFull[iVz][iShift]->Draw("colz");
+	c_TpcQVecShift->cd(1)->Clear(); c_TpcQVecShift->cd(1); p_mTpcQ3ShiftCosEast[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(2)->Clear(); c_TpcQVecShift->cd(2); p_mTpcQ3ShiftSinEast[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(3)->Clear(); c_TpcQVecShift->cd(3); p_mTpcQ3ShiftCosWest[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(4)->Clear(); c_TpcQVecShift->cd(4); p_mTpcQ3ShiftSinWest[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(5)->Clear(); c_TpcQVecShift->cd(5); p_mTpcQ3ShiftCosFull[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(6)->Clear(); c_TpcQVecShift->cd(6); p_mTpcQ3ShiftSinFull[iVz][iShift]->DrawCopy("colz");
 	c_TpcQVecShift->Update();
 	c_TpcQVecShift->Print(figName.c_str());
       }
@@ -237,24 +237,24 @@ void getTpcShiftPar(int beamType = 2)
     for(int iCent = 0; iCent < mNumCentrality; ++iCent)
     {
       figName = Form("../../figures/EventPlaneMaker/%s/TpcReCtrEp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
-      c_TpcEpReCtrDist->cd(1); h_mTpcEp1ReCtrEast[iCent]->ProjectionY()->Draw();
-      c_TpcEpReCtrDist->cd(2); h_mTpcEp1ReCtrWest[iCent]->ProjectionY()->Draw();
-      c_TpcEpReCtrDist->cd(3); h_mTpcEp1ReCtrFull[iCent]->ProjectionY()->Draw();
-      c_TpcEpReCtrDist->cd(4); h_mTpcEp1ReCtrCorr[iCent]->Draw("colz");
+      c_TpcEpReCtrDist->cd(1); h_mTpcEp1ReCtrEast[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(2); h_mTpcEp1ReCtrWest[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(3); h_mTpcEp1ReCtrFull[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(4); h_mTpcEp1ReCtrCorr[iCent]->DrawCopy("colz");
       c_TpcEpReCtrDist->Update();
       c_TpcEpReCtrDist->Print(figName.c_str());
 
-      c_TpcEpReCtrDist->cd(1); h_mTpcEp2ReCtrEast[iCent]->ProjectionY()->Draw();
-      c_TpcEpReCtrDist->cd(2); h_mTpcEp2ReCtrWest[iCent]->ProjectionY()->Draw();
-      c_TpcEpReCtrDist->cd(3); h_mTpcEp2ReCtrFull[iCent]->ProjectionY()->Draw();
-      c_TpcEpReCtrDist->cd(4); h_mTpcEp2ReCtrCorr[iCent]->Draw("colz");
+      c_TpcEpReCtrDist->cd(1); h_mTpcEp2ReCtrEast[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(2); h_mTpcEp2ReCtrWest[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(3); h_mTpcEp2ReCtrFull[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(4); h_mTpcEp2ReCtrCorr[iCent]->DrawCopy("colz");
       c_TpcEpReCtrDist->Update();
       c_TpcEpReCtrDist->Print(figName.c_str());
 
-      c_TpcEpReCtrDist->cd(1); h_mTpcEp3ReCtrEast[iCent]->ProjectionY()->Draw();
-      c_TpcEpReCtrDist->cd(2); h_mTpcEp3ReCtrWest[iCent]->ProjectionY()->Draw();
-      c_TpcEpReCtrDist->cd(3); h_mTpcEp3ReCtrFull[iCent]->ProjectionY()->Draw();
-      c_TpcEpReCtrDist->cd(4); h_mTpcEp3ReCtrCorr[iCent]->Draw("colz");
+      c_TpcEpReCtrDist->cd(1); h_mTpcEp3ReCtrEast[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(2); h_mTpcEp3ReCtrWest[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(3); h_mTpcEp3ReCtrFull[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(4); h_mTpcEp3ReCtrCorr[iCent]->DrawCopy("colz");
       c_TpcEpReCtrDist->Update();
       c_TpcEpReCtrDist->Print(figName.c_str());
     }
@@ -284,4 +284,5 @@ void getTpcShiftPar(int beamType = 2)
     h_mTpcEp3ReCtrCorr[iCent]->Write();
   }
   file_OutPutReCtrEp->Close();
+  file_InPut->Close();
 }
