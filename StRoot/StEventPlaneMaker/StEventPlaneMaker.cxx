@@ -238,8 +238,8 @@ int StEventPlaneMaker::Init()
       mEpdEpManager->readEpdPhiWgt(); // EPD
       mEpdEpManager->readEpdGrpReCtr();
       mEpdEpManager->readEpdGrpShift();
-      mEpdEpManager->readEpdGrpShiftFull();
-      mEpdEpManager->readEpdGrpResolution();
+      // mEpdEpManager->readEpdGrpShiftFull();
+      // mEpdEpManager->readEpdGrpResolution();
       mMixEpManager->readMixEpRes(); // Mix
       mMixEpManager->initMixSubEpFlow();
     }
@@ -1148,7 +1148,7 @@ int StEventPlaneMaker::Make()
 	      const double deuteronZ = mAnaUtils->calcNSigmaZ(1.0,anaUtils::mMassDeuteron,pMag,picoTrack->dEdx()); // assume every track is deutron
 	      const double mass2     = mAnaUtils->getPrimMass2(mPicoDst,iTrack);
 
-	      if(mAnaCut->passTrkDeuFlow(pMag,deuteronZ,mass2))
+	      if(mAnaCut->passTrkDeuFlow(pMag,deuteronZ,mass2) && mMixEpManager->getMixSubEp1ResVal(cent9,0) > 0.0)
 	      {
 		const double yCMS = mAnaUtils->getRapidityCMS(yLab);
 		const double v1Epd = TMath::Cos(1.0*(phi-Psi1EpdGrp0))/mMixEpManager->getMixSubEp1ResVal(cent9,0);
