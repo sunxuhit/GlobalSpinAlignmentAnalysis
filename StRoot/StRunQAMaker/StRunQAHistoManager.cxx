@@ -24,7 +24,7 @@ StRunQAHistoManager::~StRunQAHistoManager()
 
 //-------------------------------------------------------------------------------------------
 //Event QA
-void StRunQAHistoManager::initEventQA()
+void StRunQAHistoManager::initEvtQA()
 {
   const double mVzQaMin[3] = {-100.0, -100.0, 150.0};
   const double mVzQaMax[3] = {100.0, 100.0, 250.0};
@@ -77,7 +77,7 @@ void StRunQAHistoManager::initEventQA()
   }
 }
 
-void StRunQAHistoManager::fillEventQA_RefMult(int triggerBin, int refMult, int grefMult, int cent9, double reweight, int tofHits, int tofMatch, int cutSelection)
+void StRunQAHistoManager::fillEvtQaRefMult(int triggerBin, int refMult, int grefMult, int cent9, double reweight, int tofHits, int tofMatch, int cutSelection)
 {
   // for a specific triggerBin
   h_mRefMult[cutSelection][triggerBin]->Fill(refMult);
@@ -100,7 +100,7 @@ void StRunQAHistoManager::fillEventQA_RefMult(int triggerBin, int refMult, int g
   h_mTofHitsGRefMult[cutSelection][mNumTriggerBins-1]->Fill(tofHits,grefMult);
 }
 
-void StRunQAHistoManager::fillEventQA_Vertex(int triggerBin, double vx, double vy, double vz, double vzVpd, int vzBin ,int cutSelection)
+void StRunQAHistoManager::fillEvtQaVertex(int triggerBin, double vx, double vy, double vz, double vzVpd, int vzBin ,int cutSelection)
 {
   // for a specific triggerBin
   h_mVertexXY[cutSelection][triggerBin]->Fill(vx,vy);
@@ -117,12 +117,12 @@ void StRunQAHistoManager::fillEventQA_Vertex(int triggerBin, double vx, double v
   h_mVzVzBin[cutSelection][triggerBin]->Fill(vz, vzBin);
 }
 
-void StRunQAHistoManager::fillEventQA_Trigger(int triggerBin, int cutSelection)
+void StRunQAHistoManager::fillEvtQaTrigger(int triggerBin, int cutSelection)
 {
   h_mTriggerId[cutSelection]->Fill(triggerBin);
 }
 
-void StRunQAHistoManager::writeEventQA()
+void StRunQAHistoManager::writeEvtQA()
 {
   for(int iCut = 0; iCut < mNumCuts; ++iCut)
   {
@@ -150,7 +150,7 @@ void StRunQAHistoManager::writeEventQA()
 
 //-------------------------------------------------------------------------------------------
 //Track QA
-void StRunQAHistoManager::initTrackQA()
+void StRunQAHistoManager::initTrkQA()
 {
   for(int iCut = 0; iCut < mNumCuts; ++iCut)
   {
@@ -226,7 +226,7 @@ void StRunQAHistoManager::initTrackQA()
   }
 }
 
-void StRunQAHistoManager::fillTrackQA_Kinematics(int triggerBin, TVector3 pMom, TVector3 gMom, int cutSelection)
+void StRunQAHistoManager::fillTrkQaKinematics(int triggerBin, TVector3 pMom, TVector3 gMom, int cutSelection)
 {
   // for a specific triggerBin
   h_mPrimPt[cutSelection][triggerBin]->Fill(pMom.Pt()); 
@@ -245,7 +245,7 @@ void StRunQAHistoManager::fillTrackQA_Kinematics(int triggerBin, TVector3 pMom, 
   h_mGlobPhi[cutSelection][mNumTriggerBins-1]->Fill(gMom.Phi()); 
 }
 
-void StRunQAHistoManager::fillTrackQA_Quliaty(int triggerBin, double gDca, int nHitsFit, int nHitsMax, int nHitsDEdx, int cutSelection)
+void StRunQAHistoManager::fillTrkQaQuliaty(int triggerBin, double gDca, int nHitsFit, int nHitsMax, int nHitsDEdx, int cutSelection)
 {
   // for a specific triggerBin
   h_mDca[cutSelection][triggerBin]->Fill(gDca); 
@@ -269,20 +269,20 @@ void StRunQAHistoManager::fillTrackQA_Quliaty(int triggerBin, double gDca, int n
   }
 }
 
-void StRunQAHistoManager::fillTrackQA_PID(int triggerBin, double mom, short charge, double dEdx, double beta, double mass2, int cutSelection)
+void StRunQAHistoManager::fillTrkQaPID(int triggerBin, double mom, short charge, double dEdx, double beta, double mass2, int cutSelection)
 {
   // for a specific triggerBin
-  h_mMomDEdx[cutSelection][triggerBin]->Fill(mom*charge, dEdx); 
-  h_mMomMass2[cutSelection][triggerBin]->Fill(mom*charge, mass2); 
-  h_mMomBeta[cutSelection][triggerBin]->Fill(mom*charge, 1.0/beta); 
+  h_mMomDEdx[cutSelection][triggerBin]->Fill(mom/charge, dEdx); 
+  h_mMomMass2[cutSelection][triggerBin]->Fill(mom/charge, mass2/(charge*charge)); 
+  h_mMomBeta[cutSelection][triggerBin]->Fill(mom/charge, 1.0/beta); 
 
   // for all triggers
-  h_mMomDEdx[cutSelection][mNumTriggerBins-1]->Fill(mom*charge, dEdx); 
-  h_mMomMass2[cutSelection][mNumTriggerBins-1]->Fill(mom*charge, mass2); 
-  h_mMomBeta[cutSelection][mNumTriggerBins-1]->Fill(mom*charge, 1.0/beta); 
+  h_mMomDEdx[cutSelection][mNumTriggerBins-1]->Fill(mom/charge, dEdx); 
+  h_mMomMass2[cutSelection][mNumTriggerBins-1]->Fill(mom/charge, mass2/(charge*charge)); 
+  h_mMomBeta[cutSelection][mNumTriggerBins-1]->Fill(mom/charge, 1.0/beta); 
 }
 
-void StRunQAHistoManager::fillTrackQA_EpCut(int triggerBin, TVector3 pMom, bool isFull, bool isEast, bool isWest, int cutSelection)
+void StRunQAHistoManager::fillTrkQaEpCut(int triggerBin, TVector3 pMom, bool isFull, bool isEast, bool isWest, int cutSelection)
 {
   const double eta = pMom.Eta();
   if(cutSelection == 0)
@@ -299,7 +299,7 @@ void StRunQAHistoManager::fillTrackQA_EpCut(int triggerBin, TVector3 pMom, bool 
   }
 }
 
-void StRunQAHistoManager::fillTrackQA_FlowCut(int triggerBin, TVector3 pMom, bool isFull, bool isEast, bool isWest, int cutSelection)
+void StRunQAHistoManager::fillTrkQaFlowCut(int triggerBin, TVector3 pMom, bool isFull, bool isEast, bool isWest, int cutSelection)
 {
   const double eta = pMom.Eta();
   if(cutSelection == 0)
@@ -316,7 +316,7 @@ void StRunQAHistoManager::fillTrackQA_FlowCut(int triggerBin, TVector3 pMom, boo
   }
 }
 
-void StRunQAHistoManager::fillTrackQA_KaonCut(int triggerBin, TVector3 pMom, double nSigKaon, bool isFull, bool isEast, bool isWest, int cutSelection)
+void StRunQAHistoManager::fillTrkQaKaonCut(int triggerBin, TVector3 pMom, double nSigKaon, bool isFull, bool isEast, bool isWest, int cutSelection)
 {
   const double eta = pMom.Eta();
   if(cutSelection == 0)
@@ -333,7 +333,7 @@ void StRunQAHistoManager::fillTrackQA_KaonCut(int triggerBin, TVector3 pMom, dou
   }
 }
 
-void StRunQAHistoManager::writeTrackQA()
+void StRunQAHistoManager::writeTrkQA()
 {
   for(int iCut = 0; iCut < mNumCuts; ++iCut)
   {

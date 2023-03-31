@@ -73,7 +73,7 @@ void StRunQAProManager::initRunQA()
   }
 }
 
-void StRunQAProManager::fillRunQA_Event(int triggerBin, int runIndex, double refMult, double grefMult, double zdcX, double vx, double vy, double vz, int cutSelection)
+void StRunQAProManager::fillRunQAEvt(int triggerBin, int runIndex, double refMult, double grefMult, double zdcX, double vx, double vy, double vz, int cutSelection)
 {
   // for a specific triggerBin
   p_mRefMult[cutSelection][triggerBin]->Fill(runIndex, refMult);
@@ -90,7 +90,7 @@ void StRunQAProManager::fillRunQA_Event(int triggerBin, int runIndex, double ref
   p_mVr[cutSelection][mNumTriggerBins-1]->Fill(runIndex, TMath::Sqrt(vx*vx+vy*vy));
 }
 
-void StRunQAProManager::fillRunQA_Track(int triggerBin, int runIndex, double gDca, int nHitsFit, TVector3 pMom, TVector3 gMom, int cutSelection)
+void StRunQAProManager::fillRunQATrk(int triggerBin, int runIndex, double gDca, int nHitsFit, TVector3 pMom, TVector3 gMom, int cutSelection)
 {
   // for a specific triggerBin
   p_mGDca[cutSelection][triggerBin]->Fill(runIndex, gDca);

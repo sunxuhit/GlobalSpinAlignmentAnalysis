@@ -31,7 +31,6 @@ StRunQAMaker::StRunQAMaker(const char* name, StPicoDstMaker *picoMaker, string j
   mRefMultCorr       = NULL;
   mPileupUtilFxt3p85 = NULL;
 
-  // mType = beamType;
   str_mOutPutRunQA = Form("./file_%s_RunQA_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
 }
 
@@ -59,10 +58,10 @@ int StRunQAMaker::Init()
     mPileupUtilFxt3p85->init();
   }
 
-  file_mOutPutRunQA= new TFile(str_mOutPutRunQA.c_str(),"RECREATE");
+  file_mOutPutRunQA = new TFile(str_mOutPutRunQA.c_str(),"RECREATE");
   file_mOutPutRunQA->cd();
-  mRunQAHistoManager->initEventQA();
-  mRunQAHistoManager->initTrackQA();
+  mRunQAHistoManager->initEvtQA();
+  mRunQAHistoManager->initTrkQA();
   mRunQAProManager->initRunQA();
 
   return kStOK;
@@ -74,8 +73,8 @@ int StRunQAMaker::Finish()
   if(str_mOutPutRunQA != "")
   {
     file_mOutPutRunQA->cd();
-    mRunQAHistoManager->writeEventQA();
-    mRunQAHistoManager->writeTrackQA();
+    mRunQAHistoManager->writeEvtQA();
+    mRunQAHistoManager->writeTrkQA();
     mRunQAProManager->writeRunQA();
     file_mOutPutRunQA->Close();
   }
@@ -129,13 +128,22 @@ int StRunQAMaker::Make()
     const unsigned int nBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
     const unsigned int nTracks      = mPicoDst->numberOfTracks(); // get number of tracks
 
-    // StRefMultCorr Cut & centrality
-    if(!mRefMultCorr)
+    const int triggerBin  = mAnaUtils->getTriggerBin(mPicoEvent);
+    const int vzBin       = mAnaUtils->getVzBin(vz); // 0 for [vzMin,vzCtr) || 1 for [vzCtr,vzMax]
+    const int runIndex    = mAnaUtils->findRunIndex(runId); // find run index for a specific run
+    // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
+
+    if(runIndex < 0)
+    {
+      LOG_ERROR << "Could not find this run Index from StAnalysisUtils! Skip!" << endm;
+      return kStErr;
+    }
+
+    if(!mRefMultCorr) // StRefMultCorr Cut & centrality
     {
       LOG_WARN << " No mRefMultCorr! Skip! " << endl;
       return kStErr;
     }
-
     mRefMultCorr->init(runId);
     mRefMultCorr->initEvent(refMult,vz,zdcX);
     int cent9     = mRefMultCorr->getCentralityBin9(); // get Centrality9
@@ -149,16 +157,6 @@ int StRunQAMaker::Make()
       refWgt  = mPileupUtilFxt3p85->get_centralityWeight();
     }
 
-    const int runIndex    = mAnaUtils->findRunIndex(runId); // find run index for a specific run
-    const int triggerBin  = mAnaUtils->getTriggerBin(mPicoEvent);
-    const int vzBin       = mAnaUtils->getVzBin(vz); // 0 for [vzMin,vzCtr) || 1 for [vzCtr,vzMax]
-    // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
-    if(runIndex < 0)
-    {
-      LOG_ERROR << "Could not find this run Index from StAnalysisUtils! Skip!" << endm;
-      return kStErr;
-    }
-
     bool isPileUpStAnalysisCut = mAnaCut->isPileUpEvent((double)refMult, (double)nBTofMatch,vz); // alway return false for Isobar & Fxt3p85GeV_2018
     bool isPileUpStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut((double)refMult, (double)nBTofMatch,vz); // valid for Isobar
     if(mAnaCut->isFxt3p85GeV_2018()) isPileUpStRefMultCorr = mPileupUtilFxt3p85->isPileupEPD(); // valid only for Fxt3p85GeV_2018
@@ -166,17 +164,17 @@ int StRunQAMaker::Make()
     // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpStAnalysisCut = " << isPileUpStAnalysisCut << ", isPileUpStRefMultCorr = " << isPileUpStRefMultCorr << endl;
 
     // fill QA before event cuts
-    mRunQAProManager->fillRunQA_Event(triggerBin,runIndex,refMult,grefMult,zdcX,vxReCtr,vyReCtr,vz,0);
-    mRunQAHistoManager->fillEventQA_RefMult(triggerBin,refMult,grefMult,cent9,refWgt,nBTofHits,nBTofMatch,0); // wo event cut
-    mRunQAHistoManager->fillEventQA_Vertex(triggerBin,vxReCtr,vyReCtr,vz,vzVpd,vzBin,0);
-    mRunQAHistoManager->fillEventQA_Trigger(triggerBin,0);
+    mRunQAProManager->fillRunQAEvt(triggerBin,runIndex,refMult,grefMult,zdcX,vxReCtr,vyReCtr,vz,0);
+    mRunQAHistoManager->fillEvtQaRefMult(triggerBin,refMult,grefMult,cent9,refWgt,nBTofHits,nBTofMatch,0); // wo event cut
+    mRunQAHistoManager->fillEvtQaVertex(triggerBin,vxReCtr,vyReCtr,vz,vzVpd,vzBin,0);
+    mRunQAHistoManager->fillEvtQaTrigger(triggerBin,0);
 
     if(!isPileUpEvent && mAnaCut->isGoodCent9(cent9) && mAnaCut->passEventCut(mPicoEvent))
     { // apply Event Cuts for anlaysis 
-      mRunQAProManager->fillRunQA_Event(triggerBin,runIndex,refMult,grefMult,zdcX,vxReCtr,vyReCtr,vz,1);
-      mRunQAHistoManager->fillEventQA_RefMult(triggerBin,refMult,grefMult,cent9,refWgt,nBTofHits,nBTofMatch,1); // with event cut
-      mRunQAHistoManager->fillEventQA_Vertex(triggerBin,vxReCtr,vyReCtr,vz,vzVpd,vzBin,1);
-      mRunQAHistoManager->fillEventQA_Trigger(triggerBin,1);
+      mRunQAProManager->fillRunQAEvt(triggerBin,runIndex,refMult,grefMult,zdcX,vxReCtr,vyReCtr,vz,1);
+      mRunQAHistoManager->fillEvtQaRefMult(triggerBin,refMult,grefMult,cent9,refWgt,nBTofHits,nBTofMatch,1); // with event cut
+      mRunQAHistoManager->fillEvtQaVertex(triggerBin,vxReCtr,vyReCtr,vz,vzVpd,vzBin,1);
+      mRunQAHistoManager->fillEvtQaTrigger(triggerBin,1);
 
       for(unsigned int iTrack = 0; iTrack < nTracks; iTrack++) // track loop
       {
@@ -196,16 +194,16 @@ int StRunQAMaker::Make()
 	const double beta     = mAnaUtils->getBeta(mPicoDst,iTrack);
 	const double mass2    = mAnaUtils->getPrimMass2(mPicoDst,iTrack);
 
-	mRunQAHistoManager->fillTrackQA_Kinematics(triggerBin,primMom,globMom, 0); // wo track cut
-	mRunQAHistoManager->fillTrackQA_Quliaty(triggerBin,gDCA,nHitsFit,nHitsMax,nHitsDEdx,0);
-	mRunQAHistoManager->fillTrackQA_PID(triggerBin,primMom.Mag(),charge,dEdx,beta,mass2,0);
-	mRunQAProManager->fillRunQA_Track(triggerBin,runIndex,gDCA,nHitsFit,primMom,globMom,0);
+	mRunQAHistoManager->fillTrkQaKinematics(triggerBin,primMom,globMom, 0); // wo track cut
+	mRunQAHistoManager->fillTrkQaQuliaty(triggerBin,gDCA,nHitsFit,nHitsMax,nHitsDEdx,0);
+	mRunQAHistoManager->fillTrkQaPID(triggerBin,primMom.Mag(),charge,dEdx,beta,mass2,0);
+	mRunQAProManager->fillRunQATrk(triggerBin,runIndex,gDCA,nHitsFit,primMom,globMom,0);
 	if( mAnaCut->passTrkQA(picoTrack,primVtx) ) // apply QA track cut
 	{
-	  mRunQAHistoManager->fillTrackQA_Kinematics(triggerBin,primMom,globMom, 1); // with track cut
-	  mRunQAHistoManager->fillTrackQA_Quliaty(triggerBin,gDCA,nHitsFit,nHitsMax,nHitsDEdx,1);
-	  mRunQAHistoManager->fillTrackQA_PID(triggerBin,primMom.Mag(),charge,dEdx,beta,mass2,1);
-	  mRunQAProManager->fillRunQA_Track(triggerBin,runIndex,gDCA,nHitsFit,primMom,globMom,1);
+	  mRunQAHistoManager->fillTrkQaKinematics(triggerBin,primMom,globMom, 1); // with track cut
+	  mRunQAHistoManager->fillTrkQaQuliaty(triggerBin,gDCA,nHitsFit,nHitsMax,nHitsDEdx,1);
+	  mRunQAHistoManager->fillTrkQaPID(triggerBin,primMom.Mag(),charge,dEdx,beta,mass2,1);
+	  mRunQAProManager->fillRunQATrk(triggerBin,runIndex,gDCA,nHitsFit,primMom,globMom,1);
 	}
 
 	bool isEpFull = mAnaCut->passTrkTpcEpFull(picoTrack,primVtx);
@@ -218,13 +216,13 @@ int StRunQAMaker::Make()
 	bool isKaonEast = mAnaCut->passTrkKaonEast(picoTrack,primVtx);
 	bool isKaonWest = mAnaCut->passTrkKaonWest(picoTrack,primVtx);
 
-	mRunQAHistoManager->fillTrackQA_EpCut(triggerBin, primMom, isEpFull, isEpEast, isEpWest, 0);
-	mRunQAHistoManager->fillTrackQA_FlowCut(triggerBin, primMom, isFlowFull, isFlowEast, isFlowWest, 0);
-	mRunQAHistoManager->fillTrackQA_KaonCut(triggerBin, primMom, nSigKaon, isKaonFull, isKaonEast, isKaonWest, 0);
+	mRunQAHistoManager->fillTrkQaEpCut(triggerBin, primMom, isEpFull, isEpEast, isEpWest, 0);
+	mRunQAHistoManager->fillTrkQaFlowCut(triggerBin, primMom, isFlowFull, isFlowEast, isFlowWest, 0);
+	mRunQAHistoManager->fillTrkQaKaonCut(triggerBin, primMom, nSigKaon, isKaonFull, isKaonEast, isKaonWest, 0);
 
-	mRunQAHistoManager->fillTrackQA_EpCut(triggerBin, primMom, isEpFull, isEpEast, isEpWest, 1);
-	mRunQAHistoManager->fillTrackQA_FlowCut(triggerBin, primMom, isFlowFull, isFlowEast, isFlowWest, 1);
-	mRunQAHistoManager->fillTrackQA_KaonCut(triggerBin, primMom, nSigKaon, isKaonFull, isKaonEast, isKaonWest, 1);
+	mRunQAHistoManager->fillTrkQaEpCut(triggerBin, primMom, isEpFull, isEpEast, isEpWest, 1);
+	mRunQAHistoManager->fillTrkQaFlowCut(triggerBin, primMom, isFlowFull, isFlowEast, isFlowWest, 1);
+	mRunQAHistoManager->fillTrkQaKaonCut(triggerBin, primMom, nSigKaon, isKaonFull, isKaonEast, isKaonWest, 1);
       }
     }
   }

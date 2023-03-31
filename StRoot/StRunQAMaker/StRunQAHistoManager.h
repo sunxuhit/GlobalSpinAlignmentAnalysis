@@ -14,20 +14,20 @@ class StRunQAHistoManager
     virtual ~StRunQAHistoManager();
 
     //--------------QA---------------
-    void initEventQA();
-    void fillEventQA_RefMult(int triggerBin, int refMult, int grefMult, int cent9, double reweight, int tofHits, int tofMatch, int cutSelection);
-    void fillEventQA_Vertex(int triggerBin, double vx, double vy, double vz, double vzVpd, int vzBin, int cutSelection);
-    void fillEventQA_Trigger(int triggerBin, int cutSelection);
-    void writeEventQA();
+    void initEvtQA();
+    void fillEvtQaRefMult(int triggerBin, int refMult, int grefMult, int cent9, double reweight, int tofHits, int tofMatch, int cutSelection);
+    void fillEvtQaVertex(int triggerBin, double vx, double vy, double vz, double vzVpd, int vzBin, int cutSelection);
+    void fillEvtQaTrigger(int triggerBin, int cutSelection);
+    void writeEvtQA();
 
-    void initTrackQA();
-    void fillTrackQA_Kinematics(int triggerBin, TVector3 pMom, TVector3 gMom, int cutSelection);
-    void fillTrackQA_Quliaty(int triggerBin, double gDca, int nHitsFit, int nHitsMax, int nHitsDEdx, int cutSelection);
-    void fillTrackQA_PID(int triggerBin, double mom, short charge, double dEdx, double beta, double mass2, int cutSelection);
-    void fillTrackQA_EpCut(int triggerBin, TVector3 pMom, bool isFull, bool isEast, bool isWest, int cutSelection);
-    void fillTrackQA_FlowCut(int triggerBin, TVector3 pMom, bool isFull, bool isEast, bool isWest, int cutSelection);
-    void fillTrackQA_KaonCut(int triggerBin, TVector3 pMom, double nSigKaon, bool isFull, bool isEast, bool isWest, int cutSelection);
-    void writeTrackQA();
+    void initTrkQA();
+    void fillTrkQaKinematics(int triggerBin, TVector3 pMom, TVector3 gMom, int cutSelection);
+    void fillTrkQaQuliaty(int triggerBin, double gDca, int nHitsFit, int nHitsMax, int nHitsDEdx, int cutSelection);
+    void fillTrkQaPID(int triggerBin, double mom, short charge, double dEdx, double beta, double mass2, int cutSelection);
+    void fillTrkQaEpCut(int triggerBin, TVector3 pMom, bool isFull, bool isEast, bool isWest, int cutSelection);
+    void fillTrkQaFlowCut(int triggerBin, TVector3 pMom, bool isFull, bool isEast, bool isWest, int cutSelection);
+    void fillTrkQaKaonCut(int triggerBin, TVector3 pMom, double nSigKaon, bool isFull, bool isEast, bool isWest, int cutSelection);
+    void writeTrkQA();
     //--------------QA---------------
 
   private:

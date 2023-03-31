@@ -1,8 +1,5 @@
 #include <algorithm>
 
-#include <TH1F.h>
-#include <TH2F.h>
-#include <TProfile.h>
 #include <TFile.h>
 #include <TVector3.h>
 #include <TMath.h>
@@ -432,8 +429,13 @@ int StEventPlaneMaker::Make()
     const int runIndex = mAnaUtils->findRunIndex(runId); // find run index for a specific run
     // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
 
-    // StRefMultCorr Cut & centrality
-    if(!mRefMultCorr)
+    if(runIndex < 0)
+    {
+      LOG_ERROR << "Could not find this run Index from StAnalysisUtils! Skip!" << endm;
+      return kStErr;
+    }
+
+    if(!mRefMultCorr) // StRefMultCorr Cut & centrality
     {
       LOG_WARN << " No mRefMultCorr! Skip! " << endl;
       return kStErr;
@@ -451,6 +453,7 @@ int StEventPlaneMaker::Make()
       refWgt  = mPileupUtilFxt3p85->get_centralityWeight();
     }
 
+    // reject bad runs
     if(mRefMultCorr->isBadRun(runId))
     {
       LOG_ERROR << "Bad Run from StRefMultCorr! Skip!" << endm;
@@ -459,11 +462,6 @@ int StEventPlaneMaker::Make()
     if(mAnaUtils->isBadRun(runId))
     {
       LOG_ERROR << "Bad Run from StAnalysisUtils! Skip!" << endm;
-      return kStErr;
-    }
-    if(runIndex < 0)
-    {
-      LOG_ERROR << "Could not find this run Index from StAnalysisUtils! Skip!" << endm;
       return kStErr;
     }
 

@@ -85,10 +85,10 @@ void RunQA(const char *inputFile="Utility/FileList/Fxt3p85GeV_2018/pico_xrootd_l
   cout << "." << flush;
   cout << " " << nEvents << "(" << 100 << "%)";
   cout << endl;
+  chain->Finish();
   cout << "****************************************** " << endl;
   cout << "Work done... now its time to close up shop!"<< endl;
   cout << "****************************************** " << endl;
-  chain->Finish();
   cout << "****************************************** " << endl;
   cout << "total number of events  " << nEvents << endl;
   cout << "****************************************** " << endl;

@@ -4,8 +4,6 @@
 #include "StMaker.h"
 #include <string>
 
-class TProfile;
-
 class StPicoDst;
 class StPicoDstMaker;
 class StPicoEvent;
