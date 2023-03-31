@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<job minFilesPerProcess="20" filesPerHour="5" maxFilesPerProcess="25" fileListSyntax="xrootd" simulateSubmission="false">
+<job minFilesPerProcess="20" filesPerHour="2" maxFilesPerProcess="25" fileListSyntax="xrootd" simulateSubmission="false">
 
   <command>
     <!-- starver &#38;library; -->
@@ -16,7 +16,7 @@
     </Package>
   </SandBox>
 
-  <input URL="filelist:&listPath;/pico_xrootd_resubmit_EventPlaneMaker_.list" />
+  <input URL="filelist:&listPath;/pico_xrootd_resubmit_EventPlaneMaker_40BCDF72A81298165E5ED4F3AC25A27A.list" />
 
   <!-- <stdout discard="true"/> -->
   <stdout URL="file:&outPath;/Log/$JOBID.out"/>

@@ -53,9 +53,9 @@ void getZdcReCtrPar(int beamType = 0)
 
     std::string figName = Form("../../figures/EventPlaneMaker/%s/ZdcQ1ReCtr_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_ZdcQ1ReCtr->Print(figName.c_str());
+    figName = Form("../../figures/EventPlaneMaker/%s/ZdcQ1ReCtr_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     for(int iVz = 0; iVz < mNumVzBin; ++iVz)
     {
-      figName = Form("../../figures/EventPlaneMaker/%s/ZdcQ1ReCtr_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
       c_ZdcQ1ReCtr->cd(1)->Clear(); c_ZdcQ1ReCtr->cd(1); p_mZdcQ1ReCtrVertEast[iVz]->DrawCopy("colz");
       c_ZdcQ1ReCtr->cd(2)->Clear(); c_ZdcQ1ReCtr->cd(2); p_mZdcQ1ReCtrHoriEast[iVz]->DrawCopy("colz");
       c_ZdcQ1ReCtr->cd(3)->Clear(); c_ZdcQ1ReCtr->cd(3); p_mZdcQ1ReCtrVertWest[iVz]->DrawCopy("colz");
