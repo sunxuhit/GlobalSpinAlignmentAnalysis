@@ -70,23 +70,29 @@ void fitZdcGainCorr(int beamType = 0)
   }
 
   // QA plots
-  TCanvas *c_ZdcGainCorr[2][2];
+  TCanvas *c_ZdcGainCorr = new TCanvas("c_ZdcGainCorr","c_ZdcGainCorr",10,10,1600,800);
+  c_ZdcGainCorr->Divide(4,2);
+  for(int iSlat = 0; iSlat < 8; ++iSlat)
+  {
+    c_ZdcGainCorr->cd(iSlat+1);
+    c_ZdcGainCorr->cd(iSlat+1)->SetLeftMargin(0.15);
+    c_ZdcGainCorr->cd(iSlat+1)->SetBottomMargin(0.15);
+    c_ZdcGainCorr->cd(iSlat+1)->SetTicks(1,1);
+    c_ZdcGainCorr->cd(iSlat+1)->SetGrid(0,0);
+    // c_ZdcGainCorr->cd(iSlat+1)->SetLogy(1);
+  }
+  std::string figName = Form("../../figures/EventPlaneMaker/%s/ZdcGainCorr_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_ZdcGainCorr->Print(figName.c_str());
+  figName = Form("../../figures/EventPlaneMaker/%s/ZdcGainCorr_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+
   for(int iEastWest = 0; iEastWest < 2; ++iEastWest)
   {
     for(int iVertHori = 0; iVertHori < 2; ++iVertHori)
     {
-      string CanName = Form("c_mGainCorr%s%s",str_mEastWest[iEastWest].c_str(),str_mVertHori[iVertHori].c_str());
-      c_ZdcGainCorr[iEastWest][iVertHori] = new TCanvas(CanName.c_str(),CanName.c_str(),10,10,1600,800);
-      c_ZdcGainCorr[iEastWest][iVertHori]->Divide(4,2);
       for(int iSlat = 0; iSlat < 8; ++iSlat)
       {
-	c_ZdcGainCorr[iEastWest][iVertHori]->cd(iSlat+1);
-	c_ZdcGainCorr[iEastWest][iVertHori]->cd(iSlat+1)->SetLeftMargin(0.15);
-	c_ZdcGainCorr[iEastWest][iVertHori]->cd(iSlat+1)->SetBottomMargin(0.15);
-	c_ZdcGainCorr[iEastWest][iVertHori]->cd(iSlat+1)->SetTicks(1,1);
-	c_ZdcGainCorr[iEastWest][iVertHori]->cd(iSlat+1)->SetGrid(0,0);
-	c_ZdcGainCorr[iEastWest][iVertHori]->cd(iSlat+1)->SetLogy(1);
-	h_mGainCorr[iEastWest][iVertHori][iSlat]->Draw("hE");
+	c_ZdcGainCorr->cd(iSlat+1);
+	h_mGainCorr[iEastWest][iVertHori][iSlat]->DrawCopy("hE");
 	TF1 *f_exp =new TF1("f_exp","[0]*exp(-[1]*x)",0,1000);
 	f_exp->FixParameter(0,norm[iEastWest][iVertHori][iSlat]);
 	f_exp->FixParameter(1,slope[iEastWest][iVertHori][iSlat]);
@@ -98,10 +104,12 @@ void fitZdcGainCorr(int beamType = 0)
 	f_exp->SetLineStyle(1);
 	f_exp->Draw("l same");
       }
-      string FigureName = Form("../../figures/EventPlaneMaker/%s/ZdcGainCorr%s%s_%s.pdf",globCons::str_mBeamType[beamType].c_str(),str_mEastWest[iEastWest].c_str(),str_mVertHori[iVertHori].c_str(),globCons::str_mBeamType[beamType].c_str());
-      c_ZdcGainCorr[iEastWest][iVertHori]->SaveAs(FigureName.c_str());
+      c_ZdcGainCorr->Update();
+      c_ZdcGainCorr->Print(figName.c_str());
     }
   }
+  figName = Form("../../figures/EventPlaneMaker/%s/ZdcGainCorr_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_ZdcGainCorr->Print(figName.c_str());
 
   // print Gain Correcction Factors
   cout << "const double mGainCorr[2][2][8] = {" << endl;
@@ -170,4 +178,5 @@ void fitZdcGainCorr(int beamType = 0)
     }
   }
   file_OutPut->Close();
+  file_InPut->Close();
 }
