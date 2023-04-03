@@ -49,7 +49,7 @@ void fitZdcGainCorr(int beamType = 0)
       {
 	TF1 *f_exp =new TF1("f_exp","[0]*exp(-[1]*x)",0,1000);
 	f_exp->SetParameter(0,0.1*h_mGainCorr[iEastWest][iVertHori][iSlat]->GetMaximum());
-	f_exp->SetParameter(1,0.02);
+	f_exp->SetParameter(1,0.01);
 	double expStart1st = meanGain[iEastWest][iVertHori][iSlat]+1.0*rmsGain[iEastWest][iVertHori][iSlat];
 	double expStop1st  = meanGain[iEastWest][iVertHori][iSlat]+4.0*rmsGain[iEastWest][iVertHori][iSlat];
 	f_exp->SetRange(expStart1st,expStop1st);
@@ -79,7 +79,7 @@ void fitZdcGainCorr(int beamType = 0)
     c_ZdcGainCorr->cd(iSlat+1)->SetBottomMargin(0.15);
     c_ZdcGainCorr->cd(iSlat+1)->SetTicks(1,1);
     c_ZdcGainCorr->cd(iSlat+1)->SetGrid(0,0);
-    // c_ZdcGainCorr->cd(iSlat+1)->SetLogy(1);
+    c_ZdcGainCorr->cd(iSlat+1)->SetLogy(1);
   }
   std::string figName = Form("../../figures/EventPlaneMaker/%s/ZdcGainCorr_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   c_ZdcGainCorr->Print(figName.c_str());
