@@ -6,8 +6,10 @@ date
 if [ $# -eq 0 ]
 then
   BeamType=Fxt3p85GeV_2018
-  JobId=33CD03E2749A129BF5688C2682C98EB5 #generate faild list for this Job
-  Task=RunQA
+  JobId=65A2F3F004122939F4E57BBDA45579FD #generate faild list for this Job
+  Task=EventPlaneMaker
+  # Mode=GainCorr
+  Mode=ReCenterPar
 
   FileDirectory="/star/u/sunxuhit/$BeamType/SpinAlignment/$Task/OutPut"
   OutPutDir="/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/${BeamType}"
@@ -15,7 +17,7 @@ then
 
   FailedRootFiles="$OutPutDir/condor_rootFailed_${Task}_${JobId}.list"
   cp $FailedList $FailedRootFiles
-  sed -i "s/sched/file_"$BeamType"_"$Task"_/g" $FailedRootFiles
+  sed -i "s/sched/file_"$Mode"_"$BeamType"_/g" $FailedRootFiles
   sed -i "s/list/root/g" $FailedRootFiles
 
   cd $FileDirectory

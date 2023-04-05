@@ -29,6 +29,7 @@ Utility/FileList/*/*.list
 !Utility/FileList/*/runInfo*.list
 !Utility/FileList/*/allIsobarRun.list
 
+submit/**/archivedJobs/
 submit/**/JOBS/
 submit/**/Log/
 submit/**/sched*
