@@ -37,7 +37,7 @@ double rho00_theory(double *x_var, double *par)
 }
 
 
-void plotRho00BESI()
+void projRho00BESII()
 {
   gStyle->SetOptDate(0);
   const int style_phi_1st = 21;
@@ -49,13 +49,13 @@ void plotRho00BESI()
   const int colorDiff_phi = 0;
 
   const int style_Kstr = 20;
-  const int color_Kstr = kAzure-9;
+  const int color_Kstr = kAzure+2;
   const int style_Kstr_ALICE = 24;
   const int color_Kstr_ALICE = kGray+1;
   const int colorDiff_Kstr = 2;
 
   const float size_marker = 1.4;
-  const float size_font = 0.035;
+  const float size_font = 0.030;
   
   //----------------------------------------------------------
   // phi-meson STAR
@@ -106,7 +106,7 @@ void plotRho00BESI()
   c_rho00->cd()->SetLogx();
   h_frame->SetTitle("");
   h_frame->SetStats(0);
-  h_frame->GetXaxis()->SetRangeUser(1.0,4996.0);
+  h_frame->GetXaxis()->SetRangeUser(7.0,4996.0);
   h_frame->GetXaxis()->SetNdivisions(505,'N');
   h_frame->GetXaxis()->SetLabelSize(0.04);
   h_frame->GetXaxis()->SetTitle("#sqrt{s_{NN}}  (GeV)");
@@ -114,7 +114,7 @@ void plotRho00BESI()
   h_frame->GetXaxis()->SetTitleOffset(1.1);
   h_frame->GetXaxis()->CenterTitle();
 
-  h_frame->GetYaxis()->SetRangeUser(0.23,0.45);
+  h_frame->GetYaxis()->SetRangeUser(0.23,0.42);
   h_frame->GetYaxis()->SetNdivisions(505,'N');
   // h_frame->GetYaxis()->SetTitle("#rho_{00} (Out-of-Plane)");
   h_frame->GetYaxis()->SetTitle("#rho_{00}");
@@ -123,19 +123,19 @@ void plotRho00BESI()
   h_frame->GetYaxis()->SetLabelSize(0.04);
   h_frame->GetYaxis()->CenterTitle();
   h_frame->DrawCopy("pE");
-  PlotLine(1.0,4996.0,1.0/3.0,1.0/3.0,1,2,2);
+  PlotLine(7.0,4996.0,1.0/3.0,1.0/3.0,1,2,2);
 
   // K* STAR
-  Draw_TGAE_new_Symbol((TGraphAsymmErrors*)g_rhoKstar_stat,style_Kstr,color_Kstr,colorDiff_Kstr,size_marker-0.4);
-  plotSysErrorsBox(g_rhoKstar_sys,color_Kstr+2);
+  Draw_TGAE_new_Symbol((TGraphAsymmErrors*)g_rhoKstar_stat,style_Kstr,color_Kstr_ALICE,colorDiff_Kstr,size_marker-0.4);
+  plotSysErrorsBox(g_rhoKstar_sys,color_Kstr_ALICE);
 
   // K* ALICE
   Draw_TGAE_new_Symbol((TGraphAsymmErrors*)g_rhoKstar_ALICE_stat,style_Kstr_ALICE,color_Kstr_ALICE,0,size_marker-0.4);
   plotSysErrorsBox(g_rhoKstar_ALICE_sys,color_Kstr_ALICE);
 
   // phi-meson STAR
-  Draw_TGAE_new_Symbol((TGraphAsymmErrors*)g_rhoPhi_2nd_stat_Laxis,style_phi_2nd,color_phi_2nd,colorDiff_phi,size_marker+0.2);
-  plotSysErrorsBox(g_rhoPhi_2nd_sys_Laxis,color_phi_2nd);
+  Draw_TGAE_new_Symbol((TGraphAsymmErrors*)g_rhoPhi_2nd_stat_Laxis,style_phi_2nd,color_phi_ALICE,colorDiff_phi,size_marker+0.2);
+  plotSysErrorsBox(g_rhoPhi_2nd_sys_Laxis,color_phi_ALICE);
 
   // phi-meson ALICE
   Draw_TGAE_new_Symbol((TGraphAsymmErrors*)g_rhoPhi_ALICE_stat,style_phi_ALICE,color_phi_ALICE,0,size_marker);
@@ -159,7 +159,7 @@ void plotRho00BESI()
   cout << "chi2/ndf for Laxis: " << chi2_ndf_Laxis  << ", p_Laxis: " << p_Laxis << endl;
   cout << "C^{y}_{s} = " << f_rho00_Laxis->GetParameter(0) << " +/- " << f_rho00_Laxis->GetParError(0) << endl;
 
-  f_rho00_Laxis->SetLineColor(kRed);
+  f_rho00_Laxis->SetLineColor(color_phi_ALICE);
   f_rho00_Laxis->SetLineStyle(1);
   f_rho00_Laxis->SetLineWidth(4);
   f_rho00_Laxis->Draw("l same");
@@ -167,29 +167,26 @@ void plotRho00BESI()
   TF1 *f_rho00_plot = new TF1("f_rho00_plot",rho00_theory,1,4000,2);
   f_rho00_plot->FixParameter(0,f_rho00_Laxis->GetParameter(0));
   f_rho00_plot->FixParameter(1,ms);
+  f_rho00_plot->SetLineColor(color_phi_ALICE);
   f_rho00_plot->SetLineStyle(2);
   f_rho00_plot->SetLineWidth(4);
   f_rho00_plot->SetRange(200.0,3000.0);
   f_rho00_plot->Draw("l same");
 
   // plot Legend
-  // plotTopLegend((char*)"filled: STAR (Au+Au & 20\% - 60\% Centrality)",0.185,0.25,size_font,1,0.0,42,1);
-  // plotTopLegend((char*)"open: ALICE (Pb+Pb & 10\% - 50\% Centrality)",0.185,0.20,size_font,1,0.0,42,1);
+  plotTopLegend((char*)"filled: STAR (Au+Au & 20\% - 60\% Centrality)",0.185,0.25,size_font,1,0.0,42,1);
+  plotTopLegend((char*)"open: ALICE (Pb+Pb & 10\% - 50\% Centrality)",0.185,0.20,size_font,1,0.0,42,1);
 
-  plotTopLegend((char*)"STAR (Au+Au & 20\% - 60\%)",1.8,0.435,size_font,1,0.0,42,0);
-  Draw_TGAE_Point_new_Symbol(2,0.425,0.0,0.0,0.0,0.0,style_phi_2nd,color_phi_2nd,size_marker+0.2);
-  plotTopLegend((char*)"#phi    (|y| < 1.0 & 1.2 < p_{T} < 5.4 GeV/c)",2.5,0.4225,size_font,1,0.0,42,0);
+  Draw_TGAE_Point_new_Symbol(40,0.41,0.0,0.0,0.0,0.0,style_phi_2nd,color_phi_ALICE,size_marker+0.2);
+  plotTopLegend((char*)"#phi    (|y| < 1.0 & 1.2 < p_{T} < 5.4 GeV/c)",48,0.4075,size_font,1,0.0,42,0);
 
-  Draw_TGAE_Point_new_Symbol(2,0.410,0.0,0.0,0.0,0.0,style_Kstr,color_Kstr,size_marker-0.4);
-  plotTopLegend((char*)"K^{*0} (|y| < 1.0 & 1.0 < p_{T} < 5.0 GeV/c)",2.5,0.4075,size_font,1,0.0,42,0);
-
-  plotTopLegend((char*)"open symbols:",0.385,0.25,size_font,1,0.0,42,1);
-  plotTopLegend((char*)"ALICE (Pb+Pb & 10\% - 50\%)",0.385,0.20,size_font,1,0.0,42,1);
+  Draw_TGAE_Point_new_Symbol(40,0.395,0.0,0.0,0.0,0.0,style_Kstr,color_Kstr_ALICE,size_marker-0.4);
+  plotTopLegend((char*)"K^{*0} (|y| < 1.0 & 1.0 < p_{T} < 5.0 GeV/c)",48,0.3925,size_font,1,0.0,42,0);
 
   // theory
   const float Gs = f_rho00_Laxis->GetParameter(0)*1.8e5*pow(197.0,8)/(pow(450.0,2)*pow(1020.0,4)*pow(138.05,4));
   const float GsErr = f_rho00_Laxis->GetParError(0)*1.8e5*pow(197.0,8)/(pow(450.0,2)*pow(1020.0,4)*pow(138.05,4));
-  string leg_current_Laxis = Form("G^{(y)}_{s} = %1.2f #pm %1.2f m_{#pi}^{4}", Gs, GsErr);
+  string leg_current_Laxis = Form("G^{(y)}_{s} = %1.2f #pm %1.2f m_{#pi}^{4} (Fit to BESI Only)", Gs, GsErr);
   // string leg_current_Laxis = Form("C^{(y)}_{s} = %1.0f #pm %1.0f fm^{-8}",f_rho00_Laxis->GetParameter(0),f_rho00_Laxis->GetParError(0));
   // string leg_chi2_Laxis = Form("#chi^{2}/ndf: %1.1f",chi2_ndf_Laxis);
   // string leg_p_Laxis = Form("p-value: %1.3f", p_Laxis);
@@ -201,101 +198,44 @@ void plotRho00BESI()
   // leg->AddEntry(f_rho00_Laxis,leg_current_Laxis.c_str(),"l");
   // leg->AddEntry((TObject*)0,leg_stat_Laxis.c_str(),"");
   // leg->Draw("same");
-  PlotLine(1.7,2.2,0.395,0.395,2,3,1);
-  plotTopLegend((char*)leg_current_Laxis.c_str(),2.5,0.3925,size_font,1,0.0,42,0);
+  PlotLine(35,45,0.38,0.38,color_phi_ALICE,3,1);
+  plotTopLegend((char*)leg_current_Laxis.c_str(),48,0.3775,size_font,1,0.0,42,0);
 
-  // future measurement
-  TBox *bHighMuB= new TBox(2.0, 0.23, 7.5, 0.38);
-  bHighMuB->SetFillColor(kYellow);
-  bHighMuB->SetFillStyle(3001);
-  bHighMuB->Draw("same");
+  // BESII phi
+  TGraphAsymmErrors *g_rhoPhiStatBESII = new TGraphAsymmErrors();
+  g_rhoPhiStatBESII->SetPoint(0,17.0,0.3622);
+  g_rhoPhiStatBESII->SetPointError(0,0.0,0.0,0.0026,0.0026);
+  TGraphAsymmErrors *g_rhoPhiSystBESII = new TGraphAsymmErrors();
+  g_rhoPhiSystBESII->SetPoint(0,17.0,0.3622);
+  g_rhoPhiSystBESII->SetPointError(0,0.0,0.0,0.0049,0.0049);
+  Draw_TGAE_new_Symbol((TGraphAsymmErrors*)g_rhoPhiSystBESII,style_phi_2nd,color_phi_2nd,colorDiff_phi,size_marker+0.2);
+  plotSysErrorsBox(g_rhoPhiSystBESII,color_phi_2nd);
+  Draw_TGAE_Point_new_Symbol(50,0.30,0.0,0.0,0.0,0.0,style_phi_2nd,color_phi_2nd,size_marker+0.2);
+  plotTopLegend((char*)"#phi BES-II (|y| < 1.0 & Run-19)",60,0.2975,size_font,1,0.0,42,0);
 
-  // NICA @ JINR: 3 - 11 GeV
-  TLatex *lNica;
-  lNica = new TLatex(4.5, 0.31,"NICA");
-  lNica->SetTextFont(42);
-  lNica->SetTextSize(0.023);
-  lNica->SetTextColor(kGreen+3);
-  lNica->SetLineWidth(2);
-  lNica->Draw();
-  TArrow *aNica;
-  aNica = new TArrow(3.0, 0.308, 11.0, 0.308, 0.02,"<>");
-  aNica->SetFillColor(1);
-  aNica->SetFillStyle(1001);
-  aNica->SetLineColor(kGreen+3);
-  aNica->SetLineWidth(1);
-  aNica->SetLineStyle(1);
-  aNica->SetAngle(29);
-  aNica->Draw();
-  
-  //FXT : 3.0 - 7.7
-  TLatex *lFxt;
-  lFxt = new TLatex(2.75, 0.29,"STAR-FXT");
-  lFxt->SetTextFont(42);
-  lFxt->SetTextSize(0.023);
-  lFxt->SetTextColor(kRed-2);
-  lFxt->SetLineWidth(2);
-  lFxt->Draw();
-  TArrow *aFxt;
-  aFxt = new TArrow(3.0, 0.288, 7.7, 0.288, 0.02,"<>");
-  aFxt->SetFillColor(kRed-7);
-  aFxt->SetFillStyle(1002);
-  aFxt->SetLineColor(kRed-7);
-  aFxt->SetLineWidth(1);
-  aFxt->SetAngle(30);
-  aFxt->Draw();
-  
-  //BES-II: 3.0 - 7.7
-  TLatex *lBESII;
-  lBESII = new TLatex(7.75, 0.275,"STAR-BESII");
-  lBESII->SetTextFont(42);
-  lBESII->SetTextSize(0.023);
-  lBESII->SetTextColor(kAzure+2);
-  lBESII->SetLineWidth(2);
-  lBESII->Draw();
-  TArrow *aBESII;
-  aBESII = new TArrow(7.7, 0.282, 27.0, 0.282, 0.02,"<>");
-  aBESII->SetFillColor(kAzure+2);
-  aBESII->SetFillStyle(1002);
-  aBESII->SetLineColor(kAzure+2);
-  aBESII->SetLineWidth(1);
-  aBESII->SetAngle(30);
-  aBESII->Draw();
-  
-  // FAIR @ GSI: 2 - 4.9 GeV
-  TLatex *lFair;
-  lFair = new TLatex(2.40, 0.27,"FAIR");
-  lFair->SetTextFont(42);
-  lFair->SetTextSize(0.02283105);
-  lFair->SetLineWidth(1);
-  lFair->Draw();
-  TArrow *aFair;
-  aFair = new TArrow(2.0, 0.268, 4.9, 0.268, 0.02,"<>");
-  aFair->SetFillColor(1);
-  aFair->SetFillStyle(1001);
-  aFair->SetLineColor(17);
-  aFair->SetLineWidth(1);
-  aFair->SetAngle(30);
-  aFair->Draw();
-  
-  // HIAF @ IMP: 2 - 4 GeV
-  TLatex *lHiaf;
-  lHiaf = new TLatex(1.7, 0.25,"CEE@HIAF");
-  lHiaf->SetTextFont(42);
-  lHiaf->SetTextSize(0.022);
-  lHiaf->SetTextColor(kRed-2);
-  lHiaf->SetLineWidth(1);
-  lHiaf->Draw();
-  TArrow *aHiaf;
-  aHiaf = new TArrow(2.0, 0.248, 4.0, 0.248, 0.02,"<>");
-  aHiaf->SetFillColor(1);
-  aHiaf->SetFillStyle(1001);
-  aHiaf->SetLineColor(kRed-2);
-  aHiaf->SetLineWidth(1);
-  aHiaf->SetAngle(30);
-  aHiaf->Draw();
+  // BESII K*
+  // TGraphAsymmErrors *g_rhoKstarStatBESII = new TGraphAsymmErrors();
+  // g_rhoKstarStatBESII->SetPoint(0,17.0,1.0/3.0);
+  // g_rhoKstarStatBESII->SetPointError(0,0.0,0.0,0.0049,0.0049);
+  // plotSysErrorsBox(g_rhoKstarStatBESII,color_Kstr);
+  TBox *bKStarStat = new TBox(17.0/1.08,1.0/3.0-0.0049,17.0*1.08,1.0/3.0+0.0049);
+  bKStarStat->SetFillColor(color_Kstr);
+  bKStarStat->SetFillStyle(3001);
+  bKStarStat->SetLineStyle(1);
+  bKStarStat->SetLineWidth(1);
+  bKStarStat->SetLineColor(color_Kstr);
+  bKStarStat->Draw("b Same");
 
-  c_rho00->SaveAs("../../figures/AnalysisNote/fig_rho00FutureMeasurement.eps");
+  TBox *bKStarLeg = new TBox(50.0/1.08,0.285-0.004,50.0*1.08,0.285+0.004);
+  bKStarLeg->SetFillColor(color_Kstr);
+  bKStarLeg->SetFillStyle(3001);
+  bKStarLeg->SetLineStyle(1);
+  bKStarLeg->SetLineWidth(1);
+  bKStarLeg->SetLineColor(color_Kstr);
+  bKStarLeg->Draw("b Same");
+  plotTopLegend((char*)"K^{*0} BES-II Stat. Error Projection",60,0.2825,size_font,1,0.0,42,0);
+
+  c_rho00->SaveAs("../../figures/AnalysisNote/fig_rho00BESIIProjection.eps");
 }
 
 void plotSysErrors(TGraphAsymmErrors *g_rho, int plot_color)

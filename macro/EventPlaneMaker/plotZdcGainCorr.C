@@ -8,7 +8,7 @@
 
 #include "../../Utility/include/StSpinAlignmentCons.h"
 
-void plotZdcGainCorr(int beamType = 0, string jobId = "test")
+void plotZdcGainCorr(int beamType = 0, string jobId = "8BC6F84E53FCC0DE97959E4AB092C803")
 {
   TCanvas *c_ZdcGainCorr = new TCanvas("c_ZdcGainCorr","c_ZdcGainCorr",10,10,1600,800);
   c_ZdcGainCorr->Divide(4,2);
@@ -26,7 +26,6 @@ void plotZdcGainCorr(int beamType = 0, string jobId = "test")
   figName = Form("../../figures/EventPlaneMaker/%s/ZdcGainQA_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
 
   string inputList = Form("../../data/EventPlaneMaker/%s/%s.list",globCons::str_mBeamType[beamType].c_str(),jobId.c_str());
-  // string inputList = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/EventPlaneMaker/ZrZr200GeV_2018/%s.list",jobId.c_str());
   if (!inputList.empty())   // if input file is ok
   {
     cout << "Open input probability file list" << endl;
@@ -43,7 +42,6 @@ void plotZdcGainCorr(int beamType = 0, string jobId = "test")
         {
           string addfile = str;
 	  string inputFile = Form("../../data/EventPlaneMaker/%s/%s",globCons::str_mBeamType[beamType].c_str(),addfile.c_str());
-	  // string inputFile = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/EventPlaneMaker/%s/%s",globCons::str_mBeamType[beamType].c_str(),addfile.c_str());
 	  TFile *file_InPut = TFile::Open(inputFile.c_str());
 	  if(!file_InPut->IsOpen()) cout << "inputFile: " << inputFile.c_str() << "is problematic" << endl;
 	  cout << "inputFile sets to: " << inputFile.c_str() << endl;

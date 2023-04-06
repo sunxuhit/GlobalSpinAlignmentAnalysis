@@ -72,6 +72,7 @@ void StPhiMesonTree::clearPhiMixBuffer(int cent9, int vzBin, int PsiBin)
 {
   mEventCounter[cent9][vzBin][PsiBin] = 0; // General Event Info
   vec_mRunId[cent9][vzBin][PsiBin].clear();
+  vec_mRunIdx[cent9][vzBin][PsiBin].clear();
   vec_mEvtId[cent9][vzBin][PsiBin].clear();
   vec_mRefMult[cent9][vzBin][PsiBin].clear();
   vec_mNumTofMatch[cent9][vzBin][PsiBin].clear();
@@ -88,12 +89,23 @@ void StPhiMesonTree::clearPhiMixBuffer(int cent9, int vzBin, int PsiBin)
   vec_mQ1ZdcShiftWest[cent9][vzBin][PsiBin].clear();
   vec_mQ1ZdcShiftFull[cent9][vzBin][PsiBin].clear();
 
-  vec_mFlagEpdEp[cent9][vzBin][PsiBin].clear(); // EPD EP Info
-  vec_mQ1EpdShiftEast[cent9][vzBin][PsiBin].clear();
-  vec_mQ1EpdShiftWest[cent9][vzBin][PsiBin].clear();
-  vec_mQ1EpdShiftFull[cent9][vzBin][PsiBin].clear();
+  vec_mFlagEpdSideEp[cent9][vzBin][PsiBin].clear(); // EPD EP Side Info
+  vec_mQ1EpdSideShiftEast[cent9][vzBin][PsiBin].clear();
+  vec_mQ1EpdSideShiftWest[cent9][vzBin][PsiBin].clear();
+  vec_mQ1EpdSideShiftFull[cent9][vzBin][PsiBin].clear();
+
+  vec_mFlagEpdGrp0Ep[cent9][vzBin][PsiBin].clear(); // EPD EP Grp0 Info
+  vec_mQ1EpdGrp0ShiftEast[cent9][vzBin][PsiBin].clear();
+  vec_mQ1EpdGrp0ShiftWest[cent9][vzBin][PsiBin].clear();
+  vec_mQ1EpdGrp0ShiftFull[cent9][vzBin][PsiBin].clear();
+  vec_mFlagEpdGrp1Ep[cent9][vzBin][PsiBin].clear(); // EPD EP Grp1 Info
+  vec_mQ1EpdGrp1ShiftEast[cent9][vzBin][PsiBin].clear();
+  vec_mQ1EpdGrp1ShiftWest[cent9][vzBin][PsiBin].clear();
+  vec_mQ1EpdGrp1ShiftFull[cent9][vzBin][PsiBin].clear();
 
   vec_mFlagTpcEp[cent9][vzBin][PsiBin].clear(); // TPC EP Info
+  vec_mQ1TpcReCtrEast[cent9][vzBin][PsiBin].clear();
+  vec_mQ1TpcReCtrWest[cent9][vzBin][PsiBin].clear();
   vec_mQ2TpcReCtrEast[cent9][vzBin][PsiBin].clear();
   vec_mQ2TpcReCtrWest[cent9][vzBin][PsiBin].clear();
   vec_mQ3TpcReCtrEast[cent9][vzBin][PsiBin].clear();
@@ -124,7 +136,8 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
   StPicoEvent *picoEvent = (StPicoEvent*)picoDst->event();
 
   int vzBin  = getVzMixBin(mVz);
-  int PsiBin = getPsi2MixBin(mPsi2ShiftFull);
+  int PsiBin = getPsiMixBin(mPsiShiftFull,2); // for IsoBar
+  if(mAnaCut->isFxt3p85GeV_2018()) PsiBin = getPsiMixBin(mPsiShiftFull,1); // for FXT
   int evtBin = mEventCounter[mCent9][vzBin][PsiBin];
 
   const unsigned int nTracks = picoDst->numberOfTracks();
@@ -133,6 +146,7 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
   // store Enent Information
   mEventCounter[mCent9][vzBin][PsiBin]++; // General Event Info
   vec_mRunId[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->runId()));
+  vec_mRunIdx[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mRunIdx));
   vec_mEvtId[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->eventId()));
   vec_mRefMult[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->refMult()));
   vec_mNumTofMatch[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->nBTOFMatch()));
@@ -149,12 +163,23 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
   vec_mQ1ZdcShiftWest[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecZdcShiftWest));
   vec_mQ1ZdcShiftFull[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecZdcShiftFull));
 
-  vec_mFlagEpdEp[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mFlagEpdEp)); // EPD EP Info
-  vec_mQ1EpdShiftEast[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdShiftEast));
-  vec_mQ1EpdShiftWest[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdShiftWest));
-  vec_mQ1EpdShiftFull[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdShiftFull));
+  vec_mFlagEpdSideEp[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mFlagEpdSideEp)); // EPD EP Side Info
+  vec_mQ1EpdSideShiftEast[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdSideShiftEast));
+  vec_mQ1EpdSideShiftWest[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdSideShiftWest));
+  vec_mQ1EpdSideShiftFull[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdSideShiftFull));
+
+  vec_mFlagEpdGrp0Ep[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mFlagEpdGrp0Ep)); // EPD EP Grp0 Info
+  vec_mQ1EpdGrp0ShiftEast[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdGrp0ShiftEast));
+  vec_mQ1EpdGrp0ShiftWest[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdGrp0ShiftWest));
+  vec_mQ1EpdGrp0ShiftFull[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdGrp0ShiftFull));
+  vec_mFlagEpdGrp1Ep[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mFlagEpdGrp1Ep)); // EPD EP Grp1 Info
+  vec_mQ1EpdGrp1ShiftEast[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdGrp1ShiftEast));
+  vec_mQ1EpdGrp1ShiftWest[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdGrp1ShiftWest));
+  vec_mQ1EpdGrp1ShiftFull[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecEpdGrp1ShiftFull));
 
   vec_mFlagTpcEp[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mFlagTpcEp)); // TPC EP Info
+  vec_mQ1TpcReCtrEast[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecTpcReCtrEast));
+  vec_mQ1TpcReCtrWest[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ1VecTpcReCtrWest));
   vec_mQ2TpcReCtrEast[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ2VecTpcReCtrEast));
   vec_mQ2TpcReCtrWest[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ2VecTpcReCtrWest));
   vec_mQ3TpcReCtrEast[mCent9][vzBin][PsiBin].push_back(static_cast<TVector2>(v_mQ3VecTpcReCtrEast));
@@ -222,6 +247,7 @@ void StPhiMesonTree::recoPhi(int cent9, int vzBin, int PsiBin) // reconstruct ph
     int evtBin = iEvt;
     mPhiMesonEvent->clearTrackList();
     mPhiMesonEvent->setRunId(vec_mRunId[cent9][vzBin][PsiBin][evtBin]); // event header
+    mPhiMesonEvent->setRunIdx(vec_mRunIdx[cent9][vzBin][PsiBin][evtBin]); // event header
     mPhiMesonEvent->setEvtId(vec_mEvtId[cent9][vzBin][PsiBin][evtBin]);
     mPhiMesonEvent->setRefMult(vec_mRefMult[cent9][vzBin][PsiBin][evtBin]);
     mPhiMesonEvent->setNumTofMatch(vec_mNumTofMatch[cent9][vzBin][PsiBin][evtBin]);
@@ -238,12 +264,23 @@ void StPhiMesonTree::recoPhi(int cent9, int vzBin, int PsiBin) // reconstruct ph
     mPhiMesonEvent->setQ1VecZdcWest(vec_mQ1ZdcShiftWest[cent9][vzBin][PsiBin][evtBin]);
     mPhiMesonEvent->setQ1VecZdcFull(vec_mQ1ZdcShiftFull[cent9][vzBin][PsiBin][evtBin]);
 
-    mPhiMesonEvent->setFlagEpdEp(vec_mFlagEpdEp[cent9][vzBin][PsiBin][evtBin]); // EPD EP Info
-    mPhiMesonEvent->setQ1VecEpdEast(vec_mQ1EpdShiftEast[cent9][vzBin][PsiBin][evtBin]);
-    mPhiMesonEvent->setQ1VecEpdWest(vec_mQ1EpdShiftWest[cent9][vzBin][PsiBin][evtBin]);
-    mPhiMesonEvent->setQ1VecEpdFull(vec_mQ1EpdShiftFull[cent9][vzBin][PsiBin][evtBin]);
+    mPhiMesonEvent->setFlagEpdSideEp(vec_mFlagEpdSideEp[cent9][vzBin][PsiBin][evtBin]); // EPD EP Side Info
+    mPhiMesonEvent->setQ1VecEpdSideEast(vec_mQ1EpdSideShiftEast[cent9][vzBin][PsiBin][evtBin]);
+    mPhiMesonEvent->setQ1VecEpdSideWest(vec_mQ1EpdSideShiftWest[cent9][vzBin][PsiBin][evtBin]);
+    mPhiMesonEvent->setQ1VecEpdSideFull(vec_mQ1EpdSideShiftFull[cent9][vzBin][PsiBin][evtBin]);
+
+    mPhiMesonEvent->setFlagEpdGrp0Ep(vec_mFlagEpdGrp0Ep[cent9][vzBin][PsiBin][evtBin]); // EPD EP Grp0 Info
+    mPhiMesonEvent->setQ1VecEpdGrp0East(vec_mQ1EpdGrp0ShiftEast[cent9][vzBin][PsiBin][evtBin]);
+    mPhiMesonEvent->setQ1VecEpdGrp0West(vec_mQ1EpdGrp0ShiftWest[cent9][vzBin][PsiBin][evtBin]);
+    mPhiMesonEvent->setQ1VecEpdGrp0Full(vec_mQ1EpdGrp0ShiftFull[cent9][vzBin][PsiBin][evtBin]);
+    mPhiMesonEvent->setFlagEpdGrp1Ep(vec_mFlagEpdGrp1Ep[cent9][vzBin][PsiBin][evtBin]); // EPD EP Grp1 Info
+    mPhiMesonEvent->setQ1VecEpdGrp1East(vec_mQ1EpdGrp1ShiftEast[cent9][vzBin][PsiBin][evtBin]);
+    mPhiMesonEvent->setQ1VecEpdGrp1West(vec_mQ1EpdGrp1ShiftWest[cent9][vzBin][PsiBin][evtBin]);
+    mPhiMesonEvent->setQ1VecEpdGrp1Full(vec_mQ1EpdGrp1ShiftFull[cent9][vzBin][PsiBin][evtBin]);
 
     mPhiMesonEvent->setFlagTpcEp(vec_mFlagTpcEp[cent9][vzBin][PsiBin][evtBin]); // TPC EP Info
+    mPhiMesonEvent->setQ1VecTpcEast(vec_mQ1TpcReCtrEast[cent9][vzBin][PsiBin][evtBin]);
+    mPhiMesonEvent->setQ1VecTpcWest(vec_mQ1TpcReCtrWest[cent9][vzBin][PsiBin][evtBin]);
     mPhiMesonEvent->setQ2VecTpcEast(vec_mQ2TpcReCtrEast[cent9][vzBin][PsiBin][evtBin]);
     mPhiMesonEvent->setQ2VecTpcWest(vec_mQ2TpcReCtrWest[cent9][vzBin][PsiBin][evtBin]);
     mPhiMesonEvent->setQ3VecTpcEast(vec_mQ3TpcReCtrEast[cent9][vzBin][PsiBin][evtBin]);
@@ -308,6 +345,7 @@ void StPhiMesonTree::mixPhi(int cent9, int vzBin, int PsiBin) // reconstruct phi
 	int evtBin = iEvtA;
 	mPhiMesonEvent->clearTrackList();
 	mPhiMesonEvent->setRunId(vec_mRunId[cent9][vzBin][PsiBin][evtBin]); // event header
+	mPhiMesonEvent->setRunIdx(vec_mRunIdx[cent9][vzBin][PsiBin][evtBin]); // event header
 	mPhiMesonEvent->setEvtId(vec_mEvtId[cent9][vzBin][PsiBin][evtBin]);
 	mPhiMesonEvent->setRefMult(vec_mRefMult[cent9][vzBin][PsiBin][evtBin]);
 	mPhiMesonEvent->setNumTofMatch(vec_mNumTofMatch[cent9][vzBin][PsiBin][evtBin]);
@@ -324,12 +362,23 @@ void StPhiMesonTree::mixPhi(int cent9, int vzBin, int PsiBin) // reconstruct phi
 	mPhiMesonEvent->setQ1VecZdcWest(vec_mQ1ZdcShiftWest[cent9][vzBin][PsiBin][evtBin]);
 	mPhiMesonEvent->setQ1VecZdcFull(vec_mQ1ZdcShiftFull[cent9][vzBin][PsiBin][evtBin]);
 
-	mPhiMesonEvent->setFlagEpdEp(vec_mFlagEpdEp[cent9][vzBin][PsiBin][evtBin]); // EPD EP Info
-	mPhiMesonEvent->setQ1VecEpdEast(vec_mQ1EpdShiftEast[cent9][vzBin][PsiBin][evtBin]);
-	mPhiMesonEvent->setQ1VecEpdWest(vec_mQ1EpdShiftWest[cent9][vzBin][PsiBin][evtBin]);
-	mPhiMesonEvent->setQ1VecEpdFull(vec_mQ1EpdShiftFull[cent9][vzBin][PsiBin][evtBin]);
+	mPhiMesonEvent->setFlagEpdSideEp(vec_mFlagEpdSideEp[cent9][vzBin][PsiBin][evtBin]); // EPD EP Side Info
+	mPhiMesonEvent->setQ1VecEpdSideEast(vec_mQ1EpdSideShiftEast[cent9][vzBin][PsiBin][evtBin]);
+	mPhiMesonEvent->setQ1VecEpdSideWest(vec_mQ1EpdSideShiftWest[cent9][vzBin][PsiBin][evtBin]);
+	mPhiMesonEvent->setQ1VecEpdSideFull(vec_mQ1EpdSideShiftFull[cent9][vzBin][PsiBin][evtBin]);
+
+	mPhiMesonEvent->setFlagEpdGrp0Ep(vec_mFlagEpdGrp0Ep[cent9][vzBin][PsiBin][evtBin]); // EPD EP Grp0 Info
+	mPhiMesonEvent->setQ1VecEpdGrp0East(vec_mQ1EpdGrp0ShiftEast[cent9][vzBin][PsiBin][evtBin]);
+	mPhiMesonEvent->setQ1VecEpdGrp0West(vec_mQ1EpdGrp0ShiftWest[cent9][vzBin][PsiBin][evtBin]);
+	mPhiMesonEvent->setQ1VecEpdGrp0Full(vec_mQ1EpdGrp0ShiftFull[cent9][vzBin][PsiBin][evtBin]);
+	mPhiMesonEvent->setFlagEpdGrp1Ep(vec_mFlagEpdGrp1Ep[cent9][vzBin][PsiBin][evtBin]); // EPD EP Grp1 Info
+	mPhiMesonEvent->setQ1VecEpdGrp1East(vec_mQ1EpdGrp1ShiftEast[cent9][vzBin][PsiBin][evtBin]);
+	mPhiMesonEvent->setQ1VecEpdGrp1West(vec_mQ1EpdGrp1ShiftWest[cent9][vzBin][PsiBin][evtBin]);
+	mPhiMesonEvent->setQ1VecEpdGrp1Full(vec_mQ1EpdGrp1ShiftFull[cent9][vzBin][PsiBin][evtBin]);
 
 	mPhiMesonEvent->setFlagTpcEp(vec_mFlagTpcEp[cent9][vzBin][PsiBin][evtBin]); // TPC EP Info
+	mPhiMesonEvent->setQ1VecTpcEast(vec_mQ1TpcReCtrEast[cent9][vzBin][PsiBin][evtBin]);
+	mPhiMesonEvent->setQ1VecTpcWest(vec_mQ1TpcReCtrWest[cent9][vzBin][PsiBin][evtBin]);
 	mPhiMesonEvent->setQ2VecTpcEast(vec_mQ2TpcReCtrEast[cent9][vzBin][PsiBin][evtBin]);
 	mPhiMesonEvent->setQ2VecTpcWest(vec_mQ2TpcReCtrWest[cent9][vzBin][PsiBin][evtBin]);
 	mPhiMesonEvent->setQ3VecTpcEast(vec_mQ3TpcReCtrEast[cent9][vzBin][PsiBin][evtBin]);
@@ -446,32 +495,33 @@ int StPhiMesonTree::getVzMixBin(double vz)
   return vzBin;
 }
 
-int StPhiMesonTree::getPsi2MixBin(double Psi2)
+int StPhiMesonTree::getPsiMixBin(double Psi, int epOrder)
 {
-  int Psi2Bin = -1;
-  double Psi2Max = TMath::Pi()/2.0;
-  double Psi2Min = -1.0*TMath::Pi()/2.0;
-  double Psi2BinSize = (Psi2Max-Psi2Min)/mNumMixPsiBin; // pi/5
+  int PsiBin = -1;
+  double PsiMax = TMath::Pi()/(double)epOrder;
+  double PsiMin = -1.0*TMath::Pi()/(double)epOrder;
+  double PsiBinSize = (PsiMax-PsiMin)/mNumMixPsiBin; // 5 Psi Bin
 
-  if(std::abs(Psi2-Psi2Min) < std::numeric_limits<double>::epsilon()) Psi2Bin = 0;
+  if(std::abs(Psi-PsiMin) < std::numeric_limits<double>::epsilon()) PsiBin = 0;
   for(int iPsi = 0; iPsi < mNumMixPsiBin; ++iPsi)
   {
-    if((Psi2 > Psi2Min+iPsi*Psi2BinSize) && (Psi2 <= Psi2Min+(iPsi+1)*Psi2BinSize))
+    if((Psi > PsiMin+iPsi*PsiBinSize) && (Psi <= PsiMin+(iPsi+1)*PsiBinSize))
     {
-      Psi2Bin = iPsi;
+      PsiBin = iPsi;
     }
   }
+  if(std::abs(Psi-PsiMax) < std::numeric_limits<double>::epsilon()) PsiBin = mNumMixPsiBin-1;
 
-  return Psi2Bin;
+  return PsiBin;
 }
 
 void StPhiMesonTree::getPhiEvtSize(int cent9, int vzBin, int PsiBin)
 {
-  std::cout << "Event Buffer: Centrality = " << cent9 << ", VertexZ = " << vzBin << ", Psi2 = " << PsiBin << std::endl;
+  std::cout << "Event Buffer: Centrality = " << cent9 << ", VertexZ = " << vzBin << ", PsiBin = " << PsiBin << std::endl;
   std::cout << "Buffer Depth: " << mEventCounter[cent9][vzBin][PsiBin] << std::endl;
 
-  std::cout << "Size of primaryVertex = " << vec_mPrimVtx[cent9][vzBin][PsiBin].size() << std::endl;;
-  std::cout << "Size of refMult       = " << vec_mRefMult[cent9][vzBin][PsiBin].size() << std::endl;;
+  std::cout << "Size of primaryVertex = " << vec_mPrimVtx[cent9][vzBin][PsiBin].size() << std::endl;
+  std::cout << "Size of refMult       = " << vec_mRefMult[cent9][vzBin][PsiBin].size() << std::endl;
   std::cout << "---------------------------------------------------------------------------" << std::endl;
 
   for(int evtBin = 0; evtBin < mEventCounter[cent9][vzBin][PsiBin]; evtBin++)
@@ -479,7 +529,7 @@ void StPhiMesonTree::getPhiEvtSize(int cent9, int vzBin, int PsiBin)
     int phiMixKey = getPhiMixKey(cent9,vzBin,PsiBin,evtBin);
     std::cout << "Event Number " << evtBin << ":" << std::endl; 
     std::cout << "Positive Particle:" << std::endl;
-    std::cout << "  Size of MomVecKp     = " << map_mMomVecKp[phiMixKey].size() << std::endl;;
+    std::cout << "  Size of MomVecKp     = " << map_mMomVecKp[phiMixKey].size() << std::endl;
     std::cout << "  Size of Mass2        = " << map_mMass2Kp[phiMixKey].size() << std::endl;
     std::cout << "  Size of nSigmaKaon   = " << map_mNSigKp[phiMixKey].size() << std::endl;
     std::cout << "  Size of dca          = " << map_mDcaKp[phiMixKey].size() << std::endl;
@@ -487,7 +537,7 @@ void StPhiMesonTree::getPhiEvtSize(int cent9, int vzBin, int PsiBin)
     std::cout << "  Size of nHitsFit     = " << map_mNHitsFitKp[phiMixKey].size() << std::endl;
 
     std::cout << "Negative Particle:" << std::endl;
-    std::cout << "  Size of MomVecKm     = " << map_mMomVecKm[phiMixKey].size() << std::endl;;
+    std::cout << "  Size of MomVecKm     = " << map_mMomVecKm[phiMixKey].size() << std::endl;
     std::cout << "  Size of Mass2        = " << map_mMass2Km[phiMixKey].size() << std::endl;
     std::cout << "  Size of nSigmaKaon   = " << map_mNSigKm[phiMixKey].size() << std::endl;
     std::cout << "  Size of dca          = " << map_mDcaKm[phiMixKey].size() << std::endl;
@@ -500,62 +550,120 @@ void StPhiMesonTree::getPhiEvtSize(int cent9, int vzBin, int PsiBin)
 // set QVector from StPhiMesonMaker
 void StPhiMesonTree::clearEvtInfo()
 {
+  mRunIdx        = -1;
   mCent9         = -1;
   mCent16        = -1;
   mRefWgt        = -1.0;
   mVz            = -999.9;
-  mPsi2ShiftFull = -999.9;
+  mPsiShiftFull  = -999.9;
 
-  mFlagZdcEp = 0;
+  mFlagZdcEp = -1;
   v_mQ1VecZdcShiftEast.Set(0.0,0.0); 
   v_mQ1VecZdcShiftWest.Set(0.0,0.0); 
   v_mQ1VecZdcShiftFull.Set(0.0,0.0);
 
-  mFlagEpdEp = 0;
-  v_mQ1VecEpdShiftEast.Set(0.0,0.0); 
-  v_mQ1VecEpdShiftWest.Set(0.0,0.0); 
-  v_mQ1VecEpdShiftFull.Set(0.0,0.0);
+  mFlagEpdSideEp = -1;
+  v_mQ1VecEpdSideShiftEast.Set(0.0,0.0); 
+  v_mQ1VecEpdSideShiftWest.Set(0.0,0.0); 
+  v_mQ1VecEpdSideShiftFull.Set(0.0,0.0);
 
-  mFlagTpcEp = 0;
+  mFlagEpdGrp0Ep = -1;
+  v_mQ1VecEpdGrp0ShiftEast.Set(0.0,0.0); 
+  v_mQ1VecEpdGrp0ShiftWest.Set(0.0,0.0); 
+  v_mQ1VecEpdGrp0ShiftFull.Set(0.0,0.0);
+  mFlagEpdGrp1Ep = -1;
+  v_mQ1VecEpdGrp1ShiftEast.Set(0.0,0.0); 
+  v_mQ1VecEpdGrp1ShiftWest.Set(0.0,0.0); 
+  v_mQ1VecEpdGrp1ShiftFull.Set(0.0,0.0);
+
+  mFlagTpcEp = -1;
+  v_mQ1VecTpcReCtrEast.Set(0.0,0.0);
+  v_mQ1VecTpcReCtrWest.Set(0.0,0.0); 
   v_mQ2VecTpcReCtrEast.Set(0.0,0.0);
   v_mQ2VecTpcReCtrWest.Set(0.0,0.0); 
   v_mQ3VecTpcReCtrEast.Set(0.0,0.0); 
   v_mQ3VecTpcReCtrWest.Set(0.0,0.0);
-
-  mNumTrkReCtrEast = 0; 
-  mNumTrkReCtrWest = 0;
+  mNumTrkReCtrEast = -1; 
+  mNumTrkReCtrWest = -1;
 }
 
-void StPhiMesonTree::setEvtInfo(int cent9, int cent16, double refwgt, double vz, double Psi2ShiftFull)
+void StPhiMesonTree::setEvtInfo(int runIdx, int cent9, int cent16, double refwgt, double vz, double PsiShiftFull)
 {
+  mRunIdx        = runIdx;
   mCent9         = cent9;
   mCent16        = cent16;
   mRefWgt        = refwgt;
   mVz            = vz;
-  mPsi2ShiftFull = Psi2ShiftFull;
+  mPsiShiftFull  = PsiShiftFull;
 }
 
-void StPhiMesonTree::setZdcQ1Vec(int flagEp, TVector2 Q1East, TVector2 Q1West, TVector2 Q1Full)
+void StPhiMesonTree::setZdcQ1Flag(int flagEp)
 {
   mFlagZdcEp = flagEp;
+}
+
+void StPhiMesonTree::setZdcQ1Vec(TVector2 Q1East, TVector2 Q1West, TVector2 Q1Full)
+{
   v_mQ1VecZdcShiftEast = Q1East;
   v_mQ1VecZdcShiftWest = Q1West;
   v_mQ1VecZdcShiftFull = Q1Full;
 }
 
-void StPhiMesonTree::setEpdQ1Vec(int flagEp, TVector2 Q1East, TVector2 Q1West, TVector2 Q1Full)
+void StPhiMesonTree::setEpdQ1SideFlag(int flagEp)
 {
-  mFlagEpdEp = flagEp;
-  v_mQ1VecEpdShiftEast = Q1East;
-  v_mQ1VecEpdShiftWest = Q1West;
-  v_mQ1VecEpdShiftFull = Q1Full;
+  mFlagEpdSideEp = flagEp;
 }
 
-void StPhiMesonTree::setTpcQVec(int flagEp, TVector2 Q2East, TVector2 Q2West, TVector2 Q3East, TVector2 Q3West)
+void StPhiMesonTree::setEpdQ1SideVec(TVector2 Q1East, TVector2 Q1West, TVector2 Q1Full)
+{
+  v_mQ1VecEpdSideShiftEast = Q1East;
+  v_mQ1VecEpdSideShiftWest = Q1West;
+  v_mQ1VecEpdSideShiftFull = Q1Full;
+}
+
+void StPhiMesonTree::setEpdQ1Grp0Flag(int flagEp)
+{
+  mFlagEpdGrp0Ep = flagEp;
+}
+
+void StPhiMesonTree::setEpdQ1Grp0Vec(TVector2 Q1East, TVector2 Q1West, TVector2 Q1Full)
+{
+  v_mQ1VecEpdGrp0ShiftEast = Q1East;
+  v_mQ1VecEpdGrp0ShiftWest = Q1West;
+  v_mQ1VecEpdGrp0ShiftFull = Q1Full;
+}
+
+void StPhiMesonTree::setEpdQ1Grp1Flag(int flagEp)
+{
+  mFlagEpdGrp1Ep = flagEp;
+}
+
+void StPhiMesonTree::setEpdQ1Grp1Vec(TVector2 Q1East, TVector2 Q1West, TVector2 Q1Full)
+{
+  v_mQ1VecEpdGrp1ShiftEast = Q1East;
+  v_mQ1VecEpdGrp1ShiftWest = Q1West;
+  v_mQ1VecEpdGrp1ShiftFull = Q1Full;
+}
+
+void StPhiMesonTree::setTpcQFlag(int flagEp)
 {
   mFlagTpcEp = flagEp;
+}
+
+void StPhiMesonTree::setTpcQ1Vec(TVector2 Q1East, TVector2 Q1West)
+{
+  v_mQ1VecTpcReCtrEast = Q1East;
+  v_mQ1VecTpcReCtrWest = Q1West;
+}
+
+void StPhiMesonTree::setTpcQ2Vec(TVector2 Q2East, TVector2 Q2West)
+{
   v_mQ2VecTpcReCtrEast = Q2East;
   v_mQ2VecTpcReCtrWest = Q2West;
+}
+
+void StPhiMesonTree::setTpcQ3Vec(TVector2 Q3East, TVector2 Q3West)
+{
   v_mQ3VecTpcReCtrEast = Q3East;
   v_mQ3VecTpcReCtrWest = Q3West;
 }

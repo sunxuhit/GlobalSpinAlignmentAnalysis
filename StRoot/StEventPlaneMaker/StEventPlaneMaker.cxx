@@ -425,11 +425,10 @@ int StEventPlaneMaker::Make()
     const unsigned int nTracks      = mPicoDst->numberOfTracks();   // get number of tracks
     const unsigned int nEpdHits     = mPicoDst->numberOfEpdHits();  // get number of EPD hits
 
-    const int vzBin    = mAnaUtils->getVzBin(primVz); // 0 for -vz || 1 for +vz
-    const int runIndex = mAnaUtils->findRunIndex(runId); // find run index for a specific run
-    // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
-
-    if(runIndex < 0)
+    const int vzBin  = mAnaUtils->getVzBin(primVz); // 0 for -vz || 1 for +vz
+    const int runIdx = mAnaUtils->findRunIndex(runId); // find run index for a specific run
+    // cout << "runId = " << runId << ", runIdx = " << runIdx << endl;
+    if(runIdx < 0)
     {
       LOG_ERROR << "Could not find this run Index from StAnalysisUtils! Skip!" << endm;
       return kStErr;
@@ -468,15 +467,15 @@ int StEventPlaneMaker::Make()
     bool isPileUpStAnalysisCut = mAnaCut->isPileUpEvent((double)refMult, (double)nBTofMatch,primVz); // alway return false for Isobar & Fxt3p85GeV_2018
     bool isPileUpStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut((double)refMult, (double)nBTofMatch,primVz); // valid for Isobar
     if(mAnaCut->isFxt3p85GeV_2018()) isPileUpStRefMultCorr = mPileupUtilFxt3p85->isPileupEPD(); // valid only for Fxt3p85GeV_2018
-    bool isPileUpEvent = isPileUpStAnalysisCut || isPileUpStRefMultCorr;
-    // cout << "isPileUpEvent = " << isPileUpEvent << ", isPileUpStAnalysisCut = " << isPileUpStAnalysisCut << ", isPileUpStRefMultCorr = " << isPileUpStRefMultCorr << endl;
+    bool isPileUpEvt = isPileUpStAnalysisCut || isPileUpStRefMultCorr;
+    // cout << "isPileUpEvt = " << isPileUpEvt << ", isPileUpStAnalysisCut = " << isPileUpStAnalysisCut << ", isPileUpStRefMultCorr = " << isPileUpStRefMultCorr << endl;
 
-    if( !isPileUpEvent && mAnaCut->isGoodCent9(cent9) && mAnaCut->passEventCut(mPicoEvent) )
+    if( !isPileUpEvt && mAnaCut->isGoodCent9(cent9) && mAnaCut->passEventCut(mPicoEvent) )
     { // apply Event Cuts for anlaysis 
-      mZdcEpManager->initZdcEpManager(cent9,runIndex,vzBin); // initialize ZDC EP Manager
-      mEpdEpManager->initEpdEpManager(cent9,runIndex,vzBin); // initialize EPD EP Manager
-      mTpcEpManager->initTpcEpManager(cent9,runIndex,vzBin); // initialize TPC EP Manager
-      mMixEpManager->initMixEpManager(cent9,runIndex,vzBin); // initialize Mix EP Manager
+      mZdcEpManager->initZdcEpManager(cent9,runIdx,vzBin); // initialize ZDC EP Manager
+      mEpdEpManager->initEpdEpManager(cent9,runIdx,vzBin); // initialize EPD EP Manager
+      mTpcEpManager->initTpcEpManager(cent9,runIdx,vzBin); // initialize TPC EP Manager
+      mMixEpManager->initMixEpManager(cent9,runIdx,vzBin); // initialize Mix EP Manager
 
       // Calculate QVector
       if( mAnaCut->isIsobar() )
@@ -490,7 +489,7 @@ int StEventPlaneMaker::Make()
 	    mZdcEpManager->setZdcSmd(1,0,iSlat,mPicoEvent->ZdcSmdWestVertical(iSlat));
 	    mZdcEpManager->setZdcSmd(1,1,iSlat,mPicoEvent->ZdcSmdWestHorizontal(iSlat));
 	  }
-	  else
+	  if(mMode > 0)
 	  { // read and apply gain correction to raw ADC value for ZDC
 	    mZdcEpManager->setZdcSmdGainCorr(0,0,iSlat,mPicoEvent->ZdcSmdEastVertical(iSlat));
 	    mZdcEpManager->setZdcSmdGainCorr(0,1,iSlat,mPicoEvent->ZdcSmdEastHorizontal(iSlat));
