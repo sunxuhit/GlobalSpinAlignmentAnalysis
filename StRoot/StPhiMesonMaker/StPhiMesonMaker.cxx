@@ -200,11 +200,11 @@ int StPhiMesonMaker::Make()
       return kStErr;
     }
 
-    bool isPileUpEvtStAnalysisCut = mAnaCut->isPileUpEvent((double)refMult, (double)nBTofMatch,vz); // alway return false for Isobar
-    bool isPileUpEvtStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut((double)refMult, (double)nBTofMatch,vz); // valid for Isobar
+    bool isPileUpStAnalysisCut = mAnaCut->isPileUpEvent((double)refMult, (double)nBTofMatch,vz); // alway return false for Isobar
+    bool isPileUpStRefMultCorr = !mRefMultCorr->passnTofMatchRefmultCut((double)refMult, (double)nBTofMatch,vz); // valid for Isobar
     if(mAnaCut->isFxt3p85GeV_2018()) isPileUpStRefMultCorr = mPileupUtilFxt3p85->isPileupEPD(); // valid only for Fxt3p85GeV_2018
-    bool isPileUpEvt = isPileUpEvtStAnalysisCut || isPileUpEvtStRefMultCorr;
-    // cout << "isPileUpEvt = " << isPileUpEvt << ", isPileUpEvtStAnalysisCut = " << isPileUpEvtStAnalysisCut << ", isPileUpEvtStRefMultCorr = " << isPileUpEvtStRefMultCorr << endl;
+    bool isPileUpEvt = isPileUpStAnalysisCut || isPileUpStRefMultCorr;
+    // cout << "isPileUpEvt = " << isPileUpEvt << ", isPileUpStAnalysisCut = " << isPileUpStAnalysisCut << ", isPileUpStRefMultCorr = " << isPileUpStRefMultCorr << endl;
 
     if(!isPileUpEvt && mAnaCut->isGoodCent9(cent9) && mAnaCut->passEventCut(mPicoEvent))
     { // apply Event Cuts for anlaysis 
