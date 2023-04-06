@@ -6,7 +6,7 @@ date
 if [ $# -eq 0 ]
 then
   BeamType=Fxt3p85GeV_2018
-  JobId=F77924958B721BEB14EE9D2C79945675 #generate faild list for this Job
+  JobId=65A2F3F004122939F4E57BBDA45579FD #generate faild list for this Job
   Task=EventPlaneMaker
   Mode=EventPlaneMaker
 
