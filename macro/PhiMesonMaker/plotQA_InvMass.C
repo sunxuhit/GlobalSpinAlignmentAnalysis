@@ -3,79 +3,81 @@
 #include "TFile.h"
 #include "TH2F.h"
 #include "TCanvas.h"
-#include "../Utility/StSpinAlignmentCons.h"
+#include "TStyle.h"
 
-void plotQA_InvMass(int energy = 6, int flag_ME = 1)
+#include "../../Utility/include/StSpinAlignmentCons.h"
+
+void plotQA_InvMass(int beamType = 0)
 {
-  string inputdir = Form("/global/homes/x/xusun/AuAu%s/SpinAlignment/Phi/Forest/",vmsa::mBeamEnergy[energy].c_str());
-  string inputlist = Form("/global/homes/x/xusun/AuAu%s/SpinAlignment/Phi/List/Phi_%s_tree.list",vmsa::mBeamEnergy[energy].c_str(),vmsa::MixEvent[flag_ME].Data());
+  gStyle->SetOptStat(0);
+  const int mNumCentrality = 9;
 
-  TCanvas *c_InvMass = new TCanvas("c_InvMass","c_InvMass",10,10,1600,1600);
-  c_InvMass->Divide(4,4);
-  for(int i_pad = 0; i_pad < 16; ++i_pad)
+  string inputFileSE = Form("../../data/PhiMesonMaker/%s/file_RecoPhiSE_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  TFile *file_InPutSE = TFile::Open(inputFileSE.c_str());
+  if(!file_InPutSE->IsOpen()) cout << "inputFileSE: " << inputFileSE.c_str() << "is problematic" << endl;
+  cout << "inputFile sets to: " << inputFileSE.c_str() << endl;
+
+  TH2F *h_mInvMassPhiSE[mNumCentrality];
+  TH1F *h_mInvMassPhiSEDist[mNumCentrality];
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    c_InvMass->cd(i_pad+1);
-    c_InvMass->cd(i_pad+1)->SetLeftMargin(0.1);
-    c_InvMass->cd(i_pad+1)->SetBottomMargin(0.1);
-    c_InvMass->cd(i_pad+1)->SetGrid(0,0);
-    c_InvMass->cd(i_pad+1)->SetTicks(1,1);
-  }
-  string output_start = Form("../figures/InvMass_AuAu%s_%s_QA.pdf[",vmsa::mBeamEnergy[energy].c_str(),vmsa::MixEvent[flag_ME].Data());
-  c_InvMass->Print(output_start.c_str());
-  int i_pad = 0;
-  int i_page = 1;
-
-  string outputname = Form("../figures/InvMass_AuAu%s_%s_QA.pdf",vmsa::mBeamEnergy[energy].c_str(),vmsa::MixEvent[flag_ME].Data());
-  if (!inputlist.empty())   // if input file is ok
-  {
-    cout << "Open input file list: " << inputlist.c_str() << endl;
-    ifstream in(inputlist.c_str());  // input stream
-    if(in)
-    {
-      cout << "input database file list is ok" << endl;
-      char str[255];       // char array for each file name
-      while(in)
-      {
-	in.getline(str,255);  // take the lines of the file list
-	if(str[0] != 0)
-	{
-	  string inputfile;
-	  inputfile = str;
-	  inputfile = inputdir+inputfile;
-	  cout << "open file: " << inputfile.c_str() << endl;
-	  TFile *File_InPut = TFile::Open(inputfile.c_str());
-	  TH2F *h_mMass2_pt = (TH2F*)File_InPut->Get("Mass2_pt")->Clone();
-	  TH1F *h_mInvMass = (TH1F*)h_mMass2_pt->ProjectionY()->Clone("h_mInvMass");
-
-	  c_InvMass->cd(i_pad+1);
-	  h_mInvMass->DrawCopy("hE");
-
-	  i_pad++;
-	  int NumOfTracks = h_mInvMass->GetEntries();
-	  cout << "In page " << i_page << " pad " << i_pad << " with " << NumOfTracks << " tracks!" << endl;
-	  cout << endl;
-	  h_mMass2_pt->Reset();
-	  h_mInvMass->Reset();
-	  File_InPut->Close();
-	  if(i_pad == 16)
-	  {
-	    i_pad = 0;
-	    i_page++;
-	    c_InvMass->Update();
-	    c_InvMass->Print(outputname.c_str());
-	  }
-	}
-      }
-      cout << "Print last page" << endl;
-      c_InvMass->Update();
-      c_InvMass->Print(outputname.c_str());
-    }
-    else
-    {
-      cout << "WARNING: input database file input is problemtic" << endl;
-    }
+    // std::string histName = Form("h_mInvMassPhiCent%d",iCent);
+    std::string histName = Form("h_mPhiMass2Cent%d",iCent);
+    h_mInvMassPhiSE[iCent] = (TH2F*)file_InPutSE->Get(histName.c_str());
+    histName = Form("h_mInvMassPhiSECent%d",iCent);
+    h_mInvMassPhiSEDist[iCent] = (TH1F*)h_mInvMassPhiSE[iCent]->ProjectionY()->Clone(histName.c_str());
+    h_mInvMassPhiSEDist[iCent]->Sumw2();
   }
 
-  string output_stop = Form("../figures/InvMass_AuAu%s_%s_QA.pdf]",vmsa::mBeamEnergy[energy].c_str(),vmsa::MixEvent[flag_ME].Data());
-  c_InvMass->Print(output_stop.c_str());
+  string inputFileME = Form("../../data/PhiMesonMaker/%s/file_RecoPhiME_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  TFile *file_InPutME = TFile::Open(inputFileME.c_str());
+  if(!file_InPutME->IsOpen()) cout << "inputFileME: " << inputFileME.c_str() << "is problematic" << endl;
+  cout << "inputFile sets to: " << inputFileME.c_str() << endl;
+
+  TH2F *h_mInvMassPhiME[mNumCentrality]; // phi wgt
+  TH1F *h_mInvMassPhiMEDist[mNumCentrality];
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    // std::string histName = Form("h_mInvMassPhiCent%d",iCent);
+    std::string histName = Form("h_mPhiMass2Cent%d",iCent);
+    h_mInvMassPhiME[iCent] = (TH2F*)file_InPutME->Get(histName.c_str());
+    histName = Form("h_mInvMassPhiMECent%d",iCent);
+    h_mInvMassPhiMEDist[iCent] = (TH1F*)h_mInvMassPhiME[iCent]->ProjectionY()->Clone(histName.c_str());
+    h_mInvMassPhiMEDist[iCent]->Sumw2();
+  }
+
+  TCanvas *c_InvMassPhi = new TCanvas("c_InvMassPhi","c_InvMassPhi",10,10,900,900);
+  c_InvMassPhi->Divide(3,3);
+  for(int iPad = 0; iPad < 9; ++iPad)
+  {
+    c_InvMassPhi->cd(iPad+1)->SetLeftMargin(0.15);
+    c_InvMassPhi->cd(iPad+1)->SetRightMargin(0.15);
+    c_InvMassPhi->cd(iPad+1)->SetBottomMargin(0.15);
+    c_InvMassPhi->cd(iPad+1)->SetTicks(1,1);
+    c_InvMassPhi->cd(iPad+1)->SetGrid(0,0);
+  }
+
+  for(int iCent = 0; iCent< 9; ++iCent)
+  {
+    c_InvMassPhi->cd(iCent+1);
+
+    int binInteLo = h_mInvMassPhiSEDist[iCent]->FindBin(1.04);
+    int binInteHi = h_mInvMassPhiSEDist[iCent]->FindBin(1.08);
+
+    float yieldInteSE = h_mInvMassPhiSEDist[iCent]->Integral(binInteLo,binInteHi);
+    float yieldInteME = h_mInvMassPhiMEDist[iCent]->Integral(binInteLo,binInteHi);
+
+    h_mInvMassPhiMEDist[iCent]->Scale(yieldInteSE/yieldInteME);
+
+    h_mInvMassPhiSEDist[iCent]->SetMarkerStyle(24);
+    h_mInvMassPhiSEDist[iCent]->SetMarkerSize(1.0);
+    h_mInvMassPhiSEDist[iCent]->SetMarkerColor(kGray+3);
+    h_mInvMassPhiSEDist[iCent]->Draw("pE");
+    h_mInvMassPhiMEDist[iCent]->SetFillColor(2);
+    h_mInvMassPhiMEDist[iCent]->SetFillStyle(3002);
+    h_mInvMassPhiMEDist[iCent]->Draw("hE same");
+  }
+
+  std::string figName = Form("../../figures/PhiMesonMaker/%s/invMassPhiQA_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_InvMassPhi->SaveAs(figName.c_str());
 }

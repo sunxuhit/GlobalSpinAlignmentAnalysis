@@ -393,7 +393,7 @@ Int_t TGraphAsymmErrors_interpolate_and_error(TGraphAsymmErrors* hist, Double_t 
 //----------------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------------------
-void Draw_TGAE_new_Symbol(TGraphAsymmErrors* tgae, Int_t style, Int_t color, Float_t size)
+void Draw_TGAE_new_Symbol(TGraphAsymmErrors* tgae, Int_t style, Int_t color, Int_t colorDiff, Float_t size)
 {
     TString HistName;
     Float_t size_A = 1.35*size;
@@ -467,7 +467,8 @@ void Draw_TGAE_new_Symbol(TGraphAsymmErrors* tgae, Int_t style, Int_t color, Flo
     ge_clone_C->SetMarkerSize(size_C);
     ge_clone_C->SetMarkerStyle(style);
     ge_clone_C->SetMarkerColor(color);
-    ge_clone_C->SetLineColor(1);
+    // ge_clone_C->SetLineColor(1);
+    ge_clone_C->SetLineColor(color+colorDiff);
     ge_clone_C->Draw("same PE1");
 }
 //----------------------------------------------------------------------------------------

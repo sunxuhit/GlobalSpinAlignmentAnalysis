@@ -1,12 +1,14 @@
 #include <iostream>
 
+#include "StBichsel/Bichsel.h"
+#include "StBichsel/StdEdxModel.h"
 #include "StPicoEvent/StPicoDst.h"
 #include "StPicoEvent/StPicoEvent.h"
 #include "StPicoEvent/StPicoTrack.h"
 #include "StPicoEvent/StPicoBTofPidTraits.h"
-#include "StMessMgr.h"
 
 #include "Utility/include/StSpinAlignmentCons.h"
+#include "StRoot/StAnalysisUtils/StAnalysisCons.h"
 #include "StRoot/StAnalysisUtils/StAnalysisUtils.h"
 
 ClassImp(StAnalysisUtils)
@@ -94,7 +96,7 @@ bool StAnalysisUtils::readBadRunList()
 {
   vec_mBadRunId.clear();
 
-  std::string inputfile = Form("Utility/RunIndex/%s/badRunList_%s.txt",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
+  std::string inputfile = Form("Utility/FileList/%s/badRunList_%s.txt",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
   std::cout << "inputfile = " << inputfile.c_str() << std::endl;
   std::ifstream file_badRunList ( inputfile.c_str() );
   if ( !file_badRunList.is_open() )
@@ -134,10 +136,10 @@ bool StAnalysisUtils::isBadRun(int runId)
 }
 
 //---------------------------------------------------------------------------------
-double StAnalysisUtils::getBeta(StPicoDst *picoDst, int i_track)
+double StAnalysisUtils::getBeta(StPicoDst *picoDst, int iTrack)
 {
   double beta = -999.9;
-  StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(i_track); // return ith track
+  StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(iTrack); // return ith track
   int tofIndex = picoTrack->bTofPidTraitsIndex(); // return ToF PID traits
   if(tofIndex >= 0)
   {
@@ -148,10 +150,10 @@ double StAnalysisUtils::getBeta(StPicoDst *picoDst, int i_track)
   return beta;
 }
 
-double StAnalysisUtils::getPrimaryMass2(StPicoDst *picoDst, int i_track)
+double StAnalysisUtils::getPrimMass2(StPicoDst *picoDst, int iTrack)
 {
   double mass2 = -999.9;
-  StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(i_track); // return ith track
+  StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(iTrack); // return ith track
   int tofIndex = picoTrack->bTofPidTraitsIndex(); // return ToF PID traits
   if(tofIndex >= 0)
   {
@@ -169,10 +171,10 @@ double StAnalysisUtils::getPrimaryMass2(StPicoDst *picoDst, int i_track)
   return mass2;
 }
 
-double StAnalysisUtils::getGlobalMass2(StPicoDst *picoDst, int i_track)
+double StAnalysisUtils::getGlobMass2(StPicoDst *picoDst, int iTrack)
 {
   double mass2 = -999.9;
-  StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(i_track); // return ith track
+  StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(iTrack); // return ith track
   int tofIndex = picoTrack->bTofPidTraitsIndex(); // return ToF PID traits
   if(tofIndex >= 0)
   {
@@ -202,17 +204,78 @@ int StAnalysisUtils::getTriggerBin(StPicoEvent *picoEvent)
     if( picoEvent->isTrigger(600021) ) return 2; // VPDMB-30
     if( picoEvent->isTrigger(600031) ) return 3; // VPDMB-30
   }
+  if( (mType == 2) && globCons::mBeamYear[mType] == picoEvent->year() )
+  { // Fxt3p85GeV_2018
+    if( picoEvent->isTrigger(620052) ) return 0; // bbce_tofmult1
+  }
 
   return -1;
 }
 
 int StAnalysisUtils::getVzBin(double vz)
 {
-  if( mType == 0 || mType == 1 )
-  { // ZrZr200GeV_2018 || RuRu200GeV_2018
-    if(vz >= -35.0 && vz < 0.0) return 0;
-    if(vz >= 0.0 && vz <= 25.0) return 1;
+  if(vz >= anaUtils::mVzMin[mType] && vz < anaUtils::mVzCtr[mType]) 
+  {
+    return 0;
+  }
+  if(vz >= anaUtils::mVzCtr[mType] && vz <= anaUtils::mVzMax[mType]) 
+  {
+    return 1;
   }
 
   return -1;
+}
+
+double StAnalysisUtils::getVxReCtr(double vx)
+{
+  double vxReCtr = vx - anaUtils::mVxCtr[mType];
+
+  return vxReCtr;
+}
+
+double StAnalysisUtils::getVyReCtr(double vy)
+{
+  double vyReCtr = vy - anaUtils::mVyCtr[mType];
+
+  return vyReCtr;
+}
+
+double StAnalysisUtils::getRapidityLab(StPicoTrack *picoTrack, int pid)
+{
+  double mass = -999.9;
+  double rapLab = -999.9;
+  if(pid == 211 || pid == -211)   mass = anaUtils::mMassPion; // pions
+  if(pid == 321 || pid == -321)   mass = anaUtils::mMassKaon; // kaons
+  if(pid == 2212 || pid == -2212) mass = anaUtils::mMassProton; // protons
+  if(pid == 1234 || pid == -1234) mass = anaUtils::mMassDeuteron; // deutrons & randomly assigned ID
+  if(pid == 333)   mass = anaUtils::mMassPhi; // deutrons 
+
+  const TVector3 primMom = picoTrack->pMom(); // primary Momentum
+  const double primPmag = primMom.Mag();
+  const double primPz = primMom.Pz();
+  if(mass > 0.0)
+  {
+    const double eLab = TMath::Sqrt(primPmag*primPmag+mass*mass);
+    rapLab = 0.5*TMath::Log((eLab+primPz)/(eLab-primPz));
+  }
+
+  return rapLab;
+}
+
+double StAnalysisUtils::getRapidityCMS(double rapLab)
+{
+  double rapCtrM = rapLab - anaUtils::mRapCtrM[mType];
+
+  return rapCtrM;
+}
+
+double StAnalysisUtils::calcNSigmaZ(int charge, double mass, double pMag, double dEdx)
+{
+  double sigma = -999.9;
+  double dEdxExp = charge*charge*(TMath::Exp(Bichsel::Instance()->GetMostProbableZM(TMath::Log10(pMag*TMath::Abs(charge)/mass), 1)));
+  //if(charge==1) dEdxExp = charge*charge*Bichsel::Instance()->GetI70M(TMath::Log10(p*TMath::Abs(charge)/mass));
+  //if(charge==2) dEdxExp = charge*charge*Bichsel::Instance()->GetI70M(TMath::Log10(p*TMath::Abs(charge)/mass), 2.321928);
+  sigma = TMath::Log(dEdx/dEdxExp);
+
+  return sigma;
 }

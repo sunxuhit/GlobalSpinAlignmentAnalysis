@@ -14,17 +14,20 @@ class StRunQAHistoManager
     virtual ~StRunQAHistoManager();
 
     //--------------QA---------------
-    void initEventQA();
-    void fillEventQA_RefMult(int triggerBin, int refMult, int grefMult, int cent9, double reweight, int tofHits, int tofMatch, int cutSelection);
-    void fillEventQA_Vertex(int triggerBin, double vx, double vy, double vz, double vzVpd, int cutSelection);
-    void fillEventQA_Trigger(int triggerBin, int cutSelection);
-    void writeEventQA();
+    void initEvtQA();
+    void fillEvtQaRefMult(int triggerBin, int refMult, int grefMult, int cent9, double reweight, int tofHits, int tofMatch, int cutSelection);
+    void fillEvtQaVertex(int triggerBin, double vx, double vy, double vz, double vzVpd, int vzBin, int cutSelection);
+    void fillEvtQaTrigger(int triggerBin, int cutSelection);
+    void writeEvtQA();
 
-    void initTrackQA();
-    void fillTrackQA_Kinematics(int triggerBin, TVector3 pMom, TVector3 gMom, int cutSelection);
-    void fillTrackQA_Quliaty(int triggerBin, double gDca, int nHitsFit, int nHitsMax, int nHitsDEdx, int cutSelection);
-    void fillTrackQA_PID(int triggerBin, double mom, short charge, double dEdx, double beta, double mass2, int cutSelection);
-    void writeTrackQA();
+    void initTrkQA();
+    void fillTrkQaKinematics(int triggerBin, TVector3 pMom, TVector3 gMom, int cutSelection);
+    void fillTrkQaQuliaty(int triggerBin, double gDca, int nHitsFit, int nHitsMax, int nHitsDEdx, int cutSelection);
+    void fillTrkQaPID(int triggerBin, double mom, short charge, double dEdx, double beta, double mass2, int cutSelection);
+    void fillTrkQaEpCut(int triggerBin, TVector3 pMom, bool isFull, bool isEast, bool isWest, int cutSelection);
+    void fillTrkQaFlowCut(int triggerBin, TVector3 pMom, bool isFull, bool isEast, bool isWest, int cutSelection);
+    void fillTrkQaKaonCut(int triggerBin, TVector3 pMom, double nSigKaon, bool isFull, bool isEast, bool isWest, int cutSelection);
+    void writeTrkQA();
     //--------------QA---------------
 
   private:
@@ -46,10 +49,11 @@ class StRunQAHistoManager
     TH1F *h_mDiffVzVzVpd[mNumCuts][mNumTriggerBins];
     TH1F *h_mVertexZ[mNumCuts][mNumTriggerBins];
     TH2F *h_mVertexXY[mNumCuts][mNumTriggerBins];
+    TH2F *h_mVzVzBin[mNumCuts][mNumTriggerBins];
     // Track Level:
     TH1F *h_mPrimPt[mNumCuts][mNumTriggerBins];
-    TH1F *h_mPrimEta[mNumCuts][mNumTriggerBins];
     TH1F *h_mPrimPhi[mNumCuts][mNumTriggerBins];
+    TH1F *h_mPrimEta[mNumCuts][mNumTriggerBins];
     TH1F *h_mGlobPt[mNumCuts][mNumTriggerBins];
     TH1F *h_mGlobEta[mNumCuts][mNumTriggerBins];
     TH1F *h_mGlobPhi[mNumCuts][mNumTriggerBins];
@@ -60,6 +64,16 @@ class StRunQAHistoManager
     TH2F *h_mMomDEdx[mNumCuts][mNumTriggerBins];
     TH2F *h_mMomMass2[mNumCuts][mNumTriggerBins];
     TH2F *h_mMomBeta[mNumCuts][mNumTriggerBins];
+    // test StAnalysisCuts
+    TH1F *h_mPrimEtaEpFull[mNumCuts][mNumTriggerBins];
+    TH1F *h_mPrimEtaEpEast[mNumCuts][mNumTriggerBins];
+    TH1F *h_mPrimEtaEpWest[mNumCuts][mNumTriggerBins];
+    TH1F *h_mPrimEtaFlowFull[mNumCuts][mNumTriggerBins];
+    TH1F *h_mPrimEtaFlowEast[mNumCuts][mNumTriggerBins];
+    TH1F *h_mPrimEtaFlowWest[mNumCuts][mNumTriggerBins];
+    TH2F *h_mPrimEtaNSigKaonFull[mNumCuts][mNumTriggerBins];
+    TH2F *h_mPrimEtaNSigKaonEast[mNumCuts][mNumTriggerBins];
+    TH2F *h_mPrimEtaNSigKaonWest[mNumCuts][mNumTriggerBins];
 
     std::string str_mCutStatus[mNumCuts] = {"Bf","Af"};
 

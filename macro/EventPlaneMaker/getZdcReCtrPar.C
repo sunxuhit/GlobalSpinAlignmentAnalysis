@@ -53,13 +53,13 @@ void getZdcReCtrPar(int beamType = 0)
 
     std::string figName = Form("../../figures/EventPlaneMaker/%s/ZdcQ1ReCtr_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_ZdcQ1ReCtr->Print(figName.c_str());
+    figName = Form("../../figures/EventPlaneMaker/%s/ZdcQ1ReCtr_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     for(int iVz = 0; iVz < mNumVzBin; ++iVz)
     {
-      figName = Form("../../figures/EventPlaneMaker/%s/ZdcQ1ReCtr_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
-      c_ZdcQ1ReCtr->cd(1)->Clear(); c_ZdcQ1ReCtr->cd(1); p_mZdcQ1ReCtrVertEast[iVz]->Draw("colz");
-      c_ZdcQ1ReCtr->cd(2)->Clear(); c_ZdcQ1ReCtr->cd(2); p_mZdcQ1ReCtrHoriEast[iVz]->Draw("colz");
-      c_ZdcQ1ReCtr->cd(3)->Clear(); c_ZdcQ1ReCtr->cd(3); p_mZdcQ1ReCtrVertWest[iVz]->Draw("colz");
-      c_ZdcQ1ReCtr->cd(4)->Clear(); c_ZdcQ1ReCtr->cd(4); p_mZdcQ1ReCtrHoriWest[iVz]->Draw("colz");
+      c_ZdcQ1ReCtr->cd(1)->Clear(); c_ZdcQ1ReCtr->cd(1); p_mZdcQ1ReCtrVertEast[iVz]->DrawCopy("colz");
+      c_ZdcQ1ReCtr->cd(2)->Clear(); c_ZdcQ1ReCtr->cd(2); p_mZdcQ1ReCtrHoriEast[iVz]->DrawCopy("colz");
+      c_ZdcQ1ReCtr->cd(3)->Clear(); c_ZdcQ1ReCtr->cd(3); p_mZdcQ1ReCtrVertWest[iVz]->DrawCopy("colz");
+      c_ZdcQ1ReCtr->cd(4)->Clear(); c_ZdcQ1ReCtr->cd(4); p_mZdcQ1ReCtrHoriWest[iVz]->DrawCopy("colz");
       c_ZdcQ1ReCtr->Update();
       c_ZdcQ1ReCtr->Print(figName.c_str());
     }
@@ -115,10 +115,10 @@ void getZdcReCtrPar(int beamType = 0)
     for(int iCent = 0; iCent < mNumCentrality; ++iCent)
     {
       figName = Form("../../figures/EventPlaneMaker/%s/ZdcRawEp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
-      c_ZdcEp1RawDist->cd(1)->Clear(); c_ZdcEp1RawDist->cd(1); h_mZdcEp1RawEast[iCent]->ProjectionY()->Draw();
-      c_ZdcEp1RawDist->cd(2)->Clear(); c_ZdcEp1RawDist->cd(2); h_mZdcEp1RawWest[iCent]->ProjectionY()->Draw();
-      c_ZdcEp1RawDist->cd(3)->Clear(); c_ZdcEp1RawDist->cd(3); h_mZdcEp1RawFull[iCent]->ProjectionY()->Draw();
-      c_ZdcEp1RawDist->cd(4)->Clear(); c_ZdcEp1RawDist->cd(4); h_mZdcEp1RawCorr[iCent]->Draw("colz");
+      c_ZdcEp1RawDist->cd(1)->Clear(); c_ZdcEp1RawDist->cd(1); h_mZdcEp1RawEast[iCent]->ProjectionY()->DrawCopy();
+      c_ZdcEp1RawDist->cd(2)->Clear(); c_ZdcEp1RawDist->cd(2); h_mZdcEp1RawWest[iCent]->ProjectionY()->DrawCopy();
+      c_ZdcEp1RawDist->cd(3)->Clear(); c_ZdcEp1RawDist->cd(3); h_mZdcEp1RawFull[iCent]->ProjectionY()->DrawCopy();
+      c_ZdcEp1RawDist->cd(4)->Clear(); c_ZdcEp1RawDist->cd(4); h_mZdcEp1RawCorr[iCent]->DrawCopy("colz");
       c_ZdcEp1RawDist->Update();
       c_ZdcEp1RawDist->Print(figName.c_str());
     }
@@ -138,4 +138,5 @@ void getZdcReCtrPar(int beamType = 0)
     h_mZdcEp1RawCorr[iCent]->Write();
   }
   file_OutPutRawEp->Close();
+  file_InPut->Close();
 }

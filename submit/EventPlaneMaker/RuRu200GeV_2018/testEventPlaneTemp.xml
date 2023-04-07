@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<job minFilesPerProcess="20" filesPerHour="2" maxFilesPerProcess="25" fileListSyntax="xrootd" simulateSubmission="false">
+<job minFilesPerProcess="30" filesPerHour="3" maxFilesPerProcess="35" fileListSyntax="xrootd" simulateSubmission="false">
 
   <command>
     <!-- starver &#38;library; -->
@@ -19,7 +19,7 @@
   <input URL="filelist:&listPath;/pico_xrootd_test.list" />
   <!-- <input URL="catalog:star.bnl.gov?production=P20ic,library=SL20c,trgsetupname=production_isobar_2018,collision=RuRu200,filetype=daq_reco_picoDst,storage!=hpss,filename~st_physics" preferStorage="local" singleCopy="true" nFiles="10024"/> -->
 
-  <stdout discard="true"/>
+  <!-- <stdout discard="true"/> -->
   <stdout URL="file:&outPath;/Log/$JOBID.out"/>
   <stderr URL="file:&outPath;/Log/$JOBID.err"/>
 

@@ -11,8 +11,9 @@ StChain *chain;
 
 void recoEventPlane(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int mode = 1, const int beamType = 0)
 // void recoEventPlane(const Char_t *inputFile="Utility/FileList/RuRu200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int mode = 1, const int beamType = 1)
+// void recoEventPlane(const Char_t *inputFile="Utility/FileList/Fxt3p85GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int mode = 1, const int beamType = 2)
 {
-  // mBeamType[NumBeamType] = {"ZrZr200GeV_2018","RuRu200GeV_2018"};
+  // mBeamType[NumBeamType] = {"ZrZr200GeV_2018","RuRu200GeV_2018","Fxt3p85GeV_2018"};
   // mode: 0 for gain correction, 1 for re-center correction, 2 for shift correction, 3 for full shift correction, 4 for resolution calculation, 5 for charged flow
 
   TStopwatch *stopWatch = new TStopwatch();
@@ -40,6 +41,7 @@ void recoEventPlane(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/pi
   gSystem->Load("StPicoDstMaker");
   gSystem->Load("StRefMultCorr");
   gSystem->Load("StEpdUtil");
+  if(beamType == 2) gSystem->Load("StPileupUtil");
   gSystem->Load("StAnalysisUtils");
   gSystem->Load("StEventPlaneMaker");
 

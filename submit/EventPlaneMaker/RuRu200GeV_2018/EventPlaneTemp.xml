@@ -16,10 +16,10 @@
     </Package>
   </SandBox>
 
-  <!-- <input URL="filelist:&#38;listPath;/pico_xrootd_production.list" /> -->
-  <input URL="catalog:star.bnl.gov?production=P20ic,library=SL20c,trgsetupname=production_isobar_2018,collision=RuRu200,filetype=daq_reco_picoDst,storage!=hpss,filename~st_physics" preferStorage="local" singleCopy="true" nFiles="all"/>
+  <input URL="filelist:&listPath;/pico_xrootd_production.list" />
+  <!-- <input URL="catalog:star.bnl.gov?production=P20ic,library=SL20c,trgsetupname=production_isobar_2018,collision=RuRu200,filetype=daq_reco_picoDst,storage!=hpss,filename~st_physics" preferStorage="local" singleCopy="true" nFiles="all"/> -->
 
-  <stdout discard="true"/>
+  <!-- <stdout discard="true"/> -->
   <stdout URL="file:&outPath;/Log/$JOBID.out"/>
   <stderr URL="file:&outPath;/Log/$JOBID.err"/>
 

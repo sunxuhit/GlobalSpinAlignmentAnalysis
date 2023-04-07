@@ -8,12 +8,14 @@ class StPicoDst;
 class StPicoDstMaker;
 class StPicoEvent;
 class StRefMultCorr;
+class StPileupUtil;
 
 class StAnalysisUtils;
 class StAnalysisCut;
 class StZdcEpManager;
 class StEpdEpManager;
 class StTpcEpManager;
+class StMixEpManager;
 
 class StEventPlaneMaker : public StMaker {
   public:
@@ -30,16 +32,15 @@ class StEventPlaneMaker : public StMaker {
     StPicoDst      *mPicoDst;
     StPicoEvent    *mPicoEvent;
     StRefMultCorr  *mRefMultCorr;
+    StPileupUtil   *mPileupUtilFxt3p85; // from Xionghong He (Developed by Sooraj Radhakrishnan & only for Fxt3p85GeV_2018)
 
     StAnalysisUtils *mAnaUtils; // Analysis Utilities
     StAnalysisCut   *mAnaCut;   // Analysis Cuts
     StZdcEpManager  *mZdcEpManager;
     StEpdEpManager  *mEpdEpManager;
     StTpcEpManager  *mTpcEpManager;
+    StMixEpManager  *mMixEpManager; // for FXT ONLY
     
-    const int mMode;
-    const int mType;
-
     string str_mOutPutGainCorr;
     string str_mOutPutReCenterPar;
     string str_mOutPutShiftPar;
@@ -51,6 +52,10 @@ class StEventPlaneMaker : public StMaker {
     TFile *file_mOutPutShiftPar;
     TFile *file_mOutPutResolution;
     TFile *file_mOutPutFlow;
+
+    static const int mNumRingsGrps = 2;  // EPD Group 0: 0-7 rings | Group 1: 8-15 rings
+    const int mMode;
+    const int mType;
 
     ClassDef(StEventPlaneMaker, 1)
 };

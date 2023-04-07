@@ -49,7 +49,7 @@ int findBadRunList(int beamType = 0)
   file_badRunIndex.close();
 
   // generate bad runId list
-  std::string outputfile = Form("../../Utility/RunIndex/%s/badRunList_%s.txt",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  std::string outputfile = Form("../../Utility/FileList/%s/badRunList_%s.txt",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
   std::ofstream file_badRunList;
   file_badRunList.open(outputfile.c_str());
   if (!file_badRunList.is_open()) 

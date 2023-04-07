@@ -3,6 +3,7 @@
 
 #include "TObject.h"
 #include "TString.h"
+#include "TVector2.h"
 #include "TVector3.h"
 
 class StPicoDst;
@@ -17,13 +18,13 @@ class StAnalysisCut : public TObject
     virtual ~StAnalysisCut();
 
     // Run Cuts
-    bool isFixedTarget();
     bool isIsobar();
+    bool isFxt3p85GeV_2018();
 
     // Event Cuts
     bool isMinBias(StPicoEvent *picoEvent);
     bool isPileUpEvent(double refMult, double numOfBTofMatch, double vz);
-    bool isGoodCentrality(int cent9);
+    bool isGoodCent9(int cent9);
     bool passEventCut(StPicoEvent *picoEvent);
 
     // Track Cuts
@@ -50,6 +51,14 @@ class StAnalysisCut : public TObject
     bool passHitEpdEpWest(StPicoEpdHit *picoEpdHit);
     bool passHitEpdFlowEast(StPicoEpdHit *picoEpdHit);
     bool passHitEpdFlowWest(StPicoEpdHit *picoEpdHit);
+    bool passQVecEpdSide(TVector2 Q1VecEast, TVector2 Q1VecWest, TVector2 Q1VecFull);
+    bool passQVecEpdGrp(TVector2 Q1VecEast, TVector2 Q1VecWest, TVector2 Q1VecFull, int grpId);
+
+    // ZDC Hit Cuts for ZDC EP
+    bool passQVecZdc(TVector2 Q1VecEast, TVector2 Q1VecWest, TVector2 Q1VecFull);
+
+    // only used for deuteron flow comparison in Fxt3p85GeV_2018
+    bool passTrkDeuFlow(double pMag, double deuteronZ, double mass2);
 
   private:
     const int mType;

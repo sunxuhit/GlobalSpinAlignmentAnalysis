@@ -25,7 +25,7 @@ void plotGoodRunRange(double runIndexStart, double runIndexStop, double mean, do
 
 int findBadRunIndex(int beamType = 0)
 {
-  string inputfile = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/%s/RunQA/file_%s_RunQA.root",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  string inputfile = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/%s/RunQA/file_RunQA_%s.root",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
 
   TProfile *p_mRefMult[numCuts][numTriggerBins];

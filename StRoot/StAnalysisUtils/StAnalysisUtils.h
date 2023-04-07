@@ -22,11 +22,16 @@ class StAnalysisUtils
     bool readBadRunList();
     bool isBadRun(int runId);
 
-    double getBeta(StPicoDst*, int); // return beta of i-th track (tof || -999)
-    double getPrimaryMass2(StPicoDst*, int); // return m^2 of i-th track (primary || -999)
-    double getGlobalMass2(StPicoDst*, int); // return m^2 of i-th track (global || -999)
-    int getTriggerBin(StPicoEvent*); // return trigger bin for event QA
-    int getVzBin(double); // return vz bin
+    int getTriggerBin(StPicoEvent *picoEvent); // return trigger bin for event QA
+    int getVzBin(double vz); // return vz bin
+    double getVxReCtr(double vx); // return vx - anaUtils::mVxCtr[mType]
+    double getVyReCtr(double vy); // return vy - anaUtils::mVyCtr[mType]
+    double getBeta(StPicoDst *picoDst, int iTrack); // return beta of i-th track (tof || -999)
+    double getPrimMass2(StPicoDst *picoDst, int iTrack); // return m^2 of i-th track (primary || -999)
+    double getGlobMass2(StPicoDst *picoDst, int iTrack); // return m^2 of i-th track (global || -999)
+    double getRapidityLab(StPicoTrack *picoTrack, int pid); // return particle rapidity in Lab frame
+    double getRapidityCMS(double rapLab); // return particle rapidity in CMS: rapLab - anaUtils::mRapCtrM[mType]
+    double calcNSigmaZ(int charge, double mass, double mom, double dEdx); // calculate nSigmaZ for deuteron
 
   private:
     const int mType;

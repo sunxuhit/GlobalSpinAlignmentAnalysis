@@ -21,6 +21,13 @@ void getTpcShiftPar(int beamType = 0)
   cout << "inputFile sets to: " << inputFile.c_str() << endl;
 
   // Shift Correction for East/West | 0 = vertex neg/pos | 1 = shift correction harmonics
+  TProfile2D *p_mTpcQ1ShiftCosEast[mNumVzBin][mNumShiftCorr]; // 1st EP
+  TProfile2D *p_mTpcQ1ShiftSinEast[mNumVzBin][mNumShiftCorr];
+  TProfile2D *p_mTpcQ1ShiftCosWest[mNumVzBin][mNumShiftCorr];
+  TProfile2D *p_mTpcQ1ShiftSinWest[mNumVzBin][mNumShiftCorr];
+  TProfile2D *p_mTpcQ1ShiftCosFull[mNumVzBin][mNumShiftCorr];
+  TProfile2D *p_mTpcQ1ShiftSinFull[mNumVzBin][mNumShiftCorr];
+
   TProfile2D *p_mTpcQ2ShiftCosEast[mNumVzBin][mNumShiftCorr]; // 2nd EP
   TProfile2D *p_mTpcQ2ShiftSinEast[mNumVzBin][mNumShiftCorr];
   TProfile2D *p_mTpcQ2ShiftCosWest[mNumVzBin][mNumShiftCorr];
@@ -38,7 +45,22 @@ void getTpcShiftPar(int beamType = 0)
   {
     for(int iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order
     {
-      std::string proName = Form("p_mTpcQ2ShiftCos%dEastVz%d",iShift,iVz); // 2nd EP
+      std::string proName = Form("p_mTpcQ1ShiftCos%dEastVz%d",iShift,iVz); // 1st EP
+      p_mTpcQ1ShiftCosEast[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
+      proName = Form("p_mTpcQ1ShiftSin%dEastVz%d",iShift,iVz);
+      p_mTpcQ1ShiftSinEast[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
+
+      proName = Form("p_mTpcQ1ShiftCos%dWestVz%d",iShift,iVz);
+      p_mTpcQ1ShiftCosWest[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
+      proName = Form("p_mTpcQ1ShiftSin%dWestVz%d",iShift,iVz);
+      p_mTpcQ1ShiftSinWest[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
+
+      proName = Form("p_mTpcQ1ShiftCos%dFullVz%d",iShift,iVz);
+      p_mTpcQ1ShiftCosFull[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
+      proName = Form("p_mTpcQ1ShiftSin%dFullVz%d",iShift,iVz);
+      p_mTpcQ1ShiftSinFull[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
+
+      proName = Form("p_mTpcQ2ShiftCos%dEastVz%d",iShift,iVz); // 2nd EP
       p_mTpcQ2ShiftCosEast[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
       proName = Form("p_mTpcQ2ShiftSin%dEastVz%d",iShift,iVz);
       p_mTpcQ2ShiftSinEast[iVz][iShift] = (TProfile2D*)file_InPut->Get(proName.c_str());
@@ -89,21 +111,30 @@ void getTpcShiftPar(int beamType = 0)
       for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
       {
 	figName = Form("../../figures/EventPlaneMaker/%s/TpcQVecShift_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
-	c_TpcQVecShift->cd(1)->Clear(); c_TpcQVecShift->cd(1); p_mTpcQ2ShiftCosEast[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(2)->Clear(); c_TpcQVecShift->cd(2); p_mTpcQ2ShiftSinEast[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(3)->Clear(); c_TpcQVecShift->cd(3); p_mTpcQ2ShiftCosWest[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(4)->Clear(); c_TpcQVecShift->cd(4); p_mTpcQ2ShiftSinWest[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(5)->Clear(); c_TpcQVecShift->cd(5); p_mTpcQ2ShiftCosFull[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(6)->Clear(); c_TpcQVecShift->cd(6); p_mTpcQ2ShiftSinFull[iVz][iShift]->Draw("colz");
+	c_TpcQVecShift->cd(1)->Clear(); c_TpcQVecShift->cd(1); p_mTpcQ1ShiftCosEast[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(2)->Clear(); c_TpcQVecShift->cd(2); p_mTpcQ1ShiftSinEast[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(3)->Clear(); c_TpcQVecShift->cd(3); p_mTpcQ1ShiftCosWest[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(4)->Clear(); c_TpcQVecShift->cd(4); p_mTpcQ1ShiftSinWest[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(5)->Clear(); c_TpcQVecShift->cd(5); p_mTpcQ1ShiftCosFull[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(6)->Clear(); c_TpcQVecShift->cd(6); p_mTpcQ1ShiftSinFull[iVz][iShift]->DrawCopy("colz");
 	c_TpcQVecShift->Update();
 	c_TpcQVecShift->Print(figName.c_str());
 
-	c_TpcQVecShift->cd(1)->Clear(); c_TpcQVecShift->cd(1); p_mTpcQ3ShiftCosEast[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(2)->Clear(); c_TpcQVecShift->cd(2); p_mTpcQ3ShiftSinEast[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(3)->Clear(); c_TpcQVecShift->cd(3); p_mTpcQ3ShiftCosWest[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(4)->Clear(); c_TpcQVecShift->cd(4); p_mTpcQ3ShiftSinWest[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(5)->Clear(); c_TpcQVecShift->cd(5); p_mTpcQ3ShiftCosFull[iVz][iShift]->Draw("colz");
-	c_TpcQVecShift->cd(6)->Clear(); c_TpcQVecShift->cd(6); p_mTpcQ3ShiftSinFull[iVz][iShift]->Draw("colz");
+	c_TpcQVecShift->cd(1)->Clear(); c_TpcQVecShift->cd(1); p_mTpcQ2ShiftCosEast[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(2)->Clear(); c_TpcQVecShift->cd(2); p_mTpcQ2ShiftSinEast[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(3)->Clear(); c_TpcQVecShift->cd(3); p_mTpcQ2ShiftCosWest[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(4)->Clear(); c_TpcQVecShift->cd(4); p_mTpcQ2ShiftSinWest[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(5)->Clear(); c_TpcQVecShift->cd(5); p_mTpcQ2ShiftCosFull[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(6)->Clear(); c_TpcQVecShift->cd(6); p_mTpcQ2ShiftSinFull[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->Update();
+	c_TpcQVecShift->Print(figName.c_str());
+
+	c_TpcQVecShift->cd(1)->Clear(); c_TpcQVecShift->cd(1); p_mTpcQ3ShiftCosEast[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(2)->Clear(); c_TpcQVecShift->cd(2); p_mTpcQ3ShiftSinEast[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(3)->Clear(); c_TpcQVecShift->cd(3); p_mTpcQ3ShiftCosWest[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(4)->Clear(); c_TpcQVecShift->cd(4); p_mTpcQ3ShiftSinWest[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(5)->Clear(); c_TpcQVecShift->cd(5); p_mTpcQ3ShiftCosFull[iVz][iShift]->DrawCopy("colz");
+	c_TpcQVecShift->cd(6)->Clear(); c_TpcQVecShift->cd(6); p_mTpcQ3ShiftSinFull[iVz][iShift]->DrawCopy("colz");
 	c_TpcQVecShift->Update();
 	c_TpcQVecShift->Print(figName.c_str());
       }
@@ -120,6 +151,13 @@ void getTpcShiftPar(int beamType = 0)
   {
     for(int iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order
     {
+      p_mTpcQ1ShiftCosEast[iVz][iShift]->Write();
+      p_mTpcQ1ShiftSinEast[iVz][iShift]->Write();
+      p_mTpcQ1ShiftCosWest[iVz][iShift]->Write();
+      p_mTpcQ1ShiftSinWest[iVz][iShift]->Write();
+      p_mTpcQ1ShiftCosFull[iVz][iShift]->Write();
+      p_mTpcQ1ShiftSinFull[iVz][iShift]->Write();
+
       p_mTpcQ2ShiftCosEast[iVz][iShift]->Write();
       p_mTpcQ2ShiftSinEast[iVz][iShift]->Write();
       p_mTpcQ2ShiftCosWest[iVz][iShift]->Write();
@@ -138,6 +176,11 @@ void getTpcShiftPar(int beamType = 0)
   file_OutPut->Close();
 
   // Event Plane Distribution | x axis is runIndex, y axis is EP angle
+  TH2F *h_mTpcEp1ReCtrEast[mNumCentrality]; // 2nd raw EP
+  TH2F *h_mTpcEp1ReCtrWest[mNumCentrality];
+  TH2F *h_mTpcEp1ReCtrFull[mNumCentrality];
+  TH2F *h_mTpcEp1ReCtrCorr[mNumCentrality]; // Psi2East vs Psi2West
+
   TH2F *h_mTpcEp2ReCtrEast[mNumCentrality]; // 2nd raw EP
   TH2F *h_mTpcEp2ReCtrWest[mNumCentrality];
   TH2F *h_mTpcEp2ReCtrFull[mNumCentrality];
@@ -149,7 +192,16 @@ void getTpcShiftPar(int beamType = 0)
   TH2F *h_mTpcEp3ReCtrCorr[mNumCentrality]; // Psi3East vs Psi3West
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string histName = Form("h_mTpcEp2ReCtrEastCent%d",iCent); // 2nd EP
+    std::string histName = Form("h_mTpcEp1ReCtrEastCent%d",iCent); // 1st EP
+    h_mTpcEp1ReCtrEast[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
+    histName = Form("h_mTpcEp1ReCtrWestCent%d",iCent);
+    h_mTpcEp1ReCtrWest[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
+    histName = Form("h_mTpcEp1ReCtrFullCent%d",iCent);
+    h_mTpcEp1ReCtrFull[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
+    histName = Form("h_mTpcEp1ReCtrCorrCent%d",iCent);
+    h_mTpcEp1ReCtrCorr[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
+
+    histName = Form("h_mTpcEp2ReCtrEastCent%d",iCent); // 2nd EP
     h_mTpcEp2ReCtrEast[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
     histName = Form("h_mTpcEp2ReCtrWestCent%d",iCent);
     h_mTpcEp2ReCtrWest[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
@@ -185,17 +237,24 @@ void getTpcShiftPar(int beamType = 0)
     for(int iCent = 0; iCent < mNumCentrality; ++iCent)
     {
       figName = Form("../../figures/EventPlaneMaker/%s/TpcReCtrEp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
-      c_TpcEpReCtrDist->cd(1); h_mTpcEp2ReCtrEast[iCent]->ProjectionY()->Draw();
-      c_TpcEpReCtrDist->cd(2); h_mTpcEp2ReCtrWest[iCent]->ProjectionY()->Draw();
-      c_TpcEpReCtrDist->cd(3); h_mTpcEp2ReCtrFull[iCent]->ProjectionY()->Draw();
-      c_TpcEpReCtrDist->cd(4); h_mTpcEp2ReCtrCorr[iCent]->Draw("colz");
+      c_TpcEpReCtrDist->cd(1); h_mTpcEp1ReCtrEast[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(2); h_mTpcEp1ReCtrWest[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(3); h_mTpcEp1ReCtrFull[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(4); h_mTpcEp1ReCtrCorr[iCent]->DrawCopy("colz");
       c_TpcEpReCtrDist->Update();
       c_TpcEpReCtrDist->Print(figName.c_str());
 
-      c_TpcEpReCtrDist->cd(1); h_mTpcEp3ReCtrEast[iCent]->ProjectionY()->Draw();
-      c_TpcEpReCtrDist->cd(2); h_mTpcEp3ReCtrWest[iCent]->ProjectionY()->Draw();
-      c_TpcEpReCtrDist->cd(3); h_mTpcEp3ReCtrFull[iCent]->ProjectionY()->Draw();
-      c_TpcEpReCtrDist->cd(4); h_mTpcEp3ReCtrCorr[iCent]->Draw("colz");
+      c_TpcEpReCtrDist->cd(1); h_mTpcEp2ReCtrEast[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(2); h_mTpcEp2ReCtrWest[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(3); h_mTpcEp2ReCtrFull[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(4); h_mTpcEp2ReCtrCorr[iCent]->DrawCopy("colz");
+      c_TpcEpReCtrDist->Update();
+      c_TpcEpReCtrDist->Print(figName.c_str());
+
+      c_TpcEpReCtrDist->cd(1); h_mTpcEp3ReCtrEast[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(2); h_mTpcEp3ReCtrWest[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(3); h_mTpcEp3ReCtrFull[iCent]->ProjectionY()->DrawCopy();
+      c_TpcEpReCtrDist->cd(4); h_mTpcEp3ReCtrCorr[iCent]->DrawCopy("colz");
       c_TpcEpReCtrDist->Update();
       c_TpcEpReCtrDist->Print(figName.c_str());
     }
@@ -209,6 +268,11 @@ void getTpcShiftPar(int beamType = 0)
   file_OutPutReCtrEp->cd();
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
+    h_mTpcEp1ReCtrEast[iCent]->Write();
+    h_mTpcEp1ReCtrWest[iCent]->Write();
+    h_mTpcEp1ReCtrFull[iCent]->Write();
+    h_mTpcEp1ReCtrCorr[iCent]->Write();
+
     h_mTpcEp2ReCtrEast[iCent]->Write();
     h_mTpcEp2ReCtrWest[iCent]->Write();
     h_mTpcEp2ReCtrFull[iCent]->Write();
@@ -220,4 +284,5 @@ void getTpcShiftPar(int beamType = 0)
     h_mTpcEp3ReCtrCorr[iCent]->Write();
   }
   file_OutPutReCtrEp->Close();
+  file_InPut->Close();
 }

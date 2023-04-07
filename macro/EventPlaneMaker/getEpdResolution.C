@@ -16,6 +16,7 @@ void getEpdResolution(int beamType = 0)
   const int mNumVzBin = 2; // 0: vz < 0 | 1: vz >= 0
   const int mNumShiftCorr = 20;
   const int mNumCentrality = 9;
+  const int mNumRingsGrps = 2;
 
   string inputFile = Form("../../data/EventPlaneMaker/%s/file_EpResolution_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *file_InPut = TFile::Open(inputFile.c_str());
@@ -23,8 +24,22 @@ void getEpdResolution(int beamType = 0)
   cout << "inputFile sets to: " << inputFile.c_str() << endl;
 
   // Shift Correction for Full EP
-  TProfile *p_mEpdSubEp1Res = (TProfile*)file_InPut->Get("p_mEpdSubEp1Res");;
+  TProfile *p_mEpdSubEp1SideRes;
+  TProfile *p_mEpdSubEp1GrpRes[mNumRingsGrps]; // resolution of same group
+  if(beamType == 0 || beamType == 1)
+  {
+    p_mEpdSubEp1SideRes = (TProfile*)file_InPut->Get("p_mEpdSubEp1SideRes");
+  }
+  if(beamType == 2)
+  {
+    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
+    {
+      std::string proName = Form("p_mEpdSubEp1Grp%dRes",iGrp);
+      p_mEpdSubEp1GrpRes[iGrp] = (TProfile*)file_InPut->Get(proName.c_str());
+    }
+  }
 
+  if(beamType == 0 || beamType == 1)
   {
     TCanvas *c_EpdSubEp1Res = new TCanvas("c_EpdSubEp1Res","c_EpdSubEp1Res",10,10,800,800);
     c_EpdSubEp1Res->cd()->SetLeftMargin(0.15);
@@ -32,12 +47,34 @@ void getEpdResolution(int beamType = 0)
     c_EpdSubEp1Res->cd()->SetBottomMargin(0.15);
     c_EpdSubEp1Res->cd()->SetTicks(1,1);
     c_EpdSubEp1Res->cd()->SetGrid(0,0);
-    p_mEpdSubEp1Res->GetXaxis()->SetTitle("Centrality 9 Bins");
-    p_mEpdSubEp1Res->GetYaxis()->SetTitle("cos(#Psi_{1}^{West}-#Psi_{1}^{East})");
-    p_mEpdSubEp1Res->GetYaxis()->SetTitleOffset(1.25);
-    p_mEpdSubEp1Res->GetYaxis()->SetNdivisions(505);
-    p_mEpdSubEp1Res->GetYaxis()->SetLabelSize(0.03);
-    p_mEpdSubEp1Res->Draw("PE");
+    p_mEpdSubEp1SideRes->GetXaxis()->SetTitle("Centrality 9 Bins");
+    p_mEpdSubEp1SideRes->GetYaxis()->SetTitle("cos(#Psi_{1}^{West}-#Psi_{1}^{East})");
+    p_mEpdSubEp1SideRes->GetYaxis()->SetTitleOffset(1.25);
+    p_mEpdSubEp1SideRes->GetYaxis()->SetNdivisions(505);
+    p_mEpdSubEp1SideRes->GetYaxis()->SetLabelSize(0.03);
+    p_mEpdSubEp1SideRes->DrawCopy("PE");
+
+    std::string figName = Form("../../figures/EventPlaneMaker/%s/EpdSubEp1Resolution_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_EpdSubEp1Res->SaveAs(figName.c_str());
+  }
+  if(beamType == 2)
+  {
+    TCanvas *c_EpdSubEp1Res = new TCanvas("c_EpdSubEp1Res","c_EpdSubEp1Res",10,10,800,400);
+    c_EpdSubEp1Res->Divide(2,1);
+    for(int iGrp = 0; iGrp < 2; ++iGrp)
+    {
+      c_EpdSubEp1Res->cd(iGrp+1)->SetLeftMargin(0.15);
+      c_EpdSubEp1Res->cd(iGrp+1)->SetRightMargin(0.15);
+      c_EpdSubEp1Res->cd(iGrp+1)->SetBottomMargin(0.15);
+      c_EpdSubEp1Res->cd(iGrp+1)->SetTicks(1,1);
+      c_EpdSubEp1Res->cd(iGrp+1)->SetGrid(0,0);
+      p_mEpdSubEp1GrpRes[iGrp]->GetXaxis()->SetTitle("Centrality 9 Bins");
+      p_mEpdSubEp1GrpRes[iGrp]->GetYaxis()->SetTitle("cos(#Psi_{1}^{West}-#Psi_{1}^{East})");
+      p_mEpdSubEp1GrpRes[iGrp]->GetYaxis()->SetTitleOffset(1.25);
+      p_mEpdSubEp1GrpRes[iGrp]->GetYaxis()->SetNdivisions(505);
+      p_mEpdSubEp1GrpRes[iGrp]->GetYaxis()->SetLabelSize(0.03);
+      p_mEpdSubEp1GrpRes[iGrp]->DrawCopy("PE");
+    }
 
     std::string figName = Form("../../figures/EventPlaneMaker/%s/EpdSubEp1Resolution_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_EpdSubEp1Res->SaveAs(figName.c_str());
@@ -47,27 +84,61 @@ void getEpdResolution(int beamType = 0)
   cout << "outputFile: " << outputFile.c_str() << endl;
   TFile *file_OutPut = new TFile(outputFile.c_str(),"RECREATE");
   file_OutPut->cd();
-  p_mEpdSubEp1Res->Write();
+  if(beamType == 0 || beamType == 1)
+  {
+    p_mEpdSubEp1SideRes->Write();
+  }
+  if(beamType == 2)
+  {
+    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
+    {
+      p_mEpdSubEp1GrpRes[iGrp]->Write();
+    }
+  }
   file_OutPut->Close();
 
   // Event Plane Distribution | x axis is runIndex, y axis is EP angle
-  TH2F *h_mEpdEp1ShiftEast[mNumCentrality]; // shift EP
-  TH2F *h_mEpdEp1ShiftWest[mNumCentrality];
-  TH2F *h_mEpdEp1ShiftFull[mNumCentrality]; // Qwest-QEast
-  TH2F *h_mEpdEp1ShiftFullCorr[mNumCentrality];
-  TH2F *h_mEpdEp1ShiftCorr[mNumCentrality]; // Psi1East vs Psi1West
+  TH2F *h_mEpdEp1SideShiftEast[mNumCentrality]; // shift EP
+  TH2F *h_mEpdEp1SideShiftWest[mNumCentrality];
+  TH2F *h_mEpdEp1SideShiftFull[mNumCentrality]; // Qwest-QEast
+  TH2F *h_mEpdEp1SideShiftCorr[mNumCentrality]; // Psi1East vs Psi1West
+  TH2F *h_mEpdEp1SideShiftFullCorr[mNumCentrality];
+  TH2F *h_mEpdEp1GrpShiftEast[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpShiftWest[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpShiftFull[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpShiftCorr[mNumCentrality][mNumRingsGrps];
+  // TH2F *h_mEpdEp1GrpShiftFullCorr[mNumCentrality][mNumRingsGrps];
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string histName = Form("h_mEpdEp1ShiftEastCent%d",iCent);
-    h_mEpdEp1ShiftEast[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
-    histName = Form("h_mEpdEp1ShiftWestCent%d",iCent);
-    h_mEpdEp1ShiftWest[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
-    histName = Form("h_mEpdEp1ShiftFullCent%d",iCent);
-    h_mEpdEp1ShiftFull[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
-    histName = Form("h_mEpdEp1ShiftFullCorrCent%d",iCent);
-    h_mEpdEp1ShiftFullCorr[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
-    histName = Form("h_mEpdEp1ShiftCorrCent%d",iCent);
-    h_mEpdEp1ShiftCorr[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
+    if(beamType == 0 || beamType == 1)
+    {
+      std::string histName = Form("h_mEpdEp1SideShiftEastCent%d",iCent);
+      h_mEpdEp1SideShiftEast[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
+      histName = Form("h_mEpdEp1SideShiftWestCent%d",iCent);
+      h_mEpdEp1SideShiftWest[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
+      histName = Form("h_mEpdEp1SideShiftFullCent%d",iCent);
+      h_mEpdEp1SideShiftFull[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
+      histName = Form("h_mEpdEp1SideShiftCorrCent%d",iCent);
+      h_mEpdEp1SideShiftCorr[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
+      histName = Form("h_mEpdEp1SideShiftFullCorrCent%d",iCent);
+      h_mEpdEp1SideShiftFullCorr[iCent] = (TH2F*)file_InPut->Get(histName.c_str());
+    }
+    if(beamType == 2)
+    {
+      for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
+      {
+	std::string histName = Form("h_mEpdEp1Grp%dShiftEastCent%d",iGrp,iCent);
+	h_mEpdEp1GrpShiftEast[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	histName = Form("h_mEpdEp1Grp%dShiftWestCent%d",iGrp,iCent);
+	h_mEpdEp1GrpShiftWest[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	histName = Form("h_mEpdEp1Grp%dShiftFullCent%d",iGrp,iCent);
+	h_mEpdEp1GrpShiftFull[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	histName = Form("h_mEpdEp1Grp%dShiftCorrCent%d",iGrp,iCent);
+	h_mEpdEp1GrpShiftCorr[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	// histName = Form("h_mEpdEp1Grp%dShiftFullCorrCent%d",iGrp,iCent);
+	// h_mEpdEp1GrpShiftFullCorr[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+      }
+    }
   }
 
   {
@@ -84,16 +155,32 @@ void getEpdResolution(int beamType = 0)
 
     std::string figName = Form("../../figures/EventPlaneMaker/%s/EpdShiftFullEp_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_EpdEp1ShiftDist->Print(figName.c_str());
+    figName = Form("../../figures/EventPlaneMaker/%s/EpdShiftFullEp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     for(int iCent = 0; iCent < mNumCentrality; ++iCent)
     {
-      figName = Form("../../figures/EventPlaneMaker/%s/EpdShiftFullEp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
-      c_EpdEp1ShiftDist->cd(1)->Clear(); c_EpdEp1ShiftDist->cd(1); h_mEpdEp1ShiftEast[iCent]->ProjectionY()->Draw();
-      c_EpdEp1ShiftDist->cd(2)->Clear(); c_EpdEp1ShiftDist->cd(2); h_mEpdEp1ShiftWest[iCent]->ProjectionY()->Draw();
-      c_EpdEp1ShiftDist->cd(3)->Clear(); c_EpdEp1ShiftDist->cd(3); h_mEpdEp1ShiftFull[iCent]->ProjectionY()->Draw();
-      c_EpdEp1ShiftDist->cd(4)->Clear(); c_EpdEp1ShiftDist->cd(4); h_mEpdEp1ShiftFullCorr[iCent]->ProjectionY()->Draw();
-      c_EpdEp1ShiftDist->cd(5)->Clear(); c_EpdEp1ShiftDist->cd(5); h_mEpdEp1ShiftCorr[iCent]->Draw("colz");
-      c_EpdEp1ShiftDist->Update();
-      c_EpdEp1ShiftDist->Print(figName.c_str());
+      if(beamType == 0 || beamType == 1)
+      {
+	c_EpdEp1ShiftDist->cd(1)->Clear(); c_EpdEp1ShiftDist->cd(1); h_mEpdEp1SideShiftEast[iCent]->ProjectionY()->DrawCopy();
+	c_EpdEp1ShiftDist->cd(2)->Clear(); c_EpdEp1ShiftDist->cd(2); h_mEpdEp1SideShiftWest[iCent]->ProjectionY()->DrawCopy();
+	c_EpdEp1ShiftDist->cd(3)->Clear(); c_EpdEp1ShiftDist->cd(3); h_mEpdEp1SideShiftFull[iCent]->ProjectionY()->DrawCopy();
+	c_EpdEp1ShiftDist->cd(4)->Clear(); c_EpdEp1ShiftDist->cd(4); h_mEpdEp1SideShiftFullCorr[iCent]->ProjectionY()->DrawCopy();
+	c_EpdEp1ShiftDist->cd(5)->Clear(); c_EpdEp1ShiftDist->cd(5); h_mEpdEp1SideShiftCorr[iCent]->DrawCopy("colz");
+	c_EpdEp1ShiftDist->Update();
+	c_EpdEp1ShiftDist->Print(figName.c_str());
+      }
+      if(beamType == 2)
+      {
+	for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
+	{
+	  c_EpdEp1ShiftDist->cd(1)->Clear(); c_EpdEp1ShiftDist->cd(1); h_mEpdEp1GrpShiftEast[iCent][iGrp]->ProjectionY()->DrawCopy();
+	  c_EpdEp1ShiftDist->cd(2)->Clear(); c_EpdEp1ShiftDist->cd(2); h_mEpdEp1GrpShiftWest[iCent][iGrp]->ProjectionY()->DrawCopy();
+	  c_EpdEp1ShiftDist->cd(3)->Clear(); c_EpdEp1ShiftDist->cd(3); h_mEpdEp1GrpShiftFull[iCent][iGrp]->ProjectionY()->DrawCopy();
+	  // c_EpdEp1ShiftDist->cd(4)->Clear(); c_EpdEp1ShiftDist->cd(4); h_mEpdEp1GrpShiftFullCorr[iCent][iGrp]->ProjectionY()->DrawCopy();
+	  c_EpdEp1ShiftDist->cd(5)->Clear(); c_EpdEp1ShiftDist->cd(5); h_mEpdEp1GrpShiftCorr[iCent][iGrp]->DrawCopy("colz");
+	  c_EpdEp1ShiftDist->Update();
+	  c_EpdEp1ShiftDist->Print(figName.c_str());
+	}
+      }
     }
     figName = Form("../../figures/EventPlaneMaker/%s/EpdShiftFullEp_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_EpdEp1ShiftDist->Print(figName.c_str());
@@ -105,10 +192,26 @@ void getEpdResolution(int beamType = 0)
   file_OutPutShiftEp->cd();
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    h_mEpdEp1ShiftEast[iCent]->Write();
-    h_mEpdEp1ShiftWest[iCent]->Write();
-    h_mEpdEp1ShiftFull[iCent]->Write();
-    h_mEpdEp1ShiftCorr[iCent]->Write();
+    if(beamType == 0 || beamType == 1)
+    {
+      h_mEpdEp1SideShiftEast[iCent]->Write();
+      h_mEpdEp1SideShiftWest[iCent]->Write();
+      h_mEpdEp1SideShiftFull[iCent]->Write();
+      h_mEpdEp1SideShiftCorr[iCent]->Write();
+      h_mEpdEp1SideShiftFullCorr[iCent]->Write();
+    }
+    if(beamType == 2)
+    {
+      for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
+      {
+	h_mEpdEp1GrpShiftEast[iCent][iGrp]->Write();
+	h_mEpdEp1GrpShiftWest[iCent][iGrp]->Write();
+	h_mEpdEp1GrpShiftFull[iCent][iGrp]->Write();
+	h_mEpdEp1GrpShiftCorr[iCent][iGrp]->Write();
+	// h_mEpdEp1GrpShiftFullCorr[iCent][iGrp]->Write();
+      }
+    }
   }
   file_OutPutShiftEp->Close();
+  file_InPut->Close();
 }

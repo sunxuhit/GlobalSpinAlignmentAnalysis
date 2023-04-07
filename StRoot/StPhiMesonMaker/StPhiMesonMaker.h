@@ -8,12 +8,14 @@ class StPicoDst;
 class StPicoDstMaker;
 class StPicoEvent;
 class StRefMultCorr;
+class StPileupUtil;
 
 class StAnalysisUtils;
 class StAnalysisCut;
 class StZdcEpManager;
 class StEpdEpManager;
 class StTpcEpManager;
+// class StMixEpManager;
 class StPhiMesonTree;
 
 class StPhiMesonMaker : public StMaker {
@@ -31,12 +33,14 @@ class StPhiMesonMaker : public StMaker {
     StPicoDst      *mPicoDst;
     StPicoEvent    *mPicoEvent;
     StRefMultCorr  *mRefMultCorr;
+    StPileupUtil   *mPileupUtilFxt3p85; // from Xionghong He (Developed by Sooraj Radhakrishnan & only for Fxt3p85GeV_2018)
 
     StAnalysisUtils *mAnaUtils; // Analysis Utilities
     StAnalysisCut   *mAnaCut;   // Analysis Cuts
     StZdcEpManager  *mZdcEpManager;
     StEpdEpManager  *mEpdEpManager;
     StTpcEpManager  *mTpcEpManager;
+    // StMixEpManager  *mMixEpManager;
     StPhiMesonTree  *mPhiMesonTree;
 
     const int mMode;

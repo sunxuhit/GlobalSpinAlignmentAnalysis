@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<job minFilesPerProcess="20" filesPerHour="5" maxFilesPerProcess="25" fileListSyntax="xrootd" simulateSubmission="false">
+<job minFilesPerProcess="20" filesPerHour="2" maxFilesPerProcess="25" fileListSyntax="xrootd" simulateSubmission="false">
 
   <command>
     <!-- starver &#38;library; -->
@@ -29,7 +29,7 @@
     <ListLocation>./JOBS/list/</ListLocation>
   </Generator>
 
-  <output fromScratch="*.root" toURL="file:&outPath;/Data/" />
+  <output fromScratch="*.root" toURL="file:&outPath;/OutPut/" />
   <output fromScratch="*.log" toURL="file:&outPath;/Log/" />
 </job>
 

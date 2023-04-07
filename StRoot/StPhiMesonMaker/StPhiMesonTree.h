@@ -35,14 +35,24 @@ class StPhiMesonTree : public TObject
 
     int getPhiMixKey(int cent9, int vzBin, int PsiBin, int evtBin); // return 1000*cent9 + 100*vzBin + 10*PsiBin + evtBin
     int getVzMixBin(double vz);
-    int getPsi2MixBin(double Psi2);
+    int getPsiMixBin(double Psi, int epOrder);
     void getPhiEvtSize(int cent9, int vzBin, int PsiBin);
 
+    // set event info
     void clearEvtInfo();
-    void setEvtInfo(int cent9, int cent16, double refwgt, double vz, double Psi2ShiftFull);
-    void setZdcQ1Vec(int flagEp, TVector2 Q1VecZdcShiftEast,TVector2 Q1VecZdcShiftWest, TVector2 Q1VecZdcShiftFull); // Shift Corrected ZDC Q1Vector: East & West & Full
-    void setEpdQ1Vec(int flagEp, TVector2 Q1VecEpdShiftEast,TVector2 Q1VecEpdShiftWest, TVector2 Q1VecEpdShiftFull); // Shift Corrected EPD Q1Vector: East & West & Full
-    void setTpcQVec(int flagEp, TVector2 Q2VecTpcReCtrEast,TVector2 Q2VecTpcReCtrWest, TVector2 Q3VecTpcReCtrEast,TVector2 Q3VecTpcReCtrWest); // ReCenter Corrected TPC Q2Vector & Q3Vector: East & West
+    void setEvtInfo(int runIdx, int cent9, int cent16, double refwgt, double vz, double PsiShiftFull);
+    void setZdcQ1Flag(int flagEp); // ZDC Flag
+    void setZdcQ1Vec(TVector2 Q1VecZdcShiftEast,TVector2 Q1VecZdcShiftWest, TVector2 Q1VecZdcShiftFull); // Shift Corrected ZDC Q1Vector: East & West & Full
+    void setEpdQ1SideFlag(int flagEp); // EPD Side FLag
+    void setEpdQ1SideVec(TVector2 Q1VecEpdSideShiftEast,TVector2 Q1VecEpdSideShiftWest, TVector2 Q1VecEpdSideShiftFull); // Shift Corrected EPD Side Q1Vector: East & West & Full
+    void setEpdQ1Grp0Flag(int flagEp); // EPD Grp0 FLag
+    void setEpdQ1Grp0Vec(TVector2 Q1VecEpdGrp0ShiftEast,TVector2 Q1VecEpdGrp0ShiftWest, TVector2 Q1VecEpdGrp0ShiftFull); // Shift Corrected EPD Grp0 Q1Vector: East & West & Full
+    void setEpdQ1Grp1Flag(int flagEp); // EPD Grp1 FLag
+    void setEpdQ1Grp1Vec(TVector2 Q1VecEpdGrp1ShiftEast,TVector2 Q1VecEpdGrp1ShiftWest, TVector2 Q1VecEpdGrp1ShiftFull); // Shift Corrected EPD Grp1 Q1Vector: East & West & Full
+    void setTpcQFlag(int flagEp); // TPC Flag
+    void setTpcQ1Vec(TVector2 Q1VecTpcReCtrEast,TVector2 Q1VecTpcReCtrWest); // ReCenter Corrected TPC Q1Vector: East & West
+    void setTpcQ2Vec(TVector2 Q2VecTpcReCtrEast,TVector2 Q2VecTpcReCtrWest); // ReCenter Corrected TPC Q2Vector: East & West
+    void setTpcQ3Vec(TVector2 Q3VecTpcReCtrEast,TVector2 Q3VecTpcReCtrWest); // ReCenter Corrected TPC Q3Vector: East & West
     void setNumTrks(int numTrkEast, int numTrkWest); // Number of Tracks used in ReCenter Correction: East & West
 
   private:
@@ -62,6 +72,7 @@ class StPhiMesonTree : public TObject
     // 0 = centrality bin, 1 = vertexZ bin, 2 = Psi bin || push_back->event
     int mEventCounter[mNumCentrality][mNumMixVzBin][mNumMixPsiBin]; // General Event Info
     std::vector<int> vec_mRunId[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
+    std::vector<int> vec_mRunIdx[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
     std::vector<int> vec_mEvtId[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
     std::vector<int> vec_mRefMult[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
     std::vector<int> vec_mNumTofMatch[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
@@ -76,14 +87,25 @@ class StPhiMesonTree : public TObject
     std::vector<int> vec_mFlagZdcEp[mNumCentrality][mNumMixVzBin][mNumMixPsiBin]; // ZDC EP Info
     std::vector<TVector2> vec_mQ1ZdcShiftEast[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
     std::vector<TVector2> vec_mQ1ZdcShiftWest[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
-    std::vector<TVector2> vec_mQ1ZdcShiftFull[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
+    std::vector<TVector2> vec_mQ1ZdcShiftFull[mNumCentrality][mNumMixVzBin][mNumMixPsiBin]; // shift corrected Full EP
 
-    std::vector<int> vec_mFlagEpdEp[mNumCentrality][mNumMixVzBin][mNumMixPsiBin]; // EPD EP Info
-    std::vector<TVector2> vec_mQ1EpdShiftEast[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
-    std::vector<TVector2> vec_mQ1EpdShiftWest[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
-    std::vector<TVector2> vec_mQ1EpdShiftFull[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
+    std::vector<int> vec_mFlagEpdSideEp[mNumCentrality][mNumMixVzBin][mNumMixPsiBin]; // EPD EP Info
+    std::vector<TVector2> vec_mQ1EpdSideShiftEast[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
+    std::vector<TVector2> vec_mQ1EpdSideShiftWest[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
+    std::vector<TVector2> vec_mQ1EpdSideShiftFull[mNumCentrality][mNumMixVzBin][mNumMixPsiBin]; // shift corrected Full EP
+
+    std::vector<int> vec_mFlagEpdGrp0Ep[mNumCentrality][mNumMixVzBin][mNumMixPsiBin]; // EPD EP Info
+    std::vector<TVector2> vec_mQ1EpdGrp0ShiftEast[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
+    std::vector<TVector2> vec_mQ1EpdGrp0ShiftWest[mNumCentrality][mNumMixVzBin][mNumMixPsiBin]; // not relavant for FXT
+    std::vector<TVector2> vec_mQ1EpdGrp0ShiftFull[mNumCentrality][mNumMixVzBin][mNumMixPsiBin]; // not relavant for FXT
+    std::vector<int> vec_mFlagEpdGrp1Ep[mNumCentrality][mNumMixVzBin][mNumMixPsiBin]; // EPD EP Info
+    std::vector<TVector2> vec_mQ1EpdGrp1ShiftEast[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
+    std::vector<TVector2> vec_mQ1EpdGrp1ShiftWest[mNumCentrality][mNumMixVzBin][mNumMixPsiBin]; // not relavant for FXT
+    std::vector<TVector2> vec_mQ1EpdGrp1ShiftFull[mNumCentrality][mNumMixVzBin][mNumMixPsiBin]; // not relavant for FXT
 
     std::vector<int> vec_mFlagTpcEp[mNumCentrality][mNumMixVzBin][mNumMixPsiBin]; // TPC EP Info
+    std::vector<TVector2> vec_mQ1TpcReCtrEast[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
+    std::vector<TVector2> vec_mQ1TpcReCtrWest[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
     std::vector<TVector2> vec_mQ2TpcReCtrEast[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
     std::vector<TVector2> vec_mQ2TpcReCtrWest[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
     std::vector<TVector2> vec_mQ3TpcReCtrEast[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
@@ -106,17 +128,29 @@ class StPhiMesonTree : public TObject
     std::map<int, std::vector<double> > map_mNHitsFitKp;
     std::map<int, std::vector<double> > map_mNHitsFitKm;
 
-    TH2F *h_mPhiMass2[mNumCentrality];
+    TH2F *h_mInvMassPhi[mNumCentrality]; // pt vs. invMassPhi
 
     // set QVector
-    int mFlagZdcEp, mFlagEpdEp, mFlagTpcEp;
+    int mFlagZdcEp; 
     TVector2 v_mQ1VecZdcShiftEast, v_mQ1VecZdcShiftWest, v_mQ1VecZdcShiftFull;
-    TVector2 v_mQ1VecEpdShiftEast, v_mQ1VecEpdShiftWest, v_mQ1VecEpdShiftFull;
-    TVector2 v_mQ2VecTpcReCtrEast, v_mQ2VecTpcReCtrWest, v_mQ3VecTpcReCtrEast, v_mQ3VecTpcReCtrWest;
+
+    int mFlagEpdSideEp; 
+    TVector2 v_mQ1VecEpdSideShiftEast, v_mQ1VecEpdSideShiftWest, v_mQ1VecEpdSideShiftFull;
+
+    int mFlagEpdGrp0Ep; 
+    TVector2 v_mQ1VecEpdGrp0ShiftEast, v_mQ1VecEpdGrp0ShiftWest, v_mQ1VecEpdGrp0ShiftFull;
+    int mFlagEpdGrp1Ep; 
+    TVector2 v_mQ1VecEpdGrp1ShiftEast, v_mQ1VecEpdGrp1ShiftWest, v_mQ1VecEpdGrp1ShiftFull;
+
+    int mFlagTpcEp;
+    TVector2 v_mQ1VecTpcReCtrEast, v_mQ1VecTpcReCtrWest; 
+    TVector2 v_mQ2VecTpcReCtrEast, v_mQ2VecTpcReCtrWest; 
+    TVector2 v_mQ3VecTpcReCtrEast, v_mQ3VecTpcReCtrWest;
     int mNumTrkReCtrEast, mNumTrkReCtrWest;
 
-    int mCent9, mCent16;
-    double mRefWgt, mVz, mPsi2ShiftFull;
+    int mRunIdx, mCent9, mCent16;
+    double mRefWgt, mVz, mPsiShiftFull;
+
     const int mType;
 
   ClassDef(StPhiMesonTree,1)
