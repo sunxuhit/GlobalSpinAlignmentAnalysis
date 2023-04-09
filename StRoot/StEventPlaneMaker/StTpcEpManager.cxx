@@ -1778,10 +1778,10 @@ void StTpcEpManager::initTpcSubEpShift()
 
 void StTpcEpManager::fillTpcSubEpShift(double Psi1East, double Psi1West, double Psi1Full, double Psi2East, double Psi2West, double Psi2Full, double Psi3East, double Psi3West, double Psi3Full)
 {
-  h_mTpcEp1ShiftEast[mCent9]->Fill(mRunIndex,Psi2East);
-  h_mTpcEp1ShiftWest[mCent9]->Fill(mRunIndex,Psi2West);
-  h_mTpcEp1ShiftFull[mCent9]->Fill(mRunIndex,Psi2Full);
-  h_mTpcEp1ShiftCorr[mCent9]->Fill(Psi2East,Psi2West);
+  h_mTpcEp1ShiftEast[mCent9]->Fill(mRunIndex,Psi1East);
+  h_mTpcEp1ShiftWest[mCent9]->Fill(mRunIndex,Psi1West);
+  h_mTpcEp1ShiftFull[mCent9]->Fill(mRunIndex,Psi1Full);
+  h_mTpcEp1ShiftCorr[mCent9]->Fill(Psi1East,Psi1West);
 
   h_mTpcEp2ShiftEast[mCent9]->Fill(mRunIndex,Psi2East);
   h_mTpcEp2ShiftWest[mCent9]->Fill(mRunIndex,Psi2West);
