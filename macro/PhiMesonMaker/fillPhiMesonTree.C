@@ -11,8 +11,9 @@ StChain *chain;
 
 void fillPhiMesonTree(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int mode = 0, const int beamType = 0, const int flagME = 0)
 // void fillPhiMesonTree(const Char_t *inputFile="Utility/FileList/RuRu200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int mode = 0, const int beamType = 1, const int flagME = 0)
+// void fillPhiMesonTree(const Char_t *inputFile="Utility/FileList/Fxt3p85GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int mode = 0, const int beamType = 2, const int flagME = 0)
 {
-  // mBeamType[NumBeamType] = {"ZrZr200GeV_2018","RuRu200GeV_2018"};
+  // mBeamType[NumBeamType] = {"ZrZr200GeV_2018","RuRu200GeV_2018","Fxt3p85GeV_2018"};
   // mode: 0 for phi meson TTree production
   // flagME: 0 for Same Event, 1 for Mixed Event
 
@@ -21,13 +22,13 @@ void fillPhiMesonTree(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/
 
   /*
   string SL_version = "pro";
-  if(energy == 0) SL_version = "SL18h"; // 200GeV_2014
-  if(energy == 1) SL_version = "SL18c"; // 54GeV_2017
-  if(energy == 2) SL_version = "SL19b"; // 27GeV_2018
+  if(beamType == 0) SL_version = "SL20c"; // ZrZr200GeV_2018
+  if(beamType == 1) SL_version = "SL20c"; // RuRu200GeV_2018
+  if(beamType == 2) SL_version = "SL20d"; // Fxt3p85GeV_2018
   string env_SL = getenv ("STAR");
-  if (env_SL.find(SL_version)==string::npos) 
+  if (env_SL.find(SL_version)==string::npos)
   {
-    cout<<"Environment Star Library does not match the requested library in runPicoMixedEventMaker.C. Exiting..."<<endl;
+    cout<<"Environment Star Library does not match the requested library in RunQA.C. Exiting..."<<endl;
     exit(1);
   }
   */
@@ -42,6 +43,7 @@ void fillPhiMesonTree(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/
   gSystem->Load("StPicoDstMaker");
   gSystem->Load("StRefMultCorr");
   gSystem->Load("StEpdUtil");
+  if(beamType == 2) gSystem->Load("StPileupUtil");
   gSystem->Load("StAnalysisUtils");
   gSystem->Load("StEventPlaneMaker");
   gSystem->Load("StPhiMesonMaker");

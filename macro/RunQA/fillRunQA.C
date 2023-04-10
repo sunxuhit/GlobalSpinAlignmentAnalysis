@@ -9,11 +9,11 @@ class StPicoEvent;
 
 StChain *chain;
 
-// void RunQA(const char *inputFile="Utility/FileList/ZrZr200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int beamType = 0)
-// void RunQA(const char *inputFile="Utility/FileList/RuRu200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int beamType = 1)
-void RunQA(const char *inputFile="Utility/FileList/Fxt3p85GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int beamType = 2)
+void fillRunQA(const char *inputFile="Utility/FileList/ZrZr200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int beamType = 0)
+// void fillRunQA(const char *inputFile="Utility/FileList/RuRu200GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int beamType = 1)
+// void fillRunQA(const char *inputFile="Utility/FileList/Fxt3p85GeV_2018/pico_xrootd_local.list", const string jobId = "14", const int beamType = 2)
 {
-  // mBeamType[NumBeamType] = {"ZrZr200GeV_2018","RuRu200GeV_2018"};
+  // mBeamType[NumBeamType] = {"ZrZr200GeV_2018","RuRu200GeV_2018","Fxt3p85GeV_2018"};
 
   TStopwatch *stopWatch = new TStopwatch();
   stopWatch->Start();
@@ -22,6 +22,7 @@ void RunQA(const char *inputFile="Utility/FileList/Fxt3p85GeV_2018/pico_xrootd_l
   string SL_version = "pro";
   if(beamType == 0) SL_version = "SL20c"; // ZrZr200GeV_2018
   if(beamType == 1) SL_version = "SL20c"; // RuRu200GeV_2018
+  if(beamType == 2) SL_version = "SL20d"; // Fxt3p85GeV_2018
   string env_SL = getenv ("STAR");
   if (env_SL.find(SL_version)==string::npos) 
   {

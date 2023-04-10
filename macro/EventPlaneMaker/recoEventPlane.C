@@ -23,6 +23,7 @@ void recoEventPlane(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/pi
   string SL_version = "pro";
   if(beamType == 0) SL_version = "SL20c"; // ZrZr200GeV_2018
   if(beamType == 1) SL_version = "SL20c"; // RuRu200GeV_2018
+  if(beamType == 2) SL_version = "SL20d"; // Fxt3p85GeV_2018
   string env_SL = getenv ("STAR");
   if (env_SL.find(SL_version)==string::npos)
   {
@@ -31,7 +32,7 @@ void recoEventPlane(const Char_t *inputFile="Utility/FileList/ZrZr200GeV_2018/pi
   }
   */
 
-  int nEvents = 10000000000;
+  int nEvents = 1000000000;
   // int nEvents = 10000;
 
   gROOT->LoadMacro("$STAR/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");
