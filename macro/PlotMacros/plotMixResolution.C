@@ -12,11 +12,16 @@
 
 double propMixEpResErr(double valA, double sigA, double valB, double sigB, double valC, double sigC);
 
-void getMixResolution(int beamType = 2)
+void plotMixResolution(int beamType = 2)
 {
   gStyle->SetOptStat(0);
   const int mNumCentrality = 9;
   const int mNumEpGroup    = 6;
+  const double mCentrality[mNumCentrality] = {75.0, 65.0, 55.0, 45.0, 35.0, 25.0, 15.0, 7.5, 2.5};
+
+  string inputFileXH = "/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/EventPlaneMaker/Fxt3p85GeV_2018/res_3GeV.root";
+  TFile *file_InPutXH = TFile::Open(inputFileXH.c_str());
+  TGraphErrors *g_resXH = (TGraphErrors*)file_InPutXH->Get("Graph");
 
   string inputFile = Form("../../data/EventPlaneMaker/%s/file_EpResolution_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *file_InPut = TFile::Open(inputFile.c_str());
@@ -77,10 +82,12 @@ void getMixResolution(int beamType = 2)
   // 0: EpdEpGrp0 vs. EpdEpGrp1 && TpcEpWest (default) | 1: EpdEpGrp0 vs. EpdEpGrp1 && TpcEpEast | 2: EpdEpGrp0 vs. TpcEpEast && TpcEpWest
   // 3: EpdEpGrp1 vs. EpdEpGrp0 && TpcEpWest (mainSys) | 4: EpdEpGrp1 vs. EpdEpGrp0 && TpcEpEast | 5: EpdEpGrp1 vs. TpcEpEast && TpcEpWest
   TH1F *h_mMixSubEp1Res[mNumEpGroup]; // 1st EP
+  TGraphErrors *g_mMixSubEp1Res[mNumEpGroup]; // 1st EP
   for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
   {
-    std::string histName = Form("h_mMixSubEp1ResGrp%d",iGrp); // 1st EP
-    h_mMixSubEp1Res[iGrp] = new TH1F(histName.c_str(),histName.c_str(),mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+    std::string grapName = Form("g_mMixSubEp1ResGrp%d",iGrp); // 1st EP
+    g_mMixSubEp1Res[iGrp] = new TGraphErrors();
+    g_mMixSubEp1Res[iGrp]->SetName(grapName.c_str());
   }
   double mMixSubEp1ResVal[mNumCentrality][mNumEpGroup];
   double mMixSubEp1ResErr[mNumCentrality][mNumEpGroup];
@@ -108,73 +115,68 @@ void getMixResolution(int beamType = 2)
       }
       mMixSubEp1ResVal[iCent][iGrp] = valRes1Sub;
       mMixSubEp1ResErr[iCent][iGrp] = errRes1Sub;
-      h_mMixSubEp1Res[iGrp]->SetBinContent(iCent+1,mMixSubEp1ResVal[iCent][iGrp]);
-      h_mMixSubEp1Res[iGrp]->SetBinError(iCent+1,mMixSubEp1ResErr[iCent][iGrp]);
+      g_mMixSubEp1Res[iGrp]->SetPoint(iCent, mCentrality[iCent], mMixSubEp1ResVal[iCent][iGrp]);
+      g_mMixSubEp1Res[iGrp]->SetPointError(iCent, 0.0, mMixSubEp1ResErr[iCent][iGrp]);
     }
   }
   //--------------------------------------------------------------------------------
 
-  TCanvas *c_MixSubEp1Res = new TCanvas("c_MixSubEp1Res","c_MixSubEp1Res",10,10,1200,800);
-  c_MixSubEp1Res->Divide(3,2);
-  for(int iPad = 0; iPad < 6; ++iPad)
+  TCanvas *c_MixSubEp1Res = new TCanvas("c_MixSubEp1Res","c_MixSubEp1Res",10,10,800,800);
+  c_MixSubEp1Res->cd()->SetLeftMargin(0.15);
+  c_MixSubEp1Res->cd()->SetRightMargin(0.15);
+  c_MixSubEp1Res->cd()->SetBottomMargin(0.15);
+  c_MixSubEp1Res->cd()->SetTicks(1,1);
+  c_MixSubEp1Res->cd()->SetGrid(0,0);
+  TH1F *h_frame = new TH1F("h_frame","h_frame",100,-0.5,99.5);
+  for(int iBin = 0; iBin < 100; ++iBin)
   {
-    c_MixSubEp1Res->cd(iPad+1)->SetLeftMargin(0.15);
-    c_MixSubEp1Res->cd(iPad+1)->SetRightMargin(0.15);
-    c_MixSubEp1Res->cd(iPad+1)->SetBottomMargin(0.15);
-    c_MixSubEp1Res->cd(iPad+1)->SetTicks(1,1);
-    c_MixSubEp1Res->cd(iPad+1)->SetGrid(0,0);
+    h_frame->SetBinContent(iBin+1,-10.0);
+    h_frame->SetBinError(iBin+1,1.0);
   }
-  std::string figName = Form("../../figures/EventPlaneMaker/%s/EpdMixSubEp1Resolution_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  h_frame->SetTitle("");
+  h_frame->SetStats(0);
+  h_frame->GetXaxis()->SetRangeUser(-0.5,80.0);
+  h_frame->GetYaxis()->SetRangeUser(-0.05,0.8);
+  h_frame->GetXaxis()->SetNdivisions(505);
+  h_frame->GetYaxis()->SetNdivisions(505);
+  h_frame->GetXaxis()->SetTitle("Centrality (%)");
+  h_frame->GetYaxis()->SetTitle("1st EP Resolution");
+  h_frame->GetXaxis()->CenterTitle();
+  h_frame->GetYaxis()->CenterTitle();
+
+  std::string figName = Form("../../figures/EventPlaneMaker/%s/EpdMixEp1ResComp_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   c_MixSubEp1Res->Print(figName.c_str());
-  figName = Form("../../figures/EventPlaneMaker/%s/EpdMixSubEp1Resolution_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
-  for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
-  {
-    c_MixSubEp1Res->cd(iGrp+1)->Clear(); 
-    c_MixSubEp1Res->cd(iGrp+1); 
-    // 0: EpdEpGrp0 vs. TpcEpEast | 1: EpdEpGrp0 vs. TpcEpWest | 2: EpdEpGrp1 vs. TpcEpEast
-    // 3: EpdEpGrp1 vs. TpcEpWest | 4: EpdEpGrp0 vs. EpdEpGrp1 | 5: TpcEpEast vs. TpcEpWest
-    p_mMixSubEp1Res[iGrp]->GetXaxis()->SetTitle("Centrality 9 Bins");
-    if(iGrp == 0) p_mMixSubEp1Res[iGrp]->GetYaxis()->SetTitle("<cos(#Psi_{1}^{Epd0AB}-#Psi_{1}^{TpcEast})>");
-    if(iGrp == 1) p_mMixSubEp1Res[iGrp]->GetYaxis()->SetTitle("<cos(#Psi_{1}^{Epd0AB}-#Psi_{1}^{TpcWest})>");
-    if(iGrp == 2) p_mMixSubEp1Res[iGrp]->GetYaxis()->SetTitle("<cos(#Psi_{1}^{Epd1CD}-#Psi_{1}^{TpcEast})>");
-    if(iGrp == 3) p_mMixSubEp1Res[iGrp]->GetYaxis()->SetTitle("<cos(#Psi_{1}^{Epd1CD}-#Psi_{1}^{TpcWest})>");
-    if(iGrp == 4) p_mMixSubEp1Res[iGrp]->GetYaxis()->SetTitle("<cos(#Psi_{1}^{Epd0AB}-#Psi_{1}^{Epd1CD})>");
-    if(iGrp == 5) p_mMixSubEp1Res[iGrp]->GetYaxis()->SetTitle("<cos(#Psi_{1}^{TpcEast}-#Psi_{1}^{TpcWest})>");
-    p_mMixSubEp1Res[iGrp]->DrawCopy();
-  }
+  figName = Form("../../figures/EventPlaneMaker/%s/EpdMixEp1ResComp_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+
+  h_frame->DrawCopy("pE");
+  g_resXH->SetMarkerStyle(24);
+  g_resXH->SetMarkerSize(1.6);
+  g_resXH->SetMarkerColor(2);
+  g_resXH->Draw("pE same");
+
+  g_mMixSubEp1Res[0]->SetMarkerStyle(24);
+  g_mMixSubEp1Res[0]->SetMarkerSize(1.6);
+  g_mMixSubEp1Res[0]->SetMarkerColor(4);
+  g_mMixSubEp1Res[0]->Draw("pE same");
+  g_mMixSubEp1Res[3]->SetMarkerStyle(25);
+  g_mMixSubEp1Res[3]->SetMarkerSize(1.4);
+  g_mMixSubEp1Res[3]->SetMarkerColor(4);
+  g_mMixSubEp1Res[3]->Draw("pE same");
+
+  TLegend *leg = new TLegend(0.20,0.2,0.65,0.35);
+  leg->SetBorderSize(0);
+  leg->SetFillColorAlpha(0,0.0);
+  leg->AddEntry(g_resXH,"Xionghong's Results","P");
+  leg->AddEntry(g_mMixSubEp1Res[0],"Epd0AB vs. Epd1CD && TpcWest","P");
+  leg->AddEntry(g_mMixSubEp1Res[3],"Epd1CD vs. Epd0AB && TpcWest","P");
+  leg->Draw("same");
+
   c_MixSubEp1Res->Update();
   c_MixSubEp1Res->Print(figName.c_str());
 
-  for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
-  {
-    c_MixSubEp1Res->cd(iGrp+1)->Clear(); 
-    c_MixSubEp1Res->cd(iGrp+1); 
-    // 0: EpdEpGrp0 vs. EpdEpGrp1 && TpcEpWest (default) | 1: EpdEpGrp0 vs. EpdEpGrp1 && TpcEpEast | 2: EpdEpGrp0 vs. TpcEpEast && TpcEpWest
-    // 3: EpdEpGrp1 vs. EpdEpGrp0 && TpcEpWest (mainSys) | 4: EpdEpGrp1 vs. EpdEpGrp0 && TpcEpEast | 5: EpdEpGrp1 vs. TpcEpEast && TpcEpWest
-    if(iGrp == 0) h_mMixSubEp1Res[iGrp]->SetTitle("Epd0AB vs. Epd1CD & TpcWest");
-    if(iGrp == 1) h_mMixSubEp1Res[iGrp]->SetTitle("Epd0AB vs. Epd1CD & TpcEast");
-    if(iGrp == 2) h_mMixSubEp1Res[iGrp]->SetTitle("Epd0AB vs. TpcEast& TpcWest");
-    if(iGrp == 3) h_mMixSubEp1Res[iGrp]->SetTitle("Epd1CD vs. Epd0AB & TpcWest");
-    if(iGrp == 4) h_mMixSubEp1Res[iGrp]->SetTitle("Epd1CD vs. Epd0AB & TpcEast");
-    if(iGrp == 5) h_mMixSubEp1Res[iGrp]->SetTitle("Epd1CD vs. TpcEast & TpcWest");
-    h_mMixSubEp1Res[iGrp]->GetXaxis()->SetTitle("Centrality 9 Bins");
-    h_mMixSubEp1Res[iGrp]->DrawCopy();
-  }
-  c_MixSubEp1Res->Update();
+  figName = Form("../../figures/EventPlaneMaker/%s/EpdMixEp1ResComp_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   c_MixSubEp1Res->Print(figName.c_str());
 
-  figName = Form("../../figures/EventPlaneMaker/%s/EpdMixSubEp1Resolution_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
-  c_MixSubEp1Res->Print(figName.c_str());
-
-  string outputFile = Form("../../Utility/EventPlaneMaker/%s/Resolution/file_MixEpResolution_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
-  cout << "outputFile: " << outputFile.c_str() << endl;
-  TFile *file_OutPut = new TFile(outputFile.c_str(),"RECREATE");
-  file_OutPut->cd();
-  for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
-  {
-    p_mMixSubEp1Res[iGrp]->Write();
-  }
-  file_OutPut->Close();
   file_InPut->Close();
 }
 
