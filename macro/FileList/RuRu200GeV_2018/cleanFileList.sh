@@ -9,7 +9,8 @@ then
   # Task=RunQA
   Task=EventPlaneMaker
 
-  OutPutDir="/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/${BeamType}"
+  # OutPutDir="/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/${BeamType}"
+  OutPutDir="../../../Utility/FileList/${BeamType}"
 
   echo "delete following files:"
   ls -d $OutPutDir/condor_failed_${Task}_*.list
