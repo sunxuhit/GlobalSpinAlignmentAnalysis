@@ -8,9 +8,9 @@ then
   BeamType=Fxt3p85GeV_2018
   JobId=65A2F3F004122939F4E57BBDA45579FD #generate faild list for this Job
   Task=EventPlaneMaker
-  Mode=EventPlaneMaker
+  # Mode=EventPlaneMaker
 
-  LogDirectory="/star/u/sunxuhit/$BeamType/SpinAlignment/${Mode}/Log"
+  LogDirectory="/star/u/sunxuhit/$BeamType/SpinAlignment/${Task}/Log"
 
   OutPutDir="/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/${BeamType}"
   cd $OutPutDir

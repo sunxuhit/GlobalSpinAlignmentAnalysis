@@ -1148,7 +1148,7 @@ int StEventPlaneMaker::Make()
 
 	      if(mAnaCut->passTrkDeuFlow(pMag,deuteronZ,mass2) && mMixEpManager->getMixSubEp1ResVal(cent9,0) > 0.0)
 	      {
-		if( pT > 0.8 && pT < 3.5 && cent9 >=4 && cent9 <=6 )
+		if( pT > 0.8 && pT < 2.0 && cent9 >=4 && cent9 <=6 )
 		{ // 10-40% with the same cuts as PLB827,136941
 		  const double yCMS = mAnaUtils->getRapidityCMS(yLab);
 		  const double v1Epd = TMath::Cos(1.0*(phi-Psi1EpdGrp0))/mMixEpManager->getMixSubEp1ResVal(cent9,0);

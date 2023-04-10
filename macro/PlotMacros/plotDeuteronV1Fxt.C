@@ -87,7 +87,7 @@ void plotDeuteronV1Fxt()
   TLegend *leg = new TLegend(0.15,0.7,0.5,0.85);
   leg->SetBorderSize(0);
   leg->SetFillColorAlpha(0,0.0);
-  leg->AddEntry(p_mMixSubEpDeuV1,"d","P");
+  leg->AddEntry(p_mMixSubEpDeuV1,"d (no Eff. Corr.)","P");
   leg->AddEntry(g_mMixSubEpDeuV1,"d flipped","P");
   leg->AddEntry(g_DeuV1XH,"Xionghong's Results","P");
   leg->Draw("same");
