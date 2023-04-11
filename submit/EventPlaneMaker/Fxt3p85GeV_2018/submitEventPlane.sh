@@ -3,7 +3,7 @@
 codePath=/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis
 
 ##########Beam Type Selection##########
-mode=4 # 0: gain & phi wgt | 1: sub EP recenter | 2: sub EP shift | 4: resolution | 5: flow
+mode=5 # 0: gain & phi wgt | 1: sub EP recenter | 2: sub EP shift | 4: resolution | 5: flow
 beamType=2  # Fxt3p85GeV_2018
 library=SL20d
 listPath=/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/Fxt3p85GeV_2018

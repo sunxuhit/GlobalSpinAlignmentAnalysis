@@ -362,16 +362,17 @@ int StPhiMesonMaker::Make()
 	  const TVector2 vQ1EpdGrp0East = mEpdEpManager->getQ1VecGrpShiftEast(0); // get Shift Corrected Q1Vector from EPD Grp0
 	  const TVector2 vQ1EpdGrp0West = mEpdEpManager->getQ1VecGrpShiftWest(0);
 	  const TVector2 vQ1EpdGrp0Full = mEpdEpManager->getQ1VecGrpShiftFull(0);
-	  const TVector2 vQ1EpdGrp0FullCorr = mEpdEpManager->getQ1VecGrpShiftFullCorr(0);
+	  // const TVector2 vQ1EpdGrp0FullCorr = mEpdEpManager->getQ1VecGrpShiftFullCorr(0);
 	  if( mAnaCut->passQVecEpdGrp(vQ1EpdGrp0East,vQ1EpdGrp0West,vQ1EpdGrp0Full,0) ) // EPD EP Grp0
 	  {
 	    flagEpdGrp0Ep = 1;
 	  }
+
 	  int flagEpdGrp1Ep = 0; // EPD Grp1 EP
 	  const TVector2 vQ1EpdGrp1East = mEpdEpManager->getQ1VecGrpShiftEast(1); // get Shift Corrected Q1Vector from EPD Grp0
 	  const TVector2 vQ1EpdGrp1West = mEpdEpManager->getQ1VecGrpShiftWest(1);
 	  const TVector2 vQ1EpdGrp1Full = mEpdEpManager->getQ1VecGrpShiftFull(1);
-	  const TVector2 vQ1EpdGrp1FullCorr = mEpdEpManager->getQ1VecGrpShiftFullCorr(1);
+	  // const TVector2 vQ1EpdGrp1FullCorr = mEpdEpManager->getQ1VecGrpShiftFullCorr(1);
 	  if( mAnaCut->passQVecEpdGrp(vQ1EpdGrp1East,vQ1EpdGrp1West,vQ1EpdGrp1Full,1) ) // EPD EP Grp1
 	  {
 	    flagEpdGrp1Ep = 1;
@@ -400,9 +401,9 @@ int StPhiMesonMaker::Make()
 	  mPhiMesonTree->setEpdQ1SideFlag(flagEpdSideEp); // EPD Side EP
 	  mPhiMesonTree->setEpdQ1SideVec(vQ1EpdSideEast, vQ1EpdSideWest, vQ1EpdSideFullCorr); // Shift Corrected EPD Side Q1Vector: East & West & Full
 	  mPhiMesonTree->setEpdQ1Grp0Flag(flagEpdGrp0Ep); // EPD Grp0 EP & NOT Used in Isobar
-	  mPhiMesonTree->setEpdQ1Grp0Vec(vQ1EpdGrp0East, vQ1EpdGrp0West, vQ1EpdGrp0FullCorr); // Shift Corrected EPD Grp0 Q1Vector: East & West & Full
+	  mPhiMesonTree->setEpdQ1Grp0Vec(vQ1EpdGrp0East, vQ1EpdGrp0West, vQ1EpdGrp0Full); // Shift Corrected EPD Grp0 Q1Vector: East & West & Full
 	  mPhiMesonTree->setEpdQ1Grp1Flag(flagEpdGrp1Ep); // EPD Grp1 EP & NOT Used in Isobar
-	  mPhiMesonTree->setEpdQ1Grp1Vec(vQ1EpdGrp1East, vQ1EpdGrp1West, vQ1EpdGrp1FullCorr); // Shift Corrected EPD Grp1 Q1Vector: East & West & Full
+	  mPhiMesonTree->setEpdQ1Grp1Vec(vQ1EpdGrp1East, vQ1EpdGrp1West, vQ1EpdGrp1Full); // Shift Corrected EPD Grp1 Q1Vector: East & West & Full
 	  mPhiMesonTree->setTpcQFlag(flagTpcEp); // TPC EP
 	  mPhiMesonTree->setTpcQ1Vec(vQ1TpcEast, vQ1TpcWest); // ReCenter Corrected TPC Q1Vector: East & West
 	  mPhiMesonTree->setTpcQ2Vec(vQ2TpcEast, vQ2TpcWest); // ReCenter Corrected TPC Q2Vector: East & West
