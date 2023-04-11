@@ -10,7 +10,7 @@ then
   Task=EventPlaneMaker
   # Mode=EventPlaneMaker
 
-  LogDirectory="/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/log/${Task}/${BeamType}"
+  LogDirectory="/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/log/${Task}/${BeamType}/${JobId}"
 
   OutPutDir="/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/${BeamType}"
 
