@@ -22,7 +22,7 @@ void plotQA_InvMass(int beamType = 0)
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     // std::string histName = Form("h_mInvMassPhiCent%d",iCent);
-    std::string histName = Form("h_mPhiMass2Cent%d",iCent);
+    std::string histName = Form("h_mInvMassPhiCent%d",iCent);
     h_mInvMassPhiSE[iCent] = (TH2F*)file_InPutSE->Get(histName.c_str());
     histName = Form("h_mInvMassPhiSECent%d",iCent);
     h_mInvMassPhiSEDist[iCent] = (TH1F*)h_mInvMassPhiSE[iCent]->ProjectionY()->Clone(histName.c_str());
@@ -39,7 +39,7 @@ void plotQA_InvMass(int beamType = 0)
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     // std::string histName = Form("h_mInvMassPhiCent%d",iCent);
-    std::string histName = Form("h_mPhiMass2Cent%d",iCent);
+    std::string histName = Form("h_mInvMassPhiCent%d",iCent);
     h_mInvMassPhiME[iCent] = (TH2F*)file_InPutME->Get(histName.c_str());
     histName = Form("h_mInvMassPhiMECent%d",iCent);
     h_mInvMassPhiMEDist[iCent] = (TH1F*)h_mInvMassPhiME[iCent]->ProjectionY()->Clone(histName.c_str());

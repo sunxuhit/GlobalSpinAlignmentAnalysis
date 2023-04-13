@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void calcFxtEnergy(double beamEnergy = 3.85)
+void calcFxtEnergy(double beamEnergy = 0.5)
 {
   // beam travels -z
   double massProton = anaUtils::mMassProton;
@@ -21,6 +21,7 @@ void calcFxtEnergy(double beamEnergy = 3.85)
   // beam
   double massBeam = massProton*numNucleons;
   double eLabBeam = beamEnergy*numNucleons;
+  // double eLabBeam = beamEnergy*numNucleons+massBeam;
   double pLabBeam = -1.0*TMath::Sqrt(eLabBeam*eLabBeam - massBeam*massBeam); // p^2 = E^2 - m^2
   double bLabBeam = pLabBeam/eLabBeam;
   double yLabBeam = 0.5*TMath::Log((eLabBeam+pLabBeam)/(eLabBeam-pLabBeam));
