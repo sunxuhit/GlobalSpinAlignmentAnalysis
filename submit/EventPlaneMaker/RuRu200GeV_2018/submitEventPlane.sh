@@ -3,7 +3,7 @@
 codePath=/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis
 
 ##########Beam Type Selection##########
-mode=3 # 0: gain & phi wgt | 1: sub EP recenter | 2: sub EP shift | 3: full EP shift | 4: resolution | 5: flow
+mode=4 # 0: gain & phi wgt | 1: sub EP recenter | 2: sub EP shift | 3: full EP shift | 4: resolution | 5: flow
 beamType=1  # RuRu200GeV_2018
 library=SL20c
 listPath=/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/RuRu200GeV_2018
