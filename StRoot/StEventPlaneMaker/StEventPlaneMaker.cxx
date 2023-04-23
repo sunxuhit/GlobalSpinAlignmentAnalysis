@@ -1006,6 +1006,7 @@ int StEventPlaneMaker::Make()
 	  { // charged hadron v1 from EPD
 	    const double Psi1SideEpdEast = mEpdEpManager->getPsi1SideShiftEast();
 	    const double Psi1SideEpdWest = mEpdEpManager->getPsi1SideShiftWest();
+	    const double Psi1SideEpdFull = mEpdEpManager->getPsi1SideShiftFullCorr();
 	    for(unsigned int iEpdHit = 0; iEpdHit < nEpdHits; ++iEpdHit)
 	    { // calculate charged hadron v1 in EPD w.r.t. EPD
 	      StPicoEpdHit *picoEpdHit = (StPicoEpdHit*)mPicoDst->epdHit(iEpdHit); 
@@ -1037,16 +1038,21 @@ int StEventPlaneMaker::Make()
 	      const double phi = primMom.Phi(); // -pi to pi
 
 	      // keep the same pt cuts as charged v1 from ZDC
-	      if(mAnaCut->passTrkTpcFlowEast(picoTrack, primVtx) && pt > 0.15 && pt < 2.0) // negative eta
-	      { // correlate track from East to EP from West EPD
-		const double v1Epd = TMath::Cos(1.0*(phi-Psi1SideEpdWest))/mEpdEpManager->getEpdSubEp1SideResVal(cent9);
+	      if(mAnaCut->passTrkTpcFlowFull(picoTrack, primVtx) && pt > 0.15 && pt < 2.0 ) // positive eta
+	      { // use full EPD EP
+		const double v1Epd = TMath::Cos(1.0*(phi-Psi1SideEpdFull))/mEpdEpManager->getEpdFullEp1SideResVal(cent9);
 		mEpdEpManager->fillEpdSubEpSideV1(eta, v1Epd, refWgt);
 	      }
-	      if(mAnaCut->passTrkTpcFlowWest(picoTrack, primVtx) && pt > 0.15 && pt < 2.0 ) // positive eta
-	      { // correlate track from West to EP from East EPD
-		const double v1Epd = TMath::Cos(1.0*(phi-Psi1SideEpdEast))/mEpdEpManager->getEpdSubEp1SideResVal(cent9);
-		mEpdEpManager->fillEpdSubEpSideV1(eta, v1Epd, refWgt);
-	      }
+	      // if(mAnaCut->passTrkTpcFlowEast(picoTrack, primVtx) && pt > 0.15 && pt < 2.0) // negative eta
+	      // { // correlate track from East to EP from West EPD
+		// const double v1Epd = TMath::Cos(1.0*(phi-Psi1SideEpdWest))/mEpdEpManager->getEpdSubEp1SideResVal(cent9);
+		// mEpdEpManager->fillEpdSubEpSideV1(eta, v1Epd, refWgt);
+	      // }
+	      // if(mAnaCut->passTrkTpcFlowWest(picoTrack, primVtx) && pt > 0.15 && pt < 2.0 ) // positive eta
+	      // { // correlate track from West to EP from East EPD
+		// const double v1Epd = TMath::Cos(1.0*(phi-Psi1SideEpdEast))/mEpdEpManager->getEpdSubEp1SideResVal(cent9);
+		// mEpdEpManager->fillEpdSubEpSideV1(eta, v1Epd, refWgt);
+	      // }
 	    }
 	  }
 	}

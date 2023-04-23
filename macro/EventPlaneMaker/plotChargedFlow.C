@@ -28,15 +28,15 @@ void plotChargedFlow(int beamType = 0)
 
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string proName = Form("p_mZdcFullEpDFlowCent%d",iCent);
+    std::string proName = Form("p_mZdcFullEpV1Cent%d",iCent);
     p_mZdcFullEpV1[iCent] = (TProfile*)file_InPut->Get(proName.c_str());
-    proName = Form("p_mEpdSubEpDFlowCent%d",iCent);
+    proName = Form("p_mEpdSubEpSideV1Cent%d",iCent);
     p_mEpdSubEpV1[iCent] = (TProfile*)file_InPut->Get(proName.c_str());
     // proName = Form("p_mTpcSubEpV1Cent%d",iCent);
     // p_mTpcSubEpV1[iCent] = (TProfile*)file_InPut->Get(proName.c_str());
-    proName = Form("p_mTpcSubEpEFlowCent%d",iCent);
+    proName = Form("p_mTpcSubEpV2Cent%d",iCent);
     p_mTpcSubEpV2[iCent] = (TProfile*)file_InPut->Get(proName.c_str());
-    proName = Form("p_mTpcSubEpTFlowCent%d",iCent);
+    proName = Form("p_mTpcSubEpV3Cent%d",iCent);
     p_mTpcSubEpV3[iCent] = (TProfile*)file_InPut->Get(proName.c_str());
   }
 

@@ -7,12 +7,12 @@
 
 #include "../../Utility/include/StSpinAlignmentCons.h"
 
-void plotQA_InvMass(int beamType = 0)
+void plotQA_InvMass(int beamType = 2, int jobId = 14, string jobIdSE = "820136BE69B6CDF4F20D30A77C669DDB", string jobIdME = "3F47A6F6F2164F758207FE4857B14B88")
 {
   gStyle->SetOptStat(0);
   const int mNumCentrality = 9;
 
-  string inputFileSE = Form("../../data/PhiMesonMaker/%s/file_RecoPhiSE_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string inputFileSE = Form("../../data/PhiMesonMaker/%s/file_RecoPhiSE_%s_%s_%d.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str(),jobIdSE.c_str(),jobId);
   TFile *file_InPutSE = TFile::Open(inputFileSE.c_str());
   if(!file_InPutSE->IsOpen()) cout << "inputFileSE: " << inputFileSE.c_str() << "is problematic" << endl;
   cout << "inputFile sets to: " << inputFileSE.c_str() << endl;
@@ -29,7 +29,7 @@ void plotQA_InvMass(int beamType = 0)
     h_mInvMassPhiSEDist[iCent]->Sumw2();
   }
 
-  string inputFileME = Form("../../data/PhiMesonMaker/%s/file_RecoPhiME_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string inputFileME = Form("../../data/PhiMesonMaker/%s/file_RecoPhiME_%s_%s_%d.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str(),jobIdME.c_str(),jobId);
   TFile *file_InPutME = TFile::Open(inputFileME.c_str());
   if(!file_InPutME->IsOpen()) cout << "inputFileME: " << inputFileME.c_str() << "is problematic" << endl;
   cout << "inputFile sets to: " << inputFileME.c_str() << endl;
