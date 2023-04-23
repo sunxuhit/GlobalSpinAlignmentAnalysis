@@ -6,13 +6,17 @@ date
 if [ $# -eq 0 ]
 then
   BeamType=ZrZr200GeV_2018
-  JobId=CEBB7148080C11DF693CC3046509174F #generate faild list for this Job
+  JobId=2B53FE9588EBB9E4924B159AD95517F0 #generate faild list for this Job
   Task=EventPlaneMaker
   # Mode=GainCorr
   # Mode=ReCenterPar
   # Mode=ShiftPar
   # Mode=ShiftParFull
-  Mode=EpResolution
+  # Mode=EpResolution
+  Mode=ChargedFlow
+  # Task=PhiMesonMaker
+  # Mode=RecoPhiSE
+  # Mode=RecoPhiME
 
   FileDirectory="/star/u/sunxuhit/$BeamType/SpinAlignment/$Task/OutPut"
   OutPutDir="/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/${BeamType}"

@@ -8,6 +8,7 @@ then
   BeamType=RuRu200GeV_2018
   # Task=RunQA
   Task=EventPlaneMaker
+  # Task=PhiMesonMaker
 
   # OutPutDir="/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/${BeamType}"
   OutPutDir="../../../Utility/FileList/${BeamType}"

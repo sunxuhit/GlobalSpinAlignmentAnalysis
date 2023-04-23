@@ -7,7 +7,8 @@ if [ $# -eq 0 ]
 then
   BeamType=ZrZr200GeV_2018
   # Task=RunQA
-  Task=EventPlaneMaker
+  # Task=EventPlaneMaker
+  Task=PhiMesonMaker
 
   # OutPutDir="/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/${BeamType}"
   OutPutDir="../../../Utility/FileList/${BeamType}"
