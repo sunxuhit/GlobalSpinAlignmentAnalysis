@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include "TVector3.h"
+
 #include "StBichsel/Bichsel.h"
 #include "StBichsel/StdEdxModel.h"
 #include "StPicoEvent/StPicoDst.h"

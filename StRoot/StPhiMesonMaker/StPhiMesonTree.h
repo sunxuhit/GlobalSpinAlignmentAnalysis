@@ -56,10 +56,16 @@ class StPhiMesonTree : public TObject
     void setNumTrks(int numTrkEast, int numTrkWest); // Number of Tracks used in ReCenter Correction: East & West
 
   private:
+    // Isobar
     static const int mNumCentrality = 9;  // 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%
-    static const int mNumMixVzBin   = 10; // 10 vz bins for event mixing
-    static const int mNumMixPsiBin  = 5;  // 5 TPC Psi2 bins for event mixing
+    static const int mNumMixVzBin   = 10; // 10 vz bins for Isobar event mixing
+    static const int mNumMixPsiBin  = 5;  // 5 TPC Psi2 bins for Isobar event mixing
     static const int mNumMixBuffer  = 5;  // 5 events for event mixing
+    // FXT
+    // static const int mNumCentrality = 9;  // 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%
+    // static const int mNumMixVzBin   = 2;  // 2 vz bins for FXT event mixing
+    // static const int mNumMixPsiBin  = 10; // 10 EPD Psi1 bins for FXT event mixing
+    // static const int mNumMixBuffer  = 5;  // 5 events for event mixing
 
     StAnalysisUtils *mAnaUtils; // Analysis Utilities
     StAnalysisCut   *mAnaCut;   // Analysis Cuts

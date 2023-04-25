@@ -39,7 +39,7 @@ void StPhiMesonTree::initPhiTree()
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     std::string histName = Form("h_mInvMassPhiCent%d",iCent);
-    h_mInvMassPhi[iCent] = new TH2F(histName.c_str(),histName.c_str(),20,0.2,5.0,200,0.98,1.08);
+    h_mInvMassPhi[iCent] = new TH2F(histName.c_str(),histName.c_str(),25,0.0,5.0,200,0.98,1.08);
     for(int iVz = 0; iVz < mNumMixVzBin; ++iVz)
     {
       for(int iPsi = 0; iPsi < mNumMixPsiBin; ++iPsi)
@@ -295,7 +295,7 @@ void StPhiMesonTree::recoPhi(int cent9, int vzBin, int PsiBin) // reconstruct ph
     for(unsigned int iTrkKp = 0; iTrkKp < map_mMomVecKp[phiMixKey].size(); ++iTrkKp)
     { // first track loop over K+ candidates
       TVector3 primMomKp = map_mMomVecKp[phiMixKey][iTrkKp];
-      lTrkKp.SetXYZM(primMomKp.X(),primMomKp.Y(),primMomKp.Z(), anaUtils::mMassKaon);
+      lTrkKp.SetXYZM(primMomKp.X(),primMomKp.Y(),primMomKp.Z(),anaUtils::mMassKaon);
 
       for(unsigned int iTrkKm = 0; iTrkKm < map_mMomVecKm[phiMixKey].size(); ++iTrkKm)
       { // second track loop over K- candidates
@@ -481,7 +481,7 @@ int StPhiMesonTree::getVzMixBin(double vz)
 {
   int vzBin = -1;
 
-  double vzBinSize = (anaUtils::mVzMax[mType]-anaUtils::mVzMin[mType])/mNumMixVzBin; // 6cm for IsoBar
+  double vzBinSize = (anaUtils::mVzMax[mType]-anaUtils::mVzMin[mType])/mNumMixVzBin; // 6cm for IsoBar | 2cm for FXT
 
   if(std::abs(vz-anaUtils::mVzMin[mType]) < std::numeric_limits<double>::epsilon()) vzBin = 0;
   for(int iVz = 0; iVz < mNumMixVzBin; ++iVz)
