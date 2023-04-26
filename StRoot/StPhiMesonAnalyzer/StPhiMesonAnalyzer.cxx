@@ -1,7 +1,7 @@
 #include <fstream>
 
-#include "TFile.h"
 #include "TChain.h"
+#include "TFile.h"
 #include "TVector2.h"
 #include "TVector3.h"
 #include "TLorentzVector.h"
@@ -17,7 +17,8 @@
 // #include "StRoot/StEventPlaneMaker/StEpdEpManager.h"
 #include "StRoot/StEventPlaneMaker/StTpcEpManager.h"
 #include "StRoot/StPhiMesonMaker/StPhiMesonEvent.h"
-#include "StRoot/StPhiMesonMaker/StPhiMesonAnalyzer.h"
+#include "StRoot/StPhiMesonAnalyzer/StPhiMesonHistoManger.h"
+#include "StRoot/StPhiMesonAnalyzer/StPhiMesonAnalyzer.h"
 
 ClassImp(StPhiMesonAnalyzer)
 
@@ -40,7 +41,7 @@ StPhiMesonAnalyzer::StPhiMesonAnalyzer(const int beamType, const int mode, const
   if(mMode == 0)
   {
     string outputfile = Form("./file_QaPhi%s_%s_%d.root",str_mMixEvt[mFlagME].c_str(),globCons::str_mBeamType[mType].c_str(),mListId);
-    setOutPutfile(outputfile);
+    setOutPutFile(outputfile);
   }
 }
 
@@ -134,10 +135,10 @@ void StPhiMesonAnalyzer::initChain()
 // initial functions
 void StPhiMesonAnalyzer::Init()
 {
-  mZdcEpManager = new StZdcEpManager(mType); // initialize ZDC EP Manager
-  mEpdEpManager = new StEpdEpManager(mType); // initialize EPD EP Manager
+  // mZdcEpManager = new StZdcEpManager(mType); // initialize ZDC EP Manager
+  // mEpdEpManager = new StEpdEpManager(mType); // initialize EPD EP Manager
   mTpcEpManager = new StTpcEpManager(mType); // initialize TPC EP Manager
-  mHistManager  = new StPhiMesonHistoManger(mType); // initialize histogram manager
+  mHistManager  = new StPhiMesonHistoManger(mType,mMode); // initialize histogram manager
   mAnaCut       = new StAnalysisCut(mType);
   mAnaUtils     = new StAnalysisUtils(mType);
   // mAnaUtils->initRunIndex(); // initialize std::map for run index
@@ -237,12 +238,12 @@ void StPhiMesonAnalyzer::Make()
   TVector2 vQ1EpdGrp1ShiftFull(0.0,0.0);
 
   int flagTpcEp = -1; // TPC EP
-  int vQ1TpcReCtrEast(0.0,0.0);
-  int vQ1TpcReCtrWest(0.0,0.0);
-  int vQ2TpcReCtrEast(0.0,0.0);
-  int vQ2TpcReCtrWest(0.0,0.0);
-  int vQ3TpcReCtrEast(0.0,0.0);
-  int vQ3TpcReCtrWest(0.0,0.0);
+  TVector2 vQ1TpcReCtrEast(0.0,0.0);
+  TVector2 vQ1TpcReCtrWest(0.0,0.0);
+  TVector2 vQ2TpcReCtrEast(0.0,0.0);
+  TVector2 vQ2TpcReCtrWest(0.0,0.0);
+  TVector2 vQ3TpcReCtrEast(0.0,0.0);
+  TVector2 vQ3TpcReCtrWest(0.0,0.0);
   int numTrkReCtrEast = -1;
   int numTrkReCtrWest = -1;
 
@@ -311,7 +312,7 @@ void StPhiMesonAnalyzer::Make()
     numTrkReCtrWest = mPhiEvt->getNumTrkReCtrWest();
     numTrkUsed      = mPhiEvt->getNumTracks();
 
-    const int vzBin  = mAnaUtils->getVzBin(vz); // 0 for -vz || 1 for +vz
+    // const int vzBin  = mAnaUtils->getVzBin(mPrimVtx.Z()); // 0 for -vz || 1 for +vz
 
     // Initialise Track 
     TVector3 vTrkMomKp(0.0,0.0,0.0);

@@ -11,7 +11,7 @@ class StPhiMesonHistoManger
 {
   public:
     StPhiMesonHistoManger(const int beamType, const int flagME);
-    ~StPhiMesonHistoManger();
+    virtual ~StPhiMesonHistoManger();
 
     void initPhiQA();
     void fillPhiQA(int cent9, double pt, double yLab, double yCms, double invMass, double refWgt);
