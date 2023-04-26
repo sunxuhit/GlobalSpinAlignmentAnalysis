@@ -4,6 +4,9 @@
 #include "TObject.h"
 #include <string>
 
+class TChain;
+class TFile;
+
 class StAnalysisUtils;
 class StAnalysisCut;
 // class StZdcEpManager;
@@ -17,11 +20,11 @@ class StPhiMesonAnalyzer : public TObject
 {
   public:
     StPhiMesonAnalyzer(const int beamType, const int mode, const int flagME, const int listId, const long startEvt, const long stopEvt); // mode: 0 for QA, 1 for phi invMass | flagME: 0 for Same Event, 1 for Mixed Event | listId: list ID
-    ~StPhiMesonAnalyzer();
+    virtual ~StPhiMesonAnalyzer();
 
     void setInPutDir(const string inputDir);
     void setInPutList(const string inputList);
-    void setOutPutfile(const string outputFile);
+    void setOutPutFile(const string outputFile);
     void setStartEvent(const long startEvent);
     void setStopEvent(const long stopEvent);
     void initChain();

@@ -1,6 +1,7 @@
 #include "TString.h"
 #include "TMath.h"
 #include "TH1F.h"
+#include "TH2F.h"
 
 #include "StMessMgr.h"
 
@@ -79,12 +80,12 @@ int StPhiMesonHistoManger::getPtBinQA(double pt)
 
   const double ptMin      = 0.0;
   const double ptMax      = 5.0;
-  const double ptBinWidth = 0.2;
+  const double ptBinWidth = (ptMax-ptMin)/(double)mNumPtBinQA; // 0.2
 
   if(std::abs(pt-ptMin) < std::numeric_limits<double>::epsilon()) ptBin = 0;
   for(int iPt = 0; iPt < mNumPtBinQA; ++iPt)
   {
-    if((pt > ptMin+iPt*ptBinWidth) && (vz <= ptMin+(iPt+1)*ptBinWidth))
+    if((pt > ptMin+iPt*ptBinWidth) && (pt <= ptMin+(iPt+1)*ptBinWidth))
     {
       ptBin = iPt;
     }
@@ -99,12 +100,12 @@ int StPhiMesonHistoManger::getRapBinQA(double y)
 
   const double yMin      = -1.25;
   const double yMax      = 1.25;
-  const double yBinWidth = 0.1;
+  const double yBinWidth = (yMax-yMin)/(double)mNumRapBinQA; // 0.1
 
   if(std::abs(y-yMin) < std::numeric_limits<double>::epsilon()) yBin = 0;
   for(int iPt = 0; iPt < mNumRapBinQA; ++iPt)
   {
-    if((y > yMin+iPt*yBinWidth) && (vz <= yMin+(iPt+1)*yBinWidth))
+    if((y > yMin+iPt*yBinWidth) && (y <= yMin+(iPt+1)*yBinWidth))
     {
       yBin = iPt;
     }
