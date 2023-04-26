@@ -35,7 +35,7 @@ StPhiMesonAnalyzer::StPhiMesonAnalyzer(const int beamType, const int mode, const
   const int startListId = mNumList*mListId + 1; // start list
   const int stopListId  = mNumList*(mListId+1); // stop list
 
-  string inputList = Form("/star/data01/pwg/sunxuhit/%s/SpinAlignment/PhiMesonMaker/List/List_RecoPhi%s_%s_%d_%d.list",globCons::str_mBeamType[mType].c_str(),str_mMixEvt[mFlagME].c_str(),globCons::str_mBeamType[mType].c_str(),startListId,stopListId);
+  string inputList = Form("/star/data01/pwg/sunxuhit/%s/SpinAlignment/PhiMesonMaker/List/RecoPhi%s_%s_%d_%d.list",globCons::str_mBeamType[mType].c_str(),str_mMixEvt[mFlagME].c_str(),globCons::str_mBeamType[mType].c_str(),startListId,stopListId);
   setInPutList(inputList);
 
   if(mMode == 0)
