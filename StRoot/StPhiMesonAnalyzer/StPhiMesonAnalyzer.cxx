@@ -23,24 +23,24 @@
 ClassImp(StPhiMesonAnalyzer)
 
 //----------------------------------------------------
-StPhiMesonAnalyzer::StPhiMesonAnalyzer(const int beamType, const int mode, const int flagME, const int listId, const long startEvt, const long stopEvt) : mType(beamType), mMode(mode), mFlagME(flagME), mListId(listId)
+StPhiMesonAnalyzer::StPhiMesonAnalyzer(const string inputList, const string jobId, const int beamType, const int mode, const int flagME, const long startEvt, const long stopEvt) : mType(beamType), mMode(mode), mFlagME(flagME)
 {
   mFlagInPut = 1;
   setStartEvent(startEvt);
   setStopEvent(stopEvt);
 
-  string inputdir = Form("/star/data01/pwg/sunxuhit/%s/SpinAlignment/PhiMesonMaker/Forest/",globCons::str_mBeamType[mType].c_str());
-  setInPutDir(inputdir);
+  // string inputdir = Form("/star/data01/pwg/sunxuhit/%s/SpinAlignment/PhiMesonMaker/Forest/",globCons::str_mBeamType[mType].c_str());
+  // setInPutDir(inputdir);
 
-  const int startListId = mNumList*mListId + 1; // start list
-  const int stopListId  = mNumList*(mListId+1); // stop list
+  // const int startListId = mNumList*mListId + 1; // start list
+  // const int stopListId  = mNumList*(mListId+1); // stop list
 
-  string inputList = Form("/star/data01/pwg/sunxuhit/%s/SpinAlignment/PhiMesonMaker/List/List_RecoPhi%s_%s_%d_%d.list",globCons::str_mBeamType[mType].c_str(),str_mMixEvt[mFlagME].c_str(),globCons::str_mBeamType[mType].c_str(),startListId,stopListId);
+  // string inputList = Form("/star/data01/pwg/sunxuhit/%s/SpinAlignment/PhiMesonMaker/List/List_RecoPhi%s_%s_%d_%d.list",globCons::str_mBeamType[mType].c_str(),str_mMixEvt[mFlagME].c_str(),globCons::str_mBeamType[mType].c_str(),startListId,stopListId);
   setInPutList(inputList);
 
   if(mMode == 0)
   {
-    string outputfile = Form("./file_QaPhi%s_%s_%d.root",str_mMixEvt[mFlagME].c_str(),globCons::str_mBeamType[mType].c_str(),mListId);
+    string outputfile = Form("./file_QaPhi%s_%s_%s.root",str_mMixEvt[mFlagME].c_str(),globCons::str_mBeamType[mType].c_str(),jobId.c_str());
     setOutPutFile(outputfile);
   }
 }
@@ -50,11 +50,11 @@ StPhiMesonAnalyzer::~StPhiMesonAnalyzer()
 }
 //----------------------------------------------------
 // set Input/Output
-void StPhiMesonAnalyzer::setInPutDir(const string inputDir)
-{
-  str_mInPutDir = inputDir;
-  cout << "Input directory was set to: " << str_mInPutDir.c_str() << endl;
-}
+// void StPhiMesonAnalyzer::setInPutDir(const string inputDir)
+// {
+//   str_mInPutDir = inputDir;
+//   cout << "Input directory was set to: " << str_mInPutDir.c_str() << endl;
+// }
 void StPhiMesonAnalyzer::setInPutList(const string inputList)
 {
   str_mInPutList = inputList;
@@ -94,9 +94,9 @@ void StPhiMesonAnalyzer::initChain()
 	in.getline(str,255);  // take the lines of the file list
 	if(str[0] != 0)
 	{
-	  string addfile;
-	  addfile = str;
-	  addfile = str_mInPutDir+addfile;
+	  string addfile = str;
+	  // addfile = str;
+	  // addfile = str_mInPutDir+addfile;
 	  c_mInPut->AddFile(addfile.c_str(),-1,"PhiMesonEvent");
 	  long file_entries = c_mInPut->GetEntries();
 	  cout << "File added to data chain: " << addfile.c_str() << " with " << (file_entries-entries_save) << " entries" << endl;

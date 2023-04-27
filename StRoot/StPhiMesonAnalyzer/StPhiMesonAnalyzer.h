@@ -19,10 +19,10 @@ class StPhiMesonHistoManger;
 class StPhiMesonAnalyzer : public TObject
 {
   public:
-    StPhiMesonAnalyzer(const int beamType, const int mode, const int flagME, const int listId, const long startEvt, const long stopEvt); // mode: 0 for QA, 1 for phi invMass | flagME: 0 for Same Event, 1 for Mixed Event | listId: list ID
+    StPhiMesonAnalyzer(const string inputList, const string jobId, const int beamType, const int mode, const int flagME, const long startEvt, const long stopEvt); // mode: 0 for QA, 1 for phi invMass | flagME: 0 for Same Event, 1 for Mixed Event | listId: list ID
     virtual ~StPhiMesonAnalyzer();
 
-    void setInPutDir(const string inputDir);
+    // void setInPutDir(const string inputDir);
     void setInPutList(const string inputList);
     void setOutPutFile(const string outputFile);
     void setStartEvent(const long startEvent);
@@ -34,7 +34,7 @@ class StPhiMesonAnalyzer : public TObject
     void Finish();
 
   private:
-    static const int mNumList = 20; // number of files per list
+    // static const int mNumList = 20; // number of files per list
 
     StAnalysisUtils *mAnaUtils; // Analysis Utilities
     StAnalysisCut   *mAnaCut;   // Analysis Cuts
@@ -51,7 +51,7 @@ class StPhiMesonAnalyzer : public TObject
     const int mFlagME; // 0 for Same Event, 1 for Mixed Event
     const int mListId;
 
-    string str_mInPutDir;
+    // string str_mInPutDir;
     string str_mInPutList;
     string str_mOutPutFile;
     string str_mOutPutFlow;
