@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<job minFilesPerProcess="20" filesPerHour="2" maxFilesPerProcess="25" fileListSyntax="paths" simulateSubmission="false">
+
+  <command>
+    <!-- starver &#38;library; -->
+    root4star -l -b -q anaPhiMesonTree.C\(\"$FILELIST\",\"$JOBID\",&beamType;,&mode;,&flagME;,&startEvt;,&stopEvt;\)&gt;&amp; ${JOBID}.log
+  </command>
+
+  <SandBox installer="ZIP">
+    <Package>
+      <File>file:&codePath;/macro/PhiMesonAnalyzer/anaPhiMesonTree.C</File>
+      <File>file:&codePath;/.sl73_gcc485/</File>
+      <File>file:&codePath;/StRoot/</File>
+      <File>file:&codePath;/Utility/</File>
+    </Package>
+  </SandBox>
+
+  <input URL="filelist:&listPath;/forestRecoPhi&strME;test_Fxt3p85GeV_2018.list" />
+
+  <!-- <stdout discard="true"/> -->
+  <stdout URL="file:&outPath;/Log/$JOBID.out"/>
+  <stderr URL="file:&outPath;/Log/$JOBID.err"/>
+
+  <Generator>
+    <ReportLocation>./JOBS/report/</ReportLocation>
+    <ScriptLocation>./JOBS/csh/</ScriptLocation>
+    <ListLocation>./JOBS/list/</ListLocation>
+  </Generator>
+
+  <output fromScratch="*.root" toURL="file:&outPath;/OutPut/" />
+  <output fromScratch="*.log" toURL="file:&outPath;/Log/" />
+</job>
+
