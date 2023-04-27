@@ -49,7 +49,7 @@ class StPhiMesonAnalyzer : public TObject
     const int mType;
     const int mMode; // 0 for QA | 1 for phi flow | 2 for phi spin alignment
     const int mFlagME; // 0 for Same Event, 1 for Mixed Event
-    const int mListId;
+    // const int mListId;
 
     // string str_mInPutDir;
     string str_mInPutList;
