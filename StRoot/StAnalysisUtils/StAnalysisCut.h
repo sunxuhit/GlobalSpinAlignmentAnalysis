@@ -41,9 +41,11 @@ class StAnalysisCut : public TObject
     bool passTrkTpcFlowEast(StPicoTrack *picoTrack, TVector3 primVtx);
     bool passTrkTpcFlowWest(StPicoTrack *picoTrack, TVector3 primVtx);
     // Kaon Candidate
-    bool passTrkKaonFull(StPicoTrack *picoTrack, TVector3 primVtx);
-    bool passTrkKaonEast(StPicoTrack *picoTrack, TVector3 primVtx);
-    bool passTrkKaonWest(StPicoTrack *picoTrack, TVector3 primVtx);
+    bool passTrkTpcKaonFull(StPicoTrack *picoTrack, TVector3 primVtx);
+    bool passTrkTpcKaonEast(StPicoTrack *picoTrack, TVector3 primVtx);
+    bool passTrkTpcKaonWest(StPicoTrack *picoTrack, TVector3 primVtx);
+    bool passTrkTofKaonTree(TVector3 primMom, int charge, double mass2, double beta); // loose cuts to fill the TTree
+    bool passTrkTofKaonSpin(TVector3 primMom, int charge, double mass2, double beta); // strict cuts for flow/alignment analysis
 
     // EPD Hit Cuts for EPD EP
     bool passHitEpdEpFull(StPicoEpdHit *picoEpdHit);

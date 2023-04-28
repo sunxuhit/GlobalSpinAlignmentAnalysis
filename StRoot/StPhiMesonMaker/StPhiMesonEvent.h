@@ -21,6 +21,8 @@ class StPhiMesonTrack : public TObject
     TVector3 v_mTrkMomKm;
     double mMass2Kp; // mass2 of Kplus
     double mMass2Km;
+    double mBetaKp; // 1/beta of Kplus
+    double mBetaKm;
     double mNSigKp; // nsigma dE/dx of Kplus
     double mNSigKm;
     double mDcaKp; // distance of closest approach of Kplus
@@ -39,6 +41,8 @@ class StPhiMesonTrack : public TObject
       v_mTrkMomKm.SetXYZ(0.0,0.0,0.0);
       mMass2Kp    = -999.9;
       mMass2Km    = -999.9;
+      mBetaKp     = -999.9;
+      mBetaKm     = -999.9;
       mNSigKp     = -999.9;
       mNSigKm     = -999.9;
       mDcaKp      = -999.9;
@@ -57,6 +61,8 @@ class StPhiMesonTrack : public TObject
     void setTrkMomKm(TVector3 f)        { v_mTrkMomKm = f; }
     void setMass2Kp(double f)           { mMass2Kp    = f; }
     void setMass2Km(double f)           { mMass2Km    = f; }
+    void setBetaKp(double f)            { mBetaKp     = f; }
+    void setBetaKm(double f)            { mBetaKm     = f; }
     void setNSigKp(double f)            { mNSigKp     = f; }
     void setNSigKm(double f)            { mNSigKm     = f; }
     void setDcaKp(double f)             { mDcaKp      = f; }
@@ -73,6 +79,8 @@ class StPhiMesonTrack : public TObject
     TVector3 getTrkMomKm() const        { return v_mTrkMomKm; }
     double getMass2Kp() const           { return mMass2Kp;    }
     double getMass2Km() const           { return mMass2Km;    }
+    double getBetaKp() const            { return mBetaKp;     }
+    double getBetaKm() const            { return mBetaKm;     }
     double getNSigKp() const            { return mNSigKp;     }
     double getNSigKm() const            { return mNSigKm;     }
     double getDcaKp() const             { return mDcaKp;      }

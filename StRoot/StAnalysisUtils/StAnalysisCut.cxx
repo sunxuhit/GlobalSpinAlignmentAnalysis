@@ -319,7 +319,7 @@ bool StAnalysisCut::passTrkTpcFlowWest(StPicoTrack *picoTrack, TVector3 primVtx)
 }
 //---------------------------------------------------------------------------------
 // Track Cuts for Kaon Candidate
-bool StAnalysisCut::passTrkKaonFull(StPicoTrack *picoTrack, TVector3 primVtx)
+bool StAnalysisCut::passTrkTpcKaonFull(StPicoTrack *picoTrack, TVector3 primVtx)
 {
   if(!passTrkBasic(picoTrack)) return false;
   if(!picoTrack->isPrimary()) return false; // require primary tracks only
@@ -357,10 +357,9 @@ bool StAnalysisCut::passTrkKaonFull(StPicoTrack *picoTrack, TVector3 primVtx)
 
   return true;
 }
-
-bool StAnalysisCut::passTrkKaonEast(StPicoTrack *picoTrack, TVector3 primVtx) // neg
+bool StAnalysisCut::passTrkTpcKaonEast(StPicoTrack *picoTrack, TVector3 primVtx) // neg
 {
-  if(!passTrkKaonFull(picoTrack, primVtx)) return false;
+  if(!passTrkTpcKaonFull(picoTrack, primVtx)) return false;
 
   // eta cut: [-anaUtils::mEtaKaonMax[mType], anaUtils::mEtaKaonCtr[mType]]
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
@@ -373,9 +372,9 @@ bool StAnalysisCut::passTrkKaonEast(StPicoTrack *picoTrack, TVector3 primVtx) //
   return true;
 }
 
-bool StAnalysisCut::passTrkKaonWest(StPicoTrack *picoTrack, TVector3 primVtx) // pos
+bool StAnalysisCut::passTrkTpcKaonWest(StPicoTrack *picoTrack, TVector3 primVtx) // pos
 {
-  if(!passTrkKaonFull(picoTrack, primVtx)) return false;
+  if(!passTrkTpcKaonFull(picoTrack, primVtx)) return false;
 
   // eta cut: (anaUtils::mEtaKaonCtr[mType], anaUtils::mEtaKaonMax[mType]]
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
@@ -386,6 +385,28 @@ bool StAnalysisCut::passTrkKaonWest(StPicoTrack *picoTrack, TVector3 primVtx) //
   }
 
   return true;
+}
+bool StAnalysisCut::passTrkTofKaonTree(TVector3 primMom, int charge, double mass2, double beta) // neg
+{
+  if(primMom.Mag() < 0.65 && ((mass2 > anaUtils::mMass2KaonTreeMin[mType] && mass2 < anaUtils::mMass2KaonTreeMax[mType]) || mass2 < -10.0))
+  { // ToF when valid
+    return true;
+  }
+  if(primMom.Mag() >= 0.65 && (mass2 > anaUtils::mMass2KaonTreeMin[mType] && mass2 < anaUtils::mMass2KaonTreeMax[mType]))
+  { // ToF always
+    return true;
+  }
+
+  return false;
+}
+bool StAnalysisCut::passTrkTofKaonSpin(TVector3 primMom, int charge, double mass2, double beta) // neg
+{
+  if(mass2 > anaUtils::mMass2KaonSpinMin[mType] && mass2 < anaUtils::mMass2KaonSpinMax[mType])
+  { // ToF always
+    return true;
+  }
+
+  return false;
 }
 //---------------------------------------------------------------------------------
 // Hit Cuts for EPD EP

@@ -125,6 +125,8 @@ class StPhiMesonTree : public TObject
     std::map<int, std::vector<TVector3> > map_mMomVecKm; // K-
     std::map<int, std::vector<double> > map_mMass2Kp;
     std::map<int, std::vector<double> > map_mMass2Km;
+    std::map<int, std::vector<double> > map_mBetaKp;
+    std::map<int, std::vector<double> > map_mBetaKm;
     std::map<int, std::vector<double> > map_mNSigKp;
     std::map<int, std::vector<double> > map_mNSigKm;
     std::map<int, std::vector<double> > map_mDcaKp;

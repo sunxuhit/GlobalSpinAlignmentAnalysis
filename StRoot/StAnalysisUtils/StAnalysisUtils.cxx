@@ -246,11 +246,11 @@ double StAnalysisUtils::getRapidityLab(StPicoTrack *picoTrack, int pid)
 {
   double mass = -999.9;
   double rapLab = -999.9;
-  if(pid == 211 || pid == -211)   mass = anaUtils::mMassPion; // pions
-  if(pid == 321 || pid == -321)   mass = anaUtils::mMassKaon; // kaons
-  if(pid == 2212 || pid == -2212) mass = anaUtils::mMassProton; // protons
-  if(pid == 1234 || pid == -1234) mass = anaUtils::mMassDeuteron; // deutrons & randomly assigned ID
-  if(pid == 333)   mass = anaUtils::mMassPhi; // deutrons 
+  if(pid == 211 || pid == -211)   mass = anaUtils::mMassPion; // pion
+  if(pid == 321 || pid == -321)   mass = anaUtils::mMassKaon; // kaon
+  if(pid == 2212 || pid == -2212) mass = anaUtils::mMassProton; // proton
+  if(pid == 1234 || pid == -1234) mass = anaUtils::mMassDeuteron; // deutron & randomly assigned ID
+  if(pid == 333)   mass = anaUtils::mMassPhi; // phi
 
   const TVector3 primMom = picoTrack->pMom(); // primary Momentum
   const double primPmag = primMom.Mag();

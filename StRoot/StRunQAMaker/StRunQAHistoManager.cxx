@@ -77,13 +77,13 @@ void StRunQAHistoManager::initEvtQA()
   }
 }
 
-void StRunQAHistoManager::fillEvtQaRefMult(int triggerBin, int refMult, int grefMult, int cent9, double reweight, int tofHits, int tofMatch, int cutSelection)
+void StRunQAHistoManager::fillEvtQaRefMult(int triggerBin, int refMult, int grefMult, int cent9, double refWgt, int tofHits, int tofMatch, int cutSelection)
 {
   // for a specific triggerBin
   h_mRefMult[cutSelection][triggerBin]->Fill(refMult);
   h_mGRefMult[cutSelection][triggerBin]->Fill(grefMult);
   h_mRefMultGRefMult[cutSelection][triggerBin]->Fill(refMult,grefMult);
-  h_mCentrality9[cutSelection][triggerBin]->Fill(cent9,reweight);
+  h_mCentrality9[cutSelection][triggerBin]->Fill(cent9,refWgt);
   h_mTofMatchRefMult[cutSelection][triggerBin]->Fill(tofMatch,refMult);
   h_mTofHitsRefMult[cutSelection][triggerBin]->Fill(tofHits,refMult);
   h_mTofMatchGRefMult[cutSelection][triggerBin]->Fill(tofMatch,grefMult);
@@ -93,7 +93,7 @@ void StRunQAHistoManager::fillEvtQaRefMult(int triggerBin, int refMult, int gref
   h_mRefMult[cutSelection][mNumTriggerBins-1]->Fill(refMult);
   h_mGRefMult[cutSelection][mNumTriggerBins-1]->Fill(grefMult);
   h_mRefMultGRefMult[cutSelection][mNumTriggerBins-1]->Fill(refMult,grefMult);
-  h_mCentrality9[cutSelection][mNumTriggerBins-1]->Fill(cent9,reweight);
+  h_mCentrality9[cutSelection][mNumTriggerBins-1]->Fill(cent9,refWgt);
   h_mTofMatchRefMult[cutSelection][mNumTriggerBins-1]->Fill(tofMatch,refMult);
   h_mTofHitsRefMult[cutSelection][mNumTriggerBins-1]->Fill(tofHits,refMult);
   h_mTofMatchGRefMult[cutSelection][mNumTriggerBins-1]->Fill(tofMatch,grefMult);
@@ -224,6 +224,21 @@ void StRunQAHistoManager::initTrkQA()
       h_mPrimEtaNSigKaonWest[iCut][iTrig] = new TH2F(histName.c_str(),histName.c_str(),402,-10.05,10.05,201,-10.05,10.05);
     }
   }
+
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    for(int iTrig = 0; iTrig < mNumTriggerBins; ++iTrig)
+    {
+      std::string histName = Form("h_mAcptLabKpCent%dTrigger%d",iCent,iTrig);
+      h_mAcptLabKp[iCent][iTrig] = new TH2F(histName.c_str(),histName.c_str(),mNumRapBinQA,-1.25,1.25,mNumPtBinQA,0.0,5.0);
+      histName = Form("h_mAcptCmsKpCent%dTrigger%d",iCent,iTrig);
+      h_mAcptCmsKp[iCent][iTrig] = new TH2F(histName.c_str(),histName.c_str(),mNumRapBinQA,-1.25,1.25,mNumPtBinQA,0.0,5.0);
+      histName = Form("h_mAcptLabKmCent%dTrigger%d",iCent,iTrig);
+      h_mAcptLabKm[iCent][iTrig] = new TH2F(histName.c_str(),histName.c_str(),mNumRapBinQA,-1.25,1.25,mNumPtBinQA,0.0,5.0);
+      histName = Form("h_mAcptCmsKmCent%dTrigger%d",iCent),iTrig;
+      h_mAcptCmsKm[iCent][iTrig] = new TH2F(histName.c_str(),histName.c_str(),mNumRapBinQA,-1.25,1.25,mNumPtBinQA,0.0,5.0);
+    }
+  }
 }
 
 void StRunQAHistoManager::fillTrkQaKinematics(int triggerBin, TVector3 pMom, TVector3 gMom, int cutSelection)
@@ -333,6 +348,20 @@ void StRunQAHistoManager::fillTrkQaKaonCut(int triggerBin, TVector3 pMom, double
   }
 }
 
+void StRunQAHistoManager::fillTrkQaKaonAcpt(int triggerBin, int cent9, int charge, double yLab, double yCms, double pt, double refWgt)
+{
+  if(charge > 0)
+  {
+    h_mAcptLabKp[cent9][triggerBin]->Fill(yLab,pt,refWgt);
+    h_mAcptCmsKp[cent9][triggerBin]->Fill(yCms,pt,refWgt);
+  }
+  if(charge < 0)
+  {
+    h_mAcptLabKm[cent9][triggerBin]->Fill(yLab,pt,refWgt);
+    h_mAcptCmsKm[cent9][triggerBin]->Fill(yCms,pt,refWgt);
+  }
+}
+
 void StRunQAHistoManager::writeTrkQA()
 {
   for(int iCut = 0; iCut < mNumCuts; ++iCut)
@@ -363,6 +392,17 @@ void StRunQAHistoManager::writeTrkQA()
       h_mPrimEtaNSigKaonFull[iCut][iTrig]->Write();
       h_mPrimEtaNSigKaonEast[iCut][iTrig]->Write();
       h_mPrimEtaNSigKaonWest[iCut][iTrig]->Write();
+    }
+  }
+
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    for(int iTrig = 0; iTrig < mNumTriggerBins; ++iTrig)
+    {
+      h_mAcptLabKp[iCent][iTrig]->Write();
+      h_mAcptCmsKp[iCent][iTrig]->Write();
+      h_mAcptLabKm[iCent][iTrig]->Write();
+      h_mAcptCmsKm[iCent][iTrig]->Write();
     }
   }
 }

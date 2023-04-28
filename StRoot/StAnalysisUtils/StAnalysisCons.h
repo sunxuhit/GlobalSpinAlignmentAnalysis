@@ -55,8 +55,10 @@ namespace anaUtils
   const double mPrimMomKaonMax[mNumBeamUtils] = {10.0, 10.0, 10.0};
   const double mNSigKaonMin[mNumBeamUtils]    = {-3.0, -3.0, -3.0}; // Default: <= 2.5 | SysError: <= 3.0 & <= 2.0
   const double mNSigKaonMax[mNumBeamUtils]    = {3.0, 3.0, 3.0};
-  const double mMass2KaonMin[mNumBeamUtils]   = {0.1, 0.1, 0.1};
-  const double mMass2KaonMax[mNumBeamUtils]   = {0.4, 0.4, 0.4};
+  const double mMass2KaonTreeMin[mNumBeamUtils]   = {0.1, 0.1, 0.1};
+  const double mMass2KaonTreeMax[mNumBeamUtils]   = {0.4, 0.4, 0.4};
+  const double mMass2KaonSpinMin[mNumBeamUtils]   = {0.16, 0.16, 0.16};
+  const double mMass2KaonSpinMax[mNumBeamUtils]   = {0.36, 0.36, 0.36};
 
   // hit cuts: EPD Event Plane Maker
   const double mMipEpdEpMax[mNumBeamUtils] = {2.0, 2.0, 2.0};

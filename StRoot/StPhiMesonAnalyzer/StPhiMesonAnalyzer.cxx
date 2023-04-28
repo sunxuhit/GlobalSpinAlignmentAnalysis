@@ -319,6 +319,8 @@ void StPhiMesonAnalyzer::Make()
     TVector3 vTrkMomKm(0.0,0.0,0.0);
     double mass2Kp = -999.9;
     double mass2Km = -999.9;
+    double betaKp  = -999.9;
+    double betaKm  = -999.9;
     double nSigKp  = -999.9;
     double nSigKm  = -999.9;
     double dcaKp   = -999.9;
@@ -335,10 +337,12 @@ void StPhiMesonAnalyzer::Make()
       for(unsigned short iTrk = 0; iTrk < numTrkUsed; ++iTrk) // loop over all tracks of the actual event
       {
 	mPhiTrk    = mPhiEvt->getTrack(iTrk); // get Track Information
-	vTrkMomKp = mPhiTrk->getTrkMomKp(); // K+
-	vTrkMomKm = mPhiTrk->getTrkMomKm(); // K-
+	vTrkMomKp  = mPhiTrk->getTrkMomKp(); // K+
+	vTrkMomKm  = mPhiTrk->getTrkMomKm(); // K-
 	mass2Kp    = mPhiTrk->getMass2Kp(); // K+
 	mass2Km    = mPhiTrk->getMass2Km(); // K-
+	betaKp     = mPhiTrk->getBetaKp(); // K+
+	betaKm     = mPhiTrk->getBetaKm(); // K-
 	nSigKp     = mPhiTrk->getNSigKp(); // K+
 	nSigKm     = mPhiTrk->getNSigKm(); // K-
 	dcaKp      = mPhiTrk->getDcaKp(); // K+
@@ -355,7 +359,7 @@ void StPhiMesonAnalyzer::Make()
 	lTrkKm.SetXYZM(vTrkMomKm.X(),vTrkMomKm.Y(),vTrkMomKm.Z(),anaUtils::mMassKaon);
 	lTrkPhi = lTrkKp+lTrkKm;
 
-	if( (mass2Kp > 0.16 && mass2Kp < 0.36) && (mass2Km > 0.16 && mass2Km < 0.36) )
+	if( mAnaCut->passTrkTofKaonSpin(vTrkMomKp,chargeKp,mass2Kp,betaKp) && mAnaCut->passTrkTofKaonSpin(vTrkMomKm,chargeKm,mass2Km,betaKm) )
 	{ // always require ToF Info
 	  float ptPhi = lTrkPhi.Perp();
 	  float yPhiLab = lTrkPhi.Rapidity();

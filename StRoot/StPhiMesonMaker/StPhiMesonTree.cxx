@@ -120,6 +120,8 @@ void StPhiMesonTree::clearPhiMixBuffer(int cent9, int vzBin, int PsiBin)
     map_mMomVecKm[phiMixKey].clear();
     map_mMass2Kp[phiMixKey].clear();
     map_mMass2Km[phiMixKey].clear();
+    map_mBetaKp[phiMixKey].clear();
+    map_mBetaKm[phiMixKey].clear();
     map_mNSigKp[phiMixKey].clear();
     map_mNSigKm[phiMixKey].clear();
     map_mDcaKp[phiMixKey].clear();
@@ -192,22 +194,21 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
   {
     StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(iTrk);
 
-    if(mAnaCut->passTrkKaonFull(picoTrack, primVtx))
+    if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx))
     {
+      double beta  = mAnaUtils->getBeta(picoDst, iTrk);
       double mass2 = mAnaUtils->getPrimMass2(picoDst, iTrk);
       int charge = static_cast<int>(picoTrack->charge());
       TVector3 primMom = picoTrack->pMom();
 
-      if(
-	  (primMom.Mag() < 0.65 && ((mass2 > anaUtils::mMass2KaonMin[mType] && mass2 < anaUtils::mMass2KaonMax[mType]) || mass2 < -10.0)) // dE/dx + ToF
-	  || (primMom.Mag() >= 0.65 && (mass2 > anaUtils::mMass2KaonMin[mType] && mass2 < anaUtils::mMass2KaonMax[mType])) // dE/dx + ToF(always)
-	)
+      if( mAnaCut->passTrkTofKaonTree(primMom,charge,mass2,beta))
       {
 	int phiMixKey = getPhiMixKey(mCent9,vzBin,PsiBin,evtBin);
 	if(charge > 0)
 	{ // K+ candidate
 	  map_mMomVecKp[phiMixKey].push_back(static_cast<TVector3>(picoTrack->pMom()));// primMom 
 	  map_mMass2Kp[phiMixKey].push_back(static_cast<double>(mass2)); // mass2
+	  map_mBetaKp[phiMixKey].push_back(static_cast<double>(1.0/beta)); // 1/beta
 	  map_mNSigKp[phiMixKey].push_back(static_cast<double>(picoTrack->nSigmaKaon())); // nSigmaKaon
 	  map_mDcaKp[phiMixKey].push_back(static_cast<double>(picoTrack->gDCA(primVtx.X(),primVtx.Y(),primVtx.Z()))); // dca
 	  map_mChargeKp[phiMixKey].push_back(static_cast<int>(charge)); // charge
@@ -217,6 +218,7 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
 	{ // K- candidate
 	  map_mMomVecKm[phiMixKey].push_back(static_cast<TVector3>(picoTrack->pMom()));// primMom 
 	  map_mMass2Km[phiMixKey].push_back(static_cast<double>(mass2)); // mass2
+	  map_mBetaKm[phiMixKey].push_back(static_cast<double>(1.0/beta)); // 1/beta
 	  map_mNSigKm[phiMixKey].push_back(static_cast<double>(picoTrack->nSigmaKaon())); // nSigmaKaon
 	  map_mDcaKm[phiMixKey].push_back(static_cast<double>(picoTrack->gDCA(primVtx.X(),primVtx.Y(),primVtx.Z()))); // dca
 	  map_mChargeKm[phiMixKey].push_back(static_cast<int>(charge)); // charge
@@ -314,6 +316,8 @@ void StPhiMesonTree::recoPhi(int cent9, int vzBin, int PsiBin) // reconstruct ph
 	  mPhiMesonTrack->setTrkMomKm(map_mMomVecKm[phiMixKey][iTrkKm]); // K-
 	  mPhiMesonTrack->setMass2Kp(map_mMass2Kp[phiMixKey][iTrkKp]); // K+
 	  mPhiMesonTrack->setMass2Km(map_mMass2Km[phiMixKey][iTrkKm]); // K-
+	  mPhiMesonTrack->setMass2Kp(map_mBetaKp[phiMixKey][iTrkKp]); // K+
+	  mPhiMesonTrack->setMass2Km(map_mBetaKm[phiMixKey][iTrkKm]); // K-
 	  mPhiMesonTrack->setNSigKp(map_mNSigKp[phiMixKey][iTrkKp]); // K+
 	  mPhiMesonTrack->setNSigKm(map_mNSigKm[phiMixKey][iTrkKm]); // K-
 	  mPhiMesonTrack->setDcaKp(map_mDcaKp[phiMixKey][iTrkKp]); // K+
@@ -412,6 +416,8 @@ void StPhiMesonTree::mixPhi(int cent9, int vzBin, int PsiBin) // reconstruct phi
 	    mPhiMesonTrack->setTrkMomKm(map_mMomVecKm[phiMixKeyB][iTrkKm]); // K- from EvtB
 	    mPhiMesonTrack->setMass2Kp(map_mMass2Kp[phiMixKeyA][iTrkKp]); // K+ from EvtA
 	    mPhiMesonTrack->setMass2Km(map_mMass2Km[phiMixKeyB][iTrkKm]); // K- from EvtB
+	    mPhiMesonTrack->setMass2Kp(map_mBetaKp[phiMixKeyA][iTrkKp]); // K+ from EvtA
+	    mPhiMesonTrack->setMass2Km(map_mBetaKm[phiMixKeyB][iTrkKm]); // K- from EvtB
 	    mPhiMesonTrack->setNSigKp(map_mNSigKp[phiMixKeyA][iTrkKp]); // K+ from EvtA
 	    mPhiMesonTrack->setNSigKm(map_mNSigKm[phiMixKeyB][iTrkKm]); // K- from EvtB
 	    mPhiMesonTrack->setDcaKp(map_mDcaKp[phiMixKeyA][iTrkKp]); // K+ from EvtA
@@ -451,6 +457,8 @@ void StPhiMesonTree::mixPhi(int cent9, int vzBin, int PsiBin) // reconstruct phi
 	    mPhiMesonTrack->setTrkMomKm(map_mMomVecKm[phiMixKeyA][iTrkKm]); // K- from EvtA
 	    mPhiMesonTrack->setMass2Kp(map_mMass2Kp[phiMixKeyB][iTrkKp]); // K+ from EvtB
 	    mPhiMesonTrack->setMass2Km(map_mMass2Km[phiMixKeyA][iTrkKm]); // K- from EvtA
+	    mPhiMesonTrack->setMass2Kp(map_mBetaKp[phiMixKeyB][iTrkKp]); // K+ from EvtB
+	    mPhiMesonTrack->setMass2Km(map_mBetaKm[phiMixKeyA][iTrkKm]); // K- from EvtA
 	    mPhiMesonTrack->setNSigKp(map_mNSigKp[phiMixKeyB][iTrkKp]); // K+ from EvtB
 	    mPhiMesonTrack->setNSigKm(map_mNSigKm[phiMixKeyA][iTrkKm]); // K- from EvtA
 	    mPhiMesonTrack->setDcaKp(map_mDcaKp[phiMixKeyB][iTrkKp]); // K+ from EvtB
@@ -531,6 +539,7 @@ void StPhiMesonTree::getPhiEvtSize(int cent9, int vzBin, int PsiBin)
     std::cout << "Positive Particle:" << std::endl;
     std::cout << "  Size of MomVecKp     = " << map_mMomVecKp[phiMixKey].size() << std::endl;
     std::cout << "  Size of Mass2        = " << map_mMass2Kp[phiMixKey].size() << std::endl;
+    std::cout << "  Size of beta         = " << map_mBetaKp[phiMixKey].size() << std::endl;
     std::cout << "  Size of nSigmaKaon   = " << map_mNSigKp[phiMixKey].size() << std::endl;
     std::cout << "  Size of dca          = " << map_mDcaKp[phiMixKey].size() << std::endl;
     std::cout << "  Size of charge       = " << map_mChargeKp[phiMixKey].size() << std::endl;
@@ -539,6 +548,7 @@ void StPhiMesonTree::getPhiEvtSize(int cent9, int vzBin, int PsiBin)
     std::cout << "Negative Particle:" << std::endl;
     std::cout << "  Size of MomVecKm     = " << map_mMomVecKm[phiMixKey].size() << std::endl;
     std::cout << "  Size of Mass2        = " << map_mMass2Km[phiMixKey].size() << std::endl;
+    std::cout << "  Size of beta         = " << map_mBetaKm[phiMixKey].size() << std::endl;
     std::cout << "  Size of nSigmaKaon   = " << map_mNSigKm[phiMixKey].size() << std::endl;
     std::cout << "  Size of dca          = " << map_mDcaKm[phiMixKey].size() << std::endl;
     std::cout << "  Size of charge       = " << map_mChargeKm[phiMixKey].size() << std::endl;

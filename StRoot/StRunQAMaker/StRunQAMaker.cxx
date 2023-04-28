@@ -212,9 +212,9 @@ int StRunQAMaker::Make()
 	bool isFlowFull = mAnaCut->passTrkTpcFlowFull(picoTrack,primVtx);
 	bool isFlowEast = mAnaCut->passTrkTpcFlowEast(picoTrack,primVtx);
 	bool isFlowWest = mAnaCut->passTrkTpcFlowWest(picoTrack,primVtx);
-	bool isKaonFull = mAnaCut->passTrkKaonFull(picoTrack,primVtx);
-	bool isKaonEast = mAnaCut->passTrkKaonEast(picoTrack,primVtx);
-	bool isKaonWest = mAnaCut->passTrkKaonWest(picoTrack,primVtx);
+	bool isKaonFull = mAnaCut->passTrkTpcKaonFull(picoTrack,primVtx);
+	bool isKaonEast = mAnaCut->passTrkTpcKaonEast(picoTrack,primVtx);
+	bool isKaonWest = mAnaCut->passTrkTpcKaonWest(picoTrack,primVtx);
 
 	mRunQAHistoManager->fillTrkQaEpCut(triggerBin, primMom, isEpFull, isEpEast, isEpWest, 0);
 	mRunQAHistoManager->fillTrkQaFlowCut(triggerBin, primMom, isFlowFull, isFlowEast, isFlowWest, 0);
@@ -223,6 +223,22 @@ int StRunQAMaker::Make()
 	mRunQAHistoManager->fillTrkQaEpCut(triggerBin, primMom, isEpFull, isEpEast, isEpWest, 1);
 	mRunQAHistoManager->fillTrkQaFlowCut(triggerBin, primMom, isFlowFull, isFlowEast, isFlowWest, 1);
 	mRunQAHistoManager->fillTrkQaKaonCut(triggerBin, primMom, nSigKaon, isKaonFull, isKaonEast, isKaonWest, 1);
+
+	if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx) && mAnaCut->passTrkTofKaonTree(primMom,charge,mass2,beta))
+	{
+	  if(charge > 0) // K+
+	  {
+	    const double yLab = mAnaUtils->getRapidityLab(picoTrack,321);
+	    const double yCms = mAnaUtils->getRapidityCms(yLab);
+	    mRunQAProManager->fillTrkQaKaonAcpt(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt)
+	  }
+	  if(charge < 0) // K-
+	  {
+	    const double yLab = mAnaUtils->getRapidityLab(picoTrack,-321);
+	    const double yCms = mAnaUtils->getRapidityCms(yLab);
+	    mRunQAProManager->fillTrkQaKaonAcpt(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt)
+	  }
+	}
       }
     }
   }
