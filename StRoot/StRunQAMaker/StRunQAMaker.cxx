@@ -229,14 +229,14 @@ int StRunQAMaker::Make()
 	  if(charge > 0) // K+
 	  {
 	    const double yLab = mAnaUtils->getRapidityLab(picoTrack,321);
-	    const double yCms = mAnaUtils->getRapidityCms(yLab);
-	    mRunQAProManager->fillTrkQaKaonAcpt(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt)
+	    const double yCms = mAnaUtils->getRapidityCMS(yLab);
+	    mRunQAHistoManager->fillTrkQaKaonAcpt(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt);
 	  }
 	  if(charge < 0) // K-
 	  {
 	    const double yLab = mAnaUtils->getRapidityLab(picoTrack,-321);
-	    const double yCms = mAnaUtils->getRapidityCms(yLab);
-	    mRunQAProManager->fillTrkQaKaonAcpt(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt)
+	    const double yCms = mAnaUtils->getRapidityCMS(yLab);
+	    mRunQAHistoManager->fillTrkQaKaonAcpt(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt);
 	  }
 	}
       }
