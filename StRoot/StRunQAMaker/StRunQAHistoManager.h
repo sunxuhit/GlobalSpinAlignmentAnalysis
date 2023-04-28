@@ -27,7 +27,8 @@ class StRunQAHistoManager
     void fillTrkQaEpCut(int triggerBin, TVector3 pMom, bool isFull, bool isEast, bool isWest, int cutSelection);
     void fillTrkQaFlowCut(int triggerBin, TVector3 pMom, bool isFull, bool isEast, bool isWest, int cutSelection);
     void fillTrkQaKaonCut(int triggerBin, TVector3 pMom, double nSigKaon, bool isFull, bool isEast, bool isWest, int cutSelection);
-    void fillTrkQaKaonAcpt(int triggerBin, int cent9, int charge, double yLab, double yCms, double pt, double refWgt);
+    void fillTrkQaKaonAcptTree(int triggerBin, int cent9, int charge, double yLab, double yCms, double pt, double refWgt);
+    void fillTrkQaKaonAcptSpin(int triggerBin, int cent9, int charge, double yLab, double yCms, double pt, double refWgt);
     void writeTrkQA();
     //--------------QA---------------
 
@@ -35,8 +36,8 @@ class StRunQAHistoManager
     static const int mNumCuts = 2; // 0: before cuts | 1: after cuts
     static const int mNumTriggerBins = 10; // 0-8 for different triggerID | 9 for all triggers
     static const int mNumCentrality = 9; // 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%
-    static const int mNumPtBinQA    = 25; // 25 bins from 0 to 5.0 GeV/c
-    static const int mNumRapBinQA   = 25; // 25 bins from -1.25 to 1.25
+    static const int mNumPtBinQA    = 500; // 250 bins from -0.05 to 9.95 GeV/c
+    static const int mNumRapBinQA   = 250; // 250 bins from -2.5 to 2.5
 
     // QA Histograms
     // Event Level:
@@ -80,10 +81,14 @@ class StRunQAHistoManager
     TH2F *h_mPrimEtaNSigKaonWest[mNumCuts][mNumTriggerBins];
 
     // Kaon Acceptance
-    TH2F *h_mAcptLabKp[mNumCentrality][mNumTriggerBins]; // y vs. pT
-    TH2F *h_mAcptCmsKp[mNumCentrality][mNumTriggerBins]; // y vs. pT
-    TH2F *h_mAcptLabKm[mNumCentrality][mNumTriggerBins];
-    TH2F *h_mAcptCmsKm[mNumCentrality][mNumTriggerBins];
+    TH2F *h_mAcptTreeLabKp[mNumCentrality][mNumTriggerBins]; // y vs. pT
+    TH2F *h_mAcptTreeCmsKp[mNumCentrality][mNumTriggerBins];
+    TH2F *h_mAcptTreeLabKm[mNumCentrality][mNumTriggerBins];
+    TH2F *h_mAcptTreeCmsKm[mNumCentrality][mNumTriggerBins];
+    TH2F *h_mAcptSpinLabKp[mNumCentrality][mNumTriggerBins]; // y vs. pT
+    TH2F *h_mAcptSpinCmsKp[mNumCentrality][mNumTriggerBins];
+    TH2F *h_mAcptSpinLabKm[mNumCentrality][mNumTriggerBins];
+    TH2F *h_mAcptSpinCmsKm[mNumCentrality][mNumTriggerBins];
 
     std::string str_mCutStatus[mNumCuts] = {"Bf","Af"};
 

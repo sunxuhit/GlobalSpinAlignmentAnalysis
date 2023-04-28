@@ -229,14 +229,23 @@ void StRunQAHistoManager::initTrkQA()
   {
     for(int iTrig = 0; iTrig < mNumTriggerBins; ++iTrig)
     {
-      std::string histName = Form("h_mAcptLabKpCent%dTrigger%d",iCent,iTrig);
-      h_mAcptLabKp[iCent][iTrig] = new TH2F(histName.c_str(),histName.c_str(),mNumRapBinQA,-1.25,1.25,mNumPtBinQA,0.0,5.0);
-      histName = Form("h_mAcptCmsKpCent%dTrigger%d",iCent,iTrig);
-      h_mAcptCmsKp[iCent][iTrig] = new TH2F(histName.c_str(),histName.c_str(),mNumRapBinQA,-1.25,1.25,mNumPtBinQA,0.0,5.0);
-      histName = Form("h_mAcptLabKmCent%dTrigger%d",iCent,iTrig);
-      h_mAcptLabKm[iCent][iTrig] = new TH2F(histName.c_str(),histName.c_str(),mNumRapBinQA,-1.25,1.25,mNumPtBinQA,0.0,5.0);
-      histName = Form("h_mAcptCmsKmCent%dTrigger%d",iCent),iTrig;
-      h_mAcptCmsKm[iCent][iTrig] = new TH2F(histName.c_str(),histName.c_str(),mNumRapBinQA,-1.25,1.25,mNumPtBinQA,0.0,5.0);
+      std::string histName = Form("h_mAcptTreeLabKpCent%dTrigger%d",iCent,iTrig);
+      h_mAcptTreeLabKp[iCent][iTrig] = new TH2F(histName.c_str(),histName.c_str(),mNumRapBinQA,-2.5,2.5,mNumPtBinQA,-0.05,9.95);
+      histName = Form("h_mAcptTreeCmsKpCent%dTrigger%d",iCent,iTrig);
+      h_mAcptTreeCmsKp[iCent][iTrig] = new TH2F(histName.c_str(),histName.c_str(),mNumRapBinQA,-2.5,2.5,mNumPtBinQA,-0.05,9.95);
+      histName = Form("h_mAcptTreeLabKmCent%dTrigger%d",iCent,iTrig);
+      h_mAcptTreeLabKm[iCent][iTrig] = new TH2F(histName.c_str(),histName.c_str(),mNumRapBinQA,-2.5,2.5,mNumPtBinQA,-0.05,9.95);
+      histName = Form("h_mAcptTreeCmsKmCent%dTrigger%d",iCent,iTrig);
+      h_mAcptTreeCmsKm[iCent][iTrig] = new TH2F(histName.c_str(),histName.c_str(),mNumRapBinQA,-2.5,2.5,mNumPtBinQA,-0.05,9.95);
+
+      histName = Form("h_mAcptSpinLabKpCent%dTrigger%d",iCent,iTrig);
+      h_mAcptSpinLabKp[iCent][iTrig] = new TH2F(histName.c_str(),histName.c_str(),mNumRapBinQA,-2.5,2.5,mNumPtBinQA,-0.05,9.95);
+      histName = Form("h_mAcptSpinCmsKpCent%dTrigger%d",iCent,iTrig);
+      h_mAcptSpinCmsKp[iCent][iTrig] = new TH2F(histName.c_str(),histName.c_str(),mNumRapBinQA,-2.5,2.5,mNumPtBinQA,-0.05,9.95);
+      histName = Form("h_mAcptSpinLabKmCent%dTrigger%d",iCent,iTrig);
+      h_mAcptSpinLabKm[iCent][iTrig] = new TH2F(histName.c_str(),histName.c_str(),mNumRapBinQA,-2.5,2.5,mNumPtBinQA,-0.05,9.95);
+      histName = Form("h_mAcptSpinCmsKmCent%dTrigger%d",iCent,iTrig);
+      h_mAcptSpinCmsKm[iCent][iTrig] = new TH2F(histName.c_str(),histName.c_str(),mNumRapBinQA,-2.5,2.5,mNumPtBinQA,-0.05,9.95);
     }
   }
 }
@@ -348,17 +357,31 @@ void StRunQAHistoManager::fillTrkQaKaonCut(int triggerBin, TVector3 pMom, double
   }
 }
 
-void StRunQAHistoManager::fillTrkQaKaonAcpt(int triggerBin, int cent9, int charge, double yLab, double yCms, double pt, double refWgt)
+void StRunQAHistoManager::fillTrkQaKaonAcptTree(int triggerBin, int cent9, int charge, double yLab, double yCms, double pt, double refWgt)
 {
   if(charge > 0)
   {
-    h_mAcptLabKp[cent9][triggerBin]->Fill(yLab,pt,refWgt);
-    h_mAcptCmsKp[cent9][triggerBin]->Fill(yCms,pt,refWgt);
+    h_mAcptTreeLabKp[cent9][triggerBin]->Fill(yLab,pt,refWgt);
+    h_mAcptTreeCmsKp[cent9][triggerBin]->Fill(yCms,pt,refWgt);
   }
   if(charge < 0)
   {
-    h_mAcptLabKm[cent9][triggerBin]->Fill(yLab,pt,refWgt);
-    h_mAcptCmsKm[cent9][triggerBin]->Fill(yCms,pt,refWgt);
+    h_mAcptTreeLabKm[cent9][triggerBin]->Fill(yLab,pt,refWgt);
+    h_mAcptTreeCmsKm[cent9][triggerBin]->Fill(yCms,pt,refWgt);
+  }
+}
+
+void StRunQAHistoManager::fillTrkQaKaonAcptSpin(int triggerBin, int cent9, int charge, double yLab, double yCms, double pt, double refWgt)
+{
+  if(charge > 0)
+  {
+    h_mAcptSpinLabKp[cent9][triggerBin]->Fill(yLab,pt,refWgt);
+    h_mAcptSpinCmsKp[cent9][triggerBin]->Fill(yCms,pt,refWgt);
+  }
+  if(charge < 0)
+  {
+    h_mAcptSpinLabKm[cent9][triggerBin]->Fill(yLab,pt,refWgt);
+    h_mAcptSpinCmsKm[cent9][triggerBin]->Fill(yCms,pt,refWgt);
   }
 }
 
@@ -399,10 +422,15 @@ void StRunQAHistoManager::writeTrkQA()
   {
     for(int iTrig = 0; iTrig < mNumTriggerBins; ++iTrig)
     {
-      h_mAcptLabKp[iCent][iTrig]->Write();
-      h_mAcptCmsKp[iCent][iTrig]->Write();
-      h_mAcptLabKm[iCent][iTrig]->Write();
-      h_mAcptCmsKm[iCent][iTrig]->Write();
+      h_mAcptTreeLabKp[iCent][iTrig]->Write();
+      h_mAcptTreeCmsKp[iCent][iTrig]->Write();
+      h_mAcptTreeLabKm[iCent][iTrig]->Write();
+      h_mAcptTreeCmsKm[iCent][iTrig]->Write();
+
+      h_mAcptSpinLabKp[iCent][iTrig]->Write();
+      h_mAcptSpinCmsKp[iCent][iTrig]->Write();
+      h_mAcptSpinLabKm[iCent][iTrig]->Write();
+      h_mAcptSpinCmsKm[iCent][iTrig]->Write();
     }
   }
 }

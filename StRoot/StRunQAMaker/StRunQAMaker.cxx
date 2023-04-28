@@ -224,19 +224,33 @@ int StRunQAMaker::Make()
 	mRunQAHistoManager->fillTrkQaFlowCut(triggerBin, primMom, isFlowFull, isFlowEast, isFlowWest, 1);
 	mRunQAHistoManager->fillTrkQaKaonCut(triggerBin, primMom, nSigKaon, isKaonFull, isKaonEast, isKaonWest, 1);
 
-	if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx) && mAnaCut->passTrkTofKaonTree(primMom,charge,mass2,beta))
+	if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx) )
 	{
 	  if(charge > 0) // K+
 	  {
 	    const double yLab = mAnaUtils->getRapidityLab(picoTrack,321);
 	    const double yCms = mAnaUtils->getRapidityCMS(yLab);
-	    mRunQAHistoManager->fillTrkQaKaonAcpt(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt);
+	    if(mAnaCut->passTrkTofKaonTree(primMom,charge,mass2,beta))
+	    {
+	      mRunQAHistoManager->fillTrkQaKaonAcptTree(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt);
+	    }
+	    if(mAnaCut->passTrkTofKaonSpin(primMom,charge,mass2,beta))
+	    {
+	      mRunQAHistoManager->fillTrkQaKaonAcptSpin(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt);
+	    }
 	  }
 	  if(charge < 0) // K-
 	  {
 	    const double yLab = mAnaUtils->getRapidityLab(picoTrack,-321);
 	    const double yCms = mAnaUtils->getRapidityCMS(yLab);
-	    mRunQAHistoManager->fillTrkQaKaonAcpt(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt);
+	    if(mAnaCut->passTrkTofKaonTree(primMom,charge,mass2,beta))
+	    {
+	      mRunQAHistoManager->fillTrkQaKaonAcptTree(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt);
+	    }
+	    if(mAnaCut->passTrkTofKaonSpin(primMom,charge,mass2,beta))
+	    {
+	      mRunQAHistoManager->fillTrkQaKaonAcptSpin(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt);
+	    }
 	  }
 	}
       }
