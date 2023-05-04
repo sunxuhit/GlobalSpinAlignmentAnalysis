@@ -73,6 +73,9 @@ namespace anaUtils
   const double mMassPhiMin   = 0.98;
   const double mMassPhiMax   = 1.08;
   const int mNumInvMassPhi   = 100; // 10 MeV/Bin
+  const double mRapPhiMin[mNumBeamUtils] = {-1.0, -1.0, -1.0};
+  const double mRapPhiCtr[mNumBeamUtils] = {0.0, 0.0, 0.0};
+  const double mRapPhiMax[mNumBeamUtils] = {1.0, 1.0, 1.0};
 
   // rapidity of center of mass system
   const double mRapCtrM[mNumBeamUtils] = {0.0, 0.0, -1.045};

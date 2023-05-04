@@ -114,20 +114,6 @@ double StTpcEpManager::getWeight(StPicoTrack *picoTrack)
   double wgt = (pt > anaUtils::mPrimPtEpWeight[mType]) ? anaUtils::mPrimPtEpWeight[mType] : pt;
   if(pt < anaUtils::mPrimPtEpMin[mType]) wgt = 0.0;
 
-  // double wgt = pt;
-  // if(pt > anaUtils::mPrimPtEpWeight[mType])
-  // {
-  //   wgt = anaUtils::mPrimPtEpWeight[mType];
-  // }
-  // if(pt <= anaUtils::mPrimPtEpWeight[mType])
-  // {
-  //   wgt = pt;
-  // }
-  // if(pt < anaUtils::mPrimPtEpMin[mType])
-  // {
-  //   wgt = 0.0;
-  // }
-
   return wgt;
 }
 
@@ -184,6 +170,53 @@ void StTpcEpManager::addTrackReCtrFull(StPicoTrack *picoTrack)
   v_mQ3ReCtrFull += wgt*(calq3Vector(picoTrack) - getq3VecCtrFull());
   mQCouReCtrFull++;
 }
+
+// Used in StPhiMesonAnalyzer
+TVector2 StTpcEpManager::calq1Vector(TVector3 primMom)
+{
+  const double phi = primMom.Phi(); // -pi to pi
+  TVector2 q1Vector(0.0,0.0);
+
+  const double q1x = TMath::Cos(1.0*phi);
+  const double q1y = TMath::Sin(1.0*phi);
+  q1Vector.Set(q1x,q1y);
+
+  return q1Vector;
+}
+
+TVector2 StTpcEpManager::calq2Vector(TVector3 primMom)
+{
+  const double phi = primMom.Phi(); // -pi to pi
+  TVector2 q2Vector(0.0,0.0);
+
+  const double q2x = TMath::Cos(2.0*phi);
+  const double q2y = TMath::Sin(2.0*phi);
+  q2Vector.Set(q2x,q2y);
+
+  return q2Vector;
+}
+
+TVector2 StTpcEpManager::calq3Vector(TVector3 primMom)
+{
+  const double phi = primMom.Phi(); // -pi to pi
+  TVector2 q3Vector(0.0,0.0);
+
+  const double q3x = TMath::Cos(3.0*phi);
+  const double q3y = TMath::Sin(3.0*phi);
+  q3Vector.Set(q3x,q3y);
+
+  return q3Vector;
+}
+
+double StTpcEpManager::getWeight(TVector3 primMom)
+{
+  const double pt = primMom.Perp();
+  double wgt = (pt > anaUtils::mPrimPtEpWeight[mType]) ? anaUtils::mPrimPtEpWeight[mType] : pt;
+  if(pt < anaUtils::mPrimPtEpMin[mType]) wgt = 0.0;
+
+  return wgt;
+}
+
 //---------------------------------------------------------------------------------
 // ReCenterPar Correction
 void StTpcEpManager::initTpcReCtr()

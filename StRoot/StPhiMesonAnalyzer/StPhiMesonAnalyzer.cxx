@@ -26,22 +26,29 @@ ClassImp(StPhiMesonAnalyzer)
 StPhiMesonAnalyzer::StPhiMesonAnalyzer(const string inputList, const string jobId, const int beamType, const int mode, const int flagME, const long startEvt, const long stopEvt) : mType(beamType), mMode(mode), mFlagME(flagME)
 {
   mFlagInPut = 1;
-  setStartEvent(startEvt);
-  setStopEvent(stopEvt);
+  mStartEvt = startEvt;
+  cout << "nStartEvent = " << mStartEvt << endl;
+  mStopEvt = stopEvt;
+  cout << "nStopEvent = " << mStopEvt << endl;
 
-  // string inputdir = Form("/star/data01/pwg/sunxuhit/%s/SpinAlignment/PhiMesonMaker/Forest/",globCons::str_mBeamType[mType].c_str());
-  // setInPutDir(inputdir);
-
-  // const int startListId = mNumList*mListId + 1; // start list
-  // const int stopListId  = mNumList*(mListId+1); // stop list
-
-  // string inputList = Form("/star/data01/pwg/sunxuhit/%s/SpinAlignment/PhiMesonMaker/List/RecoPhi%s_%s_%d_%d.list",globCons::str_mBeamType[mType].c_str(),str_mMixEvt[mFlagME].c_str(),globCons::str_mBeamType[mType].c_str(),startListId,stopListId);
-  setInPutList(inputList);
+  str_mInPutList = inputList;
+  string infoInPutList = Form("InPut %s list was set to: %s",str_mMixEvt[mFlagME].c_str(),str_mInPutList.c_str());
+  cout << infoInPutList.c_str() << endl;
 
   if(mMode == 0)
   {
-    string outputfile = Form("./file_QaPhi%s_%s_%s.root",str_mMixEvt[mFlagME].c_str(),globCons::str_mBeamType[mType].c_str(),jobId.c_str());
-    setOutPutFile(outputfile);
+    str_mOutPutQA = Form("./file_QaPhi%s_%s_%s.root",str_mMixEvt[mFlagME].c_str(),globCons::str_mBeamType[mType].c_str(),jobId.c_str());
+    cout << "Output file was set to: " << str_mOutPutQA.c_str() << endl;
+  }
+  if(mMode == 1)
+  {
+    str_mOutPutFlow = Form("./file_FlowPhi%s_%s_%s.root",str_mMixEvt[mFlagME].c_str(),globCons::str_mBeamType[mType].c_str(),jobId.c_str());
+    cout << "Output file was set to: " << str_mOutPutFlow.c_str() << endl;
+  }
+  if(mMode == 2)
+  {
+    str_mOutPutSpin = Form("./file_SpinPhi%s_%s_%s.root",str_mMixEvt[mFlagME].c_str(),globCons::str_mBeamType[mType].c_str(),jobId.c_str());
+    cout << "Output file was set to: " << str_mOutPutSpin.c_str() << endl;
   }
 }
 
@@ -49,33 +56,6 @@ StPhiMesonAnalyzer::~StPhiMesonAnalyzer()
 {
 }
 //----------------------------------------------------
-// set Input/Output
-// void StPhiMesonAnalyzer::setInPutDir(const string inputDir)
-// {
-//   str_mInPutDir = inputDir;
-//   cout << "Input directory was set to: " << str_mInPutDir.c_str() << endl;
-// }
-void StPhiMesonAnalyzer::setInPutList(const string inputList)
-{
-  str_mInPutList = inputList;
-  string InFo_InPutList = Form("InPut %s list was set to: %s",str_mMixEvt[mFlagME].c_str(),str_mInPutList.c_str());
-  cout << InFo_InPutList.c_str() << endl;
-}
-void StPhiMesonAnalyzer::setOutPutFile(const string outputFile)
-{
-  str_mOutPutFile = outputFile;
-  cout << "Output file was set to: " << str_mOutPutFile.c_str() << endl;
-}
-void StPhiMesonAnalyzer::setStartEvent(const long startEvt)
-{
-    mStartEvt = startEvt;
-    cout << "nStartEvent = " << mStartEvt << endl;
-}
-void StPhiMesonAnalyzer::setStopEvent(const long stopEvt)
-{
-    mStopEvt = stopEvt;
-    cout << "nStopEvent = " << mStopEvt << endl;
-}
 void StPhiMesonAnalyzer::initChain()
 { // initialize TChain
   if (!str_mInPutList.empty())   // if input file is ok
@@ -145,21 +125,27 @@ void StPhiMesonAnalyzer::Init()
 
   initChain();
 
-  mTpcEpManager->readTpcReCtr(); // TPC
-  mTpcEpManager->readTpcShift();
 
   if(mMode == 0)
   {
-    file_mOutPutQA = new TFile(str_mOutPutFile.c_str(),"RECREATE");
+    file_mOutPutQA = new TFile(str_mOutPutQA.c_str(),"RECREATE");
     mHistManager->initPhiQA();
   }
   if(mMode == 1)
   {
-    file_mOutPutFlow = new TFile(str_mOutPutFile.c_str(),"RECREATE");
+    file_mOutPutFlow = new TFile(str_mOutPutFlow.c_str(),"RECREATE");
+    if(mAnaCut->isIsobar()) 
+    {
+      mTpcEpManager->readTpcReCtr(); // TPC
+      mTpcEpManager->readTpcShift();
+      mTpcEpManager->readTpcResolution();
+      mHistManager->initIsoPhiFlow();
+    }
+
   }
-  if(mMode == 1)
+  if(mMode == 2)
   {
-    file_mOutPutSpin = new TFile(str_mOutPutFile.c_str(),"RECREATE");
+    file_mOutPutSpin = new TFile(str_mOutPutSpin.c_str(),"RECREATE");
   }
 }
 //-------------------------------------------------------------------
@@ -167,7 +153,7 @@ void StPhiMesonAnalyzer::Finish()
 {
   if(mMode == 0)
   {
-    if(str_mOutPutFile != "")
+    if(str_mOutPutQA != "")
     {
       file_mOutPutQA->cd();
       mHistManager->writePhiQA();
@@ -179,6 +165,7 @@ void StPhiMesonAnalyzer::Finish()
     if(str_mOutPutFlow != "")
     {
       file_mOutPutFlow->cd();
+      if(mAnaCut->isIsobar()) mHistManager->writeIsoPhiFlow();
       file_mOutPutFlow->Close();
     }
   }
@@ -249,22 +236,19 @@ void StPhiMesonAnalyzer::Make()
 
   unsigned short numTrkUsed = -1;
 
-  for(long counter = startEvtUsed; counter < stopEvtUsed; counter++)
+  for(long iEvt = startEvtUsed; iEvt < stopEvtUsed; iEvt++)
   {
-    if (!c_mInPut->GetEntry( counter )) // take the event -> information is stored in event
+    if (!c_mInPut->GetEntry( iEvt )) // take the event -> information is stored in event
       break;  // end of data chunk
 
     // display event process
-    if(counter != 0  &&  counter % 1000 == 0)
-    {
-      cout << "." << flush;
-    }
-    if(counter != 0  &&  counter % 10000 == 0)
+    if(iEvt != 0  &&  iEvt % 1000 == 0) { cout << "." << flush; }
+    if(iEvt != 0  &&  iEvt % 10000 == 0)
     {
       if((stopEvtUsed-startEvtUsed) > 0)
       {
-	double evtPercent = 100.0*((double)(counter-startEvtUsed))/((double)(stopEvtUsed-startEvtUsed));
-	cout << " " << counter-startEvtUsed << " (" << evtPercent << "%) " << "\n" << "==> Processing data (VecMesonSpinAlignment) " << flush;
+	double evtPercent = 100.0*((double)(iEvt-startEvtUsed))/((double)(stopEvtUsed-startEvtUsed));
+	cout << " " << iEvt-startEvtUsed << " (" << evtPercent << "%) " << "\n" << "==> Processing data (VecMesonSpinAlignment) " << flush;
       }
     }
 
@@ -312,7 +296,8 @@ void StPhiMesonAnalyzer::Make()
     numTrkReCtrWest = mPhiEvt->getNumTrkReCtrWest();
     numTrkUsed      = mPhiEvt->getNumTracks();
 
-    // const int vzBin  = mAnaUtils->getVzBin(mPrimVtx.Z()); // 0 for -vz || 1 for +vz
+    const int vzBin  = mAnaUtils->getVzBin(mPrimVtx.Z()); // 0 for -vz || 1 for +vz
+    mTpcEpManager->initTpcEpManager(cent9,runIdx,vzBin); // initialize TPC EP Manager
 
     // Initialise Track 
     TVector3 vTrkMomKp(0.0,0.0,0.0);
@@ -332,52 +317,134 @@ void StPhiMesonAnalyzer::Make()
     int flagKp     = -1;
     int flagKm     = -1;
 
-    if(mMode == 0)
+    for(unsigned short iTrk = 0; iTrk < numTrkUsed; ++iTrk) // loop over all tracks of the actual event
     {
-      for(unsigned short iTrk = 0; iTrk < numTrkUsed; ++iTrk) // loop over all tracks of the actual event
-      {
-	mPhiTrk    = mPhiEvt->getTrack(iTrk); // get Track Information
-	vTrkMomKp  = mPhiTrk->getTrkMomKp(); // K+
-	vTrkMomKm  = mPhiTrk->getTrkMomKm(); // K-
-	mass2Kp    = mPhiTrk->getMass2Kp(); // K+
-	mass2Km    = mPhiTrk->getMass2Km(); // K-
-	betaKp     = mPhiTrk->getBetaKp(); // K+
-	betaKm     = mPhiTrk->getBetaKm(); // K-
-	nSigKp     = mPhiTrk->getNSigKp(); // K+
-	nSigKm     = mPhiTrk->getNSigKm(); // K-
-	dcaKp      = mPhiTrk->getDcaKp(); // K+
-	dcaKm      = mPhiTrk->getDcaKm(); // K-
-	chargeKp   = mPhiTrk->getChargeKp(); // K+
-	chargeKm   = mPhiTrk->getChargeKm(); // K-
-	nHitsFitKp = mPhiTrk->getNHitsFitKp(); // K+
-	nHitsFitKm = mPhiTrk->getNHitsFitKm(); // K-
-	flagKp     = mPhiTrk->getFlagKp(); // K+
-	flagKm     = mPhiTrk->getFlagKm(); // K-
+      mPhiTrk    = mPhiEvt->getTrack(iTrk); // get Track Information
+      vTrkMomKp  = mPhiTrk->getTrkMomKp(); // K+
+      vTrkMomKm  = mPhiTrk->getTrkMomKm(); // K-
+      mass2Kp    = mPhiTrk->getMass2Kp(); // K+
+      mass2Km    = mPhiTrk->getMass2Km(); // K-
+      betaKp     = mPhiTrk->getBetaKp(); // K+
+      betaKm     = mPhiTrk->getBetaKm(); // K-
+      nSigKp     = mPhiTrk->getNSigKp(); // K+
+      nSigKm     = mPhiTrk->getNSigKm(); // K-
+      dcaKp      = mPhiTrk->getDcaKp(); // K+
+      dcaKm      = mPhiTrk->getDcaKm(); // K-
+      chargeKp   = mPhiTrk->getChargeKp(); // K+
+      chargeKm   = mPhiTrk->getChargeKm(); // K-
+      nHitsFitKp = mPhiTrk->getNHitsFitKp(); // K+
+      nHitsFitKm = mPhiTrk->getNHitsFitKm(); // K-
+      flagKp     = mPhiTrk->getFlagKp(); // K+
+      flagKm     = mPhiTrk->getFlagKm(); // K-
 
-	TLorentzVector lTrkKp, lTrkKm, lTrkPhi;
-	lTrkKp.SetXYZM(vTrkMomKp.X(),vTrkMomKp.Y(),vTrkMomKp.Z(),anaUtils::mMassKaon);
-	lTrkKm.SetXYZM(vTrkMomKm.X(),vTrkMomKm.Y(),vTrkMomKm.Z(),anaUtils::mMassKaon);
-	lTrkPhi = lTrkKp+lTrkKm;
+      TLorentzVector lTrkKp, lTrkKm;
+      lTrkKp.SetXYZM(vTrkMomKp.X(),vTrkMomKp.Y(),vTrkMomKp.Z(),anaUtils::mMassKaon);
+      lTrkKm.SetXYZM(vTrkMomKm.X(),vTrkMomKm.Y(),vTrkMomKm.Z(),anaUtils::mMassKaon);
+      TLorentzVector lTrkPhi = lTrkKp+lTrkKm;
 
+      double ptPhi      = lTrkPhi.Perp();
+      double yPhiLab    = lTrkPhi.Rapidity();
+      double yPhiCms    = mAnaUtils->getRapidityCMS(yPhiLab);
+      double phiPhi     = lTrkPhi.Phi();
+      double invMassPhi = lTrkPhi.M();
+
+      if(mMode == 0)
+      { // phi invMass QA
 	if( mAnaCut->passTrkTofKaonSpin(vTrkMomKp,chargeKp,mass2Kp,betaKp) && mAnaCut->passTrkTofKaonSpin(vTrkMomKm,chargeKm,mass2Km,betaKm) )
 	{ // always require ToF Info
-	  float ptPhi = lTrkPhi.Perp();
-	  float yPhiLab = lTrkPhi.Rapidity();
-	  float yPhiCms = mAnaUtils->getRapidityCMS(yPhiLab);
-	  float invMassPhi = lTrkPhi.M();
 	  mHistManager->fillPhiQA(cent9,ptPhi,yPhiLab,yPhiCms,invMassPhi,refWgt);
 	}
       }
-    }
-    if(mMode == 1)
-    {
-      if(mAnaCut->isIsobar() && flagEpdSideEp == 1 && flagTpcEp == 1)
-      { // Isobar with valid EPD side EP and TPC EP
+      if(mMode == 1)
+      { // phi flow
+	if(mAnaCut->isIsobar() && flagEpdSideEp == 1 && flagTpcEp == 1)
+	{ // Isobar with valid EPD side EP and TPC EP
+	  if( mAnaCut->passTrkTofKaonSpin(vTrkMomKp,chargeKp,mass2Kp,betaKp) && mAnaCut->passTrkTofKaonSpin(vTrkMomKm,chargeKm,mass2Km,betaKm) )
+	  { // always require ToF Info
+	    if(mAnaCut->passTrkPhiFlowEast(yPhiCms))
+	    { // get EP from West
+	      TVector2 Q2VecWest = vQ2TpcReCtrWest;
+	      TVector2 Q3VecWest = vQ3TpcReCtrWest;
+	      if(flagKp == 0 && mAnaCut->passTrkTpcEpWest(vTrkMomKp,dcaKp))
+	      { // Kp used in West EP
+		double wgtTpc = mTpcEpManager->getWeight(vTrkMomKp);
+
+		TVector2 q2VecKp = mTpcEpManager->calq2Vector(vTrkMomKp);
+		TVector2 q2VecCtrKp = mTpcEpManager->getq2VecCtrWest();
+		Q2VecWest = Q2VecWest - wgtTpc*(q2VecKp-q2VecCtrKp)
+
+		TVector2 q3VecKp = mTpcEpManager->calq3Vector(vTrkMomKp);
+		TVector2 q3VecCtrKp = mTpcEpManager->getq3VecCtrWest();
+		Q3VecWest = Q3VecWest - wgtTpc*(q3VecKp-q3VecCtrKp)
+	      }
+	      if(flagKm == 0 && mAnaCut->passTrkTpcEpWest(vTrkMomKm,dcaKm))
+	      { // Km used in West EP
+		double wgtTpc = mTpcEpManager->getWeight(vTrkMomKm);
+
+		TVector2 q2VecKm = mTpcEpManager->calq2Vector(vTrkMomKm);
+		TVector2 q2VecCtrKm = mTpcEpManager->getq2VecCtrWest();
+		Q2VecWest = Q2VecWest - wgtTpc*(q2VecKm-q2VecCtrKm)
+
+		TVector2 q3VecKm = mTpcEpManager->calq3Vector(vTrkMomKm);
+		TVector2 q3VecCtrKm = mTpcEpManager->getq3VecCtrWest();
+		Q3VecWest = Q3VecWest - wgtTpc*(q3VecKm-q3VecCtrKm)
+	      }
+	      double res2Sub = mTpcEpManager->getTpcSubEp2ResVal(cent9);
+	      double Psi2West = mTpcEpManager->getPsi2ShiftWest(Q2VecWest);
+	      mHistManager->fillIsoPhiV2(cent9, ptPhi, yPhiCms, phiPhi, Psi2West, invMassPhi, res2Sub, refWgt);
+
+	      double res3Sub = mTpcEpManager->getTpcSubEp3ResVal(cent9);
+	      double Psi3West = mTpcEpManager->getPsi3ShiftWest(Q3VecWest);
+	      mHistManager->fillIsoPhiV3(cent9, ptPhi, yPhiCms, phiPhi, Psi3West, invMassPhi, res3Sub, refWgt);
+
+	      mHistManager->fillIsoPhiYields(cent9, ptPhi, yPhiCms, invMassPhi, refWgt);
+	    }
+	    if(mAnaCut->passTrkPhiFlowWest(yPhiCms))
+	    { // get EP from East
+	      TVector2 Q2VecEast = vQ2TpcReCtrEast;
+	      TVector2 Q3VecEast = vQ3TpcReCtrEast;
+	      if(flagKp == 0 && mAnaCut->passTrkTpcEpEast(vTrkMomKp,dcaKp))
+	      { // Kp used in East EP
+		double wgtTpc = mTpcEpManager->getWeight(vTrkMomKp);
+
+		TVector2 q2VecKp = mTpcEpManager->calq2Vector(vTrkMomKp);
+		TVector2 q2VecCtrKp = mTpcEpManager->getq2VecCtrEast();
+		Q2VecEast = Q2VecEast - wgtTpc*(q2VecKp-q2VecCtrKp)
+
+		TVector2 q3VecKp = mTpcEpManager->calq3Vector(vTrkMomKp);
+		TVector2 q3VecCtrKp = mTpcEpManager->getq3VecCtrEast();
+		Q3VecEast = Q3VecEast - wgtTpc*(q3VecKp-q3VecCtrKp)
+	      }
+	      if(flagKm == 0 && mAnaCut->passTrkTpcEpEast(vTrkMomKm,dcaKm))
+	      { // Km used in East EP
+		double wgtTpc = mTpcEpManager->getWeight(vTrkMomKm);
+
+		TVector2 q2VecKm = mTpcEpManager->calq2Vector(vTrkMomKm);
+		TVector2 q2VecCtrKm = mTpcEpManager->getq2VecCtrEast();
+		Q2VecEast = Q2VecEast - wgtTpc*(q2VecKm-q2VecCtrKm)
+
+		TVector2 q3VecKm = mTpcEpManager->calq3Vector(vTrkMomKm);
+		TVector2 q3VecCtrKm = mTpcEpManager->getq3VecCtrEast();
+		Q3VecEast = Q3VecEast - wgtTpc*(q3VecKm-q3VecCtrKm)
+	      }
+	      double res2Sub = mTpcEpManager->getTpcSubEp2ResVal(cent9);
+	      double Psi2East = mTpcEpManager->getPsi2ShiftEast(Q2VecEast);
+	      mHistManager->fillIsoPhiV2(cent9, ptPhi, yPhiCms, phiPhi, Psi2East, invMassPhi, res2Sub, refWgt);
+
+	      double res3Sub = mTpcEpManager->getTpcSubEp3ResVal(cent9);
+	      double Psi3East = mTpcEpManager->getPsi3ShiftEast(Q3VecEast);
+	      mHistManager->fillIsoPhiV3(cent9, ptPhi, yPhiCms, phiPhi, Psi3East, invMassPhi, res3Sub, refWgt);
+
+	      mHistManager->fillIsoPhiYields(cent9, ptPhi, yPhiCms, invMassPhi, refWgt);
+	    }
+	  }
+	}
+	if(mAnaCut->isFxt3p85GeV_2018() && flagEpdGrp0Ep == 1 && flagEpdGrp1Ep == 1 && flagTpcEp == 1)
+	{ // Fxt3p85GeV_2018 with valid EPD Grp0 & Grp1 EP and TPC EP
+	}
       }
-      if(mAnaCut->isFxt3p85GeV_2018() && flagEpdGrp0Ep == 1 && flagEpdGrp1Ep == 1 && flagTpcEp == 1)
-      { // Fxt3p85GeV_2018 with valid EPD Grp0 & Grp1 EP and TPC EP
-      }
     }
+    mTpcEpManager->clearTpcEpManager();
   }
 
   cout << "." << flush;

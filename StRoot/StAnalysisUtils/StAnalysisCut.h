@@ -62,6 +62,14 @@ class StAnalysisCut : public TObject
     // only used for deuteron flow comparison in Fxt3p85GeV_2018
     bool passTrkDeuFlow(double pMag, double deuteronZ, double mass2);
 
+    // TPC EP: used in StPhiMesonAnalyzer
+    bool passTrkTpcEpFull(TVector3 primMom, double gDca);
+    bool passTrkTpcEpEast(TVector3 primMom, double gDca);
+    bool passTrkTpcEpWest(TVector3 primMom, double gDca);
+    // phi Flow: used in StPhiMesonAnalyzer
+    bool passTrkPhiFlowEast(double yPhiCms);
+    bool passTrkPhiFlowWest(double yPhiCms);
+
   private:
     const int mType;
 

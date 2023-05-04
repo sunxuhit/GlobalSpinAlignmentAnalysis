@@ -4,6 +4,7 @@
 #include <string>
 #include "TObject.h"
 #include "TVector2.h"
+#include "TVector3.h"
 
 class StPicoTrack;
 class TFile;
@@ -30,6 +31,10 @@ class StTpcEpManager : public TObject
     void addTrackReCtrEast(StPicoTrack* picoTrack);
     void addTrackReCtrWest(StPicoTrack* picoTrack);
     void addTrackReCtrFull(StPicoTrack* picoTrack);
+    TVector2 calq1Vector(TVector3 primMom); // used in StPhiMesonAnalyzer
+    TVector2 calq2Vector(TVector3 primMom);
+    TVector2 calq3Vector(TVector3 primMom);
+    double getWeight(TVector3 primMom);
 
     // ReCenter Correction
     void initTpcReCtr();

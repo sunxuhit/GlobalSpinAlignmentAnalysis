@@ -256,7 +256,7 @@ bool StAnalysisCut::passNumTrkTpcSubEpReCtr(int numTrackEast, int numTrackWest)
 }
 //---------------------------------------------------------------------------------
 // Track Cuts for TPC flow
-bool StAnalysisCut::passTrkTpcFlowFull(StPicoTrack *picoTrack, TVector3 primVtx) // neg
+bool StAnalysisCut::passTrkTpcFlowFull(StPicoTrack *picoTrack, TVector3 primVtx)
 {
   if(!passTrkBasic(picoTrack)) return false;
   if(!picoTrack->isPrimary()) return false; // require primary tracks only
@@ -386,6 +386,7 @@ bool StAnalysisCut::passTrkTpcKaonWest(StPicoTrack *picoTrack, TVector3 primVtx)
 
   return true;
 }
+
 bool StAnalysisCut::passTrkTofKaonTree(TVector3 primMom, int charge, double mass2, double beta) // neg
 {
   if(primMom.Mag() < 0.65 && ((mass2 > anaUtils::mMass2KaonTreeMin[mType] && mass2 < anaUtils::mMass2KaonTreeMax[mType]) || mass2 < -10.0))
@@ -399,6 +400,7 @@ bool StAnalysisCut::passTrkTofKaonTree(TVector3 primMom, int charge, double mass
 
   return false;
 }
+
 bool StAnalysisCut::passTrkTofKaonSpin(TVector3 primMom, int charge, double mass2, double beta) // neg
 {
   if(mass2 > anaUtils::mMass2KaonSpinMin[mType] && mass2 < anaUtils::mMass2KaonSpinMax[mType])
@@ -557,4 +559,79 @@ bool StAnalysisCut::passTrkDeuFlow(double pMag, double deuteronZ, double mass2)
     return true;
 
   return false;
+}
+//---------------------------------------------------------------------------------
+// Track Cuts for TPC EP: used in StPhiMesonAnalyzer
+bool StAnalysisCut::passTrkTpcEpFull(TVector3 primMom, double gDca)
+{
+  // dca cut
+  if(gDca > anaUtils::mDcaEpMax[mType])
+  {
+    return false;
+  }
+
+  // eta cut: for ZrZr200GeV_2018 & RuRu200GeV_2018 [-1.0,1.0] | for Fxt3p85GeV_2018 [-2.0,0.0]
+  const double eta = primMom.PseudoRapidity();
+  if(eta < anaUtils::mEtaEpMin[mType] || eta > anaUtils::mEtaEpMax[mType])
+  {
+    return false;
+  }
+
+  // momentum cut: 0.2 <= pT <= 2.0 && p <= 10.0 GeV/c
+  if(primMom.Pt() < anaUtils::mPrimPtEpMin[mType] || primMom.Pt() > anaUtils::mPrimPtEpMax[mType] || primMom.Mag() > anaUtils::mPrimMomEpMax[mType])
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool StAnalysisCut::passTrkTpcEpEast(TVector3 primMom, double gDca) // neg
+{
+  if(!passTrkTpcEpFull(primMom,gDca)) return false;
+
+  const double eta = primMom.PseudoRapidity();
+  if(eta < anaUtils::mEtaEpMin[mType] || eta > anaUtils::mEtaEpCtr[mType]-anaUtils::mEtaEpGap[mType])
+  { // eta cut: [anaUtils::mEtaEpMin[mType], anaUtils::mEtaEpCtr[mType]-anaUtils::mEtaEpGap[mType]]
+    return false;
+  }
+
+  return true;
+}
+
+bool StAnalysisCut::passTrkTpcEpWest(TVector3 primMom, double gDca) // pos
+{
+  if(!passTrkTpcEpFull(primMom,gDca)) return false;
+
+  // eta cut: [anaUtils::mEtaEpCtr[mType]+anaUtils::mEtaEpGap[mType], anaUtils::mEtaEpMax[mType]]
+  const double eta = primMom.PseudoRapidity();
+  if(eta < anaUtils::mEtaEpCtr[mType]+anaUtils::mEtaEpGap[mType] || eta > anaUtils::mEtaEpMax[mType])
+  { // eta cut: [anaUtils::mEtaEpCtr[mType]+anaUtils::mEtaEpGap[mType], anaUtils::mEtaEpMax[mType]]
+    return false;
+  }
+
+  return true;
+}
+//---------------------------------------------------------------------------------
+// Track Cuts for phi flow: used in StPhiMesonAnalyzer
+bool StAnalysisCut::passTrkPhiFlowEast(double yPhiCms) // neg
+{
+  // rapidity cut: [anaUtils::mRapPhiMin[mType], anaUtils::mRapPhiCtr[mType]]
+  if(yPhiCms < anaUtils::mRapPhiMin[mType] || yPhiCms > anaUtils::mRapPhiCtr[mType])
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool StAnalysisCut::passTrkPhiFlowWest(double yPhiCms) // pos
+{
+  // rapidity cut: (anaUtils::mRapPhiCtr[mType], anaUtils::mRapPhiMax[mType]]
+  if(yPhiCms <= anaUtils::mRapPhiCtr[mType] || yPhiCms > anaUtils::mRapPhiMax[mType])
+  {
+    return false;
+  }
+
+  return true;
 }
