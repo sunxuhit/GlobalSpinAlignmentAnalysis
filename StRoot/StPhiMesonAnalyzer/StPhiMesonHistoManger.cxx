@@ -149,7 +149,7 @@ void StPhiMesonHistoManger::initIsoPhiFlow()
     for(int iPt = 0; iPt < mNumPtBinIsoPhiFlow; ++iPt)
     {
       std::string isoPhiYieldsKey = Form("h_mInvMassIsoPhiYields%sCent%dPt%d",str_mMixEvt[mFlagME].c_str(),iCent,iPt);
-      h_mInvMassIsoPhiYields[isoPhiYieldsKey] = new TH1F(isoPhiV2Key.c_str(),isoPhiV2Key.c_str(),anaUtils::mNumInvMassPhi,anaUtils::mMassPhiMin,anaUtils::mMassPhiMax);
+      h_mInvMassIsoPhiYields[isoPhiYieldsKey] = new TH1F(isoPhiYieldsKey.c_str(),isoPhiYieldsKey.c_str(),anaUtils::mNumInvMassPhi,anaUtils::mMassPhiMin,anaUtils::mMassPhiMax);
     }
   }
 }

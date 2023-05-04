@@ -371,11 +371,11 @@ void StPhiMesonAnalyzer::Make()
 
 		TVector2 q2VecKp = mTpcEpManager->calq2Vector(vTrkMomKp);
 		TVector2 q2VecCtrKp = mTpcEpManager->getq2VecCtrWest();
-		Q2VecWest = Q2VecWest - wgtTpc*(q2VecKp-q2VecCtrKp)
+		Q2VecWest = Q2VecWest - wgtTpc*(q2VecKp-q2VecCtrKp);
 
 		TVector2 q3VecKp = mTpcEpManager->calq3Vector(vTrkMomKp);
 		TVector2 q3VecCtrKp = mTpcEpManager->getq3VecCtrWest();
-		Q3VecWest = Q3VecWest - wgtTpc*(q3VecKp-q3VecCtrKp)
+		Q3VecWest = Q3VecWest - wgtTpc*(q3VecKp-q3VecCtrKp);
 	      }
 	      if(flagKm == 0 && mAnaCut->passTrkTpcEpWest(vTrkMomKm,dcaKm))
 	      { // Km used in West EP
@@ -383,11 +383,11 @@ void StPhiMesonAnalyzer::Make()
 
 		TVector2 q2VecKm = mTpcEpManager->calq2Vector(vTrkMomKm);
 		TVector2 q2VecCtrKm = mTpcEpManager->getq2VecCtrWest();
-		Q2VecWest = Q2VecWest - wgtTpc*(q2VecKm-q2VecCtrKm)
+		Q2VecWest = Q2VecWest - wgtTpc*(q2VecKm-q2VecCtrKm);
 
 		TVector2 q3VecKm = mTpcEpManager->calq3Vector(vTrkMomKm);
 		TVector2 q3VecCtrKm = mTpcEpManager->getq3VecCtrWest();
-		Q3VecWest = Q3VecWest - wgtTpc*(q3VecKm-q3VecCtrKm)
+		Q3VecWest = Q3VecWest - wgtTpc*(q3VecKm-q3VecCtrKm);
 	      }
 	      double res2Sub = mTpcEpManager->getTpcSubEp2ResVal(cent9);
 	      double Psi2West = mTpcEpManager->getPsi2ShiftWest(Q2VecWest);
@@ -409,11 +409,11 @@ void StPhiMesonAnalyzer::Make()
 
 		TVector2 q2VecKp = mTpcEpManager->calq2Vector(vTrkMomKp);
 		TVector2 q2VecCtrKp = mTpcEpManager->getq2VecCtrEast();
-		Q2VecEast = Q2VecEast - wgtTpc*(q2VecKp-q2VecCtrKp)
+		Q2VecEast = Q2VecEast - wgtTpc*(q2VecKp-q2VecCtrKp);
 
 		TVector2 q3VecKp = mTpcEpManager->calq3Vector(vTrkMomKp);
 		TVector2 q3VecCtrKp = mTpcEpManager->getq3VecCtrEast();
-		Q3VecEast = Q3VecEast - wgtTpc*(q3VecKp-q3VecCtrKp)
+		Q3VecEast = Q3VecEast - wgtTpc*(q3VecKp-q3VecCtrKp);
 	      }
 	      if(flagKm == 0 && mAnaCut->passTrkTpcEpEast(vTrkMomKm,dcaKm))
 	      { // Km used in East EP
@@ -421,11 +421,11 @@ void StPhiMesonAnalyzer::Make()
 
 		TVector2 q2VecKm = mTpcEpManager->calq2Vector(vTrkMomKm);
 		TVector2 q2VecCtrKm = mTpcEpManager->getq2VecCtrEast();
-		Q2VecEast = Q2VecEast - wgtTpc*(q2VecKm-q2VecCtrKm)
+		Q2VecEast = Q2VecEast - wgtTpc*(q2VecKm-q2VecCtrKm);
 
 		TVector2 q3VecKm = mTpcEpManager->calq3Vector(vTrkMomKm);
 		TVector2 q3VecCtrKm = mTpcEpManager->getq3VecCtrEast();
-		Q3VecEast = Q3VecEast - wgtTpc*(q3VecKm-q3VecCtrKm)
+		Q3VecEast = Q3VecEast - wgtTpc*(q3VecKm-q3VecCtrKm);
 	      }
 	      double res2Sub = mTpcEpManager->getTpcSubEp2ResVal(cent9);
 	      double Psi2East = mTpcEpManager->getPsi2ShiftEast(Q2VecEast);
