@@ -36,8 +36,8 @@ class StRunQAHistoManager
     static const int mNumCuts = 2; // 0: before cuts | 1: after cuts
     static const int mNumTriggerBins = 10; // 0-8 for different triggerID | 9 for all triggers
     static const int mNumCentrality = 9; // 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%
-    static const int mNumPtBinQA    = 500; // 250 bins from -0.05 to 9.95 GeV/c
-    static const int mNumRapBinQA   = 250; // 250 bins from -2.5 to 2.5
+    static const int mNumPtBinQA    = 500; // 500 bins from -0.05 to 9.95 GeV/c
+    static const int mNumRapBinQA   = 500; // 500 bins from -2.5 to 2.5
 
     // QA Histograms
     // Event Level:

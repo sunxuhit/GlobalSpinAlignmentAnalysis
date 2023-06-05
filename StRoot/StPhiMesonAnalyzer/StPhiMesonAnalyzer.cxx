@@ -13,9 +13,8 @@
 #include "StRoot/StAnalysisUtils/StAnalysisCons.h"
 #include "StRoot/StAnalysisUtils/StAnalysisUtils.h"
 #include "StRoot/StAnalysisUtils/StAnalysisCut.h"
-// #include "StRoot/StEventPlaneMaker/StZdcEpManager.h"
-// #include "StRoot/StEventPlaneMaker/StEpdEpManager.h"
 #include "StRoot/StEventPlaneMaker/StTpcEpManager.h"
+#include "StRoot/StEventPlaneMaker/StMixEpManager.h"
 #include "StRoot/StPhiMesonMaker/StPhiMesonEvent.h"
 #include "StRoot/StPhiMesonAnalyzer/StPhiMesonHistoManger.h"
 #include "StRoot/StPhiMesonAnalyzer/StPhiMesonAnalyzer.h"
@@ -27,9 +26,8 @@ StPhiMesonAnalyzer::StPhiMesonAnalyzer(const string inputList, const string jobI
 {
   mFlagInPut = 1;
   mStartEvt = startEvt;
-  cout << "nStartEvent = " << mStartEvt << endl;
   mStopEvt = stopEvt;
-  cout << "nStopEvent = " << mStopEvt << endl;
+  cout << "nStartEvent = " << mStartEvt << ", nStopEvent = " << mStopEvt << endl;
 
   str_mInPutList = inputList;
   string infoInPutList = Form("InPut %s list was set to: %s",str_mMixEvt[mFlagME].c_str(),str_mInPutList.c_str());
@@ -62,25 +60,23 @@ void StPhiMesonAnalyzer::initChain()
   {
     string infoList = Form("Open %s file list ",str_mMixEvt[mFlagME].c_str());
     cout << infoList.c_str() << endl;
-    ifstream in(str_mInPutList);  // input stream
-    if(in)
+    ifstream file_InPutList(str_mInPutList);  // input stream
+    if(file_InPutList)
     {
       cout << "input file list is ok" << endl;
-      c_mInPut = new TChain("PhiMesonEvent", "PhiMesonEvent");
+      c_mInPutPhiEvt = new TChain("PhiMesonEvent", "PhiMesonEvent");
       char str[255];       // char array for each file name
-      long entries_save = 0;
-      while(in)
+      long evtSave = 0;
+      while(file_InPutList)
       {
-	in.getline(str,255);  // take the lines of the file list
+	file_InPutList.getline(str,255);  // take the lines of the file list
 	if(str[0] != 0)
 	{
 	  string addfile = str;
-	  // addfile = str;
-	  // addfile = str_mInPutDir+addfile;
-	  c_mInPut->AddFile(addfile.c_str(),-1,"PhiMesonEvent");
-	  long file_entries = c_mInPut->GetEntries();
-	  cout << "File added to data chain: " << addfile.c_str() << " with " << (file_entries-entries_save) << " entries" << endl;
-	  entries_save = file_entries;
+	  c_mInPutPhiEvt->AddFile(addfile.c_str(),-1,"PhiMesonEvent");
+	  long evtInPut = c_mInPutPhiEvt->GetEntries();
+	  cout << "File added to data chain: " << addfile.c_str() << " with " << (evtInPut-evtSave) << " entries" << endl;
+	  evtSave = evtInPut;
 	}
       }
     }
@@ -93,7 +89,7 @@ void StPhiMesonAnalyzer::initChain()
   }
 
   // Set the input tree
-  if (mFlagInPut == 1 && !c_mInPut->GetBranch( "phiSpinAlignmentBranch" ))
+  if (mFlagInPut == 1 && !c_mInPutPhiEvt->GetBranch( "phiSpinAlignmentBranch" ))
   {
     cerr << "ERROR: Could not find branch 'phiSpinAlignmentBranch' in tree!" << endl;
   }
@@ -101,9 +97,9 @@ void StPhiMesonAnalyzer::initChain()
   if(mFlagInPut == 1)
   {
     mPhiEvt = new StPhiMesonEvent();
-    c_mInPut->SetBranchAddress("phiSpinAlignmentBranch",&mPhiEvt);
+    c_mInPutPhiEvt->SetBranchAddress("phiSpinAlignmentBranch",&mPhiEvt);
 
-    int nEvts = c_mInPut->GetEntriesFast();
+    int nEvts = c_mInPutPhiEvt->GetEntriesFast();
     cout << "Number of events in file(s) = " << nEvts << endl;
     if(mStartEvt > nEvts) mStartEvt = nEvts;
     if(mStopEvt > nEvts) mStopEvt   = nEvts;
@@ -115,16 +111,13 @@ void StPhiMesonAnalyzer::initChain()
 // initial functions
 void StPhiMesonAnalyzer::Init()
 {
-  // mZdcEpManager = new StZdcEpManager(mType); // initialize ZDC EP Manager
-  // mEpdEpManager = new StEpdEpManager(mType); // initialize EPD EP Manager
   mTpcEpManager = new StTpcEpManager(mType); // initialize TPC EP Manager
+  mMixEpManager = new StMixEpManager(mType); // initialize Mix EP Manager
   mHistManager  = new StPhiMesonHistoManger(mType,mFlagME); // initialize histogram manager
   mAnaCut       = new StAnalysisCut(mType);
   mAnaUtils     = new StAnalysisUtils(mType);
-  // mAnaUtils->initRunIndex(); // initialize std::map for run index
 
   initChain();
-
 
   if(mMode == 0)
   {
@@ -141,7 +134,11 @@ void StPhiMesonAnalyzer::Init()
       mTpcEpManager->readTpcResolution();
       mHistManager->initIsoPhiFlow();
     }
-
+    if(mAnaCut->isFxt3p85GeV_2018())
+    {
+      mMixEpManager->readMixEpRes(); // Mix
+      mHistManager->initFxtPhiFlow();
+    }
   }
   if(mMode == 2)
   {
@@ -166,6 +163,7 @@ void StPhiMesonAnalyzer::Finish()
     {
       file_mOutPutFlow->cd();
       if(mAnaCut->isIsobar()) mHistManager->writeIsoPhiFlow();
+      if(mAnaCut->isFxt3p85GeV_2018()) mHistManager->writeFxtPhiFlow();
       file_mOutPutFlow->Close();
     }
   }
@@ -183,13 +181,11 @@ void StPhiMesonAnalyzer::Finish()
 // loop phi meson events
 void StPhiMesonAnalyzer::Make()
 {
-  long startEvtUsed;
-  long stopEvtUsed;
+  long startEvtUsed = mStartEvt;
+  long stopEvtUsed  = mStopEvt;
 
-  startEvtUsed = mStartEvt;
-  stopEvtUsed  = mStopEvt;
-  c_mInPut->SetBranchAddress("phiSpinAlignmentBranch",&mPhiEvt);
-  c_mInPut->GetEntry(0); // For unknown reasons root doesn't like it if someone starts to read a file not from the 0 entry
+  c_mInPutPhiEvt->SetBranchAddress("phiSpinAlignmentBranch",&mPhiEvt);
+  c_mInPutPhiEvt->GetEntry(0); // For unknown reasons root doesn't like it if someone starts to read a file not from the 0 entry
 
   // Initialise Event Head
   int runId       = -1;
@@ -238,7 +234,7 @@ void StPhiMesonAnalyzer::Make()
 
   for(long iEvt = startEvtUsed; iEvt < stopEvtUsed; iEvt++)
   {
-    if (!c_mInPut->GetEntry( iEvt )) // take the event -> information is stored in event
+    if( !c_mInPutPhiEvt->GetEntry(iEvt) ) // take the event -> information is stored in event
       break;  // end of data chunk
 
     // display event process
@@ -298,6 +294,7 @@ void StPhiMesonAnalyzer::Make()
 
     const int vzBin  = mAnaUtils->getVzBin(mPrimVtx.Z()); // 0 for -vz || 1 for +vz
     mTpcEpManager->initTpcEpManager(cent9,runIdx,vzBin); // initialize TPC EP Manager
+    mMixEpManager->initMixEpManager(cent9,runIdx,vzBin); // initialize Mix EP Manager
 
     // Initialise Track 
     TVector3 vTrkMomKp(0.0,0.0,0.0);
@@ -391,12 +388,11 @@ void StPhiMesonAnalyzer::Make()
 	      }
 	      double res2Sub = mTpcEpManager->getTpcSubEp2ResVal(cent9);
 	      double Psi2West = mTpcEpManager->getPsi2ShiftWest(Q2VecWest);
-	      mHistManager->fillIsoPhiV2(cent9, ptPhi, yPhiCms, phiPhi, Psi2West, invMassPhi, res2Sub, refWgt);
-
 	      double res3Sub = mTpcEpManager->getTpcSubEp3ResVal(cent9);
 	      double Psi3West = mTpcEpManager->getPsi3ShiftWest(Q3VecWest);
-	      mHistManager->fillIsoPhiV3(cent9, ptPhi, yPhiCms, phiPhi, Psi3West, invMassPhi, res3Sub, refWgt);
 
+	      mHistManager->fillIsoPhiV2(cent9, ptPhi, yPhiCms, phiPhi, Psi2West, invMassPhi, res2Sub, refWgt);
+	      mHistManager->fillIsoPhiV3(cent9, ptPhi, yPhiCms, phiPhi, Psi3West, invMassPhi, res3Sub, refWgt);
 	      mHistManager->fillIsoPhiYields(cent9, ptPhi, yPhiCms, invMassPhi, refWgt);
 	    }
 	    if(mAnaCut->passTrkPhiFlowWest(yPhiCms))
@@ -429,22 +425,30 @@ void StPhiMesonAnalyzer::Make()
 	      }
 	      double res2Sub = mTpcEpManager->getTpcSubEp2ResVal(cent9);
 	      double Psi2East = mTpcEpManager->getPsi2ShiftEast(Q2VecEast);
-	      mHistManager->fillIsoPhiV2(cent9, ptPhi, yPhiCms, phiPhi, Psi2East, invMassPhi, res2Sub, refWgt);
-
 	      double res3Sub = mTpcEpManager->getTpcSubEp3ResVal(cent9);
 	      double Psi3East = mTpcEpManager->getPsi3ShiftEast(Q3VecEast);
-	      mHistManager->fillIsoPhiV3(cent9, ptPhi, yPhiCms, phiPhi, Psi3East, invMassPhi, res3Sub, refWgt);
 
+	      mHistManager->fillIsoPhiV2(cent9, ptPhi, yPhiCms, phiPhi, Psi2East, invMassPhi, res2Sub, refWgt);
+	      mHistManager->fillIsoPhiV3(cent9, ptPhi, yPhiCms, phiPhi, Psi3East, invMassPhi, res3Sub, refWgt);
 	      mHistManager->fillIsoPhiYields(cent9, ptPhi, yPhiCms, invMassPhi, refWgt);
 	    }
 	  }
 	}
 	if(mAnaCut->isFxt3p85GeV_2018() && flagEpdGrp0Ep == 1 && flagEpdGrp1Ep == 1 && flagTpcEp == 1)
 	{ // Fxt3p85GeV_2018 with valid EPD Grp0 & Grp1 EP and TPC EP
+	  if( mAnaCut->passTrkTofKaonSpin(vTrkMomKp,chargeKp,mass2Kp,betaKp) && mAnaCut->passTrkTofKaonSpin(vTrkMomKm,chargeKm,mass2Km,betaKm) )
+	  { // always require ToF Info
+	    double res12Sub = mMixEpManager->getMixSubEp1Res2Val(cent9,0);
+	    double Psi1Grp0 = TMath::ATan2(vQ1EpdGrp0ShiftEast.Y(),vQ1EpdGrp0ShiftEast.X()); // Psi1 from EPD East Grp0
+
+	    mHistManager->fillFxtPhiV2(cent9, ptPhi, yPhiCms, phiPhi, Psi1Grp0, invMassPhi, res12Sub, refWgt);
+	    mHistManager->fillFxtPhiYields(cent9, ptPhi, yPhiCms, invMassPhi, refWgt);
+	  }
 	}
       }
     }
     mTpcEpManager->clearTpcEpManager();
+    mMixEpManager->clearMixEpManager();
   }
 
   cout << "." << flush;

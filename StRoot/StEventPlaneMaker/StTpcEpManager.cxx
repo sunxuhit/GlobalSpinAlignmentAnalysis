@@ -33,9 +33,9 @@ StTpcEpManager::~StTpcEpManager()
 //---------------------------------------------------------------------------------
 void StTpcEpManager::clearTpcEpManager()
 {
-  mCent9 = -1;
+  mCent9    = -1;
   mRunIndex = -1;
-  mVzBin = -1;
+  mVzBin    = -1;
 
   mQCouRawEast = 0; // raw EP
   mQCouRawWest = 0;

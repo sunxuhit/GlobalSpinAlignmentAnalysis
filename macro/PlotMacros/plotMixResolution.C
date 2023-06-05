@@ -12,6 +12,30 @@
 
 double propMixEpResErr(double valA, double sigA, double valB, double sigB, double valC, double sigC);
 
+double funcMixEp1Res1(double *x_val, double *par)
+{
+  double chi = x_val[0];
+  double arg = chi*chi/4.0;
+  double norm = TMath::Sqrt(TMath::Pi()/2.0)/2.0;
+
+  double res1Full = norm*chi*TMath::Exp(-1.0*arg)*(TMath::BesselI0(arg)+TMath::BesselI1(arg));
+
+  return res1Full;
+}
+
+double funcMixEp1Res2(double *x_val, double *par)
+{
+  double chi = x_val[0];
+  double arg = chi*chi/4.0;
+  double norm = TMath::Sqrt(TMath::Pi())/(2.0*TMath::Sqrt(2.0));
+  double besselOneHalf = TMath::Sqrt(2.0*arg/TMath::Pi()) * TMath::SinH(arg)/arg;
+  double besselThreeHalf = TMath::Sqrt(2.0*arg/TMath::Pi()) * (TMath::CosH(arg)/arg - TMath::SinH(arg)/(arg*arg) );
+
+  double res12Sub = norm * chi * TMath::Exp(-1.0*arg) * (besselOneHalf + besselThreeHalf);
+
+  return res12Sub;
+}
+
 void plotMixResolution(int beamType = 2)
 {
   gStyle->SetOptStat(0);
@@ -19,7 +43,7 @@ void plotMixResolution(int beamType = 2)
   const int mNumEpGroup    = 6;
   const double mCentrality[mNumCentrality] = {75.0, 65.0, 55.0, 45.0, 35.0, 25.0, 15.0, 7.5, 2.5};
 
-  string inputFileXH = "/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/EventPlaneMaker/Fxt3p85GeV_2018/res_3GeV.root";
+  string inputFileXH = "../../data/EventPlaneMaker/Fxt3p85GeV_2018/res_3GeV.root";
   TFile *file_InPutXH = TFile::Open(inputFileXH.c_str());
   TGraphErrors *g_resXH = (TGraphErrors*)file_InPutXH->Get("Graph");
 
@@ -81,42 +105,67 @@ void plotMixResolution(int beamType = 2)
 
   // 0: EpdEpGrp0 vs. EpdEpGrp1 && TpcEpWest (default) | 1: EpdEpGrp0 vs. EpdEpGrp1 && TpcEpEast | 2: EpdEpGrp0 vs. TpcEpEast && TpcEpWest
   // 3: EpdEpGrp1 vs. EpdEpGrp0 && TpcEpWest (mainSys) | 4: EpdEpGrp1 vs. EpdEpGrp0 && TpcEpEast | 5: EpdEpGrp1 vs. TpcEpEast && TpcEpWest
-  TH1F *h_mMixSubEp1Res[mNumEpGroup]; // 1st EP
-  TGraphErrors *g_mMixSubEp1Res[mNumEpGroup]; // 1st EP
-  for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
-  {
-    std::string grapName = Form("g_mMixSubEp1ResGrp%d",iGrp); // 1st EP
-    g_mMixSubEp1Res[iGrp] = new TGraphErrors();
-    g_mMixSubEp1Res[iGrp]->SetName(grapName.c_str());
-  }
-  double mMixSubEp1ResVal[mNumCentrality][mNumEpGroup];
-  double mMixSubEp1ResErr[mNumCentrality][mNumEpGroup];
+  double mMixSubEp1Res1Val[mNumCentrality][mNumEpGroup];
+  double mMixSubEp1Res1Err[mNumCentrality][mNumEpGroup];
+  double mMixSubEp1Res2Val[mNumCentrality][mNumEpGroup];
+  double mMixSubEp1Res2Err[mNumCentrality][mNumEpGroup];
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
     {
-      mMixSubEp1ResVal[iCent][iGrp]  = 0.0;
-      mMixSubEp1ResErr[iCent][iGrp]  = 0.0;
+      mMixSubEp1Res1Val[iCent][iGrp] = 0.0;
+      mMixSubEp1Res1Err[iCent][iGrp] = 0.0;
+      mMixSubEp1Res2Val[iCent][iGrp] = 0.0;
+      mMixSubEp1Res2Err[iCent][iGrp] = 0.0;
     }
   }
+
+  TGraphErrors *g_mMixSubEp1Res1[mNumEpGroup]; // 1st EP Res
+  TGraphErrors *g_mMixSubEp1Res2[mNumEpGroup]; // 2nd EP Res
+  for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
+  {
+    std::string grapName = Form("g_mMixSubEp1ResGrp%d",iGrp);
+    g_mMixSubEp1Res1[iGrp] = new TGraphErrors();
+    g_mMixSubEp1Res1[iGrp]->SetName(grapName.c_str());
+
+    grapName = Form("g_mMixSubEp1Res2Grp%d",iGrp);
+    g_mMixSubEp1Res2[iGrp] = new TGraphErrors();
+    g_mMixSubEp1Res2[iGrp]->SetName(grapName.c_str());
+  }
+
+  TF1 *f_MixEp1Res1 = new TF1("f_MixEp1Res1",funcMixEp1Res1,0,10,0);
+  TF1 *f_MixEp1Res2 = new TF1("f_MixEp1Res2",funcMixEp1Res2,0,10,0);
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
     {
       double valRes1Sub  = -999.9;
       double errRes1Sub  = 1.0;
-      double valRes1Raw = valRes1Temp[iCent][iGrp];
-      double errRes1Raw = errRes1Temp[iCent][iGrp];
+      double valRes1Raw  = valRes1Temp[iCent][iGrp];
+      double errRes1Raw  = errRes1Temp[iCent][iGrp];
 
-      if(valRes1Raw > 0)
+      double valRes12Sub = -999.9;
+      double errRes12Sub = 1.0;
+
+      if(valRes1Raw > 0 && valRes1Raw < 1.0)
       {
 	valRes1Sub = TMath::Sqrt(valRes1Raw);
 	errRes1Sub = errRes1Raw/(2.0*valRes1Sub);
+
+	double chi1Sub    = f_MixEp1Res1->GetX(valRes1Sub); // calculate 2nd EP Res
+	valRes12Sub       = f_MixEp1Res2->Eval(chi1Sub);
+	double errChi1Sub = errRes1Sub/f_MixEp1Res1->Derivative(chi1Sub); // error propagation
+	errRes12Sub       = f_MixEp1Res2->Derivative(chi1Sub)*errChi1Sub;
       }
-      mMixSubEp1ResVal[iCent][iGrp] = valRes1Sub;
-      mMixSubEp1ResErr[iCent][iGrp] = errRes1Sub;
-      g_mMixSubEp1Res[iGrp]->SetPoint(iCent, mCentrality[iCent], mMixSubEp1ResVal[iCent][iGrp]);
-      g_mMixSubEp1Res[iGrp]->SetPointError(iCent, 0.0, mMixSubEp1ResErr[iCent][iGrp]);
+      mMixSubEp1Res1Val[iCent][iGrp] = valRes1Sub;
+      mMixSubEp1Res1Err[iCent][iGrp] = errRes1Sub;
+      g_mMixSubEp1Res1[iGrp]->SetPoint(iCent, mCentrality[iCent], mMixSubEp1Res1Val[iCent][iGrp]);
+      g_mMixSubEp1Res1[iGrp]->SetPointError(iCent, 0.0, mMixSubEp1Res1Err[iCent][iGrp]);
+
+      mMixSubEp1Res2Val[iCent][iGrp] = valRes12Sub;
+      mMixSubEp1Res2Err[iCent][iGrp] = errRes12Sub;
+      g_mMixSubEp1Res2[iGrp]->SetPoint(iCent, mCentrality[iCent], mMixSubEp1Res2Val[iCent][iGrp]);
+      g_mMixSubEp1Res2[iGrp]->SetPointError(iCent, 0.0, mMixSubEp1Res2Err[iCent][iGrp]);
     }
   }
   //--------------------------------------------------------------------------------
@@ -154,22 +203,34 @@ void plotMixResolution(int beamType = 2)
   g_resXH->SetMarkerColor(2);
   g_resXH->Draw("pE same");
 
-  g_mMixSubEp1Res[0]->SetMarkerStyle(24);
-  g_mMixSubEp1Res[0]->SetMarkerSize(1.6);
-  g_mMixSubEp1Res[0]->SetMarkerColor(4);
-  g_mMixSubEp1Res[0]->Draw("pE same");
-  g_mMixSubEp1Res[3]->SetMarkerStyle(25);
-  g_mMixSubEp1Res[3]->SetMarkerSize(1.4);
-  g_mMixSubEp1Res[3]->SetMarkerColor(4);
-  g_mMixSubEp1Res[3]->Draw("pE same");
+  g_mMixSubEp1Res1[0]->SetMarkerStyle(24);
+  g_mMixSubEp1Res1[0]->SetMarkerSize(1.6);
+  g_mMixSubEp1Res1[0]->SetMarkerColor(4);
+  g_mMixSubEp1Res1[0]->Draw("pE same");
+  g_mMixSubEp1Res1[3]->SetMarkerStyle(25);
+  g_mMixSubEp1Res1[3]->SetMarkerSize(1.4);
+  g_mMixSubEp1Res1[3]->SetMarkerColor(4);
+  g_mMixSubEp1Res1[3]->Draw("pE same");
+
+  g_mMixSubEp1Res2[0]->SetMarkerStyle(20);
+  g_mMixSubEp1Res2[0]->SetMarkerSize(1.6);
+  g_mMixSubEp1Res2[0]->SetMarkerColor(4);
+  g_mMixSubEp1Res2[0]->Draw("pE same");
+  g_mMixSubEp1Res2[3]->SetMarkerStyle(21);
+  g_mMixSubEp1Res2[3]->SetMarkerSize(1.4);
+  g_mMixSubEp1Res2[3]->SetMarkerColor(4);
+  g_mMixSubEp1Res2[3]->Draw("pE same");
 
   TLegend *leg = new TLegend(0.20,0.2,0.65,0.35);
   leg->SetBorderSize(0);
   leg->SetFillColorAlpha(0,0.0);
-  leg->AddEntry(g_resXH,"Xionghong's Results","P");
-  leg->AddEntry(g_mMixSubEp1Res[0],"Epd0AB vs. Epd1CD && TpcWest","P");
-  leg->AddEntry(g_mMixSubEp1Res[3],"Epd1CD vs. Epd0AB && TpcWest","P");
+  leg->AddEntry(g_resXH,"R1: Xionghong's Results","P");
+  leg->AddEntry(g_mMixSubEp1Res1[0],"R1: Epd0AB vs. Epd1CD && TpcWest","P");
+  leg->AddEntry(g_mMixSubEp1Res1[3],"R1: Epd1CD vs. Epd0AB && TpcWest","P");
   leg->Draw("same");
+
+  c_MixSubEp1Res->Update();
+  c_MixSubEp1Res->Print(figName.c_str());
 
   c_MixSubEp1Res->Update();
   c_MixSubEp1Res->Print(figName.c_str());

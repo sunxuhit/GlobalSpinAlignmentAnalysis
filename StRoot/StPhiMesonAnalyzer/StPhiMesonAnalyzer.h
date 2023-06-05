@@ -9,9 +9,8 @@ class TFile;
 
 class StAnalysisUtils;
 class StAnalysisCut;
-// class StZdcEpManager;
-// class StEpdEpManager;
 class StTpcEpManager;
+class StMixEpManager;
 class StPhiMesonEvent;
 class StPhiMesonTrack;
 class StPhiMesonHistoManger;
@@ -33,9 +32,8 @@ class StPhiMesonAnalyzer : public TObject
 
     StAnalysisUtils *mAnaUtils; // Analysis Utilities
     StAnalysisCut   *mAnaCut;   // Analysis Cuts
-    // StZdcEpManager  *mZdcEpManager;
-    // StEpdEpManager  *mEpdEpManager;
     StTpcEpManager  *mTpcEpManager;
+    StMixEpManager  *mMixEpManager; // for FXT ONLY
     StPhiMesonEvent *mPhiEvt;
     StPhiMesonTrack *mPhiTrk;
     StPhiMesonHistoManger *mHistManager;
@@ -53,7 +51,7 @@ class StPhiMesonAnalyzer : public TObject
     long mStopEvt;
     long mStartEvt;
 
-    TChain *c_mInPut;
+    TChain *c_mInPutPhiEvt;
     TFile *file_mOutPutQA;
     TFile *file_mOutPutFlow;
     TFile *file_mOutPutSpin;

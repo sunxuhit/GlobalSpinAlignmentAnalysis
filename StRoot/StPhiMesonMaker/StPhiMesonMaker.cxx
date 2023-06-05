@@ -321,7 +321,7 @@ int StPhiMesonMaker::Make()
 	  const int numTrkReCtrEast = mTpcEpManager->getNumTrkReCtrEast();
 	  const int numTrkReCtrWest = mTpcEpManager->getNumTrkReCtrWest();
 	  if(mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest))
-	  { // fill phi meson TTree only if TPC has avaliable EP
+	  {
 	    flagTpcEp = 1;
 	  }
 
@@ -388,7 +388,7 @@ int StPhiMesonMaker::Make()
 	  const int numTrkReCtrEast = mTpcEpManager->getNumTrkReCtrEast();
 	  const int numTrkReCtrWest = mTpcEpManager->getNumTrkReCtrWest();
 	  if(mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest))
-	  { // fill phi meson TTree only if TPC has avaliable EP
+	  {
 	    flagTpcEp = 1;
 	  }
 

@@ -47,9 +47,9 @@ StZdcEpManager::~StZdcEpManager()
 
 void StZdcEpManager::clearZdcEpManager()
 {
-  mCent9 = -1;
+  mCent9    = -1;
   mRunIndex = -1;
-  mVzBin = -1;
+  mVzBin    = -1;
 
   for(int iEastWest = 0; iEastWest < 2; ++iEastWest)
   {

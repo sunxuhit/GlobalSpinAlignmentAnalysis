@@ -48,9 +48,9 @@ StEpdEpManager::~StEpdEpManager()
 //---------------------------------------------------------------------------------
 void StEpdEpManager::clearEpdEpManager()
 {
-  mCent9 = -1;
+  mCent9    = -1;
   mRunIndex = -1;
-  mVzBin = -1;
+  mVzBin    = -1;
 
   mQ1WgtSideRawEast = 0.0;
   mQ1WgtSideRawWest = 0.0;

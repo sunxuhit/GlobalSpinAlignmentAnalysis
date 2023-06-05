@@ -222,6 +222,7 @@ void StPhiMesonHistoManger::writeIsoPhiFlow()
     }
   }
 }
+
 int StPhiMesonHistoManger::getCentBinIsoPhiFlow(int cent9)
 {
   int centBin = -1;
@@ -237,8 +238,8 @@ int StPhiMesonHistoManger::getPtBinIsoPhiFlow(double pt)
 {
   int ptBin = -1;
 
-  const double ptLo[mNumPtBinIsoPhiFlow] = {0.4,0.8,1.2,1.6,2.0,2.4,2.8,3.2,3.8,4.6};
-  const double ptHi[mNumPtBinIsoPhiFlow] = {0.8,1.2,1.6,2.0,2.4,2.8,3.2,3.8,4.6,7.2};
+  const double ptLo[mNumPtBinIsoPhiFlow] = {0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6,1.8,2.0,2.2,2.4,2.6,2.8,3.0,3.4,3.8,4.2,4.6,5.4};
+  const double ptHi[mNumPtBinIsoPhiFlow] = {0.4,0.6,0.8,1.0,1.2,1.4,1.6,1.8,2.0,2.2,2.4,2.6,2.8,3.0,3.2,3.8,4.2,4.6,5.4,7.2};
 
   if(std::abs(pt-ptLo[0]) < std::numeric_limits<double>::epsilon()) ptBin = 0;
   for(int iPt = 0; iPt < mNumPtBinIsoPhiFlow; ++iPt)
@@ -279,8 +280,8 @@ double StPhiMesonHistoManger::transPsi2(double phi, double Psi2)
 {
   const double phiPsi2 = phi - Psi2; // [-3pi/2,3pi/2]
   double phiPsi2Corr = phiPsi2;
-  if(Psi2 >  TMath::Pi()/2.0) phiPsi2Corr = phiPsi2 - TMath::Pi();
-  if(Psi2 < -TMath::Pi()/2.0) phiPsi2Corr = phiPsi2 + TMath::Pi();
+  if(phiPsi2 >  TMath::Pi()/2.0) phiPsi2Corr = phiPsi2 - TMath::Pi();
+  if(phiPsi2 < -TMath::Pi()/2.0) phiPsi2Corr = phiPsi2 + TMath::Pi();
 
   return phiPsi2Corr;
 }
@@ -324,8 +325,8 @@ double StPhiMesonHistoManger::transPsi3(double phi, double Psi3)
   double phiPsi3Corr = phiPsi3;
   if(phiPsi3 >  TMath::Pi()) phiPsi3Corr = phiPsi3 - 2.0*TMath::TwoPi()/3.0;
   if(phiPsi3 < -TMath::Pi()) phiPsi3Corr = phiPsi3 + 2.0*TMath::TwoPi()/3.0;
-  if(phiPsi3 >  TMath::Pi()/3.0 && phiPsi3 <= TMath::Pi()) phiPsi3Corr = phiPsi3 - TMath::TwoPi()/3.0;
-  if(phiPsi3 < -TMath::Pi()/3.0 && phiPsi3 >= TMath::Pi()) phiPsi3Corr = phiPsi3 + TMath::TwoPi()/3.0;
+  if(phiPsi3 >  TMath::Pi()/3.0 && phiPsi3 <=  TMath::Pi()) phiPsi3Corr = phiPsi3 - TMath::TwoPi()/3.0;
+  if(phiPsi3 < -TMath::Pi()/3.0 && phiPsi3 >= -TMath::Pi()) phiPsi3Corr = phiPsi3 + TMath::TwoPi()/3.0;
 
   return phiPsi3Corr;
 }
@@ -333,6 +334,156 @@ double StPhiMesonHistoManger::transPsi3(double phi, double Psi3)
 bool StPhiMesonHistoManger::isPsi3InRange(double phiPsi3)
 {
   if(phiPsi3 < -TMath::Pi()/3.0 || phiPsi3 > TMath::Pi()/3.0)
+  {
+    return false;
+  }
+
+  return true;
+}
+//-------------------------------------------------------------
+void StPhiMesonHistoManger::initFxtPhiFlow()
+{
+  for(int iCent = 0; iCent < mNumCentBinFxtPhiFlow; ++iCent)
+  {
+    for(int iPt = 0; iPt < mNumPtBinFxtPhiFlow; ++iPt)
+    {
+      for(int iPsi = 0; iPsi < mNumPsiBinFxtPhiFlow; ++iPsi)
+      {
+	std::string fxtPhiV2Key = Form("h_mInvMassFxtPhiV2%sCent%dPt%dPsi%d",str_mMixEvt[mFlagME].c_str(),iCent,iPt,iPsi);
+	h_mInvMassFxtPhiV2[fxtPhiV2Key] = new TH1F(fxtPhiV2Key.c_str(),fxtPhiV2Key.c_str(),anaUtils::mNumInvMassPhi,anaUtils::mMassPhiMin,anaUtils::mMassPhiMax);
+      }
+    }
+  }
+
+  for(int iCent = 0; iCent < mNumCentBinFxtPhiYileds; ++iCent)
+  {
+    for(int iPt = 0; iPt < mNumPtBinFxtPhiFlow; ++iPt)
+    {
+      std::string fxtPhiYieldsKey = Form("h_mInvMassFxtPhiYields%sCent%dPt%d",str_mMixEvt[mFlagME].c_str(),iCent,iPt);
+      h_mInvMassFxtPhiYields[fxtPhiYieldsKey] = new TH1F(fxtPhiYieldsKey.c_str(),fxtPhiYieldsKey.c_str(),anaUtils::mNumInvMassPhi,anaUtils::mMassPhiMin,anaUtils::mMassPhiMax);
+    }
+  }
+}
+
+void StPhiMesonHistoManger::fillFxtPhiV2(int cent9, double pt, double yCms, double phi, double Psi1, double invMass, double res12, double refWgt)
+{
+  int centBin = getCentBinFxtPhiFlow(cent9);
+  int ptBin   = getPtBinFxtPhiFlow(pt);
+  int PsiBin  = getPsi12BinFxtPhiFlow(phi,Psi1);
+
+  if(centBin > 0 && ptBin >= 0 && PsiBin >= 0)
+  {
+    std::string fxtPhiV2CentKey = Form("h_mInvMassFxtPhiV2%sCent%dPt%dPsi%d",str_mMixEvt[mFlagME].c_str(),centBin,ptBin,PsiBin);
+    h_mInvMassFxtPhiV2[fxtPhiV2CentKey]->Fill(invMass,refWgt/res12); // centrality dependence
+
+    std::string fxtPhiV2MinBiasKey = Form("h_mInvMassFxtPhiV2%sCent0Pt%dPsi%d",str_mMixEvt[mFlagME].c_str(),ptBin,PsiBin);
+    h_mInvMassFxtPhiV2[fxtPhiV2MinBiasKey]->Fill(invMass,refWgt/res12); // minimum bias
+  }
+}
+
+void StPhiMesonHistoManger::fillFxtPhiYields(int cent9, double pt, double yCms, double invMass, double refWgt)
+{
+  int ptBin   = getPtBinFxtPhiFlow(pt);
+
+  if(ptBin >= 0)
+  {
+    std::string fxtPhiYieldsKey = Form("h_mInvMassFxtPhiYields%sCent%dPt%d",str_mMixEvt[mFlagME].c_str(),cent9,ptBin);
+    h_mInvMassFxtPhiYields[fxtPhiYieldsKey]->Fill(invMass,refWgt);
+  }
+}
+
+void StPhiMesonHistoManger::writeFxtPhiFlow()
+{
+  for(int iCent = 0; iCent < mNumCentBinFxtPhiFlow; ++iCent)
+  {
+    for(int iPt = 0; iPt < mNumPtBinFxtPhiFlow; ++iPt)
+    {
+      for(int iPsi = 0; iPsi < mNumPsiBinFxtPhiFlow; ++iPsi)
+      {
+	std::string fxtPhiV2Key = Form("h_mInvMassFxtPhiV2%sCent%dPt%dPsi%d",str_mMixEvt[mFlagME].c_str(),iCent,iPt,iPsi);
+	h_mInvMassFxtPhiV2[fxtPhiV2Key]->Write();
+      }
+    }
+  }
+
+  for(int iCent = 0; iCent < mNumCentBinFxtPhiYileds; ++iCent)
+  {
+    for(int iPt = 0; iPt < mNumPtBinFxtPhiFlow; ++iPt)
+    {
+      std::string fxtPhiYieldsKey = Form("h_mInvMassFxtPhiYields%sCent%dPt%d",str_mMixEvt[mFlagME].c_str(),iCent,iPt);
+      h_mInvMassFxtPhiYields[fxtPhiYieldsKey]->Write();
+    }
+  }
+}
+
+int StPhiMesonHistoManger::getCentBinFxtPhiFlow(int cent9)
+{
+  int centBin = -1;
+
+  if(cent9 >= 7 && cent9 <= 8) return 1; //  0-10%
+  if(cent9 >= 4 && cent9 <= 6) return 2; // 10-40%
+  if(cent9 >= 2 && cent9 <= 3) return 3; // 40-60%
+
+  return centBin;
+}
+
+int StPhiMesonHistoManger::getPtBinFxtPhiFlow(double pt)
+{
+  int ptBin = -1;
+
+  const double ptLo[mNumPtBinFxtPhiFlow] = {0.4,0.5,0.6,0.8,1.0,1.2,1.4,1.6,1.8,2.0};
+  const double ptHi[mNumPtBinFxtPhiFlow] = {0.5,0.6,0.8,1.0,1.2,1.4,1.6,1.8,2.0,3.0};
+
+  if(std::abs(pt-ptLo[0]) < std::numeric_limits<double>::epsilon()) ptBin = 0;
+  for(int iPt = 0; iPt < mNumPtBinFxtPhiFlow; ++iPt)
+  {
+    if((pt > ptLo[iPt]) && (pt <= ptHi[iPt]))
+    {
+      ptBin = iPt;
+    }
+  }
+
+  return ptBin;
+}
+
+int StPhiMesonHistoManger::getPsi12BinFxtPhiFlow(double phi, double Psi1)
+{
+  int PsiBin = -1;
+
+  const double phiPsi12 = transPsi12(phi,Psi1); // [-pi/2,pi/2]
+  if(!isPsi12InRange(phiPsi12)) return PsiBin;
+  
+  const double phiPsiMin      = 0.0;
+  const double phiPsiMax      = TMath::Pi()/2.0;
+  const double phiPsiBinWidth = (phiPsiMax-phiPsiMin)/(double)mNumPsiBinFxtPhiFlow; // pi/10
+
+  if(std::abs(std::abs(phiPsi12)-phiPsiMin) < std::numeric_limits<double>::epsilon()) PsiBin = 0;
+  for(int iPsi = 0; iPsi < mNumPsiBinFxtPhiFlow; ++iPsi)
+  {
+    if((std::abs(phiPsi12) > phiPsiMin+iPsi*phiPsiBinWidth) && (std::abs(phiPsi12) <= phiPsiMin+(iPsi+1)*phiPsiBinWidth))
+    {
+      PsiBin = iPsi;
+    }
+  }
+
+  return PsiBin;
+}
+
+double StPhiMesonHistoManger::transPsi12(double phi, double Psi1)
+{
+  const double phiPsi12 = phi - Psi1; // [-2pi,2pi]
+  double phiPsi12Corr = phiPsi12;
+  if(phiPsi12 >  3.0*TMath::Pi()/2.0) phiPsi12Corr = phiPsi12 - 2.0*TMath::Pi();
+  if(phiPsi12 < -3.0*TMath::Pi()/2.0) phiPsi12Corr = phiPsi12 + 2.0*TMath::Pi();
+  if(phiPsi12 >  TMath::Pi()/2.0 && phiPsi12 <=  3.0*TMath::Pi()/2.0) phiPsi12Corr = phiPsi12 - TMath::Pi();
+  if(phiPsi12 < -TMath::Pi()/2.0 && phiPsi12 >= -3.0*TMath::Pi()/2.0) phiPsi12Corr = phiPsi12 + TMath::Pi();
+
+  return phiPsi12Corr;
+}
+
+bool StPhiMesonHistoManger::isPsi12InRange(double phiPsi12)
+{
+  if(phiPsi2 < -TMath::Pi()/2.0 || phiPsi2 > TMath::Pi()/2.0)
   {
     return false;
   }

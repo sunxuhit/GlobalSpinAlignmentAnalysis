@@ -18,6 +18,30 @@
 #include "StRoot/StAnalysisUtils/StAnalysisCons.h"
 #include "StRoot/StEventPlaneMaker/StMixEpManager.h"
 
+double funcMixEp1Res1(double *x_val, double *par)
+{
+  double chi = x_val[0];
+  double arg = chi*chi/4.0;
+  double norm = TMath::Sqrt(TMath::Pi()/2.0)/2.0;
+
+  double res1Full = norm*chi*TMath::Exp(-1.0*arg)*(TMath::BesselI0(arg)+TMath::BesselI1(arg));
+
+  return res1Full;
+}
+
+double funcMixEp1Res2(double *x_val, double *par)
+{
+  double chi = x_val[0];
+  double arg = chi*chi/4.0;
+  double norm = TMath::Sqrt(TMath::Pi())/(2.0*TMath::Sqrt(2.0));
+  double besselOneHalf = TMath::Sqrt(2.0*arg/TMath::Pi())*TMath::SinH(arg)/arg;
+  double besselThreeHalf = TMath::Sqrt(2.0*arg/TMath::Pi())*(TMath::CosH(arg)/arg-TMath::SinH(arg)/(arg*arg));
+
+  double res12Sub = norm*chi*TMath::Exp(-1.0*arg)*(besselOneHalf+besselThreeHalf);
+
+  return res12Sub;
+}
+
 ClassImp(StMixEpManager)
 
 //---------------------------------------------------------------------------------
@@ -33,14 +57,14 @@ StMixEpManager::~StMixEpManager()
 //---------------------------------------------------------------------------------
 void StMixEpManager::clearMixEpManager()
 {
-  mCent9 = -1;
+  mCent9    = -1;
   mRunIndex = -1;
-  mVzBin = -1;
+  mVzBin    = -1;
 }
 
 void StMixEpManager::initMixEpManager(int cent9, int runIndex, int vzBin)
 {
-  mCent9 = cent9;
+  mCent9    = cent9;
   mRunIndex = runIndex;
   mVzBin    = vzBin;
 }
@@ -128,26 +152,42 @@ void StMixEpManager::readMixEpRes()
   {
     for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
     {
-      mMixSubEp1ResVal[iCent][iGrp]  = 0.0;
-      mMixSubEp1ResErr[iCent][iGrp]  = 0.0;
+      mMixSubEp1Res1Val[iCent][iGrp] = 0.0;
+      mMixSubEp1Res1Err[iCent][iGrp] = 0.0;
+      mMixSubEp1Res2Val[iCent][iGrp] = 0.0;
+      mMixSubEp1Res2Err[iCent][iGrp] = 0.0;
     }
   }
+
+  TF1 *f_MixEp1Res1 = new TF1("f_MixEp1Res1",funcMixEp1Res1,0,10,0);
+  TF1 *f_MixEp1Res2 = new TF1("f_MixEp1Res2",funcMixEp1Res2,0,10,0);
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     for(int iGrp = 0; iGrp < mNumEpGroup; ++iGrp)
     {
-      double valRes1Sub  = -999.9;
-      double errRes1Sub  = 1.0;
+      double valRes1Sub = -999.9;
+      double errRes1Sub = 1.0;
       double valRes1Raw = valRes1Temp[iCent][iGrp];
       double errRes1Raw = errRes1Temp[iCent][iGrp];
 
-      if(valRes1Raw > 0)
+      double valRes12Sub = -999.9;
+      double errRes12Sub = 1.0;
+
+      if(valRes1Raw > 0 && valRes1Raw < 1.0)
       {
 	valRes1Sub = TMath::Sqrt(valRes1Raw);
 	errRes1Sub = errRes1Raw/(2.0*valRes1Sub);
+
+	double chi1Sub    = f_MixEp1Res1->GetX(valRes1Sub); // calculate 2nd EP Res
+	valRes12Sub       = f_MixEp1Res2->Eval(chi1Sub);
+	double errChi1Sub = errRes1Sub/f_MixEp1Res1->Derivative(chi1Sub); // error propagation
+	errRes12Sub       = f_MixEp1Res2->Derivative(chi1Sub)*errChi1Sub;
       }
-      mMixSubEp1ResVal[iCent][iGrp]  = valRes1Sub;
-      mMixSubEp1ResErr[iCent][iGrp]  = errRes1Sub;
+
+      mMixSubEp1Res1Val[iCent][iGrp] = valRes1Sub;
+      mMixSubEp1Res1Err[iCent][iGrp] = errRes1Sub;
+      mMixSubEp1Res2Val[iCent][iGrp] = valRes12Sub;
+      mMixSubEp1Res2Err[iCent][iGrp] = errRes12Sub;
     }
   }
   file_mResolution->Close();
@@ -167,14 +207,24 @@ double StMixEpManager::propMixEpResErr(double valA, double sigA, double valB, do
   return sigABdivC;
 }
 
-double StMixEpManager::getMixSubEp1ResVal(int cent9, int grpId)
+double StMixEpManager::getMixSubEp1Res1Val(int cent9, int grpId)
 {
-  return mMixSubEp1ResVal[cent9][grpId];
+  return mMixSubEp1Res1Val[cent9][grpId];
 }
 
-double StMixEpManager::getMixSubEp1ResErr(int cent9, int grpId)
+double StMixEpManager::getMixSubEp1Res1Err(int cent9, int grpId)
 {
-  return mMixSubEp1ResErr[cent9][grpId];
+  return mMixSubEp1Res1Err[cent9][grpId];
+}
+
+double StMixEpManager::getMixSubEp1Res2Val(int cent9, int grpId)
+{
+  return mMixSubEp1Res2Val[cent9][grpId];
+}
+
+double StMixEpManager::getMixSubEp1Res2Err(int cent9, int grpId)
+{
+  return mMixSubEp1Res2Err[cent9][grpId];
 }
 //---------------------------------------------------------------------------------
 // deutron Directed Flow

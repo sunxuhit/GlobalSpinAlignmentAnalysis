@@ -31,7 +31,7 @@ StRunQAMaker::StRunQAMaker(const char* name, StPicoDstMaker *picoMaker, string j
   mRefMultCorr       = NULL;
   mPileupUtilFxt3p85 = NULL;
 
-  str_mOutPutRunQA = Form("./file_%s_RunQA_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
+  str_mOutPutRunQA = Form("./file_RunQA_%s_%s.root",globCons::str_mBeamType[mType].c_str(),jobId.c_str());
 }
 
 //----------------------------------------------------------------------------- 

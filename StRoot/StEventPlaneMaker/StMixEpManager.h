@@ -20,8 +20,10 @@ class StMixEpManager : public TObject
     void writeMixEpRes();
     void readMixEpRes();
     double propMixEpResErr(double valA, double sigA, double valB, double sigB, double valC, double sigC); // return the error of valSubResA*valSubResB/valSubResC
-    double getMixSubEp1ResVal(int cent9, int grpId);
-    double getMixSubEp1ResErr(int cent9, int grpId);
+    double getMixSubEp1Res1Val(int cent9, int grpId);
+    double getMixSubEp1Res1Err(int cent9, int grpId);
+    double getMixSubEp1Res2Val(int cent9, int grpId);
+    double getMixSubEp1Res2Err(int cent9, int grpId);
 
     // Deuteron Directed Flow
     void initMixSubEpFlow(); // Sub EP
@@ -51,8 +53,10 @@ class StMixEpManager : public TObject
     TProfile *p_mMixSubEp1Res[mNumEpGroup]; // 1st EP
     // 0: EpdEpGrp0 vs. EpdEpGrp1 && TpcEpWest (default) | 1: EpdEpGrp0 vs. EpdEpGrp1 && TpcEpEast | 2: EpdEpGrp0 vs. TpcEpEast && TpcEpWest
     // 3: EpdEpGrp1 vs. EpdEpGrp0 && TpcEpWest (mainSys) | 4: EpdEpGrp1 vs. EpdEpGrp0 && TpcEpEast | 5: EpdEpGrp1 vs. TpcEpEast && TpcEpWest
-    double mMixSubEp1ResVal[mNumCentrality][mNumEpGroup];
-    double mMixSubEp1ResErr[mNumCentrality][mNumEpGroup];
+    double mMixSubEp1Res1Val[mNumCentrality][mNumEpGroup];
+    double mMixSubEp1Res1Err[mNumCentrality][mNumEpGroup];
+    double mMixSubEp1Res2Val[mNumCentrality][mNumEpGroup];
+    double mMixSubEp1Res2Err[mNumCentrality][mNumEpGroup];
 
     // deutron Directed Flow
     TProfile *p_mMixSubEpDeuV1; // deutron v1(EpdEpGrp0) vs. rap

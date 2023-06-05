@@ -38,12 +38,12 @@ class StPhiMesonHistoManger
     bool isPsi2InRange(double phiPsi2);
     bool isPsi3InRange(double phiPsi3);
 
-    // void initFxtPhiFlow(); // Fxt3p85_2018
-    // void fillFxtPhiV2(int cent9, double pt, double yCms, double phi, double Psi1, double invMass, double refWgt);
-    // void writeFxtPhiFlow();
-    // int getFxtCentBinPhiFlow(int cent9);
-    // int getFxtPtBinPhiFlow(double pt);
-    // int getFxtPsi1BinPhiFlow(double phi, double Psi1);
+    void initFxtPhiFlow(); // Fxt3p85_2018
+    void fillFxtPhiV2(int cent9, double pt, double yCms, double phi, double Psi1, double invMass, double res2, double refWgt);
+    void writeFxtPhiFlow();
+    int getCentBinFxtPhiFlow(int cent9);
+    int getPtBinFxtPhiFlow(double pt);
+    int getPsi12BinFxtPhiFlow(double phi, double Psi1);
 
   private:
     static const int mNumCentBinQA = 10; // 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%, 9: 20-60%
@@ -51,9 +51,14 @@ class StPhiMesonHistoManger
     static const int mNumRapBinQA  = 25; // 25 bins from -1.25 to 1.25
 
     static const int mNumCentBinIsoPhiFlow   = 4;  // 0: 0%-80%, 1: 0-10%, 2: 10-40%, 3: 40-80%
-    static const int mNumPtBinIsoPhiFlow     = 10; // [0.4,0.8],(0.8,1.2],(1.2,1.6],(1.6,2.0],(2.0,2.4],(2.4,2.8],(2.8,3.2],(3.2,3.8],(3.8,4.6],(4.6,7.2]
+    static const int mNumPtBinIsoPhiFlow     = 20; // 0.4 - 7.2 GeV/c
     static const int mNumPsiBinIsoPhiFlow    = 7;  // [0,pi/2] for v2 | [0,pi/3] for v3
-    static const int mNumCentBinIsoPhiYileds = 9; // 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%
+    static const int mNumCentBinIsoPhiYileds = 9;  // 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%
+
+    static const int mNumCentBinFxtPhiFlow   = 4;  // 0: 0%-60%, 1: 0-10%, 2: 10-40%, 3: 40-60%
+    static const int mNumPtBinFxtPhiFlow     = 10; // 0.4 - 3.0 GeV/c
+    static const int mNumPsiBinFxtPhiFlow    = 5;  // [0,pi/2] for v2
+    static const int mNumCentBinFxtPhiYileds = 9;  // 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%
 
     // QA histograms
     TH2F* h_mInvMassPhiQA[mNumCentBinQA]; // pT vs. invMass
@@ -65,9 +70,9 @@ class StPhiMesonHistoManger
     std::map<string,TH1F*> h_mAcptPhiCms;
 
     // Isobar phi Flow histograms
-    // 0 = centrality: 0: 0%-80%, 1: 0-10%, 2: 10-40%, 3: 40-80% for Isobar | 0: 0-60%, 1: 0-10%, 2: 10-40%, 3: 40-60%
+    // 0 = centrality: 0: 0%-80%, 1: 0-10%, 2: 10-40%, 3: 40-80% for Isobar
     // 1 = pt bin
-    // 2 = phi-Psi: 7 bins for Isobar v2 & v3 | 5 bins for FXT v2
+    // 2 = phi-Psi: 7 bins for Isobar v2 & v3
     std::map<string,TH1F*> h_mInvMassIsoPhiV2;
     std::map<string,TH1F*> h_mInvMassIsoPhiV3;
     // Isobar phi Yields histograms
@@ -75,8 +80,15 @@ class StPhiMesonHistoManger
     // 1 = pt bin
     std::map<string,TH1F*> h_mInvMassIsoPhiYields;
 
-
-    // std::map<string,TH1F*> h_mInvMassFxtPhiV2;
+    // FXT phi Flow histograms
+    // 0 = centrality: 0: 0-60%, 1: 0-10%, 2: 10-40%, 3: 40-60%
+    // 1 = pt bin
+    // 2 = phi-Psi: 5 bins for FXT v2
+    std::map<string,TH1F*> h_mInvMassFxtPhiV2;
+    // Isobar phi Yields histograms
+    // 0 = centrality: 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%
+    // 1 = pt bin
+    std::map<string,TH1F*> h_mInvMassFxtPhiYields;
 
     const int mType;
     const int mFlagME; // 0 for Same Event, 1 for Mixed Event
