@@ -188,7 +188,7 @@ void StPhiMesonHistoManger::fillIsoPhiV3(int cent9, double pt, double yCms, doub
 
 void StPhiMesonHistoManger::fillIsoPhiYields(int cent9, double pt, double yCms, double invMass, double refWgt)
 {
-  int ptBin   = getPtBinIsoPhiFlow(pt);
+  int ptBin = getPtBinIsoPhiFlow(pt);
 
   if(ptBin >= 0)
   {
@@ -383,7 +383,7 @@ void StPhiMesonHistoManger::fillFxtPhiV2(int cent9, double pt, double yCms, doub
 
 void StPhiMesonHistoManger::fillFxtPhiYields(int cent9, double pt, double yCms, double invMass, double refWgt)
 {
-  int ptBin   = getPtBinFxtPhiFlow(pt);
+  int ptBin = getPtBinFxtPhiFlow(pt);
 
   if(ptBin >= 0)
   {
@@ -483,7 +483,7 @@ double StPhiMesonHistoManger::transPsi12(double phi, double Psi1)
 
 bool StPhiMesonHistoManger::isPsi12InRange(double phiPsi12)
 {
-  if(phiPsi2 < -TMath::Pi()/2.0 || phiPsi2 > TMath::Pi()/2.0)
+  if(phiPsi12 < -TMath::Pi()/2.0 || phiPsi12 > TMath::Pi()/2.0)
   {
     return false;
   }

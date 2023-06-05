@@ -39,11 +39,14 @@ class StPhiMesonHistoManger
     bool isPsi3InRange(double phiPsi3);
 
     void initFxtPhiFlow(); // Fxt3p85_2018
-    void fillFxtPhiV2(int cent9, double pt, double yCms, double phi, double Psi1, double invMass, double res2, double refWgt);
+    void fillFxtPhiV2(int cent9, double pt, double yCms, double phi, double Psi1, double invMass, double res12, double refWgt);
+    void fillFxtPhiYields(int cent9, double pt, double yCms, double invMass, double refWgt);
     void writeFxtPhiFlow();
     int getCentBinFxtPhiFlow(int cent9);
     int getPtBinFxtPhiFlow(double pt);
     int getPsi12BinFxtPhiFlow(double phi, double Psi1);
+    double transPsi12(double phi, double Psi1);
+    bool isPsi12InRange(double phiPsi12);
 
   private:
     static const int mNumCentBinQA = 10; // 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%, 9: 20-60%
