@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<job minFilesPerProcess="50" filesPerHour="5" maxFilesPerProcess="100" fileListSyntax="xrootd" simulateSubmission="false">
+<job minFilesPerProcess="20" filesPerHour="2" maxFilesPerProcess="25" fileListSyntax="xrootd" simulateSubmission="false">
 
   <command>
     <!-- starver &#38;library; -->
-    root4star -l -b -q RunQA.C\(\"$FILELIST\",\"$JOBID\",&beamType;\)&gt;&amp; ${JOBID}.log
+    root4star -l -b -q fillRunQA.C\(\"$FILELIST\",\"$JOBID\",&beamType;\)&gt;&amp; ${JOBID}.log
   </command>
 
   <SandBox installer="ZIP">
     <Package>
-      <File>file:&codePath;/macro/RunQA/RunQA.C</File>
+      <File>file:&codePath;/macro/RunQA/fillRunQA.C</File>
       <File>file:&codePath;/.sl73_gcc485/</File>
       <File>file:&codePath;/StRoot/</File>
       <File>file:&codePath;/Utility/</File>
     </Package>
   </SandBox>
 
-  <input URL="filelist:&listPath;/pico_xrootd_production.list" />
-  <!-- <input URL="catalog:star.bnl.gov?production=P19ie,library=SL20d,trgsetupname=production_3p85GeV_fixedTarget_2018,collision=AuAu8,filetype=daq_reco_picoDst,storage!=hpss,filename~st_physics" preferStorage="local" singleCopy="true" nFiles="all"/> -->
+  <input URL="filelist:&listPath;/pico_xrootd_full.list" />
 
-  <stdout discard="true"/>
+  <!-- <stdout discard="true"/> -->
   <stdout URL="file:&outPath;/Log/$JOBID.out"/>
   <stderr URL="file:&outPath;/Log/$JOBID.err"/>
 
