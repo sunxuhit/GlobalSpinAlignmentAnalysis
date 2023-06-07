@@ -8,7 +8,7 @@
 
 int genRunIndex(int beamType = 0)
 {
-  const int numOfRuns = globCons::mMaxRunIndex[beamType];
+  const int numOfRuns = globCons::mNumRunIndex[beamType];
   int runId[numOfRuns];
   int runIndex[numOfRuns];
   for(int i_run = 0; i_run < numOfRuns; ++i_run)
