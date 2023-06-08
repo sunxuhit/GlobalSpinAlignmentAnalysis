@@ -20,7 +20,7 @@ class StRunQAProManager
 
   private:
     static const int mNumCuts = 2; // 0: before cuts | 1: after cuts
-    static const int mNumTriggerBins = 10; // 0-8 for different triggerID | 9 for all triggers
+    static const int mNumTriggerBins = 5; // 0-3 for different triggerID | 4 for all triggers
 
     // Run-by-Run QA | x axis is RunIndex
     TProfile *p_mRefMult[mNumCuts][mNumTriggerBins];

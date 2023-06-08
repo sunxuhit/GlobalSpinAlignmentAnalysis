@@ -224,7 +224,7 @@ int StRunQAMaker::Make()
 	mRunQAHistoManager->fillTrkQaFlowCut(triggerBin, primMom, isFlowFull, isFlowEast, isFlowWest, 1);
 	mRunQAHistoManager->fillTrkQaKaonCut(triggerBin, primMom, nSigKaon, isKaonFull, isKaonEast, isKaonWest, 1);
 
-	if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx) )
+	if( mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx) )
 	{
 	  if(charge > 0) // K+
 	  {

@@ -7,7 +7,8 @@ if [ $# -eq 0 ]
 then
   BeamType=RuRu200GeV_2018
   JobId=6ACCCE7CCDD4AC9C315BBFC84DB94902 #generate faild list for this Job
-  Task=EventPlaneMaker
+  Task=RunQA
+  # Task=EventPlaneMaker
   # Task=PhiMesonMaker
 
   LogDirectory="/star/u/sunxuhit/$BeamType/SpinAlignment/${Task}/Log"
