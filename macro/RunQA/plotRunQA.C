@@ -12,7 +12,7 @@ using namespace std;
 
 static const string CutStatus[2] = {"Bf","Af"};
 static const int numCuts = 2; // 0: before cuts | 1: after cuts
-static const int numTriggerBins = 10; // 0-8 for different triggerID | 9 for all triggers
+static const int numTriggerBins = 5; // 0-3 for different triggerID | 4 for all triggers
 
 void plotRunQA(int beamType = 2)
 {
@@ -38,7 +38,7 @@ void plotRunQA(int beamType = 2)
   }
   const int numOfTriggers = (int)vecTriggerID.size();
 
-  string inputfile = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/RunQA/%s/file_%s_RunQA.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string inputfile = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/RunQA/%s/file_RunQA_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
 
   TH1F *h_mTriggerId[2]; // 0: before cuts | 1: after cuts
@@ -133,18 +133,18 @@ void plotRunQA(int beamType = 2)
 
   { // refMult
     c_RunQA->Clear();
-    p_mRefMult[1][9]->SetTitle("refMult vs. runIndex");
-    p_mRefMult[1][9]->SetStats(0);
-    p_mRefMult[1][9]->SetMarkerColor(1);
-    p_mRefMult[1][9]->SetMarkerStyle(20);
-    p_mRefMult[1][9]->SetMarkerSize(1.0);
-    p_mRefMult[1][9]->SetLineColor(1);
-    p_mRefMult[1][9]->GetXaxis()->SetTitle("runIndex");
-    p_mRefMult[1][9]->GetYaxis()->SetTitle("<refMult>");
-    p_mRefMult[1][9]->GetYaxis()->SetRangeUser(0,400);
-    if(beamType == 2) p_mRefMult[1][9]->GetYaxis()->SetRangeUser(0,200);
-    p_mRefMult[1][9]->Draw("pE");
-    leg->AddEntry(p_mRefMult[1][9],"All Triggers","P");
+    p_mRefMult[1][numTriggerBins-1]->SetTitle("refMult vs. runIndex");
+    p_mRefMult[1][numTriggerBins-1]->SetStats(0);
+    p_mRefMult[1][numTriggerBins-1]->SetMarkerColor(1);
+    p_mRefMult[1][numTriggerBins-1]->SetMarkerStyle(20);
+    p_mRefMult[1][numTriggerBins-1]->SetMarkerSize(1.0);
+    p_mRefMult[1][numTriggerBins-1]->SetLineColor(1);
+    p_mRefMult[1][numTriggerBins-1]->GetXaxis()->SetTitle("runIndex");
+    p_mRefMult[1][numTriggerBins-1]->GetYaxis()->SetTitle("<refMult>");
+    p_mRefMult[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(0,400);
+    if(beamType == 2) p_mRefMult[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(0,200);
+    p_mRefMult[1][numTriggerBins-1]->Draw("pE");
+    leg->AddEntry(p_mRefMult[1][numTriggerBins-1],"All Triggers","P");
 
     for(int iTrig = 0; iTrig < numOfTriggers; ++iTrig)
     {
@@ -165,17 +165,17 @@ void plotRunQA(int beamType = 2)
   {
     // global refMult
     c_RunQA->Clear();
-    p_mGRefMult[1][9]->SetTitle("grefMult vs. runIndex");
-    p_mGRefMult[1][9]->SetStats(0);
-    p_mGRefMult[1][9]->SetMarkerColor(1);
-    p_mGRefMult[1][9]->SetMarkerStyle(20);
-    p_mGRefMult[1][9]->SetMarkerSize(1.0);
-    p_mGRefMult[1][9]->SetLineColor(1);
-    p_mGRefMult[1][9]->GetXaxis()->SetTitle("runIndex");
-    p_mGRefMult[1][9]->GetYaxis()->SetTitle("<grefMult>");
-    p_mGRefMult[1][9]->GetYaxis()->SetRangeUser(0,400);
-    if(beamType == 2) p_mGRefMult[1][9]->GetYaxis()->SetRangeUser(0,200);
-    p_mGRefMult[1][9]->Draw("pE");
+    p_mGRefMult[1][numTriggerBins-1]->SetTitle("grefMult vs. runIndex");
+    p_mGRefMult[1][numTriggerBins-1]->SetStats(0);
+    p_mGRefMult[1][numTriggerBins-1]->SetMarkerColor(1);
+    p_mGRefMult[1][numTriggerBins-1]->SetMarkerStyle(20);
+    p_mGRefMult[1][numTriggerBins-1]->SetMarkerSize(1.0);
+    p_mGRefMult[1][numTriggerBins-1]->SetLineColor(1);
+    p_mGRefMult[1][numTriggerBins-1]->GetXaxis()->SetTitle("runIndex");
+    p_mGRefMult[1][numTriggerBins-1]->GetYaxis()->SetTitle("<grefMult>");
+    p_mGRefMult[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(0,400);
+    if(beamType == 2) p_mGRefMult[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(0,200);
+    p_mGRefMult[1][numTriggerBins-1]->Draw("pE");
 
     for(int iTrig = 0; iTrig < numOfTriggers; ++iTrig)
     {
@@ -195,16 +195,16 @@ void plotRunQA(int beamType = 2)
   if(beamType == 0 || beamType == 1)
   {
     c_RunQA->Clear();
-    p_mZdcX[1][9]->SetTitle("ZdcX vs. runIndex");
-    p_mZdcX[1][9]->SetStats(0);
-    p_mZdcX[1][9]->SetMarkerColor(1);
-    p_mZdcX[1][9]->SetMarkerStyle(20);
-    p_mZdcX[1][9]->SetMarkerSize(1.0);
-    p_mZdcX[1][9]->SetLineColor(1);
-    p_mZdcX[1][9]->GetXaxis()->SetTitle("runIndex");
-    p_mZdcX[1][9]->GetYaxis()->SetTitle("<ZdcX>");
-    // p_mZdcX[1][9]->GetYaxis()->SetRangeUser(0,400);
-    p_mZdcX[1][9]->Draw("pE");
+    p_mZdcX[1][numOfTriggers-1]->SetTitle("ZdcX vs. runIndex");
+    p_mZdcX[1][numOfTriggers-1]->SetStats(0);
+    p_mZdcX[1][numOfTriggers-1]->SetMarkerColor(1);
+    p_mZdcX[1][numOfTriggers-1]->SetMarkerStyle(20);
+    p_mZdcX[1][numOfTriggers-1]->SetMarkerSize(1.0);
+    p_mZdcX[1][numOfTriggers-1]->SetLineColor(1);
+    p_mZdcX[1][numOfTriggers-1]->GetXaxis()->SetTitle("runIndex");
+    p_mZdcX[1][numOfTriggers-1]->GetYaxis()->SetTitle("<ZdcX>");
+    // p_mZdcX[1][numOfTriggers-1]->GetYaxis()->SetRangeUser(0,400);
+    p_mZdcX[1][numOfTriggers-1]->Draw("pE");
 
     for(int iTrig = 0; iTrig < numOfTriggers; ++iTrig)
     {
@@ -223,17 +223,17 @@ void plotRunQA(int beamType = 2)
 
   {
     c_RunQA->Clear();
-    p_mVz[1][9]->SetTitle("Vz vs. runIndex");
-    p_mVz[1][9]->SetStats(0);
-    p_mVz[1][9]->SetMarkerColor(1);
-    p_mVz[1][9]->SetMarkerStyle(20);
-    p_mVz[1][9]->SetMarkerSize(1.0);
-    p_mVz[1][9]->SetLineColor(1);
-    p_mVz[1][9]->GetXaxis()->SetTitle("runIndex");
-    p_mVz[1][9]->GetYaxis()->SetTitle("<Vz>");
-    p_mVz[1][9]->GetYaxis()->SetRangeUser(-3.0,3.0);
-    if(beamType == 2) p_mVz[1][9]->GetYaxis()->SetRangeUser(195,205);
-    p_mVz[1][9]->Draw("pE");
+    p_mVz[1][numOfTriggers-1]->SetTitle("Vz vs. runIndex");
+    p_mVz[1][numOfTriggers-1]->SetStats(0);
+    p_mVz[1][numOfTriggers-1]->SetMarkerColor(1);
+    p_mVz[1][numOfTriggers-1]->SetMarkerStyle(20);
+    p_mVz[1][numOfTriggers-1]->SetMarkerSize(1.0);
+    p_mVz[1][numOfTriggers-1]->SetLineColor(1);
+    p_mVz[1][numOfTriggers-1]->GetXaxis()->SetTitle("runIndex");
+    p_mVz[1][numOfTriggers-1]->GetYaxis()->SetTitle("<Vz>");
+    p_mVz[1][numOfTriggers-1]->GetYaxis()->SetRangeUser(-3.0,3.0);
+    if(beamType == 2) p_mVz[1][numOfTriggers-1]->GetYaxis()->SetRangeUser(195,205);
+    p_mVz[1][numOfTriggers-1]->Draw("pE");
 
     for(int iTrig = 0; iTrig < numOfTriggers; ++iTrig)
     {
@@ -252,16 +252,16 @@ void plotRunQA(int beamType = 2)
 
   {
     c_RunQA->Clear();
-    p_mVr[1][9]->SetTitle("Vr vs. runIndex");
-    p_mVr[1][9]->SetStats(0);
-    p_mVr[1][9]->SetMarkerColor(1);
-    p_mVr[1][9]->SetMarkerStyle(20);
-    p_mVr[1][9]->SetMarkerSize(1.0);
-    p_mVr[1][9]->SetLineColor(1);
-    p_mVr[1][9]->GetXaxis()->SetTitle("runIndex");
-    p_mVr[1][9]->GetYaxis()->SetTitle("<Vr>");
-    p_mVr[1][9]->GetYaxis()->SetRangeUser(0.1,0.5);
-    p_mVr[1][9]->Draw("pE");
+    p_mVr[1][numOfTriggers-1]->SetTitle("Vr vs. runIndex");
+    p_mVr[1][numOfTriggers-1]->SetStats(0);
+    p_mVr[1][numOfTriggers-1]->SetMarkerColor(1);
+    p_mVr[1][numOfTriggers-1]->SetMarkerStyle(20);
+    p_mVr[1][numOfTriggers-1]->SetMarkerSize(1.0);
+    p_mVr[1][numOfTriggers-1]->SetLineColor(1);
+    p_mVr[1][numOfTriggers-1]->GetXaxis()->SetTitle("runIndex");
+    p_mVr[1][numOfTriggers-1]->GetYaxis()->SetTitle("<Vr>");
+    p_mVr[1][numOfTriggers-1]->GetYaxis()->SetRangeUser(0.1,0.5);
+    p_mVr[1][numOfTriggers-1]->Draw("pE");
 
     for(int iTrig = 0; iTrig < numOfTriggers; ++iTrig)
     {
@@ -280,16 +280,16 @@ void plotRunQA(int beamType = 2)
 
   {
     c_RunQA->Clear();
-    p_mGDca[1][9]->SetTitle("gDca vs. runIndex");
-    p_mGDca[1][9]->SetStats(0);
-    p_mGDca[1][9]->SetMarkerColor(1);
-    p_mGDca[1][9]->SetMarkerStyle(20);
-    p_mGDca[1][9]->SetMarkerSize(1.0);
-    p_mGDca[1][9]->SetLineColor(1);
-    p_mGDca[1][9]->GetXaxis()->SetTitle("runIndex");
-    p_mGDca[1][9]->GetYaxis()->SetTitle("<gDca>");
-    p_mGDca[1][9]->GetYaxis()->SetRangeUser(0.2,1.0);
-    p_mGDca[1][9]->Draw("pE");
+    p_mGDca[1][numOfTriggers-1]->SetTitle("gDca vs. runIndex");
+    p_mGDca[1][numOfTriggers-1]->SetStats(0);
+    p_mGDca[1][numOfTriggers-1]->SetMarkerColor(1);
+    p_mGDca[1][numOfTriggers-1]->SetMarkerStyle(20);
+    p_mGDca[1][numOfTriggers-1]->SetMarkerSize(1.0);
+    p_mGDca[1][numOfTriggers-1]->SetLineColor(1);
+    p_mGDca[1][numOfTriggers-1]->GetXaxis()->SetTitle("runIndex");
+    p_mGDca[1][numOfTriggers-1]->GetYaxis()->SetTitle("<gDca>");
+    p_mGDca[1][numOfTriggers-1]->GetYaxis()->SetRangeUser(0.2,1.0);
+    p_mGDca[1][numOfTriggers-1]->Draw("pE");
 
     for(int iTrig = 0; iTrig < numOfTriggers; ++iTrig)
     {
@@ -308,16 +308,16 @@ void plotRunQA(int beamType = 2)
 
   {
     c_RunQA->Clear();
-    p_mNHitsFit[1][9]->SetTitle("nHitsFit vs. runIndex");
-    p_mNHitsFit[1][9]->SetStats(0);
-    p_mNHitsFit[1][9]->SetMarkerColor(1);
-    p_mNHitsFit[1][9]->SetMarkerStyle(20);
-    p_mNHitsFit[1][9]->SetMarkerSize(1.0);
-    p_mNHitsFit[1][9]->SetLineColor(1);
-    p_mNHitsFit[1][9]->GetXaxis()->SetTitle("runIndex");
-    p_mNHitsFit[1][9]->GetYaxis()->SetTitle("<nHitsFit>");
-    p_mNHitsFit[1][9]->GetYaxis()->SetRangeUser(25,40);
-    p_mNHitsFit[1][9]->Draw("pE");
+    p_mNHitsFit[1][numOfTriggers-1]->SetTitle("nHitsFit vs. runIndex");
+    p_mNHitsFit[1][numOfTriggers-1]->SetStats(0);
+    p_mNHitsFit[1][numOfTriggers-1]->SetMarkerColor(1);
+    p_mNHitsFit[1][numOfTriggers-1]->SetMarkerStyle(20);
+    p_mNHitsFit[1][numOfTriggers-1]->SetMarkerSize(1.0);
+    p_mNHitsFit[1][numOfTriggers-1]->SetLineColor(1);
+    p_mNHitsFit[1][numOfTriggers-1]->GetXaxis()->SetTitle("runIndex");
+    p_mNHitsFit[1][numOfTriggers-1]->GetYaxis()->SetTitle("<nHitsFit>");
+    p_mNHitsFit[1][numOfTriggers-1]->GetYaxis()->SetRangeUser(25,40);
+    p_mNHitsFit[1][numOfTriggers-1]->Draw("pE");
 
     for(int iTrig = 0; iTrig < numOfTriggers; ++iTrig)
     {
@@ -337,16 +337,16 @@ void plotRunQA(int beamType = 2)
   //---------------------
   {
     c_RunQA->Clear();
-    p_mPrimPt[1][9]->SetTitle("primPt vs. runIndex");
-    p_mPrimPt[1][9]->SetStats(0);
-    p_mPrimPt[1][9]->SetMarkerColor(1);
-    p_mPrimPt[1][9]->SetMarkerStyle(20);
-    p_mPrimPt[1][9]->SetMarkerSize(1.0);
-    p_mPrimPt[1][9]->SetLineColor(1);
-    p_mPrimPt[1][9]->GetXaxis()->SetTitle("runIndex");
-    p_mPrimPt[1][9]->GetYaxis()->SetTitle("<p_{T}^{prim}>");
-    p_mPrimPt[1][9]->GetYaxis()->SetRangeUser(0.4,0.8);
-    p_mPrimPt[1][9]->Draw("pE");
+    p_mPrimPt[1][numOfTriggers-1]->SetTitle("primPt vs. runIndex");
+    p_mPrimPt[1][numOfTriggers-1]->SetStats(0);
+    p_mPrimPt[1][numOfTriggers-1]->SetMarkerColor(1);
+    p_mPrimPt[1][numOfTriggers-1]->SetMarkerStyle(20);
+    p_mPrimPt[1][numOfTriggers-1]->SetMarkerSize(1.0);
+    p_mPrimPt[1][numOfTriggers-1]->SetLineColor(1);
+    p_mPrimPt[1][numOfTriggers-1]->GetXaxis()->SetTitle("runIndex");
+    p_mPrimPt[1][numOfTriggers-1]->GetYaxis()->SetTitle("<p_{T}^{prim}>");
+    p_mPrimPt[1][numOfTriggers-1]->GetYaxis()->SetRangeUser(0.4,0.8);
+    p_mPrimPt[1][numOfTriggers-1]->Draw("pE");
 
     for(int iTrig = 0; iTrig < numOfTriggers; ++iTrig)
     {
@@ -365,17 +365,17 @@ void plotRunQA(int beamType = 2)
 
   {
     c_RunQA->Clear();
-    p_mPrimEta[1][9]->SetTitle("primEta vs. runIndex");
-    p_mPrimEta[1][9]->SetStats(0);
-    p_mPrimEta[1][9]->SetMarkerColor(1);
-    p_mPrimEta[1][9]->SetMarkerStyle(20);
-    p_mPrimEta[1][9]->SetMarkerSize(1.0);
-    p_mPrimEta[1][9]->SetLineColor(1);
-    p_mPrimEta[1][9]->GetXaxis()->SetTitle("runIndex");
-    p_mPrimEta[1][9]->GetYaxis()->SetTitle("<#eta^{prim}>");
-    p_mPrimEta[1][9]->GetYaxis()->SetRangeUser(-0.05,0.10);
-    if(beamType == 2) p_mPrimEta[1][9]->GetYaxis()->SetRangeUser(-2.0,0.0);
-    p_mPrimEta[1][9]->Draw("pE");
+    p_mPrimEta[1][numOfTriggers-1]->SetTitle("primEta vs. runIndex");
+    p_mPrimEta[1][numOfTriggers-1]->SetStats(0);
+    p_mPrimEta[1][numOfTriggers-1]->SetMarkerColor(1);
+    p_mPrimEta[1][numOfTriggers-1]->SetMarkerStyle(20);
+    p_mPrimEta[1][numOfTriggers-1]->SetMarkerSize(1.0);
+    p_mPrimEta[1][numOfTriggers-1]->SetLineColor(1);
+    p_mPrimEta[1][numOfTriggers-1]->GetXaxis()->SetTitle("runIndex");
+    p_mPrimEta[1][numOfTriggers-1]->GetYaxis()->SetTitle("<#eta^{prim}>");
+    p_mPrimEta[1][numOfTriggers-1]->GetYaxis()->SetRangeUser(-0.05,0.10);
+    if(beamType == 2) p_mPrimEta[1][numOfTriggers-1]->GetYaxis()->SetRangeUser(-2.0,0.0);
+    p_mPrimEta[1][numOfTriggers-1]->Draw("pE");
 
     for(int iTrig = 0; iTrig < numOfTriggers; ++iTrig)
     {
@@ -394,16 +394,16 @@ void plotRunQA(int beamType = 2)
 
   {
     c_RunQA->Clear();
-    p_mPrimPhi[1][9]->SetTitle("primPhi vs. runIndex");
-    p_mPrimPhi[1][9]->SetStats(0);
-    p_mPrimPhi[1][9]->SetMarkerColor(1);
-    p_mPrimPhi[1][9]->SetMarkerStyle(20);
-    p_mPrimPhi[1][9]->SetMarkerSize(1.0);
-    p_mPrimPhi[1][9]->SetLineColor(1);
-    p_mPrimPhi[1][9]->GetXaxis()->SetTitle("runIndex");
-    p_mPrimPhi[1][9]->GetYaxis()->SetTitle("<#phi^{prim}>");
-    p_mPrimPhi[1][9]->GetYaxis()->SetRangeUser(-0.1,0.50);
-    p_mPrimPhi[1][9]->Draw("pE");
+    p_mPrimPhi[1][numOfTriggers-1]->SetTitle("primPhi vs. runIndex");
+    p_mPrimPhi[1][numOfTriggers-1]->SetStats(0);
+    p_mPrimPhi[1][numOfTriggers-1]->SetMarkerColor(1);
+    p_mPrimPhi[1][numOfTriggers-1]->SetMarkerStyle(20);
+    p_mPrimPhi[1][numOfTriggers-1]->SetMarkerSize(1.0);
+    p_mPrimPhi[1][numOfTriggers-1]->SetLineColor(1);
+    p_mPrimPhi[1][numOfTriggers-1]->GetXaxis()->SetTitle("runIndex");
+    p_mPrimPhi[1][numOfTriggers-1]->GetYaxis()->SetTitle("<#phi^{prim}>");
+    p_mPrimPhi[1][numOfTriggers-1]->GetYaxis()->SetRangeUser(-0.1,0.50);
+    p_mPrimPhi[1][numOfTriggers-1]->Draw("pE");
 
     for(int iTrig = 0; iTrig < numOfTriggers; ++iTrig)
     {
@@ -422,16 +422,16 @@ void plotRunQA(int beamType = 2)
 
   {
     c_RunQA->Clear();
-    p_mGlobPt[1][9]->SetTitle("globPt vs. runIndex");
-    p_mGlobPt[1][9]->SetStats(0);
-    p_mGlobPt[1][9]->SetMarkerColor(1);
-    p_mGlobPt[1][9]->SetMarkerStyle(20);
-    p_mGlobPt[1][9]->SetMarkerSize(1.0);
-    p_mGlobPt[1][9]->SetLineColor(1);
-    p_mGlobPt[1][9]->GetXaxis()->SetTitle("runIndex");
-    p_mGlobPt[1][9]->GetYaxis()->SetTitle("<p_{T}^{glob}>");
-    p_mGlobPt[1][9]->GetYaxis()->SetRangeUser(0.4,0.8);
-    p_mGlobPt[1][9]->Draw("pE");
+    p_mGlobPt[1][numOfTriggers-1]->SetTitle("globPt vs. runIndex");
+    p_mGlobPt[1][numOfTriggers-1]->SetStats(0);
+    p_mGlobPt[1][numOfTriggers-1]->SetMarkerColor(1);
+    p_mGlobPt[1][numOfTriggers-1]->SetMarkerStyle(20);
+    p_mGlobPt[1][numOfTriggers-1]->SetMarkerSize(1.0);
+    p_mGlobPt[1][numOfTriggers-1]->SetLineColor(1);
+    p_mGlobPt[1][numOfTriggers-1]->GetXaxis()->SetTitle("runIndex");
+    p_mGlobPt[1][numOfTriggers-1]->GetYaxis()->SetTitle("<p_{T}^{glob}>");
+    p_mGlobPt[1][numOfTriggers-1]->GetYaxis()->SetRangeUser(0.4,0.8);
+    p_mGlobPt[1][numOfTriggers-1]->Draw("pE");
 
     for(int iTrig = 0; iTrig < numOfTriggers; ++iTrig)
     {
@@ -450,17 +450,17 @@ void plotRunQA(int beamType = 2)
 
   {
     c_RunQA->Clear();
-    p_mGlobEta[1][9]->SetTitle("globEta vs. runIndex");
-    p_mGlobEta[1][9]->SetStats(0);
-    p_mGlobEta[1][9]->SetMarkerColor(1);
-    p_mGlobEta[1][9]->SetMarkerStyle(20);
-    p_mGlobEta[1][9]->SetMarkerSize(1.0);
-    p_mGlobEta[1][9]->SetLineColor(1);
-    p_mGlobEta[1][9]->GetXaxis()->SetTitle("runIndex");
-    p_mGlobEta[1][9]->GetYaxis()->SetTitle("<#eta^{glob}>");
-    p_mGlobEta[1][9]->GetYaxis()->SetRangeUser(-0.05,0.10);
-    if(beamType == 2) p_mGlobEta[1][9]->GetYaxis()->SetRangeUser(-2.0,0.0);
-    p_mGlobEta[1][9]->Draw("pE");
+    p_mGlobEta[1][numOfTriggers-1]->SetTitle("globEta vs. runIndex");
+    p_mGlobEta[1][numOfTriggers-1]->SetStats(0);
+    p_mGlobEta[1][numOfTriggers-1]->SetMarkerColor(1);
+    p_mGlobEta[1][numOfTriggers-1]->SetMarkerStyle(20);
+    p_mGlobEta[1][numOfTriggers-1]->SetMarkerSize(1.0);
+    p_mGlobEta[1][numOfTriggers-1]->SetLineColor(1);
+    p_mGlobEta[1][numOfTriggers-1]->GetXaxis()->SetTitle("runIndex");
+    p_mGlobEta[1][numOfTriggers-1]->GetYaxis()->SetTitle("<#eta^{glob}>");
+    p_mGlobEta[1][numOfTriggers-1]->GetYaxis()->SetRangeUser(-0.05,0.10);
+    if(beamType == 2) p_mGlobEta[1][numOfTriggers-1]->GetYaxis()->SetRangeUser(-2.0,0.0);
+    p_mGlobEta[1][numOfTriggers-1]->Draw("pE");
 
     for(int iTrig = 0; iTrig < numOfTriggers; ++iTrig)
     {
@@ -479,16 +479,16 @@ void plotRunQA(int beamType = 2)
 
   {
     c_RunQA->Clear();
-    p_mGlobPhi[1][9]->SetTitle("globPhi vs. runIndex");
-    p_mGlobPhi[1][9]->SetStats(0);
-    p_mGlobPhi[1][9]->SetMarkerColor(1);
-    p_mGlobPhi[1][9]->SetMarkerStyle(20);
-    p_mGlobPhi[1][9]->SetMarkerSize(1.0);
-    p_mGlobPhi[1][9]->SetLineColor(1);
-    p_mGlobPhi[1][9]->GetXaxis()->SetTitle("runIndex");
-    p_mGlobPhi[1][9]->GetYaxis()->SetTitle("<#phi^{glob}>");
-    p_mGlobPhi[1][9]->GetYaxis()->SetRangeUser(-0.1,0.50);
-    p_mGlobPhi[1][9]->Draw("pE");
+    p_mGlobPhi[1][numOfTriggers-1]->SetTitle("globPhi vs. runIndex");
+    p_mGlobPhi[1][numOfTriggers-1]->SetStats(0);
+    p_mGlobPhi[1][numOfTriggers-1]->SetMarkerColor(1);
+    p_mGlobPhi[1][numOfTriggers-1]->SetMarkerStyle(20);
+    p_mGlobPhi[1][numOfTriggers-1]->SetMarkerSize(1.0);
+    p_mGlobPhi[1][numOfTriggers-1]->SetLineColor(1);
+    p_mGlobPhi[1][numOfTriggers-1]->GetXaxis()->SetTitle("runIndex");
+    p_mGlobPhi[1][numOfTriggers-1]->GetYaxis()->SetTitle("<#phi^{glob}>");
+    p_mGlobPhi[1][numOfTriggers-1]->GetYaxis()->SetRangeUser(-0.1,0.50);
+    p_mGlobPhi[1][numOfTriggers-1]->Draw("pE");
 
     for(int iTrig = 0; iTrig < numOfTriggers; ++iTrig)
     {

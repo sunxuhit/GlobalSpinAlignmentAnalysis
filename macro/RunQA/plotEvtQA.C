@@ -12,11 +12,11 @@ using namespace std;
 
 static const string CutStatus[2] = {"Bf","Af"};
 static const int numCuts = 2; // 0: before cuts | 1: after cuts
-static const int numTriggerBins = 10; // 0-8 for different triggerID | 9 for all triggers
+static const int numTriggerBins = 5; // 0-3 for different triggerID | 4 for all triggers
 
 void plotEvtQA(int beamType = 2)
 {
-  string inputfile = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/RunQA/%s/file_%s_RunQA.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string inputfile = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/RunQA/%s/file_RunQA_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
   TH1F *h_mRefMult[numCuts][numTriggerBins];
   TH1F *h_mGRefMult[numCuts][numTriggerBins];
@@ -116,52 +116,52 @@ void plotEvtQA(int beamType = 2)
     c_EventQA->cd(1);
     c_EventQA->cd(1)->Clear();
     c_EventQA->cd(1)->SetLogy();
-    h_mRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,500.0);
-    if(beamType == 2) h_mRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,300.0);
-    h_mRefMult[iCut][9]->Draw("hE");
+    h_mRefMult[iCut][numTriggerBins-1]->GetXaxis()->SetRangeUser(0.0,500.0);
+    if(beamType == 2) h_mRefMult[iCut][numTriggerBins-1]->GetXaxis()->SetRangeUser(0.0,300.0);
+    h_mRefMult[iCut][numTriggerBins-1]->Draw("hE");
 
     c_EventQA->cd(2);
     c_EventQA->cd(2)->Clear();
     c_EventQA->cd(2)->SetLogz();
-    h_mTofMatchRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,500.0);
-    h_mTofMatchRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,500.0);
-    if(beamType == 2) h_mTofMatchRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,300.0);
-    if(beamType == 2) h_mTofMatchRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,300.0);
-    h_mTofMatchRefMult[iCut][9]->Draw("colz");
+    h_mTofMatchRefMult[iCut][numTriggerBins-1]->GetXaxis()->SetRangeUser(0.0,500.0);
+    h_mTofMatchRefMult[iCut][numTriggerBins-1]->GetYaxis()->SetRangeUser(0.0,500.0);
+    if(beamType == 2) h_mTofMatchRefMult[iCut][numTriggerBins-1]->GetXaxis()->SetRangeUser(0.0,300.0);
+    if(beamType == 2) h_mTofMatchRefMult[iCut][numTriggerBins-1]->GetYaxis()->SetRangeUser(0.0,300.0);
+    h_mTofMatchRefMult[iCut][numTriggerBins-1]->Draw("colz");
 
     c_EventQA->cd(3);
     c_EventQA->cd(3)->Clear();
     c_EventQA->cd(3)->SetLogz();
-    h_mTofHitsRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,500.0);
-    h_mTofHitsRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,500.0);
-    if(beamType == 2) h_mTofHitsRefMult[iCut][9]->GetXaxis()->SetRangeUser(0.0,300.0);
-    if(beamType == 2) h_mTofHitsRefMult[iCut][9]->GetYaxis()->SetRangeUser(0.0,300.0);
-    h_mTofHitsRefMult[iCut][9]->Draw("colz");
+    h_mTofHitsRefMult[iCut][numTriggerBins-1]->GetXaxis()->SetRangeUser(0.0,500.0);
+    h_mTofHitsRefMult[iCut][numTriggerBins-1]->GetYaxis()->SetRangeUser(0.0,500.0);
+    if(beamType == 2) h_mTofHitsRefMult[iCut][numTriggerBins-1]->GetXaxis()->SetRangeUser(0.0,300.0);
+    if(beamType == 2) h_mTofHitsRefMult[iCut][numTriggerBins-1]->GetYaxis()->SetRangeUser(0.0,300.0);
+    h_mTofHitsRefMult[iCut][numTriggerBins-1]->Draw("colz");
 
     c_EventQA->cd(4);
     c_EventQA->cd(4)->Clear();
     c_EventQA->cd(4)->SetLogy();
-    h_mCentrality9[iCut][9]->Draw("hE");
+    h_mCentrality9[iCut][numTriggerBins-1]->Draw("hE");
 
     c_EventQA->cd(5);
     c_EventQA->cd(5)->Clear();
     c_EventQA->cd(5)->SetLogz();
-    h_mVertexXY[iCut][9]->Draw("colz");
+    h_mVertexXY[iCut][numTriggerBins-1]->Draw("colz");
 
     c_EventQA->cd(6);
     c_EventQA->cd(6)->Clear();
     c_EventQA->cd(6)->SetLogy();
-    h_mVertexZ[iCut][9]->Draw();
+    h_mVertexZ[iCut][numTriggerBins-1]->Draw();
 
     c_EventQA->cd(7);
     c_EventQA->cd(7)->Clear();
     c_EventQA->cd(7)->SetLogz();
-    h_mVzVzVpd[iCut][9]->Draw("colz");
+    h_mVzVzVpd[iCut][numTriggerBins-1]->Draw("colz");
 
     c_EventQA->cd(8);
     c_EventQA->cd(8)->Clear();
     // c_EventQA->cd(8)->SetLogy();
-    h_mDiffVzVzVpd[iCut][9]->Draw();
+    h_mDiffVzVzVpd[iCut][numTriggerBins-1]->Draw();
 
     figName = Form("../../figures/RunQA/%s/EvtQA_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
     c_EventQA->Update();

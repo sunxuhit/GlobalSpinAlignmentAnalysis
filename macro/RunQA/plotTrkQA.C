@@ -13,11 +13,11 @@ using namespace std;
 
 static const string CutStatus[2] = {"Bf","Af"};
 static const int numCuts = 2; // 0: before cuts | 1: after cuts
-static const int numTriggerBins = 10; // 0-8 for different triggerID | 9 for all triggers
+static const int numTriggerBins = 5; // 0-3 for different triggerID | 4 for all triggers
 
 void plotTrkQA(int beamType = 2)
 {
-  string inputfile = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/RunQA/%s/file_%s_RunQA.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  string inputfile = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/RunQA/%s/file_RunQA_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
   TH1F *h_mPrimPt[numCuts][numTriggerBins]; // Track Kinematics
   TH1F *h_mPrimEta[numCuts][numTriggerBins];
@@ -137,18 +137,18 @@ void plotTrkQA(int beamType = 2)
     c_TrackQA->cd(iCut*3+1);
     c_TrackQA->cd(iCut*3+1)->Clear();
     c_TrackQA->cd(iCut*3+1)->SetLogy();
-    h_mPrimPt[iCut][9]->GetXaxis()->SetTitle("prim p_{T}");
-    h_mPrimPt[iCut][9]->Draw("hE");
+    h_mPrimPt[iCut][numTriggerBins-1]->GetXaxis()->SetTitle("prim p_{T}");
+    h_mPrimPt[iCut][numTriggerBins-1]->Draw("hE");
 
     c_TrackQA->cd(iCut*3+2);
     c_TrackQA->cd(iCut*3+2)->Clear();
-    h_mPrimEta[iCut][9]->GetXaxis()->SetTitle("prim #eta");
-    h_mPrimEta[iCut][9]->Draw("hE");
+    h_mPrimEta[iCut][numTriggerBins-1]->GetXaxis()->SetTitle("prim #eta");
+    h_mPrimEta[iCut][numTriggerBins-1]->Draw("hE");
 
     c_TrackQA->cd(iCut*3+3);
     c_TrackQA->cd(iCut*3+3)->Clear();;
-    h_mPrimPhi[iCut][9]->GetXaxis()->SetTitle("prim #phi");
-    h_mPrimPhi[iCut][9]->Draw("hE");
+    h_mPrimPhi[iCut][numTriggerBins-1]->GetXaxis()->SetTitle("prim #phi");
+    h_mPrimPhi[iCut][numTriggerBins-1]->Draw("hE");
   }
   figName = Form("../../figures/RunQA/%s/TrkQA_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   c_TrackQA->Update();
@@ -160,18 +160,18 @@ void plotTrkQA(int beamType = 2)
     c_TrackQA->cd(iCut*3+1);
     c_TrackQA->cd(iCut*3+1)->Clear();
     c_TrackQA->cd(iCut*3+1)->SetLogy();
-    h_mGlobPt[iCut][9]->GetXaxis()->SetTitle("glob p_{T}");
-    h_mGlobPt[iCut][9]->Draw("hE");
+    h_mGlobPt[iCut][numTriggerBins-1]->GetXaxis()->SetTitle("glob p_{T}");
+    h_mGlobPt[iCut][numTriggerBins-1]->Draw("hE");
 
     c_TrackQA->cd(iCut*3+2);
     c_TrackQA->cd(iCut*3+2)->Clear();
-    h_mGlobEta[iCut][9]->GetXaxis()->SetTitle("glob #eta");
-    h_mGlobEta[iCut][9]->Draw("hE");
+    h_mGlobEta[iCut][numTriggerBins-1]->GetXaxis()->SetTitle("glob #eta");
+    h_mGlobEta[iCut][numTriggerBins-1]->Draw("hE");
 
     c_TrackQA->cd(iCut*3+3);
     c_TrackQA->cd(iCut*3+3)->Clear();
-    h_mGlobPhi[iCut][9]->GetXaxis()->SetTitle("glob #phi");
-    h_mGlobPhi[iCut][9]->Draw("hE");
+    h_mGlobPhi[iCut][numTriggerBins-1]->GetXaxis()->SetTitle("glob #phi");
+    h_mGlobPhi[iCut][numTriggerBins-1]->Draw("hE");
   }
   figName = Form("../../figures/RunQA/%s/TrkQA_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   c_TrackQA->Update();
@@ -193,20 +193,20 @@ void plotTrkQA(int beamType = 2)
   for(int iCut = 0; iCut < numCuts; ++iCut)
   {
     c_TrackQA_Quality->cd(iCut*4+1)->SetLogy();
-    h_mDca[iCut][9]->GetXaxis()->SetTitle("dca");
-    h_mDca[iCut][9]->Draw("hE");
+    h_mDca[iCut][numTriggerBins-1]->GetXaxis()->SetTitle("dca");
+    h_mDca[iCut][numTriggerBins-1]->Draw("hE");
 
     c_TrackQA_Quality->cd(iCut*4+2);
-    h_mNHitsFit[iCut][9]->Draw("hE");
-    h_mNHitsFit[iCut][9]->GetXaxis()->SetTitle("nHitsFit");
+    h_mNHitsFit[iCut][numTriggerBins-1]->Draw("hE");
+    h_mNHitsFit[iCut][numTriggerBins-1]->GetXaxis()->SetTitle("nHitsFit");
 
     c_TrackQA_Quality->cd(iCut*4+3);
-    h_mNHitsRatio[iCut][9]->Draw("hE");
-    h_mNHitsRatio[iCut][9]->GetXaxis()->SetTitle("nHitsRatio");
+    h_mNHitsRatio[iCut][numTriggerBins-1]->Draw("hE");
+    h_mNHitsRatio[iCut][numTriggerBins-1]->GetXaxis()->SetTitle("nHitsRatio");
 
     c_TrackQA_Quality->cd(iCut*4+4);
-    h_mNHitsDEdx[iCut][9]->Draw("hE");
-    h_mNHitsDEdx[iCut][9]->GetXaxis()->SetTitle("nHitsDedx");
+    h_mNHitsDEdx[iCut][numTriggerBins-1]->Draw("hE");
+    h_mNHitsDEdx[iCut][numTriggerBins-1]->GetXaxis()->SetTitle("nHitsDedx");
   }
   figName = Form("../../figures/RunQA/%s/TrkQA_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   c_TrackQA_Quality->Update();
@@ -219,25 +219,25 @@ void plotTrkQA(int beamType = 2)
     c_TrackQA->cd(iCut*3+1)->Clear();
     c_TrackQA->cd(iCut*3+1)->SetLogy(0);
     c_TrackQA->cd(iCut*3+1)->SetLogz();
-    h_mDEdxMom[iCut][9]->GetXaxis()->SetTitle("p*q");
-    h_mDEdxMom[iCut][9]->GetYaxis()->SetTitle("dE/dx");
-    h_mDEdxMom[iCut][9]->Draw("colz");
+    h_mDEdxMom[iCut][numTriggerBins-1]->GetXaxis()->SetTitle("p*q");
+    h_mDEdxMom[iCut][numTriggerBins-1]->GetYaxis()->SetTitle("dE/dx");
+    h_mDEdxMom[iCut][numTriggerBins-1]->Draw("colz");
 
     c_TrackQA->cd(iCut*3+2);
     c_TrackQA->cd(iCut*3+2)->Clear();
     c_TrackQA->cd(iCut*3+2)->SetLogy(0);
     c_TrackQA->cd(iCut*3+2)->SetLogz();
-    h_mMass2Mom[iCut][9]->GetXaxis()->SetTitle("p*q");
-    h_mMass2Mom[iCut][9]->GetYaxis()->SetTitle("m^{2}");
-    h_mMass2Mom[iCut][9]->Draw("colz");
+    h_mMass2Mom[iCut][numTriggerBins-1]->GetXaxis()->SetTitle("p*q");
+    h_mMass2Mom[iCut][numTriggerBins-1]->GetYaxis()->SetTitle("m^{2}");
+    h_mMass2Mom[iCut][numTriggerBins-1]->Draw("colz");
 
     c_TrackQA->cd(iCut*3+3);
     c_TrackQA->cd(iCut*3+3)->Clear();
     c_TrackQA->cd(iCut*3+3)->SetLogy(0);
     c_TrackQA->cd(iCut*3+3)->SetLogz();
-    h_mBetaMom[iCut][9]->GetXaxis()->SetTitle("p*q");
-    h_mBetaMom[iCut][9]->GetYaxis()->SetTitle("1/#beta");
-    h_mBetaMom[iCut][9]->Draw("colz");
+    h_mBetaMom[iCut][numTriggerBins-1]->GetXaxis()->SetTitle("p*q");
+    h_mBetaMom[iCut][numTriggerBins-1]->GetYaxis()->SetTitle("1/#beta");
+    h_mBetaMom[iCut][numTriggerBins-1]->Draw("colz");
   }
   figName = Form("../../figures/RunQA/%s/TrkQA_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   c_TrackQA->Update();
