@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void calcFxtEnergy(double beamEnergy = 0.5)
+void calcCmsEnergy(double beamEnergy = 3.85)
 {
   // beam travels -z
   double massProton = anaUtils::mMassProton;
