@@ -14,11 +14,11 @@ mkdir -p JOBS/csh
 mkdir -p JOBS/list
 
 ##########Test Production##########
-star-submit-template -template testRunQATemp.xml -entities beamType=$beamType,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath
+# star-submit-template -template testRunQATemp.xml -entities beamType=$beamType,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath
 ##########Test Production##########
 
 ##########Full Production##########
-# star-submit-template -template RunQATemp.xml -entities beamType=$beamType,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath
+star-submit-template -template RunQATemp.xml -entities beamType=$beamType,library=$library,codePath=$codePath,outPath=$outPath,listPath=$listPath
 ##########Full Production##########
 
 ##########Re-Submit##########
