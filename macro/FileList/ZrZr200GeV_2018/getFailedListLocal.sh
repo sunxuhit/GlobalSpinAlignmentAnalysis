@@ -1,35 +1,33 @@
 #!/bin/bash
 date
 
-#. ./genFailedList.sh
+#. ./getFailedListLocal.sh
 
 if [ $# -eq 0 ]
 then
-  BeamType=RuRu200GeV_2018
-  JobId=6ACCCE7CCDD4AC9C315BBFC84DB94902 #generate faild list for this Job
-  Task=RunQA
-  # Task=EventPlaneMaker
-  # Task=PhiMesonMaker
+  BeamType=ZrZr200GeV_2018
+  JobId=F1A927942D7C2F2EBA68A8851C9B25BA #generate faild list for this Job
+  Task=EventPlaneMaker
+  # Mode=EventPlaneMaker
 
-  LogDirectory="/star/u/sunxuhit/$BeamType/SpinAlignment/${Task}/Log"
+  LogDirectory="/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/log/${Task}/${BeamType}/${JobId}"
 
-  OutPutDir="/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/${BeamType}"
-  cd $OutPutDir
+  OutPutDir="/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/Utility/FileList/${BeamType}"
 
   cd $LogDirectory
   CompletedLog="$OutPutDir/condor_completedLog_${Task}_${JobId}.list" # get completed list from run log
   rm $CompletedLog
   touch $CompletedLog
   grep -l "Work done" *${JobId}*.log | sort > $CompletedLog
-  sed -i 's/^/sched/g' $CompletedLog
-  sed -i 's/log/list/g' $CompletedLog
+  sed -i "" 's/^/sched/g' $CompletedLog
+  sed -i "" 's/log/list/g' $CompletedLog
 
   CompletedOut="$OutPutDir/condor_completedOut_${Task}_${JobId}.list" # get completed list from stdout
   rm $CompletedOut
   touch $CompletedOut
   grep -l "exiting normally" *${JOBS}*.out | sort > $CompletedOut
-  sed -i 's/^/sched/g' $CompletedOut
-  sed -i 's/out/list/g' $CompletedOut
+  sed -i "" 's/^/sched/g' $CompletedOut
+  sed -i "" 's/out/list/g' $CompletedOut
 
   CompletedList="$OutPutDir/condor_completed_${Task}_${JobId}.list" # common completed list from run log & stdout
   rm $CompletedList
@@ -39,7 +37,7 @@ then
   rm $CompletedLog
   rm $CompletedOut
 
-  SubmitDir="/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis/submit/${Task}/${BeamType}/JOBS/list"
+  SubmitDir="/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/jobs/${Task}/${BeamType}/${JobId}/list"
   echo $SubmitDir
   SubmittedList="$OutPutDir/condor_submitted_${Task}_${JobId}.list"
   rm $SubmittedList

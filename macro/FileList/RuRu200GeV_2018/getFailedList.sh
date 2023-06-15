@@ -1,12 +1,12 @@
 #!/bin/bash
 date
 
-#. ./genFailedList.sh
+#. ./getFailedList.sh
 
 if [ $# -eq 0 ]
 then
-  BeamType=Fxt3p85GeV_2018
-  JobId=F2F20A033BC8EE6EF77CF0E5849E2C75 #generate faild list for this Job
+  BeamType=RuRu200GeV_2018
+  JobId=6ACCCE7CCDD4AC9C315BBFC84DB94902 #generate faild list for this Job
   Task=RunQA
   # Task=EventPlaneMaker
   # Task=PhiMesonMaker

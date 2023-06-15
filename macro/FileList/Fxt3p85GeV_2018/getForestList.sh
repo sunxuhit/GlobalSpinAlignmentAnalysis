@@ -1,11 +1,11 @@
 #!/bin/bash
 date
 
-#. ./genForestList.sh
+#. ./getForestList.sh
 
 if [ $# -eq 0 ]
 then
-  BeamType=RuRu200GeV_2018
+  BeamType=Fxt3p85GeV_2018
   # JobId=820136BE69B6CDF4F20D30A77C669DDB #generate forest list for this Job
   Task=PhiMesonMaker
   Mode=SE
