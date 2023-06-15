@@ -12,17 +12,22 @@ then
 
   FullPicoList="$OutPutDir/pico_xrootd_full.list"
 
-  BadRunIdList="$OutPutDir/badRunStRefMultCorr.list"
-  BadRunQaList="$OutPutDir/badRunStRunQAMaker.list"
+  # BadRunIdList="$OutPutDir/badRunStRefMultCorr.list"
+  # BadRunQaList="$OutPutDir/badRunStRunQAMaker.list"
+  BadRunList="$OutPutDir/badRunFxt3p85GeV_2018.list"
 
   BadRunTempList="$OutPutDir/pico_xrootd_badRun_temp.list"
   rm $BadRunTempList
   touch $BadRunTempList
-  for item in `cat $BadRunIdList` # get picos with bad run Id from StRefMultCorr
-  do
-    cat $FullPicoList | grep $item >> $BadRunTempList
-  done
-  for item in `cat $BadRunQaList` # get picos with bad run identfied from StRunQAMaker
+  # for item in `cat $BadRunIdList` # get picos with bad run Id from StRefMultCorr
+  # do
+  #   cat $FullPicoList | grep $item >> $BadRunTempList
+  # done
+  # for item in `cat $BadRunQaList` # get picos with bad run identfied from StRunQAMaker
+  # do
+  #   cat $FullPicoList | grep $item >> $BadRunTempList
+  # done
+  for item in `cat $BadRunList` # get picos with bad run identfied from both StRefMultCorr & StRunQAMaker
   do
     cat $FullPicoList | grep $item >> $BadRunTempList
   done
@@ -31,7 +36,10 @@ then
   BadRunPicoList="$OutPutDir/pico_xrootd_badRun.list"
   rm $BadRunPicoList
   touch $BadRunPicoList
-  sort -t '/' -k 16 $BadRunTempList | uniq > $BadRunPicoList
+  # sort -t '/' -k 16 $BadRunTempList | uniq > $BadRunPicoList
+
+  awk -F/ '{print $NF, $0}' $BadRunTempList | sort | uniq | cut -f2- -d ' ' > $BadRunPicoList
+
   rm $BadRunTempList
 
   grep -Fvxf $BadRunPicoList $FullPicoList > $OutPutList
