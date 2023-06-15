@@ -6,7 +6,7 @@ date
 if [ $# -eq 0 ]
 then
   OutPutDir="../../../Utility/FileList/Fxt3p85GeV_2018"
-  OutPutList="$OutPutDir/badRunFxt3p85GeV_2018.list"
+  OutPutList="$OutPutDir/runNumberBadRun.list"
   rm $OutPutList
   touch $OutPutList
 

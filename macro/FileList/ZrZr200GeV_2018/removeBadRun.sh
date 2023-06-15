@@ -12,7 +12,7 @@ then
 
   FullPicoList="$OutPutDir/pico_xrootd_full.list"
 
-  BadRunList="$OutPutDir/badRunZrZr200GeV_2018.list"
+  BadRunList="$OutPutDir/runNumberBadRun.list"
 
   BadRunTempList="$OutPutDir/pico_xrootd_badRun_temp.list"
   rm $BadRunTempList
