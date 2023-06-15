@@ -20,14 +20,14 @@ std::map<int,int> map_runIndex; // runIndex, runId
 bool read_in_runIndex(int beamType);
 int findRunId(int runIndex);
 
-int findBadRunList(int beamType = 0)
+int findBadRunList(int beamType = 2)
 {
   map_runIndex.clear();
   bool isOpen_runIndex = read_in_runIndex(beamType);
   if(isOpen_runIndex) std::cout << "Run Index read in!" << std::endl;
 
   // read in bad runIndex list
-  std::string inputfile = Form("../../Utility/RunIndex/%s/badRunIndex_%s.txt",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  std::string inputfile = Form("../../Utility/RunIndex/%s/badRunIndex_%s.txt",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   std::cout << "inputfile = " << inputfile.c_str() << std::endl;
   std::ifstream file_badRunIndex ( inputfile.c_str() );
   if ( !file_badRunIndex.is_open() )
@@ -49,7 +49,8 @@ int findBadRunList(int beamType = 0)
   file_badRunIndex.close();
 
   // generate bad runId list
-  std::string outputfile = Form("../../Utility/FileList/%s/badRunList_%s.txt",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  // std::string outputfile = Form("../../Utility/FileList/%s/badRunList_%s.txt",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  std::string outputfile = Form("../../Utility/FileList/%s/badRunStRunQAMaker.list",globCons::str_mBeamType[beamType].c_str());
   std::ofstream file_badRunList;
   file_badRunList.open(outputfile.c_str());
   if (!file_badRunList.is_open()) 
@@ -74,7 +75,7 @@ int findBadRunList(int beamType = 0)
 bool read_in_runIndex(int beamType = 0)
 {
   // read in runId vs. runIndex
-  std::string inputfile = Form("../../Utility/RunIndex/%s/runIndex_%s.txt",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  std::string inputfile = Form("../../Utility/RunIndex/%s/runIndex_%s.txt",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   std::cout << "inputfile = " << inputfile.c_str() << std::endl;
   std::ifstream file_runIndex ( inputfile.c_str() );
   if ( !file_runIndex.is_open() )

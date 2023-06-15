@@ -11,21 +11,21 @@
 #include "TLegend.h"
 
 #include "../../Utility/include/StSpinAlignmentCons.h"
-#include "../Plot/draw.h"
+#include "../../Utility/include/draw.h"
 
 using namespace std;
 
 static const string CutStatus[2] = {"Bf","Af"};
 static const int numCuts = 2; // 0: before cuts | 1: after cuts
-static const int numTriggerBins = 10; // 0-8 for different triggerID | 9 for all triggers
+static const int numTriggerBins = 5; // 0-3 for different triggerID | 4 for all triggers
 
 void findMean(TProfile *p_runQA, double &mean, double &sigma);
 bool isBadRun(double val, double mean, double sigma);
 void plotGoodRunRange(double runIndexStart, double runIndexStop, double mean, double sigma);
 
-int findBadRunIndex(int beamType = 0)
+int findBadRunIndex(int beamType = 2)
 {
-  string inputfile = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/%s/RunQA/file_RunQA_%s.root",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  string inputfile = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/data/RunQA/%s/file_RunQA_%s.root",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   TFile *File_InPut = TFile::Open(inputfile.c_str());
 
   TProfile *p_mRefMult[numCuts][numTriggerBins];
@@ -89,7 +89,7 @@ int findBadRunIndex(int beamType = 0)
   }
 
 
-  string outputfile = Form("../../Utility/RunIndex/%s/badRunIndexUnSorted_%s.txt",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
+  string outputfile = Form("../../Utility/RunIndex/%s/badRunIndexUnSorted_%s.txt",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
   ofstream file_badRunIndex;
   file_badRunIndex.open(outputfile.c_str());
   if (!file_badRunIndex.is_open()) 
@@ -99,47 +99,81 @@ int findBadRunIndex(int beamType = 0)
   } 
 
   const double runIndexStart = -0.5;
-  const double runIndexStop  = 4999.5;
+  const double runIndexStop  = 299.5;
 
-  const int numOfTriggers = 4;
-  const int triggerID[numOfTriggers] = {600001,600011,600021,600031};
-  const int MarkerColor[numOfTriggers] = {7,6,4,2};
-  string FigName;
+  vector<string> vecTriggerID;
+  vector<int> vecMarkerColor;
+  vecTriggerID.clear();
+  vecMarkerColor.clear();
+  if(beamType == 0 || beamType == 1) 
+  {
+    vecTriggerID.push_back("600001");
+    vecTriggerID.push_back("600011");
+    vecTriggerID.push_back("600021");
+    vecTriggerID.push_back("600031");
+    vecMarkerColor.push_back(7);
+    vecMarkerColor.push_back(6);
+    vecMarkerColor.push_back(4);
+    vecMarkerColor.push_back(2);
+  }
+  if(beamType == 2) 
+  {
+    vecTriggerID.push_back("620052");
+    vecMarkerColor.push_back(4);
+  }
+  const int numOfUsedTrigs = (int)vecTriggerID.size();
+
+  TCanvas *c_BadRun = new TCanvas("c_BadRun","c_BadRun",10,10,800,400);
+  c_BadRun->cd()->SetLeftMargin(0.15);
+  c_BadRun->cd()->SetRightMargin(0.15);
+  c_BadRun->cd()->SetBottomMargin(0.15);
+  c_BadRun->cd()->SetTicks(1,1);
+  c_BadRun->cd()->SetGrid(0,0);
+
+  std::string figName = Form("../../figures/RunQA/%s/BadRun_%s.pdf[",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_BadRun->Print(figName.c_str());
+
 
   //-------------refMult----------------
   double meanRefMult = 0.0;
   double sigmaRefMult = 0.0;
-  findMean(p_mRefMult[1][9],meanRefMult,sigmaRefMult);
+  findMean(p_mRefMult[1][numTriggerBins-1],meanRefMult,sigmaRefMult);
 
-  TCanvas *c_RunQA_RefMult = new TCanvas("c_RunQA_RefMult","c_RunQA_RefMult",10,10,800,400);
-  c_RunQA_RefMult->cd()->SetLeftMargin(0.1);
-  c_RunQA_RefMult->cd()->SetRightMargin(0.1);
-  c_RunQA_RefMult->cd()->SetBottomMargin(0.1);
-  c_RunQA_RefMult->cd()->SetGrid(0,0);
-  c_RunQA_RefMult->cd()->SetTicks(1,1);
+  // TCanvas *c_RunQA_RefMult = new TCanvas("c_RunQA_RefMult","c_RunQA_RefMult",10,10,800,400);
+  // c_RunQA_RefMult->cd()->SetLeftMargin(0.1);
+  // c_RunQA_RefMult->cd()->SetRightMargin(0.1);
+  // c_RunQA_RefMult->cd()->SetBottomMargin(0.1);
+  // c_RunQA_RefMult->cd()->SetGrid(0,0);
+  // c_RunQA_RefMult->cd()->SetTicks(1,1);
 
-  p_mRefMult[1][9]->SetTitle("refMult vs. runIndex");
-  p_mRefMult[1][9]->SetStats(0);
-  p_mRefMult[1][9]->SetMarkerColor(1);
-  p_mRefMult[1][9]->SetMarkerStyle(20);
-  p_mRefMult[1][9]->SetMarkerSize(1.0);
-  p_mRefMult[1][9]->SetLineColor(1);
-  p_mRefMult[1][9]->GetXaxis()->SetTitle("runIndex");
-  p_mRefMult[1][9]->GetYaxis()->SetTitle("<refMult>");
-  p_mRefMult[1][9]->GetYaxis()->SetRangeUser(0,400);
-  p_mRefMult[1][9]->Draw("pE");
+  c_BadRun->Clear();
+  p_mRefMult[1][numTriggerBins-1]->SetTitle("refMult vs. runIndex");
+  p_mRefMult[1][numTriggerBins-1]->SetStats(0);
+  p_mRefMult[1][numTriggerBins-1]->SetMarkerColor(1);
+  p_mRefMult[1][numTriggerBins-1]->SetMarkerStyle(20);
+  p_mRefMult[1][numTriggerBins-1]->SetMarkerSize(1.0);
+  p_mRefMult[1][numTriggerBins-1]->SetLineColor(1);
+  p_mRefMult[1][numTriggerBins-1]->GetXaxis()->SetTitle("runIndex");
+  p_mRefMult[1][numTriggerBins-1]->GetYaxis()->SetTitle("<refMult>");
+  p_mRefMult[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(0,400);
+  if(beamType == 2) p_mRefMult[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(40,80);
+  p_mRefMult[1][numTriggerBins-1]->Draw("pE");
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanRefMult,sigmaRefMult);
 
-  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_RefMult_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
-  c_RunQA_RefMult->SaveAs(FigName.c_str());
+  // FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/RunQA/%s/c_RunQA_RefMult_badRunIndex_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  // c_RunQA_RefMult->SaveAs(FigName.c_str());
 
-  for(int i_run = 0; i_run < p_mRefMult[1][9]->GetNbinsX(); ++i_run)
+  figName = Form("../../figures/RunQA/%s/BadRun_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_BadRun->Update();
+  c_BadRun->Print(figName.c_str());
+
+  for(int i_run = 0; i_run < p_mRefMult[1][numTriggerBins-1]->GetNbinsX(); ++i_run)
   {
-    if(p_mRefMult[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mRefMult[1][9]->GetBinContent(i_run+1),meanRefMult,sigmaRefMult))
+    if(p_mRefMult[1][numTriggerBins-1]->GetBinError(i_run+1) > 0 && isBadRun(p_mRefMult[1][numTriggerBins-1]->GetBinContent(i_run+1),meanRefMult,sigmaRefMult))
     {
-      cout << "bad runIndex from refMult: " << p_mRefMult[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mRefMult[1][9]->GetBinCenter(i_run+1) << std::endl;
+      cout << "bad runIndex from refMult: " << p_mRefMult[1][numTriggerBins-1]->GetBinCenter(i_run+1) << endl;
+      file_badRunIndex << p_mRefMult[1][numTriggerBins-1]->GetBinCenter(i_run+1) << std::endl;
     }
   }
   //-------------refMult----------------
@@ -147,75 +181,89 @@ int findBadRunIndex(int beamType = 0)
   //-------------grefMult----------------
   double meanGRefMult = 0.0;
   double sigmaGRefMult = 0.0;
-  findMean(p_mGRefMult[1][9],meanGRefMult,sigmaGRefMult);
+  findMean(p_mGRefMult[1][numTriggerBins-1],meanGRefMult,sigmaGRefMult);
 
-  TCanvas *c_RunQA_gRefMult = new TCanvas("c_RunQA_gRefMult","c_RunQA_gRefMult",10,10,800,400);
-  c_RunQA_gRefMult->cd()->SetLeftMargin(0.1);
-  c_RunQA_gRefMult->cd()->SetRightMargin(0.1);
-  c_RunQA_gRefMult->cd()->SetBottomMargin(0.1);
-  c_RunQA_gRefMult->cd()->SetGrid(0,0);
-  c_RunQA_gRefMult->cd()->SetTicks(1,1);
+  // TCanvas *c_RunQA_gRefMult = new TCanvas("c_RunQA_gRefMult","c_RunQA_gRefMult",10,10,800,400);
+  // c_RunQA_gRefMult->cd()->SetLeftMargin(0.1);
+  // c_RunQA_gRefMult->cd()->SetRightMargin(0.1);
+  // c_RunQA_gRefMult->cd()->SetBottomMargin(0.1);
+  // c_RunQA_gRefMult->cd()->SetGrid(0,0);
+  // c_RunQA_gRefMult->cd()->SetTicks(1,1);
 
-  p_mGRefMult[1][9]->SetTitle("grefMult vs. runIndex");
-  p_mGRefMult[1][9]->SetStats(0);
-  p_mGRefMult[1][9]->SetMarkerColor(1);
-  p_mGRefMult[1][9]->SetMarkerStyle(20);
-  p_mGRefMult[1][9]->SetMarkerSize(1.0);
-  p_mGRefMult[1][9]->SetLineColor(1);
-  p_mGRefMult[1][9]->GetXaxis()->SetTitle("runIndex");
-  p_mGRefMult[1][9]->GetYaxis()->SetTitle("<grefMult>");
-  p_mGRefMult[1][9]->GetYaxis()->SetRangeUser(0,400);
-  p_mGRefMult[1][9]->Draw("pE");
+  c_BadRun->Clear();
+  p_mGRefMult[1][numTriggerBins-1]->SetTitle("grefMult vs. runIndex");
+  p_mGRefMult[1][numTriggerBins-1]->SetStats(0);
+  p_mGRefMult[1][numTriggerBins-1]->SetMarkerColor(1);
+  p_mGRefMult[1][numTriggerBins-1]->SetMarkerStyle(20);
+  p_mGRefMult[1][numTriggerBins-1]->SetMarkerSize(1.0);
+  p_mGRefMult[1][numTriggerBins-1]->SetLineColor(1);
+  p_mGRefMult[1][numTriggerBins-1]->GetXaxis()->SetTitle("runIndex");
+  p_mGRefMult[1][numTriggerBins-1]->GetYaxis()->SetTitle("<grefMult>");
+  p_mGRefMult[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(0,400);
+  if(beamType == 2) p_mGRefMult[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(0,200);
+  p_mGRefMult[1][numTriggerBins-1]->Draw("pE");
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanGRefMult,sigmaGRefMult);
 
-  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_gRefMult_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
-  c_RunQA_gRefMult->SaveAs(FigName.c_str());
+  figName = Form("../../figures/RunQA/%s/BadRun_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_BadRun->Update();
+  c_BadRun->Print(figName.c_str());
 
-  for(int i_run = 0; i_run < p_mGRefMult[1][9]->GetNbinsX(); ++i_run)
+  // FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/RunQA/%s/c_RunQA_gRefMult_badRunIndex_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  // c_RunQA_gRefMult->SaveAs(FigName.c_str());
+
+  for(int i_run = 0; i_run < p_mGRefMult[1][numTriggerBins-1]->GetNbinsX(); ++i_run)
   {
-    if(p_mGRefMult[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mGRefMult[1][9]->GetBinContent(i_run+1),meanGRefMult,sigmaGRefMult))
+    if(p_mGRefMult[1][numTriggerBins-1]->GetBinError(i_run+1) > 0 && isBadRun(p_mGRefMult[1][numTriggerBins-1]->GetBinContent(i_run+1),meanGRefMult,sigmaGRefMult))
     {
-      cout << "bad runIndex from grefMult: " << p_mGRefMult[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mGRefMult[1][9]->GetBinCenter(i_run+1) << std::endl;
+      cout << "bad runIndex from grefMult: " << p_mGRefMult[1][numTriggerBins-1]->GetBinCenter(i_run+1) << endl;
+      file_badRunIndex << p_mGRefMult[1][numTriggerBins-1]->GetBinCenter(i_run+1) << std::endl;
     }
   }
   //-------------grefMult----------------
 
   //-------------ZdcX----------------
-  double meanZdcX = 0.0;
-  double sigmaZdcX = 0.0;
-  findMean(p_mZdcX[1][9],meanZdcX,sigmaZdcX);
-
-  TCanvas *c_RunQA_ZdcX = new TCanvas("c_RunQA_ZdcX","c_RunQA_ZdcX",10,10,800,400);
-  c_RunQA_ZdcX->cd()->SetLeftMargin(0.1);
-  c_RunQA_ZdcX->cd()->SetRightMargin(0.1);
-  c_RunQA_ZdcX->cd()->SetBottomMargin(0.1);
-  c_RunQA_ZdcX->cd()->SetGrid(0,0);
-  c_RunQA_ZdcX->cd()->SetTicks(1,1);
-
-  p_mZdcX[1][9]->SetTitle("ZdcX vs. runIndex");
-  p_mZdcX[1][9]->SetStats(0);
-  p_mZdcX[1][9]->SetMarkerColor(1);
-  p_mZdcX[1][9]->SetMarkerStyle(20);
-  p_mZdcX[1][9]->SetMarkerSize(1.0);
-  p_mZdcX[1][9]->SetLineColor(1);
-  p_mZdcX[1][9]->GetXaxis()->SetTitle("runIndex");
-  p_mZdcX[1][9]->GetYaxis()->SetTitle("<ZdcX>");
-  p_mZdcX[1][9]->GetYaxis()->SetRangeUser(0,60000);
-  p_mZdcX[1][9]->Draw("pE");
-
-  plotGoodRunRange(runIndexStart,runIndexStop,meanZdcX,sigmaZdcX);
-
-  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_ZdcX_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
-  c_RunQA_ZdcX->SaveAs(FigName.c_str());
-
-  for(int i_run = 0; i_run < p_mZdcX[1][9]->GetNbinsX(); ++i_run)
+  if(beamType !=2)
   {
-    if(p_mZdcX[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mZdcX[1][9]->GetBinContent(i_run+1),meanZdcX,sigmaZdcX))
+    double meanZdcX = 0.0;
+    double sigmaZdcX = 0.0;
+    findMean(p_mZdcX[1][numTriggerBins-1],meanZdcX,sigmaZdcX);
+
+    // TCanvas *c_RunQA_ZdcX = new TCanvas("c_RunQA_ZdcX","c_RunQA_ZdcX",10,10,800,400);
+    // c_RunQA_ZdcX->cd()->SetLeftMargin(0.1);
+    // c_RunQA_ZdcX->cd()->SetRightMargin(0.1);
+    // c_RunQA_ZdcX->cd()->SetBottomMargin(0.1);
+    // c_RunQA_ZdcX->cd()->SetGrid(0,0);
+    // c_RunQA_ZdcX->cd()->SetTicks(1,1);
+
+    c_BadRun->Clear();
+    p_mZdcX[1][numTriggerBins-1]->SetTitle("ZdcX vs. runIndex");
+    p_mZdcX[1][numTriggerBins-1]->SetStats(0);
+    p_mZdcX[1][numTriggerBins-1]->SetMarkerColor(1);
+    p_mZdcX[1][numTriggerBins-1]->SetMarkerStyle(20);
+    p_mZdcX[1][numTriggerBins-1]->SetMarkerSize(1.0);
+    p_mZdcX[1][numTriggerBins-1]->SetLineColor(1);
+    p_mZdcX[1][numTriggerBins-1]->GetXaxis()->SetTitle("runIndex");
+    p_mZdcX[1][numTriggerBins-1]->GetYaxis()->SetTitle("<ZdcX>");
+    // p_mZdcX[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(0,60000);
+    p_mZdcX[1][numTriggerBins-1]->Draw("pE");
+
+    plotGoodRunRange(runIndexStart,runIndexStop,meanZdcX,sigmaZdcX);
+
+    figName = Form("../../figures/RunQA/%s/BadRun_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    c_BadRun->Update();
+    c_BadRun->Print(figName.c_str());
+
+    // FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/RunQA/%s/c_RunQA_ZdcX_badRunIndex_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+    // c_RunQA_ZdcX->SaveAs(FigName.c_str());
+
+    for(int i_run = 0; i_run < p_mZdcX[1][numTriggerBins-1]->GetNbinsX(); ++i_run)
     {
-      cout << "bad runIndex from ZdcX: " << p_mZdcX[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mZdcX[1][9]->GetBinCenter(i_run+1) << std::endl;
+      if(p_mZdcX[1][numTriggerBins-1]->GetBinError(i_run+1) > 0 && isBadRun(p_mZdcX[1][numTriggerBins-1]->GetBinContent(i_run+1),meanZdcX,sigmaZdcX))
+      {
+	cout << "bad runIndex from ZdcX: " << p_mZdcX[1][numTriggerBins-1]->GetBinCenter(i_run+1) << endl;
+	file_badRunIndex << p_mZdcX[1][numTriggerBins-1]->GetBinCenter(i_run+1) << std::endl;
+      }
     }
   }
   //-------------ZdcX----------------
@@ -223,37 +271,43 @@ int findBadRunIndex(int beamType = 0)
   //-------------Vz----------------
   double meanVz = 0.0;
   double sigmaVz = 0.0;
-  findMean(p_mVz[1][9],meanVz,sigmaVz);
+  findMean(p_mVz[1][numTriggerBins-1],meanVz,sigmaVz);
 
-  TCanvas *c_RunQA_Vz = new TCanvas("c_RunQA_Vz","c_RunQA_Vz",10,10,800,400);
-  c_RunQA_Vz->cd()->SetLeftMargin(0.1);
-  c_RunQA_Vz->cd()->SetRightMargin(0.1);
-  c_RunQA_Vz->cd()->SetBottomMargin(0.1);
-  c_RunQA_Vz->cd()->SetGrid(0,0);
-  c_RunQA_Vz->cd()->SetTicks(1,1);
+  // TCanvas *c_RunQA_Vz = new TCanvas("c_RunQA_Vz","c_RunQA_Vz",10,10,800,400);
+  // c_RunQA_Vz->cd()->SetLeftMargin(0.1);
+  // c_RunQA_Vz->cd()->SetRightMargin(0.1);
+  // c_RunQA_Vz->cd()->SetBottomMargin(0.1);
+  // c_RunQA_Vz->cd()->SetGrid(0,0);
+  // c_RunQA_Vz->cd()->SetTicks(1,1);
 
-  p_mVz[1][9]->SetTitle("Vz vs. runIndex");
-  p_mVz[1][9]->SetStats(0);
-  p_mVz[1][9]->SetMarkerColor(1);
-  p_mVz[1][9]->SetMarkerStyle(20);
-  p_mVz[1][9]->SetMarkerSize(1.0);
-  p_mVz[1][9]->SetLineColor(1);
-  p_mVz[1][9]->GetXaxis()->SetTitle("runIndex");
-  p_mVz[1][9]->GetYaxis()->SetTitle("<Vz>");
-  p_mVz[1][9]->GetYaxis()->SetRangeUser(-3.0,3.0);
-  p_mVz[1][9]->Draw("pE");
+  c_BadRun->Clear();
+  p_mVz[1][numTriggerBins-1]->SetTitle("Vz vs. runIndex");
+  p_mVz[1][numTriggerBins-1]->SetStats(0);
+  p_mVz[1][numTriggerBins-1]->SetMarkerColor(1);
+  p_mVz[1][numTriggerBins-1]->SetMarkerStyle(20);
+  p_mVz[1][numTriggerBins-1]->SetMarkerSize(1.0);
+  p_mVz[1][numTriggerBins-1]->SetLineColor(1);
+  p_mVz[1][numTriggerBins-1]->GetXaxis()->SetTitle("runIndex");
+  p_mVz[1][numTriggerBins-1]->GetYaxis()->SetTitle("<Vz>");
+  p_mVz[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(-3.0,3.0);
+  if(beamType == 2) p_mVz[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(200.5,201);
+  p_mVz[1][numTriggerBins-1]->Draw("pE");
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanVz,sigmaVz);
 
-  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_Vz_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
-  c_RunQA_Vz->SaveAs(FigName.c_str());
+  figName = Form("../../figures/RunQA/%s/BadRun_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_BadRun->Update();
+  c_BadRun->Print(figName.c_str());
 
-  for(int i_run = 0; i_run < p_mVz[1][9]->GetNbinsX(); ++i_run)
+  // FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/RunQA/%s/c_RunQA_Vz_badRunIndex_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  // c_RunQA_Vz->SaveAs(FigName.c_str());
+
+  for(int i_run = 0; i_run < p_mVz[1][numTriggerBins-1]->GetNbinsX(); ++i_run)
   {
-    if(p_mVz[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mVz[1][9]->GetBinContent(i_run+1),meanVz,sigmaVz))
+    if(p_mVz[1][numTriggerBins-1]->GetBinError(i_run+1) > 0 && isBadRun(p_mVz[1][numTriggerBins-1]->GetBinContent(i_run+1),meanVz,sigmaVz))
     {
-      cout << "bad runIndex from Vz: " << p_mVz[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mVz[1][9]->GetBinCenter(i_run+1) << std::endl;
+      cout << "bad runIndex from Vz: " << p_mVz[1][numTriggerBins-1]->GetBinCenter(i_run+1) << endl;
+      file_badRunIndex << p_mVz[1][numTriggerBins-1]->GetBinCenter(i_run+1) << std::endl;
     }
   }
   //-------------Vz----------------
@@ -261,37 +315,42 @@ int findBadRunIndex(int beamType = 0)
   //-------------Vr----------------
   double meanVr = 0.0;
   double sigmaVr = 0.0;
-  findMean(p_mVr[1][9],meanVr,sigmaVr);
+  findMean(p_mVr[1][numTriggerBins-1],meanVr,sigmaVr);
 
-  TCanvas *c_RunQA_Vr = new TCanvas("c_RunQA_Vr","c_RunQA_Vr",10,10,800,400);
-  c_RunQA_Vr->cd()->SetLeftMargin(0.1);
-  c_RunQA_Vr->cd()->SetRightMargin(0.1);
-  c_RunQA_Vr->cd()->SetBottomMargin(0.1);
-  c_RunQA_Vr->cd()->SetGrid(0,0);
-  c_RunQA_Vr->cd()->SetTicks(1,1);
+  // TCanvas *c_RunQA_Vr = new TCanvas("c_RunQA_Vr","c_RunQA_Vr",10,10,800,400);
+  // c_RunQA_Vr->cd()->SetLeftMargin(0.1);
+  // c_RunQA_Vr->cd()->SetRightMargin(0.1);
+  // c_RunQA_Vr->cd()->SetBottomMargin(0.1);
+  // c_RunQA_Vr->cd()->SetGrid(0,0);
+  // c_RunQA_Vr->cd()->SetTicks(1,1);
 
-  p_mVr[1][9]->SetTitle("Vr vs. runIndex");
-  p_mVr[1][9]->SetStats(0);
-  p_mVr[1][9]->SetMarkerColor(1);
-  p_mVr[1][9]->SetMarkerStyle(20);
-  p_mVr[1][9]->SetMarkerSize(1.0);
-  p_mVr[1][9]->SetLineColor(1);
-  p_mVr[1][9]->GetXaxis()->SetTitle("runIndex");
-  p_mVr[1][9]->GetYaxis()->SetTitle("<Vr>");
-  p_mVr[1][9]->GetYaxis()->SetRangeUser(0.1,0.5);
-  p_mVr[1][9]->Draw("pE");
+  c_BadRun->Clear();
+  p_mVr[1][numTriggerBins-1]->SetTitle("Vr vs. runIndex");
+  p_mVr[1][numTriggerBins-1]->SetStats(0);
+  p_mVr[1][numTriggerBins-1]->SetMarkerColor(1);
+  p_mVr[1][numTriggerBins-1]->SetMarkerStyle(20);
+  p_mVr[1][numTriggerBins-1]->SetMarkerSize(1.0);
+  p_mVr[1][numTriggerBins-1]->SetLineColor(1);
+  p_mVr[1][numTriggerBins-1]->GetXaxis()->SetTitle("runIndex");
+  p_mVr[1][numTriggerBins-1]->GetYaxis()->SetTitle("<Vr>");
+  p_mVr[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(0.1,0.5);
+  p_mVr[1][numTriggerBins-1]->Draw("pE");
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanVr,sigmaVr);
 
-  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_Vr_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
-  c_RunQA_Vr->SaveAs(FigName.c_str());
+  figName = Form("../../figures/RunQA/%s/BadRun_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_BadRun->Update();
+  c_BadRun->Print(figName.c_str());
 
-  for(int i_run = 0; i_run < p_mVr[1][9]->GetNbinsX(); ++i_run)
+  // FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/RunQA/%s/c_RunQA_Vr_badRunIndex_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  // c_RunQA_Vr->SaveAs(FigName.c_str());
+
+  for(int i_run = 0; i_run < p_mVr[1][numTriggerBins-1]->GetNbinsX(); ++i_run)
   {
-    if(p_mVr[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mVr[1][9]->GetBinContent(i_run+1),meanVr,sigmaVr))
+    if(p_mVr[1][numTriggerBins-1]->GetBinError(i_run+1) > 0 && isBadRun(p_mVr[1][numTriggerBins-1]->GetBinContent(i_run+1),meanVr,sigmaVr))
     {
-      cout << "bad runIndex from Vr: " << p_mVr[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mVr[1][9]->GetBinCenter(i_run+1) << std::endl;
+      cout << "bad runIndex from Vr: " << p_mVr[1][numTriggerBins-1]->GetBinCenter(i_run+1) << endl;
+      file_badRunIndex << p_mVr[1][numTriggerBins-1]->GetBinCenter(i_run+1) << std::endl;
     }
   }
   //-------------Vr----------------
@@ -299,37 +358,42 @@ int findBadRunIndex(int beamType = 0)
   //-------------gDca----------------
   double meanGDca = 0.0;
   double sigmaGDca = 0.0;
-  findMean(p_mGDca[1][9],meanGDca,sigmaGDca);
+  findMean(p_mGDca[1][numTriggerBins-1],meanGDca,sigmaGDca);
 
-  TCanvas *c_RunQA_gDca = new TCanvas("c_RunQA_gDca","c_RunQA_gDca",10,10,800,400);
-  c_RunQA_gDca->cd()->SetLeftMargin(0.1);
-  c_RunQA_gDca->cd()->SetRightMargin(0.1);
-  c_RunQA_gDca->cd()->SetBottomMargin(0.1);
-  c_RunQA_gDca->cd()->SetGrid(0,0);
-  c_RunQA_gDca->cd()->SetTicks(1,1);
+  // TCanvas *c_RunQA_gDca = new TCanvas("c_RunQA_gDca","c_RunQA_gDca",10,10,800,400);
+  // c_RunQA_gDca->cd()->SetLeftMargin(0.1);
+  // c_RunQA_gDca->cd()->SetRightMargin(0.1);
+  // c_RunQA_gDca->cd()->SetBottomMargin(0.1);
+  // c_RunQA_gDca->cd()->SetGrid(0,0);
+  // c_RunQA_gDca->cd()->SetTicks(1,1);
 
-  p_mGDca[1][9]->SetTitle("gDca vs. runIndex");
-  p_mGDca[1][9]->SetStats(0);
-  p_mGDca[1][9]->SetMarkerColor(1);
-  p_mGDca[1][9]->SetMarkerStyle(20);
-  p_mGDca[1][9]->SetMarkerSize(1.0);
-  p_mGDca[1][9]->SetLineColor(1);
-  p_mGDca[1][9]->GetXaxis()->SetTitle("runIndex");
-  p_mGDca[1][9]->GetYaxis()->SetTitle("<gDca>");
-  p_mGDca[1][9]->GetYaxis()->SetRangeUser(0.1,0.7);
-  p_mGDca[1][9]->Draw("pE");
+  c_BadRun->Clear();
+  p_mGDca[1][numTriggerBins-1]->SetTitle("gDca vs. runIndex");
+  p_mGDca[1][numTriggerBins-1]->SetStats(0);
+  p_mGDca[1][numTriggerBins-1]->SetMarkerColor(1);
+  p_mGDca[1][numTriggerBins-1]->SetMarkerStyle(20);
+  p_mGDca[1][numTriggerBins-1]->SetMarkerSize(1.0);
+  p_mGDca[1][numTriggerBins-1]->SetLineColor(1);
+  p_mGDca[1][numTriggerBins-1]->GetXaxis()->SetTitle("runIndex");
+  p_mGDca[1][numTriggerBins-1]->GetYaxis()->SetTitle("<gDca>");
+  p_mGDca[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(0.2,1.0);
+  p_mGDca[1][numTriggerBins-1]->Draw("pE");
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanGDca,sigmaGDca);
 
-  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_gDca_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
-  c_RunQA_gDca->SaveAs(FigName.c_str());
+  figName = Form("../../figures/RunQA/%s/BadRun_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_BadRun->Update();
+  c_BadRun->Print(figName.c_str());
 
-  for(int i_run = 0; i_run < p_mGDca[1][9]->GetNbinsX(); ++i_run)
+  // FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/RunQA/%s/c_RunQA_gDca_badRunIndex_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  // c_RunQA_gDca->SaveAs(FigName.c_str());
+
+  for(int i_run = 0; i_run < p_mGDca[1][numTriggerBins-1]->GetNbinsX(); ++i_run)
   {
-    if(p_mGDca[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mGDca[1][9]->GetBinContent(i_run+1),meanGDca,sigmaGDca))
+    if(p_mGDca[1][numTriggerBins-1]->GetBinError(i_run+1) > 0 && isBadRun(p_mGDca[1][numTriggerBins-1]->GetBinContent(i_run+1),meanGDca,sigmaGDca))
     {
-      cout << "bad runIndex from GDca: " << p_mGDca[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mGDca[1][9]->GetBinCenter(i_run+1) << std::endl;
+      cout << "bad runIndex from GDca: " << p_mGDca[1][numTriggerBins-1]->GetBinCenter(i_run+1) << endl;
+      file_badRunIndex << p_mGDca[1][numTriggerBins-1]->GetBinCenter(i_run+1) << std::endl;
     }
   }
   //-------------gDca----------------
@@ -337,37 +401,42 @@ int findBadRunIndex(int beamType = 0)
   //-------------nHitsFit----------------
   double meanNHitsFit = 0.0;
   double sigmaNHitsFit = 0.0;
-  findMean(p_mNHitsFit[1][9],meanNHitsFit,sigmaNHitsFit);
+  findMean(p_mNHitsFit[1][numTriggerBins-1],meanNHitsFit,sigmaNHitsFit);
 
-  TCanvas *c_RunQA_nHitsFit = new TCanvas("c_RunQA_nHitsFit","c_RunQA_nHitsFit",10,10,800,400);
-  c_RunQA_nHitsFit->cd()->SetLeftMargin(0.1);
-  c_RunQA_nHitsFit->cd()->SetRightMargin(0.1);
-  c_RunQA_nHitsFit->cd()->SetBottomMargin(0.1);
-  c_RunQA_nHitsFit->cd()->SetGrid(0,0);
-  c_RunQA_nHitsFit->cd()->SetTicks(1,1);
+  // TCanvas *c_RunQA_nHitsFit = new TCanvas("c_RunQA_nHitsFit","c_RunQA_nHitsFit",10,10,800,400);
+  // c_RunQA_nHitsFit->cd()->SetLeftMargin(0.1);
+  // c_RunQA_nHitsFit->cd()->SetRightMargin(0.1);
+  // c_RunQA_nHitsFit->cd()->SetBottomMargin(0.1);
+  // c_RunQA_nHitsFit->cd()->SetGrid(0,0);
+  // c_RunQA_nHitsFit->cd()->SetTicks(1,1);
 
-  p_mNHitsFit[1][9]->SetTitle("nHitsFit vs. runIndex");
-  p_mNHitsFit[1][9]->SetStats(0);
-  p_mNHitsFit[1][9]->SetMarkerColor(1);
-  p_mNHitsFit[1][9]->SetMarkerStyle(20);
-  p_mNHitsFit[1][9]->SetMarkerSize(1.0);
-  p_mNHitsFit[1][9]->SetLineColor(1);
-  p_mNHitsFit[1][9]->GetXaxis()->SetTitle("runIndex");
-  p_mNHitsFit[1][9]->GetYaxis()->SetTitle("<nHitsFit>");
-  p_mNHitsFit[1][9]->GetYaxis()->SetRangeUser(25,40);
-  p_mNHitsFit[1][9]->Draw("pE");
+  c_BadRun->Clear();
+  p_mNHitsFit[1][numTriggerBins-1]->SetTitle("nHitsFit vs. runIndex");
+  p_mNHitsFit[1][numTriggerBins-1]->SetStats(0);
+  p_mNHitsFit[1][numTriggerBins-1]->SetMarkerColor(1);
+  p_mNHitsFit[1][numTriggerBins-1]->SetMarkerStyle(20);
+  p_mNHitsFit[1][numTriggerBins-1]->SetMarkerSize(1.0);
+  p_mNHitsFit[1][numTriggerBins-1]->SetLineColor(1);
+  p_mNHitsFit[1][numTriggerBins-1]->GetXaxis()->SetTitle("runIndex");
+  p_mNHitsFit[1][numTriggerBins-1]->GetYaxis()->SetTitle("<nHitsFit>");
+  p_mNHitsFit[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(35,37);
+  p_mNHitsFit[1][numTriggerBins-1]->Draw("pE");
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanNHitsFit,sigmaNHitsFit);
 
-  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_nHitsFit_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
-  c_RunQA_nHitsFit->SaveAs(FigName.c_str());
+  figName = Form("../../figures/RunQA/%s/BadRun_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_BadRun->Update();
+  c_BadRun->Print(figName.c_str());
 
-  for(int i_run = 0; i_run < p_mNHitsFit[1][9]->GetNbinsX(); ++i_run)
+  // FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/RunQA/%s/c_RunQA_nHitsFit_badRunIndex_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  // c_RunQA_nHitsFit->SaveAs(FigName.c_str());
+
+  for(int i_run = 0; i_run < p_mNHitsFit[1][numTriggerBins-1]->GetNbinsX(); ++i_run)
   {
-    if(p_mNHitsFit[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mNHitsFit[1][9]->GetBinContent(i_run+1),meanNHitsFit,sigmaNHitsFit))
+    if(p_mNHitsFit[1][numTriggerBins-1]->GetBinError(i_run+1) > 0 && isBadRun(p_mNHitsFit[1][numTriggerBins-1]->GetBinContent(i_run+1),meanNHitsFit,sigmaNHitsFit))
     {
-      cout << "bad runIndex from NHitsFit: " << p_mNHitsFit[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mNHitsFit[1][9]->GetBinCenter(i_run+1) << std::endl;
+      cout << "bad runIndex from NHitsFit: " << p_mNHitsFit[1][numTriggerBins-1]->GetBinCenter(i_run+1) << endl;
+      file_badRunIndex << p_mNHitsFit[1][numTriggerBins-1]->GetBinCenter(i_run+1) << std::endl;
     }
   }
   //-------------nHitsFit----------------
@@ -375,37 +444,42 @@ int findBadRunIndex(int beamType = 0)
   //-------------primPt----------------
   double meanPrimPt = 0.0;
   double sigmaPrimPt = 0.0;
-  findMean(p_mPrimPt[1][9],meanPrimPt,sigmaPrimPt);
+  findMean(p_mPrimPt[1][numTriggerBins-1],meanPrimPt,sigmaPrimPt);
 
-  TCanvas *c_RunQA_primPt = new TCanvas("c_RunQA_primPt","c_RunQA_primPt",10,10,800,400);
-  c_RunQA_primPt->cd()->SetLeftMargin(0.1);
-  c_RunQA_primPt->cd()->SetRightMargin(0.1);
-  c_RunQA_primPt->cd()->SetBottomMargin(0.1);
-  c_RunQA_primPt->cd()->SetGrid(0,0);
-  c_RunQA_primPt->cd()->SetTicks(1,1);
+  // TCanvas *c_RunQA_primPt = new TCanvas("c_RunQA_primPt","c_RunQA_primPt",10,10,800,400);
+  // c_RunQA_primPt->cd()->SetLeftMargin(0.1);
+  // c_RunQA_primPt->cd()->SetRightMargin(0.1);
+  // c_RunQA_primPt->cd()->SetBottomMargin(0.1);
+  // c_RunQA_primPt->cd()->SetGrid(0,0);
+  // c_RunQA_primPt->cd()->SetTicks(1,1);
 
-  p_mPrimPt[1][9]->SetTitle("primPt vs. runIndex");
-  p_mPrimPt[1][9]->SetStats(0);
-  p_mPrimPt[1][9]->SetMarkerColor(1);
-  p_mPrimPt[1][9]->SetMarkerStyle(20);
-  p_mPrimPt[1][9]->SetMarkerSize(1.0);
-  p_mPrimPt[1][9]->SetLineColor(1);
-  p_mPrimPt[1][9]->GetXaxis()->SetTitle("runIndex");
-  p_mPrimPt[1][9]->GetYaxis()->SetTitle("<p_{T}^{prim}>");
-  p_mPrimPt[1][9]->GetYaxis()->SetRangeUser(0.4,0.8);
-  p_mPrimPt[1][9]->Draw("pE");
+  c_BadRun->Clear();
+  p_mPrimPt[1][numTriggerBins-1]->SetTitle("primPt vs. runIndex");
+  p_mPrimPt[1][numTriggerBins-1]->SetStats(0);
+  p_mPrimPt[1][numTriggerBins-1]->SetMarkerColor(1);
+  p_mPrimPt[1][numTriggerBins-1]->SetMarkerStyle(20);
+  p_mPrimPt[1][numTriggerBins-1]->SetMarkerSize(1.0);
+  p_mPrimPt[1][numTriggerBins-1]->SetLineColor(1);
+  p_mPrimPt[1][numTriggerBins-1]->GetXaxis()->SetTitle("runIndex");
+  p_mPrimPt[1][numTriggerBins-1]->GetYaxis()->SetTitle("<p_{T}^{prim}>");
+  p_mPrimPt[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(0.63,0.65);
+  p_mPrimPt[1][numTriggerBins-1]->Draw("pE");
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanPrimPt,sigmaPrimPt);
 
-  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_primPt_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
-  c_RunQA_primPt->SaveAs(FigName.c_str());
+  figName = Form("../../figures/RunQA/%s/BadRun_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_BadRun->Update();
+  c_BadRun->Print(figName.c_str());
 
-  for(int i_run = 0; i_run < p_mPrimPt[1][9]->GetNbinsX(); ++i_run)
+  // FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/RunQA/%s/c_RunQA_primPt_badRunIndex_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  // c_RunQA_primPt->SaveAs(FigName.c_str());
+
+  for(int i_run = 0; i_run < p_mPrimPt[1][numTriggerBins-1]->GetNbinsX(); ++i_run)
   {
-    if(p_mPrimPt[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mPrimPt[1][9]->GetBinContent(i_run+1),meanPrimPt,sigmaPrimPt))
+    if(p_mPrimPt[1][numTriggerBins-1]->GetBinError(i_run+1) > 0 && isBadRun(p_mPrimPt[1][numTriggerBins-1]->GetBinContent(i_run+1),meanPrimPt,sigmaPrimPt))
     {
-      cout << "bad runIndex from PrimPt: " << p_mPrimPt[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mPrimPt[1][9]->GetBinCenter(i_run+1) << std::endl;
+      cout << "bad runIndex from PrimPt: " << p_mPrimPt[1][numTriggerBins-1]->GetBinCenter(i_run+1) << endl;
+      file_badRunIndex << p_mPrimPt[1][numTriggerBins-1]->GetBinCenter(i_run+1) << std::endl;
     }
   }
   //-------------primPt----------------
@@ -413,37 +487,43 @@ int findBadRunIndex(int beamType = 0)
   //-------------primEta----------------
   double meanPrimEta = 0.0;
   double sigmaPrimEta = 0.0;
-  findMean(p_mPrimEta[1][9],meanPrimEta,sigmaPrimEta);
+  findMean(p_mPrimEta[1][numTriggerBins-1],meanPrimEta,sigmaPrimEta);
 
-  TCanvas *c_RunQA_primEta = new TCanvas("c_RunQA_primEta","c_RunQA_primEta",10,10,800,400);
-  c_RunQA_primEta->cd()->SetLeftMargin(0.1);
-  c_RunQA_primEta->cd()->SetRightMargin(0.1);
-  c_RunQA_primEta->cd()->SetBottomMargin(0.1);
-  c_RunQA_primEta->cd()->SetGrid(0,0);
-  c_RunQA_primEta->cd()->SetTicks(1,1);
+  // TCanvas *c_RunQA_primEta = new TCanvas("c_RunQA_primEta","c_RunQA_primEta",10,10,800,400);
+  // c_RunQA_primEta->cd()->SetLeftMargin(0.1);
+  // c_RunQA_primEta->cd()->SetRightMargin(0.1);
+  // c_RunQA_primEta->cd()->SetBottomMargin(0.1);
+  // c_RunQA_primEta->cd()->SetGrid(0,0);
+  // c_RunQA_primEta->cd()->SetTicks(1,1);
 
-  p_mPrimEta[1][9]->SetTitle("primEta vs. runIndex");
-  p_mPrimEta[1][9]->SetStats(0);
-  p_mPrimEta[1][9]->SetMarkerColor(1);
-  p_mPrimEta[1][9]->SetMarkerStyle(20);
-  p_mPrimEta[1][9]->SetMarkerSize(1.0);
-  p_mPrimEta[1][9]->SetLineColor(1);
-  p_mPrimEta[1][9]->GetXaxis()->SetTitle("runIndex");
-  p_mPrimEta[1][9]->GetYaxis()->SetTitle("<#eta^{prim}>");
-  p_mPrimEta[1][9]->GetYaxis()->SetRangeUser(-0.05,0.10);
-  p_mPrimEta[1][9]->Draw("pE");
+  c_BadRun->Clear();
+  p_mPrimEta[1][numTriggerBins-1]->SetTitle("primEta vs. runIndex");
+  p_mPrimEta[1][numTriggerBins-1]->SetStats(0);
+  p_mPrimEta[1][numTriggerBins-1]->SetMarkerColor(1);
+  p_mPrimEta[1][numTriggerBins-1]->SetMarkerStyle(20);
+  p_mPrimEta[1][numTriggerBins-1]->SetMarkerSize(1.0);
+  p_mPrimEta[1][numTriggerBins-1]->SetLineColor(1);
+  p_mPrimEta[1][numTriggerBins-1]->GetXaxis()->SetTitle("runIndex");
+  p_mPrimEta[1][numTriggerBins-1]->GetYaxis()->SetTitle("<#eta^{prim}>");
+  p_mPrimEta[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(-0.05,0.10);
+  if(beamType == 2) p_mPrimEta[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(-1.05,-1.0);
+  p_mPrimEta[1][numTriggerBins-1]->Draw("pE");
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanPrimEta,sigmaPrimEta);
 
-  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_primEta_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
-  c_RunQA_primEta->SaveAs(FigName.c_str());
+  figName = Form("../../figures/RunQA/%s/BadRun_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_BadRun->Update();
+  c_BadRun->Print(figName.c_str());
 
-  for(int i_run = 0; i_run < p_mPrimEta[1][9]->GetNbinsX(); ++i_run)
+  // FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/RunQA/%s/c_RunQA_primEta_badRunIndex_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  // c_RunQA_primEta->SaveAs(FigName.c_str());
+
+  for(int i_run = 0; i_run < p_mPrimEta[1][numTriggerBins-1]->GetNbinsX(); ++i_run)
   {
-    if(p_mPrimEta[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mPrimEta[1][9]->GetBinContent(i_run+1),meanPrimEta,sigmaPrimEta))
+    if(p_mPrimEta[1][numTriggerBins-1]->GetBinError(i_run+1) > 0 && isBadRun(p_mPrimEta[1][numTriggerBins-1]->GetBinContent(i_run+1),meanPrimEta,sigmaPrimEta))
     {
-      cout << "bad runIndex from PrimEta: " << p_mPrimEta[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mPrimEta[1][9]->GetBinCenter(i_run+1) << std::endl;
+      cout << "bad runIndex from PrimEta: " << p_mPrimEta[1][numTriggerBins-1]->GetBinCenter(i_run+1) << endl;
+      file_badRunIndex << p_mPrimEta[1][numTriggerBins-1]->GetBinCenter(i_run+1) << std::endl;
     }
   }
   //-------------primEta----------------
@@ -451,37 +531,42 @@ int findBadRunIndex(int beamType = 0)
   //-------------primPhi----------------
   double meanPrimPhi = 0.0;
   double sigmaPrimPhi = 0.0;
-  findMean(p_mPrimPhi[1][9],meanPrimPhi,sigmaPrimPhi);
+  findMean(p_mPrimPhi[1][numTriggerBins-1],meanPrimPhi,sigmaPrimPhi);
 
-  TCanvas *c_RunQA_primPhi = new TCanvas("c_RunQA_primPhi","c_RunQA_primPhi",10,10,800,400);
-  c_RunQA_primPhi->cd()->SetLeftMargin(0.1);
-  c_RunQA_primPhi->cd()->SetRightMargin(0.1);
-  c_RunQA_primPhi->cd()->SetBottomMargin(0.1);
-  c_RunQA_primPhi->cd()->SetGrid(0,0);
-  c_RunQA_primPhi->cd()->SetTicks(1,1);
+  // TCanvas *c_RunQA_primPhi = new TCanvas("c_RunQA_primPhi","c_RunQA_primPhi",10,10,800,400);
+  // c_RunQA_primPhi->cd()->SetLeftMargin(0.1);
+  // c_RunQA_primPhi->cd()->SetRightMargin(0.1);
+  // c_RunQA_primPhi->cd()->SetBottomMargin(0.1);
+  // c_RunQA_primPhi->cd()->SetGrid(0,0);
+  // c_RunQA_primPhi->cd()->SetTicks(1,1);
 
-  p_mPrimPhi[1][9]->SetTitle("primPhi vs. runIndex");
-  p_mPrimPhi[1][9]->SetStats(0);
-  p_mPrimPhi[1][9]->SetMarkerColor(1);
-  p_mPrimPhi[1][9]->SetMarkerStyle(20);
-  p_mPrimPhi[1][9]->SetMarkerSize(1.0);
-  p_mPrimPhi[1][9]->SetLineColor(1);
-  p_mPrimPhi[1][9]->GetXaxis()->SetTitle("runIndex");
-  p_mPrimPhi[1][9]->GetYaxis()->SetTitle("<#phi^{prim}>");
-  p_mPrimPhi[1][9]->GetYaxis()->SetRangeUser(-0.1,0.50);
-  p_mPrimPhi[1][9]->Draw("pE");
+  c_BadRun->Clear();
+  p_mPrimPhi[1][numTriggerBins-1]->SetTitle("primPhi vs. runIndex");
+  p_mPrimPhi[1][numTriggerBins-1]->SetStats(0);
+  p_mPrimPhi[1][numTriggerBins-1]->SetMarkerColor(1);
+  p_mPrimPhi[1][numTriggerBins-1]->SetMarkerStyle(20);
+  p_mPrimPhi[1][numTriggerBins-1]->SetMarkerSize(1.0);
+  p_mPrimPhi[1][numTriggerBins-1]->SetLineColor(1);
+  p_mPrimPhi[1][numTriggerBins-1]->GetXaxis()->SetTitle("runIndex");
+  p_mPrimPhi[1][numTriggerBins-1]->GetYaxis()->SetTitle("<#phi^{prim}>");
+  p_mPrimPhi[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(-0.05,0.05);
+  p_mPrimPhi[1][numTriggerBins-1]->Draw("pE");
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanPrimPhi,sigmaPrimPhi);
 
-  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_primPhi_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
-  c_RunQA_primPhi->SaveAs(FigName.c_str());
+  figName = Form("../../figures/RunQA/%s/BadRun_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_BadRun->Update();
+  c_BadRun->Print(figName.c_str());
 
-  for(int i_run = 0; i_run < p_mPrimPhi[1][9]->GetNbinsX(); ++i_run)
+  // FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/RunQA/%s/c_RunQA_primPhi_badRunIndex_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  // c_RunQA_primPhi->SaveAs(FigName.c_str());
+
+  for(int i_run = 0; i_run < p_mPrimPhi[1][numTriggerBins-1]->GetNbinsX(); ++i_run)
   {
-    if(p_mPrimPhi[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mPrimPhi[1][9]->GetBinContent(i_run+1),meanPrimPhi,sigmaPrimPhi))
+    if(p_mPrimPhi[1][numTriggerBins-1]->GetBinError(i_run+1) > 0 && isBadRun(p_mPrimPhi[1][numTriggerBins-1]->GetBinContent(i_run+1),meanPrimPhi,sigmaPrimPhi))
     {
-      cout << "bad runIndex from PrimPhi: " << p_mPrimPhi[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mPrimPhi[1][9]->GetBinCenter(i_run+1) << std::endl;
+      cout << "bad runIndex from PrimPhi: " << p_mPrimPhi[1][numTriggerBins-1]->GetBinCenter(i_run+1) << endl;
+      file_badRunIndex << p_mPrimPhi[1][numTriggerBins-1]->GetBinCenter(i_run+1) << std::endl;
     }
   }
   //-------------primPhi----------------
@@ -489,37 +574,42 @@ int findBadRunIndex(int beamType = 0)
   //-------------globPt----------------
   double meanGlobPt = 0.0;
   double sigmaGlobPt = 0.0;
-  findMean(p_mGlobPt[1][9],meanGlobPt,sigmaGlobPt);
+  findMean(p_mGlobPt[1][numTriggerBins-1],meanGlobPt,sigmaGlobPt);
 
-  TCanvas *c_RunQA_globPt = new TCanvas("c_RunQA_globPt","c_RunQA_globPt",10,10,800,400);
-  c_RunQA_globPt->cd()->SetLeftMargin(0.1);
-  c_RunQA_globPt->cd()->SetRightMargin(0.1);
-  c_RunQA_globPt->cd()->SetBottomMargin(0.1);
-  c_RunQA_globPt->cd()->SetGrid(0,0);
-  c_RunQA_globPt->cd()->SetTicks(1,1);
+  // TCanvas *c_RunQA_globPt = new TCanvas("c_RunQA_globPt","c_RunQA_globPt",10,10,800,400);
+  // c_RunQA_globPt->cd()->SetLeftMargin(0.1);
+  // c_RunQA_globPt->cd()->SetRightMargin(0.1);
+  // c_RunQA_globPt->cd()->SetBottomMargin(0.1);
+  // c_RunQA_globPt->cd()->SetGrid(0,0);
+  // c_RunQA_globPt->cd()->SetTicks(1,1);
 
-  p_mGlobPt[1][9]->SetTitle("globPt vs. runIndex");
-  p_mGlobPt[1][9]->SetStats(0);
-  p_mGlobPt[1][9]->SetMarkerColor(1);
-  p_mGlobPt[1][9]->SetMarkerStyle(20);
-  p_mGlobPt[1][9]->SetMarkerSize(1.0);
-  p_mGlobPt[1][9]->SetLineColor(1);
-  p_mGlobPt[1][9]->GetXaxis()->SetTitle("runIndex");
-  p_mGlobPt[1][9]->GetYaxis()->SetTitle("<p_{T}^{glob}>");
-  p_mGlobPt[1][9]->GetYaxis()->SetRangeUser(0.4,0.8);
-  p_mGlobPt[1][9]->Draw("pE");
+  c_BadRun->Clear();
+  p_mGlobPt[1][numTriggerBins-1]->SetTitle("globPt vs. runIndex");
+  p_mGlobPt[1][numTriggerBins-1]->SetStats(0);
+  p_mGlobPt[1][numTriggerBins-1]->SetMarkerColor(1);
+  p_mGlobPt[1][numTriggerBins-1]->SetMarkerStyle(20);
+  p_mGlobPt[1][numTriggerBins-1]->SetMarkerSize(1.0);
+  p_mGlobPt[1][numTriggerBins-1]->SetLineColor(1);
+  p_mGlobPt[1][numTriggerBins-1]->GetXaxis()->SetTitle("runIndex");
+  p_mGlobPt[1][numTriggerBins-1]->GetYaxis()->SetTitle("<p_{T}^{glob}>");
+  p_mGlobPt[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(0.6,0.7);
+  p_mGlobPt[1][numTriggerBins-1]->Draw("pE");
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanGlobPt,sigmaGlobPt);
 
-  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_globPt_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
-  c_RunQA_globPt->SaveAs(FigName.c_str());
+  figName = Form("../../figures/RunQA/%s/BadRun_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_BadRun->Update();
+  c_BadRun->Print(figName.c_str());
 
-  for(int i_run = 0; i_run < p_mGlobPt[1][9]->GetNbinsX(); ++i_run)
+  // FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/RunQA/%s/c_RunQA_globPt_badRunIndex_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  // c_RunQA_globPt->SaveAs(FigName.c_str());
+
+  for(int i_run = 0; i_run < p_mGlobPt[1][numTriggerBins-1]->GetNbinsX(); ++i_run)
   {
-    if(p_mGlobPt[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mGlobPt[1][9]->GetBinContent(i_run+1),meanGlobPt,sigmaGlobPt))
+    if(p_mGlobPt[1][numTriggerBins-1]->GetBinError(i_run+1) > 0 && isBadRun(p_mGlobPt[1][numTriggerBins-1]->GetBinContent(i_run+1),meanGlobPt,sigmaGlobPt))
     {
-      cout << "bad runIndex from GlobPt: " << p_mGlobPt[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mGlobPt[1][9]->GetBinCenter(i_run+1) << std::endl;
+      cout << "bad runIndex from GlobPt: " << p_mGlobPt[1][numTriggerBins-1]->GetBinCenter(i_run+1) << endl;
+      file_badRunIndex << p_mGlobPt[1][numTriggerBins-1]->GetBinCenter(i_run+1) << std::endl;
     }
   }
   //-------------globPt----------------
@@ -527,37 +617,43 @@ int findBadRunIndex(int beamType = 0)
   //-------------globEta----------------
   double meanGlobEta = 0.0;
   double sigmaGlobEta = 0.0;
-  findMean(p_mGlobEta[1][9],meanGlobEta,sigmaGlobEta);
+  findMean(p_mGlobEta[1][numTriggerBins-1],meanGlobEta,sigmaGlobEta);
 
-  TCanvas *c_RunQA_globEta = new TCanvas("c_RunQA_globEta","c_RunQA_globEta",10,10,800,400);
-  c_RunQA_globEta->cd()->SetLeftMargin(0.1);
-  c_RunQA_globEta->cd()->SetRightMargin(0.1);
-  c_RunQA_globEta->cd()->SetBottomMargin(0.1);
-  c_RunQA_globEta->cd()->SetGrid(0,0);
-  c_RunQA_globEta->cd()->SetTicks(1,1);
+  // TCanvas *c_RunQA_globEta = new TCanvas("c_RunQA_globEta","c_RunQA_globEta",10,10,800,400);
+  // c_RunQA_globEta->cd()->SetLeftMargin(0.1);
+  // c_RunQA_globEta->cd()->SetRightMargin(0.1);
+  // c_RunQA_globEta->cd()->SetBottomMargin(0.1);
+  // c_RunQA_globEta->cd()->SetGrid(0,0);
+  // c_RunQA_globEta->cd()->SetTicks(1,1);
 
-  p_mGlobEta[1][9]->SetTitle("globEta vs. runIndex");
-  p_mGlobEta[1][9]->SetStats(0);
-  p_mGlobEta[1][9]->SetMarkerColor(1);
-  p_mGlobEta[1][9]->SetMarkerStyle(20);
-  p_mGlobEta[1][9]->SetMarkerSize(1.0);
-  p_mGlobEta[1][9]->SetLineColor(1);
-  p_mGlobEta[1][9]->GetXaxis()->SetTitle("runIndex");
-  p_mGlobEta[1][9]->GetYaxis()->SetTitle("<#eta^{glob}>");
-  p_mGlobEta[1][9]->GetYaxis()->SetRangeUser(-0.05,0.10);
-  p_mGlobEta[1][9]->Draw("pE");
+  c_BadRun->Clear();
+  p_mGlobEta[1][numTriggerBins-1]->SetTitle("globEta vs. runIndex");
+  p_mGlobEta[1][numTriggerBins-1]->SetStats(0);
+  p_mGlobEta[1][numTriggerBins-1]->SetMarkerColor(1);
+  p_mGlobEta[1][numTriggerBins-1]->SetMarkerStyle(20);
+  p_mGlobEta[1][numTriggerBins-1]->SetMarkerSize(1.0);
+  p_mGlobEta[1][numTriggerBins-1]->SetLineColor(1);
+  p_mGlobEta[1][numTriggerBins-1]->GetXaxis()->SetTitle("runIndex");
+  p_mGlobEta[1][numTriggerBins-1]->GetYaxis()->SetTitle("<#eta^{glob}>");
+  p_mGlobEta[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(-0.05,0.10);
+  if(beamType == 2) p_mGlobEta[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(-1.05,-1.0);
+  p_mGlobEta[1][numTriggerBins-1]->Draw("pE");
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanGlobEta,sigmaGlobEta);
 
-  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_globEta_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
-  c_RunQA_globEta->SaveAs(FigName.c_str());
+  figName = Form("../../figures/RunQA/%s/BadRun_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_BadRun->Update();
+  c_BadRun->Print(figName.c_str());
 
-  for(int i_run = 0; i_run < p_mGlobEta[1][9]->GetNbinsX(); ++i_run)
+  // FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/RunQA/%s/c_RunQA_globEta_badRunIndex_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  // c_RunQA_globEta->SaveAs(FigName.c_str());
+
+  for(int i_run = 0; i_run < p_mGlobEta[1][numTriggerBins-1]->GetNbinsX(); ++i_run)
   {
-    if(p_mGlobEta[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mGlobEta[1][9]->GetBinContent(i_run+1),meanGlobEta,sigmaGlobEta))
+    if(p_mGlobEta[1][numTriggerBins-1]->GetBinError(i_run+1) > 0 && isBadRun(p_mGlobEta[1][numTriggerBins-1]->GetBinContent(i_run+1),meanGlobEta,sigmaGlobEta))
     {
-      cout << "bad runIndex from GlobEta: " << p_mGlobEta[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mGlobEta[1][9]->GetBinCenter(i_run+1) << std::endl;
+      cout << "bad runIndex from GlobEta: " << p_mGlobEta[1][numTriggerBins-1]->GetBinCenter(i_run+1) << endl;
+      file_badRunIndex << p_mGlobEta[1][numTriggerBins-1]->GetBinCenter(i_run+1) << std::endl;
     }
   }
   //-------------globEta----------------
@@ -565,40 +661,48 @@ int findBadRunIndex(int beamType = 0)
   //-------------globPhi----------------
   double meanGlobPhi = 0.0;
   double sigmaGlobPhi = 0.0;
-  findMean(p_mGlobPhi[1][9],meanGlobPhi,sigmaGlobPhi);
+  findMean(p_mGlobPhi[1][numTriggerBins-1],meanGlobPhi,sigmaGlobPhi);
 
-  TCanvas *c_RunQA_globPhi = new TCanvas("c_RunQA_globPhi","c_RunQA_globPhi",10,10,800,400);
-  c_RunQA_globPhi->cd()->SetLeftMargin(0.1);
-  c_RunQA_globPhi->cd()->SetRightMargin(0.1);
-  c_RunQA_globPhi->cd()->SetBottomMargin(0.1);
-  c_RunQA_globPhi->cd()->SetGrid(0,0);
-  c_RunQA_globPhi->cd()->SetTicks(1,1);
+  // TCanvas *c_RunQA_globPhi = new TCanvas("c_RunQA_globPhi","c_RunQA_globPhi",10,10,800,400);
+  // c_RunQA_globPhi->cd()->SetLeftMargin(0.1);
+  // c_RunQA_globPhi->cd()->SetRightMargin(0.1);
+  // c_RunQA_globPhi->cd()->SetBottomMargin(0.1);
+  // c_RunQA_globPhi->cd()->SetGrid(0,0);
+  // c_RunQA_globPhi->cd()->SetTicks(1,1);
 
-  p_mGlobPhi[1][9]->SetTitle("globPhi vs. runIndex");
-  p_mGlobPhi[1][9]->SetStats(0);
-  p_mGlobPhi[1][9]->SetMarkerColor(1);
-  p_mGlobPhi[1][9]->SetMarkerStyle(20);
-  p_mGlobPhi[1][9]->SetMarkerSize(1.0);
-  p_mGlobPhi[1][9]->SetLineColor(1);
-  p_mGlobPhi[1][9]->GetXaxis()->SetTitle("runIndex");
-  p_mGlobPhi[1][9]->GetYaxis()->SetTitle("<#phi^{glob}>");
-  p_mGlobPhi[1][9]->GetYaxis()->SetRangeUser(-0.1,0.50);
-  p_mGlobPhi[1][9]->Draw("pE");
+  c_BadRun->Clear();
+  p_mGlobPhi[1][numTriggerBins-1]->SetTitle("globPhi vs. runIndex");
+  p_mGlobPhi[1][numTriggerBins-1]->SetStats(0);
+  p_mGlobPhi[1][numTriggerBins-1]->SetMarkerColor(1);
+  p_mGlobPhi[1][numTriggerBins-1]->SetMarkerStyle(20);
+  p_mGlobPhi[1][numTriggerBins-1]->SetMarkerSize(1.0);
+  p_mGlobPhi[1][numTriggerBins-1]->SetLineColor(1);
+  p_mGlobPhi[1][numTriggerBins-1]->GetXaxis()->SetTitle("runIndex");
+  p_mGlobPhi[1][numTriggerBins-1]->GetYaxis()->SetTitle("<#phi^{glob}>");
+  p_mGlobPhi[1][numTriggerBins-1]->GetYaxis()->SetRangeUser(-0.05,0.05);
+  p_mGlobPhi[1][numTriggerBins-1]->Draw("pE");
 
   plotGoodRunRange(runIndexStart,runIndexStop,meanGlobPhi,sigmaGlobPhi);
 
-  FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/%s/RunQA/c_RunQA_globPhi_badRunIndex_%s.pdf",globCons::mBeamType[beamType].c_str(),globCons::mBeamType[beamType].c_str());
-  c_RunQA_globPhi->SaveAs(FigName.c_str());
+  figName = Form("../../figures/RunQA/%s/BadRun_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_BadRun->Update();
+  c_BadRun->Print(figName.c_str());
 
-  for(int i_run = 0; i_run < p_mGlobPhi[1][9]->GetNbinsX(); ++i_run)
+  // FigName = Form("/Users/xusun/WorkSpace/STAR/SpinAlignment/GlobalSpinAlignmentAnalysis/figures/RunQA/%s/c_RunQA_globPhi_badRunIndex_%s.pdf",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  // c_RunQA_globPhi->SaveAs(FigName.c_str());
+
+  for(int i_run = 0; i_run < p_mGlobPhi[1][numTriggerBins-1]->GetNbinsX(); ++i_run)
   {
-    if(p_mGlobPhi[1][9]->GetBinError(i_run+1) > 0 && isBadRun(p_mGlobPhi[1][9]->GetBinContent(i_run+1),meanGlobPhi,sigmaGlobPhi))
+    if(p_mGlobPhi[1][numTriggerBins-1]->GetBinError(i_run+1) > 0 && isBadRun(p_mGlobPhi[1][numTriggerBins-1]->GetBinContent(i_run+1),meanGlobPhi,sigmaGlobPhi))
     {
-      cout << "bad runIndex from GlobPhi: " << p_mGlobPhi[1][9]->GetBinCenter(i_run+1) << endl;
-      file_badRunIndex << p_mGlobPhi[1][9]->GetBinCenter(i_run+1) << std::endl;
+      cout << "bad runIndex from GlobPhi: " << p_mGlobPhi[1][numTriggerBins-1]->GetBinCenter(i_run+1) << endl;
+      file_badRunIndex << p_mGlobPhi[1][numTriggerBins-1]->GetBinCenter(i_run+1) << std::endl;
     }
   }
   //-------------globPhi----------------
+
+  figName = Form("../../figures/RunQA/%s/BadRun_%s.pdf]",globCons::str_mBeamType[beamType].c_str(),globCons::str_mBeamType[beamType].c_str());
+  c_BadRun->Print(figName.c_str());
 
   file_badRunIndex.close();
   return 1;
@@ -634,6 +738,6 @@ bool isBadRun(double val, double mean, double sigma)
 void plotGoodRunRange(double runIndexStart, double runIndexStop, double mean, double sigma)
 {
   PlotLine(runIndexStart, runIndexStop, mean, mean, 2, 2, 2);
-  PlotLine(runIndexStart, runIndexStop, mean+3.0*sigma, mean+3.0*sigma, 4, 2, 1);
-  PlotLine(runIndexStart, runIndexStop, mean-3.0*sigma, mean-3.0*sigma, 4, 2, 1);
+  PlotLine(runIndexStart, runIndexStop, mean+3.0*sigma, mean+3.0*sigma, 4, 2, 2);
+  PlotLine(runIndexStart, runIndexStop, mean-3.0*sigma, mean-3.0*sigma, 4, 2, 2);
 }
