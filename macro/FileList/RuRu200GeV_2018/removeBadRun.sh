@@ -18,11 +18,15 @@ then
   BadRunTempList="$OutPutDir/pico_xrootd_badRun_temp.list"
   rm $BadRunTempList
   touch $BadRunTempList
-  for item in `cat $BadRunIdList` # get picos with bad run Id
+  for item in `cat $BadRunIdList` # get picos with bad run Id from StRefMultCorr
   do
     cat $FullPicoList | grep $item >> $BadRunTempList
   done
-  cat $BadRunQaList >> $BadRunTempList # get picos with bad run identfied through the QA test
+  for item in `cat $BadRunQaList` # get picos with bad run identfied from StRunQAMaker
+  do
+    cat $FullPicoList | grep $item >> $BadRunTempList
+  done
+  # cat $BadRunQaList >> $BadRunTempList # get picos with bad run identfied through the QA test
 
   BadRunPicoList="$OutPutDir/pico_xrootd_badRun.list"
   rm $BadRunPicoList
