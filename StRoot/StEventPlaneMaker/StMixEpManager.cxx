@@ -227,6 +227,29 @@ double StMixEpManager::getMixSubEp1Res2Err(int cent9, int grpId)
   return mMixSubEp1Res2Err[cent9][grpId];
 }
 //---------------------------------------------------------------------------------
+// deutron efficiency
+void StMixEpManager::readDeuEfficiency()
+{
+  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ChargedFlow/efficiency.root",globCons::str_mBeamType[mType].c_str());
+  file_mDeuEfficiency = TFile::Open(inputFile.c_str());
+  tracking_d = (TH2D*)file_mDeuEfficiency->Get("tracking_d");
+  tpc_d = (TH1D*)file_mDeuEfficiency->Get("tpc_d");
+  tof_d = (TH1D*)file_mDeuEfficiency->Get("tof_d");
+  tofmatch = (TH2D*)file_mDeuEfficiency->Get("tofmatch");
+}
+
+float StMixEpManager::calcDeuEfficiency(float pT, float pMag, float etaLab, float yCms)
+{
+  const float dP_cut =  3.2;
+  float d_eff = (float)tracking_d->GetBinContent(tracking_d->FindBin(yCms, pT));
+  if(pMag < dP_cut) d_eff = d_eff*(float)tpc_d->GetBinContent(tpc_d->FindBin(pMag));
+  if(pMag > dP_cut) d_eff = d_eff*(float)tof_d->GetBinContent(tof_d->FindBin(pMag));
+  if(pMag > dP_cut) d_eff = d_eff*(float)tofmatch->GetBinContent(tofmatch->FindBin(-etaLab, pT));
+  if(d_eff>1) d_eff = 1.;
+
+  return d_eff;
+}
+
 // deutron Directed Flow
 void StMixEpManager::initMixSubEpFlow()
 {
@@ -234,9 +257,9 @@ void StMixEpManager::initMixSubEpFlow()
   p_mMixSubEpDeuV1->Sumw2();
 }
 
-void StMixEpManager::fillMixSubEpDeuV1(double rap, double v1, double reweight)
+void StMixEpManager::fillMixSubEpDeuV1(double yCms, double v1, double reweight)
 {
-  p_mMixSubEpDeuV1->Fill(rap, v1, reweight);
+  p_mMixSubEpDeuV1->Fill(yCms, v1, reweight);
 }
 
 void StMixEpManager::writeMixSubEpFlow()

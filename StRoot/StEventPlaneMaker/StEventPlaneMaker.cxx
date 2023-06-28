@@ -1156,9 +1156,11 @@ int StEventPlaneMaker::Make()
 	      {
 		if( pT > 0.8 && pT < 2.0 && cent9 >=4 && cent9 <=6 )
 		{ // 10-40% with the same cuts as PLB827,136941
-		  const double yCMS = mAnaUtils->getRapidityCMS(yLab);
-		  const double v1Epd = TMath::Cos(1.0*(phi-Psi1EpdGrp0))/mMixEpManager->getMixSubEp1Res1Val(cent9,0);
-		  mMixEpManager->fillMixSubEpDeuV1(yCMS, v1Epd, refWgt);
+		  const double etaLab = primMom.PseudoRapidity();
+		  const double yCms   = mAnaUtils->getRapidityCMS(yLab);
+		  const double d_eff  = mMixEpManager->calcDeuEfficiency(pT,pMag,etaLab,yCms);
+		  const double v1Epd  = TMath::Cos(1.0*(phi-Psi1EpdGrp0))/mMixEpManager->getMixSubEp1Res1Val(cent9,0);
+		  if(d_eff > 0) mMixEpManager->fillMixSubEpDeuV1(yCms, v1Epd, refWgt/d_eff);
 		}
 	      }
 	    }

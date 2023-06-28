@@ -5,6 +5,9 @@
 
 class TFile;
 class TProfile;
+class TH2F;
+class TH2D;
+class TH1D;
 
 class StMixEpManager : public TObject
 {
@@ -25,9 +28,13 @@ class StMixEpManager : public TObject
     double getMixSubEp1Res2Val(int cent9, int grpId);
     double getMixSubEp1Res2Err(int cent9, int grpId);
 
+    // Deuteron Efficiency
+    void readDeuEfficiency(); // Sub EP
+    float calcDeuEfficiency(float pT, float pMag, float etaLab, float yCms);
+
     // Deuteron Directed Flow
     void initMixSubEpFlow(); // Sub EP
-    void fillMixSubEpDeuV1(double rap, double v1, double reweight);
+    void fillMixSubEpDeuV1(double yCms, double v1, double reweight);
     void writeMixSubEpFlow();
 
     // Event Plane Distribution
@@ -58,8 +65,13 @@ class StMixEpManager : public TObject
     double mMixSubEp1Res2Val[mNumCentrality][mNumEpGroup];
     double mMixSubEp1Res2Err[mNumCentrality][mNumEpGroup];
 
+    // Deuteron Efficiency
+    TH2D* tracking_d;
+    TH1D* tpc_d;
+    TH1D* tof_d;
+    TH2D* tofmatch;
     // deutron Directed Flow
-    TProfile *p_mMixSubEpDeuV1; // deutron v1(EpdEpGrp0) vs. rap
+    TProfile *p_mMixSubEpDeuV1; // deutron v1(EpdEpGrp0) vs. yCms 
 
     // Event Plane Distribution
     // 0: EpdEpGrp0 vs. TpcEpEast | 1: EpdEpGrp0 vs. TpcEpWest | 2: EpdEpGrp1 vs. TpcEpEast
@@ -69,6 +81,7 @@ class StMixEpManager : public TObject
     TH2F *h_mMixEp1ShiftCorr[mNumCentrality][mNumEpGroup]; 
 
     TFile *file_mResolution;
+    TFile *file_mDeuEfficiency;
 
     int mCent9, mRunIndex, mVzBin;
     const int mType;
