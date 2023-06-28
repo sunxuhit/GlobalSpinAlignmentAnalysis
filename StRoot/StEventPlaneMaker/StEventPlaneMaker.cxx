@@ -238,6 +238,7 @@ int StEventPlaneMaker::Init()
       // mEpdEpManager->readEpdGrpShiftFull();
       // mEpdEpManager->readEpdGrpResolution();
       mMixEpManager->readMixEpRes(); // Mix
+      mMixEpManager->readDeuEfficiency(); // Mix
       mMixEpManager->initMixSubEpFlow();
     }
     mTpcEpManager->readTpcReCtr(); // TPC
