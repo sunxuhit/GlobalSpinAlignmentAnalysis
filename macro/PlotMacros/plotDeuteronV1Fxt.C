@@ -17,7 +17,8 @@ void plotDeuteronV1Fxt()
 {
   gStyle->SetOptStat(0);
 
-  string inputFile = "../../data/EventPlaneMaker/Fxt3p85GeV_2018/file_ChargedFlow_Fxt3p85GeV_2018.root";
+  // string inputFile = "../../data/EventPlaneMaker/Fxt3p85GeV_2018/file_ChargedFlow_Fxt3p85GeV_2018.root";
+  string inputFile = "../../data/EventPlaneMaker/Fxt3p85GeV_2018/backup/file_ChargedFlow_Fxt3p85GeV_2018.root";
   TFile *file_InPut = TFile::Open(inputFile.c_str());
   if(!file_InPut->IsOpen()) cout << "inputFile: " << inputFile.c_str() << "is problematic" << endl;
   cout << "inputFile sets to: " << inputFile.c_str() << endl;
@@ -49,6 +50,7 @@ void plotDeuteronV1Fxt()
   }
 
   inputFile = "../../data/EventPlaneMaker/Fxt3p85GeV_2018/v1y.root";
+  // inputFile = "../../data/EventPlaneMaker/Fxt3p85GeV_2018/v1y_2.0.root";
   TFile *file_InPutXH = TFile::Open(inputFile.c_str());
   TGraphErrors *g_DeuV1XH = (TGraphErrors*)file_InPutXH->Get("v1y_d_1040");
 

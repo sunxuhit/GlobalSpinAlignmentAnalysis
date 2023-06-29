@@ -540,6 +540,7 @@ bool StAnalysisCut::passTrkDeuFlow(double pMag, double deuteronZ, double mass2)
 
   double dsigma = deuteronZ - zMeans[theBin];
 
+  /*
   // default z cuts
   double lowZ[30] = {
     -0.27 , -0.27 , -0.27 , -0.27 , -0.27 , -0.27 , -0.27 , -0.27 , -0.27 , -0.24,
@@ -550,6 +551,24 @@ bool StAnalysisCut::passTrkDeuFlow(double pMag, double deuteronZ, double mass2)
     0.27 , 0.27 , 0.27 , 0.27 , 0.27 , 0.27 , 0.27 , 0.27 , 0.27 , 0.27,
     0.27, 0.27, 0.27, 0.26, 0.25, 0.24, 0.22, 0.21, 0.19, 0.17,
     0.14, 0.13, 0.12, 0.11, 0.13, 0.13, 0.12, 0.11, 0.09, 0.08};
+
+  if(pMag<0.8 && dsigma>=-0.3 && dsigma<0.3)
+    return true;
+  else if(pMag>=0.8 && pMag<3.2 && dsigma>lowZ[theBin-3] && dsigma<highZ[theBin-3])
+    return true;
+  else if(pMag>=3.2 && dsigma>=-0.4 && dsigma<0.4 && mass2<=4.8 && mass2>=2.8)
+    return true;
+    */
+
+  // z cuts
+  Float_t lowZ[30] = {
+    -0.3 , -0.3 , -0.3 , -0.3 , -0.3 , -0.3 , -0.3 , -0.3 , -0.3 , -0.27  ,
+    -0.24, -0.21, -0.18, -0.16, -0.13, -0.11, -0.09, -0.07, -0.05, -0.04  ,
+    -0.04, -0.03, -0.02, -0.01, -0.02, -0.04, -0.06, -0.08, -0.1 , -0.12};
+  Float_t highZ[30] = {
+    0.3 , 0.3 , 0.3 , 0.3 , 0.3 , 0.3 , 0.3 , 0.3 , 0.3 , 0.29,
+    0.29, 0.27, 0.27, 0.26, 0.25, 0.24, 0.22, 0.21, 0.19, 0.17,
+    0.13, 0.14, 0.12, 0.11, 0.13, 0.13, 0.12, 0.11, 0.09, 0.08};
 
   if(pMag<0.8 && dsigma>=-0.3 && dsigma<0.3)
     return true;

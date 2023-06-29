@@ -1149,7 +1149,6 @@ int StEventPlaneMaker::Make()
 	      const double phi       = primMom.Phi(); // -pi to pi
 	      const double pMag      = primMom.Mag();
 	      const double pT        = primMom.Pt();
-	      const double yLab      = mAnaUtils->getRapidityLab(picoTrack, 1234); // calculate deuteron rapidity in lab frame
 	      const double deuteronZ = mAnaUtils->calcNSigmaZ(1.0,anaUtils::mMassDeuteron,pMag,picoTrack->dEdx()); // assume every track is deutron
 	      const double mass2     = mAnaUtils->getPrimMass2(mPicoDst,iTrack);
 
@@ -1158,10 +1157,11 @@ int StEventPlaneMaker::Make()
 		if( pT > 0.8 && pT < 2.0 && cent9 >=4 && cent9 <=6 )
 		{ // 10-40% with the same cuts as PLB827,136941
 		  const double etaLab = primMom.PseudoRapidity();
+		  const double yLab   = mAnaUtils->getRapidityLab(picoTrack, 1234); // calculate deuteron rapidity in lab frame
 		  const double yCms   = mAnaUtils->getRapidityCMS(yLab);
 		  const double d_eff  = mMixEpManager->calcDeuEfficiency(pT,pMag,etaLab,yCms);
 		  const double v1Epd  = TMath::Cos(1.0*(phi-Psi1EpdGrp0))/mMixEpManager->getMixSubEp1Res1Val(cent9,0);
-		  if(d_eff > 0) mMixEpManager->fillMixSubEpDeuV1(yCms, v1Epd, refWgt/d_eff);
+		  if(d_eff > 0.0 && yCms > 0.0) mMixEpManager->fillMixSubEpDeuV1(yCms, v1Epd, refWgt/d_eff);
 		}
 	      }
 	    }

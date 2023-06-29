@@ -244,7 +244,7 @@ float StMixEpManager::calcDeuEfficiency(float pT, float pMag, float etaLab, floa
   float d_eff = (float)tracking_d->GetBinContent(tracking_d->FindBin(yCms, pT));
   if(pMag < dP_cut) d_eff = d_eff*(float)tpc_d->GetBinContent(tpc_d->FindBin(pMag));
   if(pMag > dP_cut) d_eff = d_eff*(float)tof_d->GetBinContent(tof_d->FindBin(pMag));
-  if(pMag > dP_cut) d_eff = d_eff*(float)tofmatch->GetBinContent(tofmatch->FindBin(-etaLab, pT));
+  if(pMag > dP_cut) d_eff = d_eff*(float)tofmatch->GetBinContent(tofmatch->FindBin(etaLab, pT));
   if(d_eff>1) d_eff = 1.;
 
   return d_eff;
