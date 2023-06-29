@@ -253,17 +253,21 @@ float StMixEpManager::calcDeuEfficiency(float pT, float pMag, float etaLab, floa
 // deutron Directed Flow
 void StMixEpManager::initMixSubEpFlow()
 {
+  p_mMixSubEpDeuV1Eff = new TProfile("p_mMixSubEpDeuV1Eff","p_mMixSubEpDeuV1Eff",20,-1.0,1.0);
+  p_mMixSubEpDeuV1Eff->Sumw2();
   p_mMixSubEpDeuV1 = new TProfile("p_mMixSubEpDeuV1","p_mMixSubEpDeuV1",20,-1.0,1.0);
   p_mMixSubEpDeuV1->Sumw2();
 }
 
-void StMixEpManager::fillMixSubEpDeuV1(double yCms, double v1, double reweight)
+void StMixEpManager::fillMixSubEpDeuV1(double yCms, double v1, double refWgt, double eff)
 {
-  p_mMixSubEpDeuV1->Fill(yCms, v1, reweight);
+  p_mMixSubEpDeuV1Eff->Fill(yCms, v1, refWgt/eff);
+  p_mMixSubEpDeuV1->Fill(yCms, v1, refWgt);
 }
 
 void StMixEpManager::writeMixSubEpFlow()
 {
+  p_mMixSubEpDeuV1Eff->Write();
   p_mMixSubEpDeuV1->Write();
 }
 //---------------------------------------------------------------------------------

@@ -34,7 +34,7 @@ class StMixEpManager : public TObject
 
     // Deuteron Directed Flow
     void initMixSubEpFlow(); // Sub EP
-    void fillMixSubEpDeuV1(double yCms, double v1, double reweight);
+    void fillMixSubEpDeuV1(double yCms, double v1, double refWgt, double eff);
     void writeMixSubEpFlow();
 
     // Event Plane Distribution
@@ -71,6 +71,7 @@ class StMixEpManager : public TObject
     TH1D* tof_d;
     TH2D* tofmatch;
     // deutron Directed Flow
+    TProfile *p_mMixSubEpDeuV1Eff; // deutron v1(EpdEpGrp0) vs. yCms w/ efficiency
     TProfile *p_mMixSubEpDeuV1; // deutron v1(EpdEpGrp0) vs. yCms 
 
     // Event Plane Distribution

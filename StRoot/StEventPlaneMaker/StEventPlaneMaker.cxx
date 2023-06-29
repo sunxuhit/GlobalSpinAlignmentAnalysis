@@ -1161,7 +1161,7 @@ int StEventPlaneMaker::Make()
 		  const double yCms   = mAnaUtils->getRapidityCMS(yLab);
 		  const double d_eff  = mMixEpManager->calcDeuEfficiency(pT,pMag,etaLab,yCms);
 		  const double v1Epd  = TMath::Cos(1.0*(phi-Psi1EpdGrp0))/mMixEpManager->getMixSubEp1Res1Val(cent9,0);
-		  if(d_eff > 0.0 && yCms > 0.0) mMixEpManager->fillMixSubEpDeuV1(yCms, v1Epd, refWgt/d_eff);
+		  if(d_eff > 0.0 && yCms > 0.0) mMixEpManager->fillMixSubEpDeuV1(yCms, v1Epd, refWgt, d_eff);
 		}
 	      }
 	    }
