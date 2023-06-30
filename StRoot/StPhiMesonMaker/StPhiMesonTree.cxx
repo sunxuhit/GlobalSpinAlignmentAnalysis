@@ -247,6 +247,7 @@ void StPhiMesonTree::recoPhi(int cent9, int vzBin, int PsiBin) // reconstruct ph
   for(int iEvt = 0; iEvt < mEventCounter[cent9][vzBin][PsiBin]; ++iEvt)
   {
     int evtBin = iEvt;
+    mPhiMesonEvent->clearEvtHeader();
     mPhiMesonEvent->clearTrackList();
     mPhiMesonEvent->setRunId(vec_mRunId[cent9][vzBin][PsiBin][evtBin]); // event header
     mPhiMesonEvent->setRunIdx(vec_mRunIdx[cent9][vzBin][PsiBin][evtBin]); // event header
@@ -347,6 +348,7 @@ void StPhiMesonTree::mixPhi(int cent9, int vzBin, int PsiBin) // reconstruct phi
       if(iEvtA == 0 && iEvtB == 1)
       { // set event header with the info of first event in the event buffer
 	int evtBin = iEvtA;
+	mPhiMesonEvent->clearEvtHeader();
 	mPhiMesonEvent->clearTrackList();
 	mPhiMesonEvent->setRunId(vec_mRunId[cent9][vzBin][PsiBin][evtBin]); // event header
 	mPhiMesonEvent->setRunIdx(vec_mRunIdx[cent9][vzBin][PsiBin][evtBin]); // event header
