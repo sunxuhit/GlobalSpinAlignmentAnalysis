@@ -75,6 +75,8 @@ void StRunQAHistoManager::initEvtQA()
       h_mVzVzBin[iCut][iTrig] = new TH2F(histName.c_str(),histName.c_str(),200,mVzQaMin[mType],mVzQaMax[mType], 11, -5.5, 5.5);
     }
   }
+  h_mVertexXYAllTrigs = new TH2F("h_mVertexXYAllTrigs","h_mVertexXYAllTrigs",201,-10.05,10.05,201,-10.05,10.05);
+  h_mVertexZAllTrigs = new TH1F("h_mVertexZAllTrigs","h_mVertexZAllTrigs",200,mVzQaMin[mType],mVzQaMax[mType]);
 }
 
 void StRunQAHistoManager::fillEvtQaRefMult(int triggerBin, int refMult, int grefMult, int cent9, double refWgt, int tofHits, int tofMatch, int cutSelection)
@@ -117,6 +119,12 @@ void StRunQAHistoManager::fillEvtQaVertex(int triggerBin, double vx, double vy, 
   h_mVzVzBin[cutSelection][triggerBin]->Fill(vz, vzBin);
 }
 
+void StRunQAHistoManager::fillEvtQaVertexAllTrigs(double vx, double vy, double vz)
+{
+  h_mVertexXYAllTrigs->Fill(vx,vy);
+  h_mVertexZAllTrigs->Fill(vz);
+}
+
 void StRunQAHistoManager::fillEvtQaTrigger(int triggerBin, int cutSelection)
 {
   h_mTriggerId[cutSelection]->Fill(triggerBin);
@@ -145,6 +153,8 @@ void StRunQAHistoManager::writeEvtQA()
       h_mVzVzBin[iCut][iTrig]->Write();
     }
   }
+  h_mVertexXYAllTrigs->Write();
+  h_mVertexZAllTrigs->Write();
 }
 //-------------------------------------------------------------------------------------------
 

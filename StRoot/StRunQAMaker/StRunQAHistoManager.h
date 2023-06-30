@@ -17,6 +17,7 @@ class StRunQAHistoManager
     void initEvtQA();
     void fillEvtQaRefMult(int triggerBin, int refMult, int grefMult, int cent9, double refWgt, int tofHits, int tofMatch, int cutSelection);
     void fillEvtQaVertex(int triggerBin, double vx, double vy, double vz, double vzVpd, int vzBin, int cutSelection);
+    void fillEvtQaVertexAllTrigs(double vx, double vy, double vz);
     void fillEvtQaTrigger(int triggerBin, int cutSelection);
     void writeEvtQA();
 
@@ -55,6 +56,8 @@ class StRunQAHistoManager
     TH1F *h_mVertexZ[mNumCuts][mNumTriggerBins];
     TH2F *h_mVertexXY[mNumCuts][mNumTriggerBins];
     TH2F *h_mVzVzBin[mNumCuts][mNumTriggerBins];
+    TH2F *h_mVertexXYAllTrigs;
+    TH1F *h_mVertexZAllTrigs;
     // Track Level:
     TH1F *h_mPrimPt[mNumCuts][mNumTriggerBins];
     TH1F *h_mPrimPhi[mNumCuts][mNumTriggerBins];

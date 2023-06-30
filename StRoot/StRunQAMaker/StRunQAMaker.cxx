@@ -109,30 +109,31 @@ int StRunQAMaker::Make()
     return kStErr;
   }
 
+  // Event Information
+  const int runId        = mPicoEvent->runId();
+  int refMult            = mPicoEvent->refMult(); 
+  const int grefMult     = mPicoEvent->grefMult();
+  const TVector3 primVtx = mPicoEvent->primaryVertex();
+  const double vx        = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
+  const double vy        = mPicoEvent->primaryVertex().y();
+  const double vz        = mPicoEvent->primaryVertex().z();
+  const double vzVpd     = mPicoEvent->vzVpd();
+  const double zdcX      = mPicoEvent->ZDCx();
+  const double vxReCtr   = mAnaUtils->getVxReCtr(vx);
+  const double vyReCtr   = mAnaUtils->getVyReCtr(vy);
+  const unsigned short nBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
+  const unsigned int nBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
+  const unsigned int nTracks      = mPicoDst->numberOfTracks(); // get number of tracks
+
+  const int triggerBin  = mAnaUtils->getTriggerBin(mPicoEvent);
+  const int vzBin       = mAnaUtils->getVzBin(vz); // 0 for [vzMin,vzCtr) || 1 for [vzCtr,vzMax]
+  const int runIndex    = mAnaUtils->findRunIndex(runId); // find run index for a specific run
+  // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
+  mRunQAHistoManager->fillEvtQaVertexAllTrigs(vx,vy,vz);
+
   // MinBias trigger
   if( mAnaCut->isMinBias(mPicoEvent) )
   {
-    // Event Information
-    const int runId        = mPicoEvent->runId();
-    int refMult            = mPicoEvent->refMult(); 
-    const int grefMult     = mPicoEvent->grefMult();
-    const TVector3 primVtx = mPicoEvent->primaryVertex();
-    const double vx        = mPicoEvent->primaryVertex().x(); // x works for both TVector3 and StThreeVectorF
-    const double vy        = mPicoEvent->primaryVertex().y();
-    const double vz        = mPicoEvent->primaryVertex().z();
-    const double vzVpd     = mPicoEvent->vzVpd();
-    const double zdcX      = mPicoEvent->ZDCx();
-    const double vxReCtr   = mAnaUtils->getVxReCtr(vx);
-    const double vyReCtr   = mAnaUtils->getVyReCtr(vy);
-    const unsigned short nBTofMatch = mPicoEvent->nBTOFMatch(); // get number of tof match points
-    const unsigned int nBTofHits    = mPicoDst->numberOfBTofHits(); // get number of tof hits
-    const unsigned int nTracks      = mPicoDst->numberOfTracks(); // get number of tracks
-
-    const int triggerBin  = mAnaUtils->getTriggerBin(mPicoEvent);
-    const int vzBin       = mAnaUtils->getVzBin(vz); // 0 for [vzMin,vzCtr) || 1 for [vzCtr,vzMax]
-    const int runIndex    = mAnaUtils->findRunIndex(runId); // find run index for a specific run
-    // cout << "runId = " << runId << ", runIndex = " << runIndex << endl;
-
     if(runIndex < 0)
     {
       LOG_ERROR << "Could not find this run Index from StAnalysisUtils! Skip!" << endm;
