@@ -371,13 +371,23 @@ void StRunQAHistoManager::fillTrkQaKaonAcptTree(int triggerBin, int cent9, int c
 {
   if(charge > 0)
   {
+    // for a specific triggerBin
     h_mAcptTreeLabKp[cent9][triggerBin]->Fill(yLab,pt,refWgt);
     h_mAcptTreeCmsKp[cent9][triggerBin]->Fill(yCms,pt,refWgt);
+
+    // for all triggers
+    h_mAcptTreeLabKp[cent9][mNumTriggerBins-1]->Fill(yLab,pt,refWgt);
+    h_mAcptTreeCmsKp[cent9][mNumTriggerBins-1]->Fill(yCms,pt,refWgt);
   }
   if(charge < 0)
   {
+    // for a specific triggerBin
     h_mAcptTreeLabKm[cent9][triggerBin]->Fill(yLab,pt,refWgt);
     h_mAcptTreeCmsKm[cent9][triggerBin]->Fill(yCms,pt,refWgt);
+
+    // for all triggers
+    h_mAcptTreeLabKm[cent9][mNumTriggerBins-1]->Fill(yLab,pt,refWgt);
+    h_mAcptTreeCmsKm[cent9][mNumTriggerBins-1]->Fill(yCms,pt,refWgt);
   }
 }
 
@@ -385,13 +395,23 @@ void StRunQAHistoManager::fillTrkQaKaonAcptSpin(int triggerBin, int cent9, int c
 {
   if(charge > 0)
   {
+    // for a specific triggerBin
     h_mAcptSpinLabKp[cent9][triggerBin]->Fill(yLab,pt,refWgt);
     h_mAcptSpinCmsKp[cent9][triggerBin]->Fill(yCms,pt,refWgt);
+
+    // for all triggers
+    h_mAcptSpinLabKp[cent9][mNumTriggerBins-1]->Fill(yLab,pt,refWgt);
+    h_mAcptSpinCmsKp[cent9][mNumTriggerBins-1]->Fill(yCms,pt,refWgt);
   }
   if(charge < 0)
   {
+    // for a specific triggerBin
     h_mAcptSpinLabKm[cent9][triggerBin]->Fill(yLab,pt,refWgt);
     h_mAcptSpinCmsKm[cent9][triggerBin]->Fill(yCms,pt,refWgt);
+
+    // for all triggers
+    h_mAcptSpinLabKm[cent9][mNumTriggerBins-1]->Fill(yLab,pt,refWgt);
+    h_mAcptSpinCmsKm[cent9][mNumTriggerBins-1]->Fill(yCms,pt,refWgt);
   }
 }
 
