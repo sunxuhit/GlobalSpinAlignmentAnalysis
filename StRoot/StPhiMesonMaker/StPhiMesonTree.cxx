@@ -317,8 +317,8 @@ void StPhiMesonTree::recoPhi(int cent9, int vzBin, int PsiBin) // reconstruct ph
 	  mPhiMesonTrack->setTrkMomKm(map_mMomVecKm[phiMixKey][iTrkKm]); // K-
 	  mPhiMesonTrack->setMass2Kp(map_mMass2Kp[phiMixKey][iTrkKp]); // K+
 	  mPhiMesonTrack->setMass2Km(map_mMass2Km[phiMixKey][iTrkKm]); // K-
-	  mPhiMesonTrack->setMass2Kp(map_mBetaKp[phiMixKey][iTrkKp]); // K+
-	  mPhiMesonTrack->setMass2Km(map_mBetaKm[phiMixKey][iTrkKm]); // K-
+	  mPhiMesonTrack->setBetaKp(map_mBetaKp[phiMixKey][iTrkKp]); // K+
+	  mPhiMesonTrack->setBetaKm(map_mBetaKm[phiMixKey][iTrkKm]); // K-
 	  mPhiMesonTrack->setNSigKp(map_mNSigKp[phiMixKey][iTrkKp]); // K+
 	  mPhiMesonTrack->setNSigKm(map_mNSigKm[phiMixKey][iTrkKm]); // K-
 	  mPhiMesonTrack->setDcaKp(map_mDcaKp[phiMixKey][iTrkKp]); // K+
@@ -418,8 +418,8 @@ void StPhiMesonTree::mixPhi(int cent9, int vzBin, int PsiBin) // reconstruct phi
 	    mPhiMesonTrack->setTrkMomKm(map_mMomVecKm[phiMixKeyB][iTrkKm]); // K- from EvtB
 	    mPhiMesonTrack->setMass2Kp(map_mMass2Kp[phiMixKeyA][iTrkKp]); // K+ from EvtA
 	    mPhiMesonTrack->setMass2Km(map_mMass2Km[phiMixKeyB][iTrkKm]); // K- from EvtB
-	    mPhiMesonTrack->setMass2Kp(map_mBetaKp[phiMixKeyA][iTrkKp]); // K+ from EvtA
-	    mPhiMesonTrack->setMass2Km(map_mBetaKm[phiMixKeyB][iTrkKm]); // K- from EvtB
+	    mPhiMesonTrack->setBetaKp(map_mBetaKp[phiMixKeyA][iTrkKp]); // K+ from EvtA
+	    mPhiMesonTrack->setBetaKm(map_mBetaKm[phiMixKeyB][iTrkKm]); // K- from EvtB
 	    mPhiMesonTrack->setNSigKp(map_mNSigKp[phiMixKeyA][iTrkKp]); // K+ from EvtA
 	    mPhiMesonTrack->setNSigKm(map_mNSigKm[phiMixKeyB][iTrkKm]); // K- from EvtB
 	    mPhiMesonTrack->setDcaKp(map_mDcaKp[phiMixKeyA][iTrkKp]); // K+ from EvtA
@@ -459,8 +459,8 @@ void StPhiMesonTree::mixPhi(int cent9, int vzBin, int PsiBin) // reconstruct phi
 	    mPhiMesonTrack->setTrkMomKm(map_mMomVecKm[phiMixKeyA][iTrkKm]); // K- from EvtA
 	    mPhiMesonTrack->setMass2Kp(map_mMass2Kp[phiMixKeyB][iTrkKp]); // K+ from EvtB
 	    mPhiMesonTrack->setMass2Km(map_mMass2Km[phiMixKeyA][iTrkKm]); // K- from EvtA
-	    mPhiMesonTrack->setMass2Kp(map_mBetaKp[phiMixKeyB][iTrkKp]); // K+ from EvtB
-	    mPhiMesonTrack->setMass2Km(map_mBetaKm[phiMixKeyA][iTrkKm]); // K- from EvtA
+	    mPhiMesonTrack->setBetaKp(map_mBetaKp[phiMixKeyB][iTrkKp]); // K+ from EvtB
+	    mPhiMesonTrack->setBetaKm(map_mBetaKm[phiMixKeyA][iTrkKm]); // K- from EvtA
 	    mPhiMesonTrack->setNSigKp(map_mNSigKp[phiMixKeyB][iTrkKp]); // K+ from EvtB
 	    mPhiMesonTrack->setNSigKm(map_mNSigKm[phiMixKeyA][iTrkKm]); // K- from EvtA
 	    mPhiMesonTrack->setDcaKp(map_mDcaKp[phiMixKeyB][iTrkKp]); // K+ from EvtB
