@@ -53,6 +53,14 @@ void StPhiMesonHistoManger::fillPhiQA(int cent9, double pt, double yLab, double 
     h_mAcptPhiLab[acptPhiLabKey]->Fill(invMass,refWgt);
     std::string acptPhiCmsKey = Form("h_mAcptPhi%sCmsCent%dPt%dRap%d",str_mMixEvt[mFlagME].c_str(),cent9,ptBin,yCmsBin);
     h_mAcptPhiCms[acptPhiCmsKey]->Fill(invMass,refWgt);
+
+    if( is2060(cent9) )
+    { // fill 20-60%
+      acptPhiLabKey = Form("h_mAcptPhi%sLabCent9Pt%dRap%d",str_mMixEvt[mFlagME].c_str(),ptBin,yLabBin);
+      h_mAcptPhiLab[acptPhiLabKey]->Fill(invMass,refWgt);
+      acptPhiCmsKey = Form("h_mAcptPhi%sCmsCent9Pt%dRap%d",str_mMixEvt[mFlagME].c_str(),ptBin,yCmsBin);
+      h_mAcptPhiCms[acptPhiCmsKey]->Fill(invMass,refWgt);
+    }
   }
 }
 
