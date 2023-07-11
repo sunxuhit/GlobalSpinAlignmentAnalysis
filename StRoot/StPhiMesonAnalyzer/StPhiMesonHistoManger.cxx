@@ -45,7 +45,7 @@ void StPhiMesonHistoManger::fillPhiQA(int cent9, double pt, double yLab, double 
   int yLabBin = getRapBinPhiQA(yLab);
   int yCmsBin = getRapBinPhiQA(yCms);
   h_mInvMassPhiQA[cent9]->Fill(pt,invMass,refWgt);
-  if(is2060(cent9)) h_mInvMassPhiQA[9]->Fill(pt,invMass,refWgt);
+  if(is0060(cent9)) h_mInvMassPhiQA[9]->Fill(pt,invMass,refWgt);
 
   if(ptBin >= 0 && yLabBin >= 0 && yCmsBin >= 0)
   {
@@ -54,7 +54,7 @@ void StPhiMesonHistoManger::fillPhiQA(int cent9, double pt, double yLab, double 
     std::string acptPhiCmsKey = Form("h_mAcptPhi%sCmsCent%dPt%dRap%d",str_mMixEvt[mFlagME].c_str(),cent9,ptBin,yCmsBin);
     h_mAcptPhiCms[acptPhiCmsKey]->Fill(invMass,refWgt);
 
-    if( is2060(cent9) )
+    if( is0060(cent9) )
     { // fill 20-60%
       acptPhiLabKey = Form("h_mAcptPhi%sLabCent9Pt%dRap%d",str_mMixEvt[mFlagME].c_str(),ptBin,yLabBin);
       h_mAcptPhiLab[acptPhiLabKey]->Fill(invMass,refWgt);
@@ -106,8 +106,8 @@ int StPhiMesonHistoManger::getRapBinPhiQA(double y)
 {
   int yBin = -1;
 
-  const double yMin      = -1.25;
-  const double yMax      = 1.25;
+  const double yMin      = -1.5;
+  const double yMax      = 1.5;
   const double yBinWidth = (yMax-yMin)/(double)mNumRapBinQA; // 0.1
 
   if(std::abs(y-yMin) < std::numeric_limits<double>::epsilon()) yBin = 0;
@@ -129,9 +129,23 @@ bool StPhiMesonHistoManger::is0080(int cent9)
   return true;
 }
 
+bool StPhiMesonHistoManger::is0060(int cent9)
+{
+  if(cent9 < 2 || cent9 > 8) return false;
+
+  return true;
+}
+
 bool StPhiMesonHistoManger::is2060(int cent9)
 {
   if(cent9 < 2 || cent9 > 5) return false;
+
+  return true;
+}
+
+bool StPhiMesonHistoManger::is1040(int cent9)
+{
+  if(cent9 < 4 || cent9 > 6) return false;
 
   return true;
 }
