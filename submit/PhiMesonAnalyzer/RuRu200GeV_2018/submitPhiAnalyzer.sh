@@ -5,9 +5,9 @@ codePath=/star/u/sunxuhit/WorkSpace/SpinAlignment/GlobalSpinAlignmentAnalysis
 ##########Beam Type Selection##########
 beamType=1  # RuRu200GeV_2018
 mode=0 # 0: phi meson QA
-flagME=0 # 0: Same Event | 1: Mixed Event
+flagME=0 # 0: Same Event
 strME=SE
-# flagME=1 # 0: Same Event | 1: Mixed Event
+# flagME=1 # 1: Mixed Event
 # strME=ME
 startEvt=0
 stopEvt=10000024
