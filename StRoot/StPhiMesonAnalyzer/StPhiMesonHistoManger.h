@@ -53,7 +53,7 @@ class StPhiMesonHistoManger
   private:
     static const int mNumCentBinQA = 10; // 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%, 9: 20-60%
     static const int mNumPtBinQA   = 25; // 25 bins from 0 to 5.0 GeV/c
-    static const int mNumRapBinQA  = 30; // 25 bins from -1.5 to 1.5
+    static const int mNumRapBinQA  = 30; // 30 bins from -1.5 to 1.5
 
     static const int mNumCentBinIsoPhiFlow   = 4;  // 0: 0%-80%, 1: 0-10%, 2: 10-40%, 3: 40-80%
     static const int mNumPtBinIsoPhiFlow     = 20; // 0.4 - 7.2 GeV/c

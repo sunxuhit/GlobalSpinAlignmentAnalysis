@@ -1,4 +1,5 @@
 #include <iostream>
+#include "TMath.h"
 
 #include "StRoot/StPicoEvent/StPicoDst.h"
 #include "StRoot/StPicoEvent/StPicoEvent.h"
@@ -387,7 +388,7 @@ bool StAnalysisCut::passTrkTpcKaonWest(StPicoTrack *picoTrack, TVector3 primVtx)
   return true;
 }
 
-bool StAnalysisCut::passTrkTofKaonTree(TVector3 primMom, int charge, double mass2, double beta) // neg
+bool StAnalysisCut::passTrkTofKaonTree(TVector3 primMom, int charge, double mass2, double beta)
 {
   if(primMom.Mag() < 0.65 && ((mass2 > anaUtils::mMass2KaonTreeMin[mType] && mass2 < anaUtils::mMass2KaonTreeMax[mType]) || mass2 < -10.0))
   { // ToF when valid
@@ -398,15 +399,41 @@ bool StAnalysisCut::passTrkTofKaonTree(TVector3 primMom, int charge, double mass
     return true;
   }
 
+  /*
+  // Guannan's cuts
+  const double eExp = TMath::Sqrt(primMom.Mag()*primMom.Mag()+anaUtils::mMassKaon*anaUtils::mMassKaon);
+  const double betaExp = primMom.Mag()/eExp;
+  const double delBeta = TMath::Abs(1.0/beta - 1.0/betaExp);
+  if(delBeta < 0.05 || beta < -10.0)
+  {
+    return true;
+  }
+  */
+
   return false;
 }
 
-bool StAnalysisCut::passTrkTofKaonSpin(TVector3 primMom, int charge, double mass2, double beta) // neg
+bool StAnalysisCut::passTrkTofKaonSpin(TVector3 primMom, int charge, double mass2, double beta)
 {
   if(mass2 > anaUtils::mMass2KaonSpinMin[mType] && mass2 < anaUtils::mMass2KaonSpinMax[mType])
   { // ToF always
     return true;
   }
+
+  /*
+  // Guannan's cuts
+  const double eExp = TMath::Sqrt(primMom.Mag()*primMom.Mag()+anaUtils::mMassKaon*anaUtils::mMassKaon);
+  const double betaExp = primMom.Mag()/eExp;
+  const double delBeta = TMath::Abs(1.0/beta - 1.0/betaExp);
+  if(charge > 0 && (delBeta < 0.03 || beta < -10.0))
+  { // K+: require ToF when valid
+    return true;
+  }
+  if(charge < 0 && delBeta < 0.03)
+  { // K-: always require ToF
+    return true;
+  }
+  */
 
   return false;
 }
