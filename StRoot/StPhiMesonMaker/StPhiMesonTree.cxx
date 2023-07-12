@@ -39,7 +39,7 @@ void StPhiMesonTree::initPhiTree()
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     std::string histName = Form("h_mInvMassPhiCent%d",iCent);
-    h_mInvMassPhi[iCent] = new TH2F(histName.c_str(),histName.c_str(),25,0.0,5.0,200,0.98,1.08);
+    h_mInvMassPhi[iCent] = new TH2F(histName.c_str(),histName.c_str(),25,0.0,5.0,anaUtils::mNumInvMassPhi,anaUtils::mMassPhiMin,anaUtils::mMassPhiMax);
     for(int iVz = 0; iVz < mNumMixVzBin; ++iVz)
     {
       for(int iPsi = 0; iPsi < mNumMixPsiBin; ++iPsi)
@@ -201,7 +201,7 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
       int charge = static_cast<int>(picoTrack->charge());
       TVector3 primMom = picoTrack->pMom();
 
-      if( mAnaCut->passTrkTofKaonTree(primMom,charge,mass2,beta))
+      if(mAnaCut->passTrkTofKaonTree(primMom,charge,mass2,beta))
       {
 	int phiMixKey = getPhiMixKey(mCent9,vzBin,PsiBin,evtBin);
 	if(charge > 0)
@@ -227,7 +227,6 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
       }
     }
   }
-
 
   if(flagME == 0) // same event
   {
@@ -309,7 +308,7 @@ void StPhiMesonTree::recoPhi(int cent9, int vzBin, int PsiBin) // reconstruct ph
 	double invMassPhi = lTrkPhi.M();
 	double ptPhi = lTrkPhi.Perp();
 
-	// fill phi candidate (mass within [0.98, 1.08]) into t_mPhiMesonTree
+	// fill phi candidate (mass within [0.95, 1.15]) into t_mPhiMesonTree
 	if(invMassPhi >= anaUtils::mMassPhiMin && invMassPhi <= anaUtils::mMassPhiMax) 
 	{
 	  mPhiMesonTrack = mPhiMesonEvent->createTrack();
@@ -410,7 +409,7 @@ void StPhiMesonTree::mixPhi(int cent9, int vzBin, int PsiBin) // reconstruct phi
 	  double invMassPhi = lTrkPhi.M();
 	  double ptPhi      = lTrkPhi.Perp();
 
-	  // fill phi background (mass within [0.98, 1.08]) into t_mPhiMesonTree
+	  // fill phi background (mass within [0.95, 1.15]) into t_mPhiMesonTree
 	  if(invMassPhi >= anaUtils::mMassPhiMin && invMassPhi <= anaUtils::mMassPhiMax) 
 	  {
 	    mPhiMesonTrack = mPhiMesonEvent->createTrack();
@@ -451,7 +450,7 @@ void StPhiMesonTree::mixPhi(int cent9, int vzBin, int PsiBin) // reconstruct phi
 	  double invMassPhi = lTrkPhi.M();
 	  double ptPhi      = lTrkPhi.Perp();
 
-	  // fill phi background (mass within [0.98, 1.08]) into t_mPhiMesonTree
+	  // fill phi background (mass within [0.95, 1.15]) into t_mPhiMesonTree
 	  if(invMassPhi >= anaUtils::mMassPhiMin && invMassPhi <= anaUtils::mMassPhiMax) 
 	  {
 	    mPhiMesonTrack = mPhiMesonEvent->createTrack();

@@ -65,14 +65,14 @@ namespace anaUtils
   const double mMipEpdEpMin[mNumBeamUtils] = {0.3, 0.3, 0.3};
 
   // constants used in StPhiMesonMaker/Analyzer
-  const double mMassPion     = 0.139570;
+  const double mMassPion     = 0.139570; // GeV/c^2
   const double mMassKaon     = 0.493677;
   const double mMassProton   = 0.938272;
   const double mMassDeuteron = 1.875613;
   const double mMassPhi      = 1.019455;
-  const double mMassPhiMin   = 0.98;
-  const double mMassPhiMax   = 1.08;
-  const int mNumInvMassPhi   = 100; // 10 MeV/Bin
+  const double mMassPhiMin   = 0.95;
+  const double mMassPhiMax   = 1.15;
+  const int mNumInvMassPhi   = 200; // 1 MeV/Bin
   const double mRapPhiMin[mNumBeamUtils] = {-1.0, -1.0, -1.0};
   const double mRapPhiCtr[mNumBeamUtils] = {0.0, 0.0, 0.0};
   const double mRapPhiMax[mNumBeamUtils] = {1.0, 1.0, 1.0};
