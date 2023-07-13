@@ -90,7 +90,7 @@ class StPhiMesonHistoManger
     // 1 = pt bin
     // 2 = phi-Psi: 5 bins for FXT v2
     std::map<string,TH1F*> h_mInvMassFxtPhiV2;
-    // Isobar phi Yields histograms
+    // FXT phi Yields histograms
     // 0 = centrality: 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%
     // 1 = pt bin
     std::map<string,TH1F*> h_mInvMassFxtPhiYields;

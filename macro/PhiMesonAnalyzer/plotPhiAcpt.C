@@ -14,7 +14,7 @@ void plotPhiAcpt(int beamType = 2)
   gStyle->SetOptStat(0);
   const int mNumCentBinQA = 10; // 0: 70-80%, 1: 60-70%, 2: 50-60%, 3: 40-50%, 4: 30-40%, 5: 20-30%, 6: 10-20%, 7: 5-10%, 8: 0-5%, 9: 20-60%
   const int mNumPtBinQA   = 25; // 25 bins from 0 to 5.0 GeV/c
-  const int mNumRapBinQA  = 25; // 25 bins from -1.25 to 1.25
+  const int mNumRapBinQA  = 30; // 25 bins from -1.5 to 1.5
 
   // Acceptance Histograms
   // 0 = centrality: 9 = 20%-60%, 0-8 from StRefMultCorr
