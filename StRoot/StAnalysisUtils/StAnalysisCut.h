@@ -10,6 +10,7 @@ class StPicoDst;
 class StPicoEvent;
 class StPicoTrack;
 class StPicoEpdHit;
+class StPhiMesonTrack;
 
 class StAnalysisCut : public TObject
 {
@@ -40,12 +41,18 @@ class StAnalysisCut : public TObject
     bool passTrkTpcFlowFull(StPicoTrack *picoTrack, TVector3 primVtx);
     bool passTrkTpcFlowEast(StPicoTrack *picoTrack, TVector3 primVtx);
     bool passTrkTpcFlowWest(StPicoTrack *picoTrack, TVector3 primVtx);
-    // Kaon Candidate
-    bool passTrkTpcKaonFull(StPicoTrack *picoTrack, TVector3 primVtx);
-    bool passTrkTpcKaonEast(StPicoTrack *picoTrack, TVector3 primVtx);
-    bool passTrkTpcKaonWest(StPicoTrack *picoTrack, TVector3 primVtx);
-    bool passTrkTofKaonTree(TVector3 primMom, int charge, double mass2, double beta); // loose cuts to fill the TTree
-    bool passTrkTofKaonSpin(TVector3 primMom, int charge, double mass2, double beta); // strict cuts for flow/alignment analysis
+    // Kaon Candidate: used in StPhiMesonMaker && loose cuts to fill the TTree
+    bool passTrkTpcKaonFull(StPicoTrack *picoTrack, TVector3 primVtx); // apply to single K+/K- track
+    bool passTrkTpcKaonEast(StPicoTrack *picoTrack, TVector3 primVtx); 
+    bool passTrkTpcKaonWest(StPicoTrack *picoTrack, TVector3 primVtx); 
+    bool passTrkTofKaonMass(TVector3 primMom, int charge, double mass2);
+    bool passTrkTofKaonBeta(TVector3 primMom, int charge, double beta); // cross-check with Guannan Xie
+    // Kaon Candidate: used in StPhiMesonAnalyzer && strict cuts for flow/alignment analysis
+    bool passTrkTpcKaonFull(StPhiMesonTrack *phiTrk); // apply to K+&K- track pairs
+    bool passTrkTpcKaonEast(StPhiMesonTrack *phiTrk, int charge); // apply to single K+/K- track && mostly to K+
+    bool passTrkTpcKaonWest(StPhiMesonTrack *phiTrk, int charge);
+    bool passTrkTofKaonMass(StPhiMesonTrack *phiTrk); // apply to K+&K- track pairs
+    bool passTrkTofKaonBeta(StPhiMesonTrack *phiTrk); // cross-check with Guannan Xie
 
     // EPD Hit Cuts for EPD EP
     bool passHitEpdEpFull(StPicoEpdHit *picoEpdHit);

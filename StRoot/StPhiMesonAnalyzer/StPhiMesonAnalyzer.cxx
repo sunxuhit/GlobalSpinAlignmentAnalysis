@@ -347,7 +347,7 @@ void StPhiMesonAnalyzer::Make()
 
       if(mMode == 0)
       { // phi invMass QA
-	if( mAnaCut->passTrkTofKaonSpin(vTrkMomKp,chargeKp,mass2Kp,betaKp) && mAnaCut->passTrkTofKaonSpin(vTrkMomKm,chargeKm,mass2Km,betaKm) )
+	if( mAnaCut->passTrkTofKaonBeta(mPhiTrk) )
 	{ // always require ToF Info
 	  mHistManager->fillPhiQA(cent9,ptPhi,yPhiLab,yPhiCms,invMassPhi,refWgt);
 	}
@@ -356,7 +356,7 @@ void StPhiMesonAnalyzer::Make()
       { // phi flow
 	if(mAnaCut->isIsobar() && flagEpdSideEp == 1 && flagTpcEp == 1)
 	{ // Isobar with valid EPD side EP and TPC EP
-	  if( mAnaCut->passTrkTofKaonSpin(vTrkMomKp,chargeKp,mass2Kp,betaKp) && mAnaCut->passTrkTofKaonSpin(vTrkMomKm,chargeKm,mass2Km,betaKm) )
+	  if( mAnaCut->passTrkTofKaonBeta(mPhiTrk) )
 	  { // always require ToF Info
 	    if(mAnaCut->passTrkPhiFlowEast(yPhiCms))
 	    { // get EP from West
@@ -436,7 +436,7 @@ void StPhiMesonAnalyzer::Make()
 	}
 	if(mAnaCut->isFxt3p85GeV_2018() && flagEpdGrp0Ep == 1 && flagEpdGrp1Ep == 1 && flagTpcEp == 1)
 	{ // Fxt3p85GeV_2018 with valid EPD Grp0 & Grp1 EP and TPC EP
-	  if( mAnaCut->passTrkTofKaonSpin(vTrkMomKp,chargeKp,mass2Kp,betaKp) && mAnaCut->passTrkTofKaonSpin(vTrkMomKm,chargeKm,mass2Km,betaKm) )
+	  if( mAnaCut->passTrkTpcKaonFull(mPhiTrk) && mAnaCut->passTrkTofKaonBeta(mPhiTrk) )
 	  { // always require ToF Info
 	    double res12Sub = mMixEpManager->getMixSubEp1Res2Val(cent9,0);
 	    double Psi1Grp0 = TMath::ATan2(vQ1EpdGrp0ShiftEast.Y(),vQ1EpdGrp0ShiftEast.X()); // Psi1 from EPD East Grp0

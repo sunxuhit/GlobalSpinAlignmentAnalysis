@@ -56,6 +56,16 @@ void plotPhiYields(int beamType = 2)
     {
       std::string fxtPhiYieldsKey = Form("h_mInvMassFxtPhiYieldsMECent%dPt%d",iCent,iPt);
       h_mInvMassFxtPhiYieldsME[fxtPhiYieldsKey] = (TH1F*)file_InPutME->Get(fxtPhiYieldsKey.c_str())->Clone();
+      if(iCent == 2)
+      {
+	std::string fxtPhiYieldsMinBiasKey = Form("h_mInvMassFxtPhiYieldsMECent9Pt%d",iPt); // 0-60%
+	h_mInvMassFxtPhiYieldsME[fxtPhiYieldsMinBiasKey] = (TH1F*)h_mInvMassFxtPhiYieldsME[fxtPhiYieldsKey]->Clone(fxtPhiYieldsMinBiasKey.c_str());
+      }
+      if(iCent > 2 && iCent <=8)
+      {
+	std::string fxtPhiYieldsMinBiasKey = Form("h_mInvMassFxtPhiYieldsMECent9Pt%d",iPt);
+	h_mInvMassFxtPhiYieldsME[fxtPhiYieldsMinBiasKey]->Add(h_mInvMassFxtPhiYieldsME[fxtPhiYieldsKey],1.0);
+      }
     }
   }
 
@@ -80,8 +90,27 @@ void plotPhiYields(int beamType = 2)
       {
 	c_phiYields->cd(iPt+1)->Clear();
 	c_phiYields->cd(iPt+1); 
-	std::string fxtPhiYieldsKey = Form("h_mInvMassFxtPhiYieldsSECent%dPt%d",iCent,iPt);
-	h_mInvMassFxtPhiYieldsSE[fxtPhiYieldsKey]->Draw("hE");
+	std::string fxtPhiYieldsSEKey = Form("h_mInvMassFxtPhiYieldsSECent%dPt%d",iCent,iPt);
+	std::string fxtPhiYieldsMEKey = Form("h_mInvMassFxtPhiYieldsMECent%dPt%d",iCent,iPt);
+	int normLoBin = h_mInvMassFxtPhiYieldsSE[fxtPhiYieldsSEKey]->FindBin(1.05);
+	int normHiBin = h_mInvMassFxtPhiYieldsSE[fxtPhiYieldsSEKey]->FindBin(1.10);
+
+	double inteYieldsSE = h_mInvMassFxtPhiYieldsSE[fxtPhiYieldsSEKey]->Integral(normLoBin,normHiBin);
+	double inteYieldsME = h_mInvMassFxtPhiYieldsME[fxtPhiYieldsMEKey]->Integral(normLoBin,normHiBin);
+
+	std::string title = Form("p_{T}: %1.1f-%1.1f GeV/c, 0-60%%",ptLo[iPt],ptHi[iPt]);
+	h_mInvMassFxtPhiYieldsSE[fxtPhiYieldsSEKey]->SetTitle(title.c_str());
+	h_mInvMassFxtPhiYieldsSE[fxtPhiYieldsSEKey]->GetXaxis()->SetRangeUser(0.98,1.10);
+	h_mInvMassFxtPhiYieldsSE[fxtPhiYieldsSEKey]->SetMarkerStyle(24);
+	h_mInvMassFxtPhiYieldsSE[fxtPhiYieldsSEKey]->SetMarkerColor(1);
+	h_mInvMassFxtPhiYieldsSE[fxtPhiYieldsSEKey]->SetMarkerSize(0.6);
+	h_mInvMassFxtPhiYieldsSE[fxtPhiYieldsSEKey]->DrawCopy("pE");
+	h_mInvMassFxtPhiYieldsME[fxtPhiYieldsMEKey]->GetXaxis()->SetRangeUser(0.98,1.10);
+	h_mInvMassFxtPhiYieldsME[fxtPhiYieldsMEKey]->Scale(inteYieldsSE/inteYieldsME);
+	h_mInvMassFxtPhiYieldsME[fxtPhiYieldsMEKey]->SetLineColor(kGray);
+	h_mInvMassFxtPhiYieldsME[fxtPhiYieldsMEKey]->SetFillColor(kGray);
+	h_mInvMassFxtPhiYieldsME[fxtPhiYieldsMEKey]->SetFillStyle(3001);
+	h_mInvMassFxtPhiYieldsME[fxtPhiYieldsMEKey]->DrawCopy("hE same");
       }
       c_phiYields->Update();
       c_phiYields->Print(figName.c_str());

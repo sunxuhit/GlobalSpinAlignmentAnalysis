@@ -193,37 +193,33 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
   for(unsigned int iTrk = 0; iTrk < nTracks; ++iTrk) // loop over all particles in event
   {
     StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(iTrk);
+    // TVector3 primMom = picoTrack->pMom();
+    // int charge       = static_cast<int>(picoTrack->charge());
+    // double beta      = mAnaUtils->getBeta(picoDst, iTrk);
+    // double mass2     = mAnaUtils->getPrimMass2(picoDst, iTrk);
 
-    if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx))
+    if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx) && mAnaCut->passTrkTofKaonBeta(picoTrack->pMom(),charge,beta))
     {
-      double beta  = mAnaUtils->getBeta(picoDst, iTrk);
-      double mass2 = mAnaUtils->getPrimMass2(picoDst, iTrk);
-      int charge = static_cast<int>(picoTrack->charge());
-      TVector3 primMom = picoTrack->pMom();
-
-      if(mAnaCut->passTrkTofKaonTree(primMom,charge,mass2,beta))
-      {
-	int phiMixKey = getPhiMixKey(mCent9,vzBin,PsiBin,evtBin);
-	if(charge > 0)
-	{ // K+ candidate
-	  map_mMomVecKp[phiMixKey].push_back(static_cast<TVector3>(picoTrack->pMom()));// primMom 
-	  map_mMass2Kp[phiMixKey].push_back(static_cast<double>(mass2)); // mass2
-	  map_mBetaKp[phiMixKey].push_back(static_cast<double>(1.0/beta)); // 1/beta
-	  map_mNSigKp[phiMixKey].push_back(static_cast<double>(picoTrack->nSigmaKaon())); // nSigmaKaon
-	  map_mDcaKp[phiMixKey].push_back(static_cast<double>(picoTrack->gDCA(primVtx.X(),primVtx.Y(),primVtx.Z()))); // dca
-	  map_mChargeKp[phiMixKey].push_back(static_cast<int>(charge)); // charge
-	  map_mNHitsFitKp[phiMixKey].push_back(static_cast<double>(picoTrack->nHitsFit())); // nHitsFit
-	}
-	if(charge < 0)
-	{ // K- candidate
-	  map_mMomVecKm[phiMixKey].push_back(static_cast<TVector3>(picoTrack->pMom()));// primMom 
-	  map_mMass2Km[phiMixKey].push_back(static_cast<double>(mass2)); // mass2
-	  map_mBetaKm[phiMixKey].push_back(static_cast<double>(1.0/beta)); // 1/beta
-	  map_mNSigKm[phiMixKey].push_back(static_cast<double>(picoTrack->nSigmaKaon())); // nSigmaKaon
-	  map_mDcaKm[phiMixKey].push_back(static_cast<double>(picoTrack->gDCA(primVtx.X(),primVtx.Y(),primVtx.Z()))); // dca
-	  map_mChargeKm[phiMixKey].push_back(static_cast<int>(charge)); // charge
-	  map_mNHitsFitKm[phiMixKey].push_back(static_cast<double>(picoTrack->nHitsFit())); // nHitsFit
-	}
+      int phiMixKey = getPhiMixKey(mCent9,vzBin,PsiBin,evtBin);
+      if(picoTrack->charge() > 0)
+      { // K+ candidate
+	map_mMomVecKp[phiMixKey].push_back(static_cast<TVector3>(picoTrack->pMom()));// primMom 
+	map_mMass2Kp[phiMixKey].push_back(static_cast<double>(mAnaUtils->getPrimMass2(picoDst, iTrk))); // mass2
+	map_mBetaKp[phiMixKey].push_back(static_cast<double>(mAnaUtils->getBeta(picoDst, iTrk))); // beta
+	map_mNSigKp[phiMixKey].push_back(static_cast<double>(picoTrack->nSigmaKaon())); // nSigmaKaon
+	map_mDcaKp[phiMixKey].push_back(static_cast<double>(picoTrack->gDCA(primVtx.X(),primVtx.Y(),primVtx.Z()))); // dca
+	map_mChargeKp[phiMixKey].push_back(static_cast<int>(picoTrack->charge())); // charge
+	map_mNHitsFitKp[phiMixKey].push_back(static_cast<double>(picoTrack->nHitsFit())); // nHitsFit
+      }
+      if(picoTrack->charge() < 0)
+      { // K- candidate
+	map_mMomVecKm[phiMixKey].push_back(static_cast<TVector3>(picoTrack->pMom()));// primMom 
+	map_mMass2Km[phiMixKey].push_back(static_cast<double>(mAnaUtils->getPrimMass2(picoDst, iTrk))); // mass2
+	map_mBetaKm[phiMixKey].push_back(static_cast<double>(mAnaUtils->getBeta(picoDst, iTrk))); // beta
+	map_mNSigKm[phiMixKey].push_back(static_cast<double>(picoTrack->nSigmaKaon())); // nSigmaKaon
+	map_mDcaKm[phiMixKey].push_back(static_cast<double>(picoTrack->gDCA(primVtx.X(),primVtx.Y(),primVtx.Z()))); // dca
+	map_mChargeKm[phiMixKey].push_back(static_cast<int>(picoTrack->charge())); // charge
+	map_mNHitsFitKm[phiMixKey].push_back(static_cast<double>(picoTrack->nHitsFit())); // nHitsFit
       }
     }
   }

@@ -231,7 +231,7 @@ int StRunQAMaker::Make()
 	  {
 	    const double yLab = mAnaUtils->getRapidityLab(picoTrack,321);
 	    const double yCms = mAnaUtils->getRapidityCMS(yLab);
-	    if(mAnaCut->passTrkTofKaonTree(primMom,charge,mass2,beta))
+	    if(mAnaCut->passTrkTofKaonMass(primMom,charge,mass2))
 	    {
 	      mRunQAHistoManager->fillTrkQaKaonAcptTree(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt);
 	    }
@@ -244,7 +244,7 @@ int StRunQAMaker::Make()
 	  {
 	    const double yLab = mAnaUtils->getRapidityLab(picoTrack,-321);
 	    const double yCms = mAnaUtils->getRapidityCMS(yLab);
-	    if(mAnaCut->passTrkTofKaonTree(primMom,charge,mass2,beta))
+	    if(mAnaCut->passTrkTofKaonMass(primMom,charge,mass2))
 	    {
 	      mRunQAHistoManager->fillTrkQaKaonAcptTree(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt);
 	    }
