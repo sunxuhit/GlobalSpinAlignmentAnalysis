@@ -235,7 +235,7 @@ int StRunQAMaker::Make()
 	    {
 	      mRunQAHistoManager->fillTrkQaKaonAcptTree(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt);
 	    }
-	    if(mAnaCut->passTrkTofKaonSpin(primMom,charge,mass2,beta))
+	    if( mass2 > 0.16 && mass2 < 0.36 ) // temp fix
 	    {
 	      mRunQAHistoManager->fillTrkQaKaonAcptSpin(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt);
 	    }
@@ -248,7 +248,7 @@ int StRunQAMaker::Make()
 	    {
 	      mRunQAHistoManager->fillTrkQaKaonAcptTree(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt);
 	    }
-	    if(mAnaCut->passTrkTofKaonSpin(primMom,charge,mass2,beta))
+	    if( mass2 > 0.16 && mass2 < 0.36 ) // temp fix
 	    {
 	      mRunQAHistoManager->fillTrkQaKaonAcptSpin(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt);
 	    }

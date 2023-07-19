@@ -435,8 +435,8 @@ bool StAnalysisCut::passTrkTpcKaonFull(StPhiMesonTrack *phiTrk)
   }
 
   // dca cut
-  if( phiTrk->getDcaKp > anaUtils::mDcaKaonMax[mType] ||
-      phiTrk->getDcaKm > anaUtils::mDcaKaonMax[mType] )
+  if( phiTrk->getDcaKp() > anaUtils::mDcaKaonMax[mType] ||
+      phiTrk->getDcaKm() > anaUtils::mDcaKaonMax[mType] )
   {
     return false;
   }

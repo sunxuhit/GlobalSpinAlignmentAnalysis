@@ -193,15 +193,15 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
   for(unsigned int iTrk = 0; iTrk < nTracks; ++iTrk) // loop over all particles in event
   {
     StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(iTrk);
-    // TVector3 primMom = picoTrack->pMom();
-    // int charge       = static_cast<int>(picoTrack->charge());
-    // double beta      = mAnaUtils->getBeta(picoDst, iTrk);
-    // double mass2     = mAnaUtils->getPrimMass2(picoDst, iTrk);
+    TVector3 primMom = picoTrack->pMom();
+    int charge       = static_cast<int>(picoTrack->charge());
+    double beta      = mAnaUtils->getBeta(picoDst, iTrk);
+    double mass2     = mAnaUtils->getPrimMass2(picoDst, iTrk);
 
-    if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx) && mAnaCut->passTrkTofKaonBeta(picoTrack->pMom(),charge,beta))
+    if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx) && mAnaCut->passTrkTofKaonBeta(primMom,charge,beta))
     {
       int phiMixKey = getPhiMixKey(mCent9,vzBin,PsiBin,evtBin);
-      if(picoTrack->charge() > 0)
+      if(charge > 0)
       { // K+ candidate
 	map_mMomVecKp[phiMixKey].push_back(static_cast<TVector3>(picoTrack->pMom()));// primMom 
 	map_mMass2Kp[phiMixKey].push_back(static_cast<double>(mAnaUtils->getPrimMass2(picoDst, iTrk))); // mass2
@@ -211,7 +211,7 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
 	map_mChargeKp[phiMixKey].push_back(static_cast<int>(picoTrack->charge())); // charge
 	map_mNHitsFitKp[phiMixKey].push_back(static_cast<double>(picoTrack->nHitsFit())); // nHitsFit
       }
-      if(picoTrack->charge() < 0)
+      if(charge < 0)
       { // K- candidate
 	map_mMomVecKm[phiMixKey].push_back(static_cast<TVector3>(picoTrack->pMom()));// primMom 
 	map_mMass2Km[phiMixKey].push_back(static_cast<double>(mAnaUtils->getPrimMass2(picoDst, iTrk))); // mass2
