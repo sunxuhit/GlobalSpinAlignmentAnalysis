@@ -428,8 +428,8 @@ bool StAnalysisCut::passTrkTpcKaonFull(StPhiMesonTrack *phiTrk)
 { // apply to K+&K- track pairs
 
   // nHitsFit cut
-  if(phiTrk->getNSigKp() < 20 ||
-     phiTrk->getNSigKm() < 20 ) // temp cuts for cross check with Guannan Xie
+  if(phiTrk->getNHitsFitKp() < 20 ||
+     phiTrk->getNHitsFitKm() < 20 ) // temp cuts for cross check with Guannan Xie
   {
     return false;
   }
