@@ -536,8 +536,12 @@ bool StAnalysisCut::passTrkTofKaonBeta(StPhiMesonTrack *phiTrk)
   const double betaKmExp   = primMomKm.Mag()/eKmExp;
   const double delBetaKm   = TMath::Abs(1.0/betaKm - 1.0/betaKmExp);
 
-  if( (delBetaKp < 0.03 || betaKp < -10.0) && delBetaKm < 0.03)
+  if(primMomKp.Mag() < 0.5 && (delBetaKp < 0.03 || betaKp < -10.0) && delBetaKm < 0.03)
   { // K+: require ToF when valid & K-: always require ToF
+    return true;
+  }
+  if(primMomKp.Mag() >= 0.5 && delBetaKp < 0.03 && delBetaKm < 0.03 )
+  { // always require ToF for K+ & K-
     return true;
   }
 
