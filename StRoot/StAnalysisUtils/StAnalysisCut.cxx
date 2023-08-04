@@ -393,11 +393,13 @@ bool StAnalysisCut::passTrkTpcKaonWest(StPicoTrack *picoTrack, TVector3 primVtx)
 
 bool StAnalysisCut::passTrkTofKaonMass(TVector3 primMom, int charge, double mass2)
 {
-  if(primMom.Mag() < 0.65 && ((mass2 > anaUtils::mMass2KaonTreeMin[mType] && mass2 < anaUtils::mMass2KaonTreeMax[mType]) || mass2 < -10.0))
+  // if(primMom.Mag() < 0.65 && ((mass2 > anaUtils::mMass2KaonTreeMin[mType] && mass2 < anaUtils::mMass2KaonTreeMax[mType]) || mass2 < -10.0))
+  if(primMom.Mag() <= 0.5 && ((mass2 > anaUtils::mMass2KaonTreeMin[mType] && mass2 < anaUtils::mMass2KaonTreeMax[mType]) || mass2 < -10.0))
   { // ToF when valid
     return true;
   }
-  if(primMom.Mag() >= 0.65 && (mass2 > anaUtils::mMass2KaonTreeMin[mType] && mass2 < anaUtils::mMass2KaonTreeMax[mType]))
+  // if(primMom.Mag() >= 0.65 && (mass2 > anaUtils::mMass2KaonTreeMin[mType] && mass2 < anaUtils::mMass2KaonTreeMax[mType]))
+  if(primMom.Mag() > 0.5 && (mass2 > anaUtils::mMass2KaonTreeMin[mType] && mass2 < anaUtils::mMass2KaonTreeMax[mType]))
   { // ToF always
     return true;
   }
@@ -408,11 +410,15 @@ bool StAnalysisCut::passTrkTofKaonMass(TVector3 primMom, int charge, double mass
 bool StAnalysisCut::passTrkTofKaonBeta(TVector3 primMom, int charge, double beta)
 {
   // Guannan's cuts
-  const double eExp = TMath::Sqrt(primMom.Mag()*primMom.Mag()+anaUtils::mMassKaon*anaUtils::mMassKaon);
+  const double eExp = TMath::Sqrt(primMom.Mag2()+anaUtils::mMassKaon*anaUtils::mMassKaon);
   const double betaExp = primMom.Mag()/eExp;
   const double delBeta = TMath::Abs(1.0/beta - 1.0/betaExp);
-  if(charge > 0 && (delBeta < 0.05 || beta < -10.0))
-  { // K+: require ToF when valid
+  if(charge > 0 && primMom.Mag() <= 0.5 && (delBeta < 0.05 || beta < -10.0))
+  { // K+: require ToF when valid when mom <= 0.5 GeV/c
+    return true;
+  }
+  if(charge > 0 && primMom.Mag() > 0.5 && delBeta < 0.05)
+  { // K+: always return ToF when mom > 0.5 GeV/c
     return true;
   }
   if(charge < 0 && delBeta < 0.05)
@@ -526,21 +532,21 @@ bool StAnalysisCut::passTrkTofKaonBeta(StPhiMesonTrack *phiTrk)
   // Guannan's cuts
   const double betaKp      = phiTrk->getBetaKp(); // K+
   const TVector3 primMomKp = phiTrk->getTrkMomKp();
-  const double eKpExp      = TMath::Sqrt(primMomKp.Mag()*primMomKp.Mag()+anaUtils::mMassKaon*anaUtils::mMassKaon);
+  const double eKpExp      = TMath::Sqrt(primMomKp.Mag2()+anaUtils::mMassKaon*anaUtils::mMassKaon);
   const double betaKpExp   = primMomKp.Mag()/eKpExp;
   const double delBetaKp   = TMath::Abs(1.0/betaKp - 1.0/betaKpExp);
 
   const double betaKm      = phiTrk->getBetaKm(); // K-
   const TVector3 primMomKm = phiTrk->getTrkMomKm();
-  const double eKmExp      = TMath::Sqrt(primMomKm.Mag()*primMomKm.Mag()+anaUtils::mMassKaon*anaUtils::mMassKaon);
+  const double eKmExp      = TMath::Sqrt(primMomKm.Mag2()+anaUtils::mMassKaon*anaUtils::mMassKaon);
   const double betaKmExp   = primMomKm.Mag()/eKmExp;
   const double delBetaKm   = TMath::Abs(1.0/betaKm - 1.0/betaKmExp);
 
-  if(primMomKp.Mag() < 0.5 && (delBetaKp < 0.03 || betaKp < -10.0) && delBetaKm < 0.03)
+  if(primMomKp.Mag() <= 0.5 && (delBetaKp < 0.03 || betaKp < -10.0) && delBetaKm < 0.03)
   { // K+: require ToF when valid & K-: always require ToF
     return true;
   }
-  if(primMomKp.Mag() >= 0.5 && delBetaKp < 0.03 && delBetaKm < 0.03 )
+  if(primMomKp.Mag() > 0.5 && delBetaKp < 0.03 && delBetaKm < 0.03 )
   { // always require ToF for K+ & K-
     return true;
   }
