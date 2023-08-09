@@ -40,10 +40,17 @@ void StPhiMesonTree::initPhiTree()
   {
     std::string histName = Form("h_mInvMassPhiCent%d",iCent);
     h_mInvMassPhi[iCent] = new TH2F(histName.c_str(),histName.c_str(),25,0.0,5.0,anaUtils::mNumInvMassPhi,anaUtils::mMassPhiMin,anaUtils::mMassPhiMax);
+
     histName = Form("h_mBetaKaonCent%d",iCent);
     h_mBetaKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,400,-2.0,2.0);
+    histName = Form("h_mBetaKaonCutCent%d",iCent);
+    h_mBetaKaonCut[iCent] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,400,-2.0,2.0);
+
     histName = Form("h_mMassKaonCent%d",iCent);
     h_mMassKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),1100,-0.5,10.5,400,-2.0,2.0);
+    histName = Form("h_mMassKaonCutCent%d",iCent);
+    h_mMassKaonCut[iCent] = new TH2F(histName.c_str(),histName.c_str(),1100,-0.5,10.5,400,-2.0,2.0);
+
     for(int iVz = 0; iVz < mNumMixVzBin; ++iVz)
     {
       for(int iPsi = 0; iPsi < mNumMixPsiBin; ++iPsi)
@@ -67,7 +74,9 @@ void StPhiMesonTree::writePhiTree()
   {
     h_mInvMassPhi[iCent]->Write();
     h_mBetaKaon[iCent]->Write();
+    h_mBetaKaonCut[iCent]->Write();
     h_mMassKaon[iCent]->Write();
+    h_mMassKaonCut[iCent]->Write();
   }
   t_mPhiMesonTree->Write("",TObject::kOverwrite);
 }
@@ -206,9 +215,11 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
     double betaExp   = primMom.Mag()/TMath::Sqrt(primMom.Mag2()+anaUtils::mMassKaon*anaUtils::mMassKaon); // expected beta of Kaon
     double deltaBeta = 1.0/beta - 1.0/betaExp;
     h_mBetaKaon[mCent9]->Fill(primMom.Mag()/charge,deltaBeta);
+    h_mMassKaon[mCent9]->Fill(mass2/(charge*charge),deltaBeta);
     if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx))
     { // Kaon candidate with TPC only
-      h_mMassKaon[mCent9]->Fill(mass2/(charge*charge),deltaBeta);
+      h_mBetaKaonCut[mCent9]->Fill(primMom.Mag()/charge,deltaBeta);
+      h_mMassKaonCut[mCent9]->Fill(mass2/(charge*charge),deltaBeta);
     }
 
     if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx) && mAnaCut->passTrkTofKaonBeta(primMom,charge,beta))
