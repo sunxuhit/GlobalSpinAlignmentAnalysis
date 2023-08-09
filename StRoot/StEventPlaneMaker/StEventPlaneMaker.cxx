@@ -673,6 +673,8 @@ int StEventPlaneMaker::Make()
 	      const double Psi1GrpRawWest = mEpdEpManager->getPsi1GrpRawWest(iGrp);
 	      const double Psi1GrpRawFull = mEpdEpManager->getPsi1GrpRawFull(iGrp);
 	      mEpdEpManager->fillEpdSubEpGrpRaw(Psi1GrpRawEast,Psi1GrpRawWest,Psi1GrpRawFull,iGrp);
+
+	      cout << "iGrp = " << iGrp << ", Psi1GrpRawEast = " << Psi1GrpRawEast << ", Psi1GrpRawWest = " << Psi1GrpRawWest << ", Psi1GrpRawFull = " << Psi1GrpRawFull << endl;
 	    }
 	  }
 	}
@@ -812,6 +814,8 @@ int StEventPlaneMaker::Make()
 	      mEpdEpManager->fillEpdSubEpGrpReCtr(Psi1GrpReCtrEast, Psi1GrpReCtrWest, Psi1GrpReCtrFull, iGrp);
 	      mEpdEpManager->fillEpdGrpShiftEast(iGrp);
 	      mEpdEpManager->fillEpdGrpShiftWest(iGrp);
+
+	      cout << "iGrp = " << iGrp << ", Psi1GrpReCtrEast = " << Psi1GrpReCtrEast << ", Psi1GrpReCtrWest = " << Psi1GrpReCtrWest << ", Psi1GrpReCtrFull = " << Psi1GrpReCtrFull << endl;
 	    }
 	  }
 
@@ -952,6 +956,8 @@ int StEventPlaneMaker::Make()
 	      mEpdEpManager->fillEpdSubEpGrpShift(Psi1GrpShiftEast, Psi1GrpShiftWest, Psi1GrpShiftFull, iGrp);
 	      // mEpdEpManager->fillEpdFullEpGrpShift(Psi1GrpShiftFullCorr,iGrp); // Don't need Full EPD EP for FXT
 	      mEpdEpManager->fillEpdGrpResolution(Psi1GrpShiftEast, Psi1GrpShiftWest, iGrp);
+
+	      cout << "iGrp = " << iGrp << ", Psi1GrpShiftEast = " << Psi1GrpShiftEast << ", Psi1GrpShiftWest = " << Psi1GrpShiftWest << ", Psi1GrpShiftFull = " << Psi1GrpShiftFull << endl;
 	    }
 	  }
 
