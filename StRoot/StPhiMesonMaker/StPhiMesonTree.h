@@ -138,9 +138,11 @@ class StPhiMesonTree : public TObject
 
     TH2F *h_mInvMassPhi[mNumCentrality]; // pt vs. invMassPhi
     TH2F *h_mBetaKaon[mNumCentrality];    // p/q vs. 1/beta - 1/betaKaon for all particles
-    TH2F *h_mBetaKaonCut[mNumCentrality]; // p/q vs. 1/beta - 1/betaKaon after Kaon cuts
+    TH2F *h_mBetaKaonTpc[mNumCentrality]; // p/q vs. 1/beta - 1/betaKaon after TPC Kaon cuts
+    TH2F *h_mBetaKaonTof[mNumCentrality]; // p/q vs. 1/beta - 1/betaKaon after ToF Kaon cuts
     TH2F *h_mMassKaon[mNumCentrality];    // m^2/q^2 vs. 1/beta - 1/betaKaon for all particles
-    TH2F *h_mMassKaonCut[mNumCentrality]; // m^2/q^2 vs. 1/beta - 1/betaKaon after Kaon cuts
+    TH2F *h_mMassKaonTpc[mNumCentrality]; // m^2/q^2 vs. 1/beta - 1/betaKaon after TPC Kaon cuts
+    TH2F *h_mMassKaonTof[mNumCentrality]; // m^2/q^2 vs. 1/beta - 1/betaKaon after ToF Kaon cuts
 
     // set QVector
     int mFlagZdcEp; 
