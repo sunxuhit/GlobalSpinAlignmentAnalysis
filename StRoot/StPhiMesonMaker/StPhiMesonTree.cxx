@@ -41,19 +41,23 @@ void StPhiMesonTree::initPhiTree()
     std::string histName = Form("h_mInvMassPhiCent%d",iCent);
     h_mInvMassPhi[iCent] = new TH2F(histName.c_str(),histName.c_str(),25,0.0,5.0,anaUtils::mNumInvMassPhi,anaUtils::mMassPhiMin,anaUtils::mMassPhiMax);
 
-    histName = Form("h_mBetaKaonCent%d",iCent);
-    h_mBetaKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,400,-2.0,2.0);
-    histName = Form("h_mBetaKaonTpcCent%d",iCent);
-    h_mBetaKaonTpc[iCent] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,400,-2.0,2.0);
-    histName = Form("h_mBetaKaonTofCent%d",iCent);
-    h_mBetaKaonTof[iCent] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,400,-2.0,2.0);
+    histName = Form("h_mBetaCent%d",iCent);
+    h_mBeta[iCent] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,400,-2.0,2.0);
+    histName = Form("h_mBetaTpcKaonCent%d",iCent);
+    h_mBetaTpcKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,400,-2.0,2.0);
+    histName = Form("h_mBetaTofBKaonCent%d",iCent);
+    h_mBetaTofBKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,400,-2.0,2.0);
+    histName = Form("h_mBetaTofMKaonCent%d",iCent);
+    h_mBetaTofMKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,400,-2.0,2.0);
 
-    histName = Form("h_mMassKaonCent%d",iCent);
-    h_mMassKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),1100,-0.5,10.5,400,-2.0,2.0);
-    histName = Form("h_mMassKaonTpcCent%d",iCent);
-    h_mMassKaonTpc[iCent] = new TH2F(histName.c_str(),histName.c_str(),1100,-0.5,10.5,400,-2.0,2.0);
-    histName = Form("h_mMassKaonTofCent%d",iCent);
-    h_mMassKaonTof[iCent] = new TH2F(histName.c_str(),histName.c_str(),1100,-0.5,10.5,400,-2.0,2.0);
+    histName = Form("h_mMassCent%d",iCent);
+    h_mMass[iCent] = new TH2F(histName.c_str(),histName.c_str(),1100,-0.5,10.5,400,-2.0,2.0);
+    histName = Form("h_mMassTpcKaonCent%d",iCent);
+    h_mMassTpcKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),1100,-0.5,10.5,400,-2.0,2.0);
+    histName = Form("h_mMassTofBKaonCent%d",iCent);
+    h_mMassTofBKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),1100,-0.5,10.5,400,-2.0,2.0);
+    histName = Form("h_mMassTofMKaonCent%d",iCent);
+    h_mMassTofMKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),1100,-0.5,10.5,400,-2.0,2.0);
 
     for(int iVz = 0; iVz < mNumMixVzBin; ++iVz)
     {
@@ -77,12 +81,14 @@ void StPhiMesonTree::writePhiTree()
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     h_mInvMassPhi[iCent]->Write();
-    h_mBetaKaon[iCent]->Write();
-    h_mBetaKaonTpc[iCent]->Write();
-    h_mBetaKaonTof[iCent]->Write();
-    h_mMassKaon[iCent]->Write();
-    h_mMassKaonTpc[iCent]->Write();
-    h_mMassKaonTof[iCent]->Write();
+    h_mBeta[iCent]->Write();
+    h_mBetaTpcKaon[iCent]->Write();
+    h_mBetaTofBKaon[iCent]->Write();
+    h_mBetaTofMKaon[iCent]->Write();
+    h_mMass[iCent]->Write();
+    h_mMassTpcKaon[iCent]->Write();
+    h_mMassTofBKaon[iCent]->Write();
+    h_mMassTofMKaon[iCent]->Write();
   }
   t_mPhiMesonTree->Write("",TObject::kOverwrite);
 }
@@ -220,16 +226,21 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
     double beta      = mAnaUtils->getBeta(picoDst, iTrk);
     double betaExp   = primMom.Mag()/TMath::Sqrt(primMom.Mag2()+anaUtils::mMassKaon*anaUtils::mMassKaon); // expected beta of Kaon
     double deltaBeta = 1.0/beta - 1.0/betaExp;
-    h_mBetaKaon[mCent9]->Fill(primMom.Mag()/charge,deltaBeta);
-    h_mMassKaon[mCent9]->Fill(mass2/(charge*charge),deltaBeta);
+    h_mBeta[mCent9]->Fill(primMom.Mag()/charge,deltaBeta);
+    h_mMass[mCent9]->Fill(mass2/(charge*charge),deltaBeta);
     if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx))
     { // Kaon candidate with TPC only
-      h_mBetaKaonTpc[mCent9]->Fill(primMom.Mag()/charge,deltaBeta);
-      h_mMassKaonTpc[mCent9]->Fill(mass2/(charge*charge),deltaBeta);
+      h_mBetaTpcKaon[mCent9]->Fill(primMom.Mag()/charge,deltaBeta);
+      h_mMassTpcKaon[mCent9]->Fill(mass2/(charge*charge),deltaBeta);
       if(mAnaCut->passTrkTofKaonBeta(primMom,charge,beta))
       { // Kaon candidate with TPC and ToF
-	h_mBetaKaonTof[mCent9]->Fill(primMom.Mag()/charge,deltaBeta);
-	h_mMassKaonTof[mCent9]->Fill(mass2/(charge*charge),deltaBeta);
+	h_mBetaTofBKaon[mCent9]->Fill(primMom.Mag()/charge,deltaBeta);
+	h_mMassTofBKaon[mCent9]->Fill(mass2/(charge*charge),deltaBeta);
+      }
+      if(mAnaCut->passTrkTofKaonMass(primMom,charge,mass2))
+      { // Kaon candidate with TPC and ToF
+	h_mBetaTofMKaon[mCent9]->Fill(primMom.Mag()/charge,deltaBeta);
+	h_mMassTofMKaon[mCent9]->Fill(mass2/(charge*charge),deltaBeta);
       }
     }
 
