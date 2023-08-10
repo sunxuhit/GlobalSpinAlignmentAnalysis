@@ -23,6 +23,7 @@ class StEpdEpManager : public TObject
     void initEpdEpManager(int cent9, int runIndex, int vzBin);
 
     // Utilities
+    TVector3 getEpdCtrVec(StPicoEpdHit* picoEpdHit, TVector3 primVtx);
     TVector3 getEpdRanVec(StPicoEpdHit* picoEpdHit, TVector3 primVtx);
     TVector2 calq1Vector(StPicoEpdHit* picoEpdHit, TVector3 primVtx);
     double getTileWeight(StPicoEpdHit* picoEpdHit);
