@@ -909,7 +909,7 @@ int StEventPlaneMaker::Make()
 	    {
 	      const double Psi1GrpShiftEast     = mEpdEpManager->getPsi1GrpShiftTrkAveEast(iGrp);
 	      const double Psi1GrpShiftWest     = mEpdEpManager->getPsi1GrpShiftTrkAveWest(iGrp);
-	      const double Psi1GrpShiftFull     = mEpdEpManager->getPsi1GrpShiftFull(iGrp);
+	      const double Psi1GrpShiftFull     = mEpdEpManager->getPsi1GrpShiftTrkAveFull(iGrp);
 	      mEpdEpManager->fillEpdSubEpGrpShiftTrkAve(Psi1GrpShiftEast, Psi1GrpShiftWest, Psi1GrpShiftFull, iGrp);
 	      mEpdEpManager->fillEpdGrpResolution(Psi1GrpShiftEast, Psi1GrpShiftWest, iGrp);
 

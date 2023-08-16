@@ -1976,7 +1976,7 @@ TVector2 StEpdEpManager::getQ1VecGrpReCtrEvtAveEast(int grpId)
   TVector2 Q1VecReCtr(0.0,0.0);
   TVector2 Q1VecOrig = getQ1VecGrpRawEast(grpId);
   if(mUsePhiWgt) Q1VecOrig = getQ1VecGrpWgtEast(grpId);
-  if(Q1VecRaw.Mod() > 0.0)
+  if(Q1VecOrig.Mod() > 0.0)
   {
     TVector2 Q1VecCtr = getQ1VecGrpCtrEvtAveEast(grpId);
     const double Q1x = Q1VecOrig.X() - Q1VecCtr.X();
@@ -1993,7 +1993,7 @@ TVector2 StEpdEpManager::getQ1VecGrpReCtrEvtAveWest(int grpId)
   TVector2 Q1VecReCtr(0.0,0.0);
   TVector2 Q1VecOrig = getQ1VecGrpRawWest(grpId);
   if(mUsePhiWgt) Q1VecOrig = getQ1VecGrpWgtWest(grpId);
-  if(Q1VecRaw.Mod() > 0.0)
+  if(Q1VecOrig.Mod() > 0.0)
   {
     TVector2 Q1VecCtr = getQ1VecGrpCtrEvtAveWest(grpId);
     const double Q1x = Q1VecOrig.X() - Q1VecCtr.X();

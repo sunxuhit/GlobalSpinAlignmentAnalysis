@@ -268,11 +268,11 @@ int StPhiMesonMaker::Make()
 
 	  if( mAnaCut->passHitEpdEpEast(picoEpdHit) ) // negative eta
 	  {
-	    mEpdEpManager->addHitGrpReCtrEast(picoEpdHit, primVtx);
+	    mEpdEpManager->addHitGrpReCtrTrkAveEast(picoEpdHit, primVtx);
 	  }
 	  if( mAnaCut->passHitEpdEpWest(picoEpdHit) ) // positive eta
 	  {
-	    mEpdEpManager->addHitGrpReCtrWest(picoEpdHit, primVtx);
+	    mEpdEpManager->addHitGrpReCtrTrkAveWest(picoEpdHit, primVtx);
 	  }
 	}
       }
@@ -359,20 +359,18 @@ int StPhiMesonMaker::Make()
 	  const TVector2 vQ1EpdSideFullCorr(0.0,0.0);
 
 	  int flagEpdGrp0Ep = 0; // EPD Grp0 EP
-	  const TVector2 vQ1EpdGrp0East = mEpdEpManager->getQ1VecGrpShiftEast(0); // get Shift Corrected Q1Vector from EPD Grp0
-	  const TVector2 vQ1EpdGrp0West = mEpdEpManager->getQ1VecGrpShiftWest(0);
-	  const TVector2 vQ1EpdGrp0Full = mEpdEpManager->getQ1VecGrpShiftFull(0);
-	  // const TVector2 vQ1EpdGrp0FullCorr = mEpdEpManager->getQ1VecGrpShiftFullCorr(0);
+	  const TVector2 vQ1EpdGrp0East = mEpdEpManager->getQ1VecGrpShiftTrkAveEast(0); // get Shift Corrected Q1Vector from EPD Grp0
+	  const TVector2 vQ1EpdGrp0West = mEpdEpManager->getQ1VecGrpShiftTrkAveWest(0);
+	  const TVector2 vQ1EpdGrp0Full = mEpdEpManager->getQ1VecGrpShiftTrkAveFull(0);
 	  if( mAnaCut->passQVecEpdGrp(vQ1EpdGrp0East,vQ1EpdGrp0West,vQ1EpdGrp0Full,0) ) // EPD EP Grp0
 	  {
 	    flagEpdGrp0Ep = 1;
 	  }
 
 	  int flagEpdGrp1Ep = 0; // EPD Grp1 EP
-	  const TVector2 vQ1EpdGrp1East = mEpdEpManager->getQ1VecGrpShiftEast(1); // get Shift Corrected Q1Vector from EPD Grp0
-	  const TVector2 vQ1EpdGrp1West = mEpdEpManager->getQ1VecGrpShiftWest(1);
-	  const TVector2 vQ1EpdGrp1Full = mEpdEpManager->getQ1VecGrpShiftFull(1);
-	  // const TVector2 vQ1EpdGrp1FullCorr = mEpdEpManager->getQ1VecGrpShiftFullCorr(1);
+	  const TVector2 vQ1EpdGrp1East = mEpdEpManager->getQ1VecGrpShiftTrkAveEast(1); // get Shift Corrected Q1Vector from EPD Grp0
+	  const TVector2 vQ1EpdGrp1West = mEpdEpManager->getQ1VecGrpShiftTrkAveWest(1);
+	  const TVector2 vQ1EpdGrp1Full = mEpdEpManager->getQ1VecGrpShiftTrkAveFull(1);
 	  if( mAnaCut->passQVecEpdGrp(vQ1EpdGrp1East,vQ1EpdGrp1West,vQ1EpdGrp1Full,1) ) // EPD EP Grp1
 	  {
 	    flagEpdGrp1Ep = 1;
@@ -392,7 +390,7 @@ int StPhiMesonMaker::Make()
 	    flagTpcEp = 1;
 	  }
 
-	  const double Psi1EpdGrp0 = mEpdEpManager->getPsi1GrpShiftEast(0); // Psi1 from EPD Grp 0 East & Used for Event Mixing
+	  const double Psi1EpdGrp0 = mEpdEpManager->getPsi1GrpShiftTrkAveEast(0); // Psi1 from EPD Grp 0 East & Used for Event Mixing
 
 	  mPhiMesonTree->clearEvtInfo();
 	  mPhiMesonTree->setEvtInfo(runIdx, cent9, cent16, refWgt, vz, Psi1EpdGrp0); // Use Psi1EpdGrp0 for Event Mixing
