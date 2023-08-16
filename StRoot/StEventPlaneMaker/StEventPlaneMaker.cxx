@@ -164,16 +164,6 @@ int StEventPlaneMaker::Init()
       mEpdEpManager->initEpdSideShiftFull();
       mEpdEpManager->initEpdSubEpSideShift();
     }
-    /*
-    if(mAnaCut->isFxt3p85GeV_2018()) // Don't need Full EPD EP for FXT
-    {
-      mEpdEpManager->readEpdPhiWgt(); // EPD
-      mEpdEpManager->readEpdGrpReCtr();
-      mEpdEpManager->readEpdGrpShift();
-      mEpdEpManager->initEpdGrpShiftFull();
-      mEpdEpManager->initEpdSubEpGrpShift();
-    }
-    */
   }
   if(mMode == 4)
   { // fill Event Plane Resolution for ZDC & EPD & TPC Sub EP
@@ -200,10 +190,8 @@ int StEventPlaneMaker::Init()
       mEpdEpManager->readEpdPhiWgt(); // EPD
       mEpdEpManager->readEpdGrpReCtr();
       mEpdEpManager->readEpdGrpShift();
-      // mEpdEpManager->readEpdGrpShiftFull(); // Don't need Full EPD EP for FXT
       mEpdEpManager->initEpdGrpResolution();
       mEpdEpManager->initEpdSubEpGrpShift();
-      // mEpdEpManager->initEpdFullEpGrpShift(); // Don't need Full EPD EP for FXT
       mMixEpManager->initMixEpRes(); // Mix
       mMixEpManager->initMixSubEpShift();
     }
@@ -329,13 +317,6 @@ int StEventPlaneMaker::Finish()
 	mEpdEpManager->writeEpdSideShiftFull(); // EPD
 	mEpdEpManager->writeEpdSubEpSideShift();
       }
-      /*
-      if(mAnaCut->isFxt3p85GeV_2018()) 
-      {
-	mEpdEpManager->writeEpdGrpShiftFull(); // EPD
-	mEpdEpManager->writeEpdSubEpGrpShift();
-      }
-      */
       file_mOutPutShiftPar->Close();
     }
   }
@@ -357,7 +338,6 @@ int StEventPlaneMaker::Finish()
       {
 	mEpdEpManager->writeEpdGrpResolution(); // EPD
 	mEpdEpManager->writeEpdSubEpGrpShift();
-	// mEpdEpManager->writeEpdFullEpGrpShift(); // Don't need Full EPD EP for FXT
 	mMixEpManager->writeMixEpRes(); // Mix
 	mMixEpManager->writeMixSubEpShift();
       }
@@ -609,23 +589,23 @@ int StEventPlaneMaker::Make()
 	    if( mAnaCut->passHitEpdEpEast(picoEpdHit) ) // negative eta
 	    {
 	      mEpdEpManager->addHitGrpWgtEast(picoEpdHit, primVtx);
-	      mEpdEpManager->fillEpdGrpReCtrEast(picoEpdHit, primVtx);
+	      mEpdEpManager->fillEpdGrpReCtrTrkAveEast(picoEpdHit, primVtx);
 	    }
 	    if( mAnaCut->passHitEpdEpWest(picoEpdHit) ) // positive eta
 	    {
 	      mEpdEpManager->addHitGrpWgtWest(picoEpdHit, primVtx);
-	      mEpdEpManager->fillEpdGrpReCtrWest(picoEpdHit, primVtx);
+	      mEpdEpManager->fillEpdGrpReCtrTrkAveWest(picoEpdHit, primVtx);
 	    }
 	  }
 	  if(mMode > 1) // calculate phi & eta weighted (if avaliable) and recentered Q1Vector from EPD
 	  {
 	    if( mAnaCut->passHitEpdEpEast(picoEpdHit) ) // negative eta
 	    {
-	      mEpdEpManager->addHitGrpReCtrEast(picoEpdHit, primVtx);
+	      mEpdEpManager->addHitGrpReCtrTrkAveEast(picoEpdHit, primVtx);
 	    }
 	    if( mAnaCut->passHitEpdEpWest(picoEpdHit) ) // positive eta
 	    {
-	      mEpdEpManager->addHitGrpReCtrWest(picoEpdHit, primVtx);
+	      mEpdEpManager->addHitGrpReCtrTrkAveWest(picoEpdHit, primVtx);
 	    }
 	  }
 	}
@@ -674,7 +654,7 @@ int StEventPlaneMaker::Make()
 	      const double Psi1GrpRawFull = mEpdEpManager->getPsi1GrpRawFull(iGrp);
 	      mEpdEpManager->fillEpdSubEpGrpRaw(Psi1GrpRawEast,Psi1GrpRawWest,Psi1GrpRawFull,iGrp);
 
-	      cout << "iGrp = " << iGrp << ", Psi1GrpRawEast = " << Psi1GrpRawEast << ", Psi1GrpRawWest = " << Psi1GrpRawWest << ", Psi1GrpRawFull = " << Psi1GrpRawFull << endl;
+	      // cout << "iGrp = " << iGrp << ", Psi1GrpRawEast = " << Psi1GrpRawEast << ", Psi1GrpRawWest = " << Psi1GrpRawWest << ", Psi1GrpRawFull = " << Psi1GrpRawFull << endl;
 	    }
 	  }
 	}
@@ -803,19 +783,19 @@ int StEventPlaneMaker::Make()
 	  TVector2 vQ1EpdGrpEast[mNumRingsGrps], vQ1EpdGrpWest[mNumRingsGrps], vQ1EpdGrpFull[mNumRingsGrps];
 	  for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
 	  {
-	    vQ1EpdGrpEast[iGrp] = mEpdEpManager->getQ1VecGrpReCtrEast(iGrp); // get Q1Vector from EPD groups
-	    vQ1EpdGrpWest[iGrp] = mEpdEpManager->getQ1VecGrpReCtrWest(iGrp);
-	    vQ1EpdGrpFull[iGrp] = mEpdEpManager->getQ1VecGrpReCtrFull(iGrp);
+	    vQ1EpdGrpEast[iGrp] = mEpdEpManager->getQ1VecGrpReCtrTrkAveEast(iGrp); // get Q1Vector from EPD groups
+	    vQ1EpdGrpWest[iGrp] = mEpdEpManager->getQ1VecGrpReCtrTrkAveWest(iGrp);
+	    vQ1EpdGrpFull[iGrp] = mEpdEpManager->getQ1VecGrpReCtrTrkAveFull(iGrp);
 	    if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[iGrp],vQ1EpdGrpWest[iGrp],vQ1EpdGrpFull[iGrp],iGrp) ) // EPD EP
 	    {
-	      const double Psi1GrpReCtrEast = mEpdEpManager->getPsi1GrpReCtrEast(iGrp);
-	      const double Psi1GrpReCtrWest = mEpdEpManager->getPsi1GrpReCtrWest(iGrp);
-	      const double Psi1GrpReCtrFull = mEpdEpManager->getPsi1GrpReCtrFull(iGrp);
-	      mEpdEpManager->fillEpdSubEpGrpReCtr(Psi1GrpReCtrEast, Psi1GrpReCtrWest, Psi1GrpReCtrFull, iGrp);
-	      mEpdEpManager->fillEpdGrpShiftEast(iGrp);
-	      mEpdEpManager->fillEpdGrpShiftWest(iGrp);
+	      const double Psi1GrpReCtrEast = mEpdEpManager->getPsi1GrpReCtrTrkAveEast(iGrp);
+	      const double Psi1GrpReCtrWest = mEpdEpManager->getPsi1GrpReCtrTrkAveWest(iGrp);
+	      const double Psi1GrpReCtrFull = mEpdEpManager->getPsi1GrpReCtrTrkAveFull(iGrp);
+	      mEpdEpManager->fillEpdSubEpGrpReCtrTrkAve(Psi1GrpReCtrEast, Psi1GrpReCtrWest, Psi1GrpReCtrFull, iGrp);
+	      mEpdEpManager->fillEpdGrpShiftTrkAveEast(iGrp);
+	      mEpdEpManager->fillEpdGrpShiftTrkAveWest(iGrp);
 
-	      cout << "iGrp = " << iGrp << ", Psi1GrpReCtrEast = " << Psi1GrpReCtrEast << ", Psi1GrpReCtrWest = " << Psi1GrpReCtrWest << ", Psi1GrpReCtrFull = " << Psi1GrpReCtrFull << endl;
+	      // cout << "iGrp = " << iGrp << ", Psi1GrpReCtrEast = " << Psi1GrpReCtrEast << ", Psi1GrpReCtrWest = " << Psi1GrpReCtrWest << ", Psi1GrpReCtrFull = " << Psi1GrpReCtrFull << endl;
 	    }
 	  }
 
@@ -823,8 +803,8 @@ int StEventPlaneMaker::Make()
 	      mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[1],vQ1EpdGrpWest[1],vQ1EpdGrpFull[1],1) &&
 	      mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest) )
 	  { // 3-sub events method
-	    const double Psi1EpdGrp0 = mEpdEpManager->getPsi1GrpReCtrEast(0); // Psi1 from EPD Grp 0 East
-	    const double Psi1EpdGrp1 = mEpdEpManager->getPsi1GrpReCtrEast(1); // Psi1 from EPD Grp 1 East
+	    const double Psi1EpdGrp0 = mEpdEpManager->getPsi1GrpReCtrTrkAveEast(0); // Psi1 from EPD Grp 0 East
+	    const double Psi1EpdGrp1 = mEpdEpManager->getPsi1GrpReCtrTrkAveEast(1); // Psi1 from EPD Grp 1 East
 	    const double Psi1TpcEast = mTpcEpManager->getPsi1ReCtrEast(); // Psi1 from TPC East
 	    const double Psi1TpcWest = mTpcEpManager->getPsi1ReCtrWest(); // Psi1 from TPC West
 
@@ -857,27 +837,6 @@ int StEventPlaneMaker::Make()
 	    mEpdEpManager->fillEpdSideShiftFull();
 	  }
 	}
-
-	/*
-	if( mAnaCut->isFxt3p85GeV_2018() )
-	{
-	  TVector2 vQ1EpdGrpEast[mNumRingsGrps], vQ1EpdGrpWest[mNumRingsGrps], vQ1EpdGrpFull[mNumRingsGrps];
-	  for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
-	  {
-	    vQ1EpdGrpEast[iGrp] = mEpdEpManager->getQ1VecGrpShiftEast(iGrp); // get Q1Vector from EPD groups
-	    vQ1EpdGrpWest[iGrp] = mEpdEpManager->getQ1VecGrpShiftWest(iGrp);
-	    vQ1EpdGrpFull[iGrp] = mEpdEpManager->getQ1VecGrpShiftFull(iGrp);
-	    if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[iGrp],vQ1EpdGrpWest[iGrp],vQ1EpdGrpFull[iGrp],iGrp) ) // EPD EP
-	    {
-	      const double Psi1GrpShiftEast = mEpdEpManager->getPsi1GrpShiftEast(iGrp);
-	      const double Psi1GrpShiftWest = mEpdEpManager->getPsi1GrpShiftWest(iGrp);
-	      const double Psi1GrpShiftFull = mEpdEpManager->getPsi1GrpShiftFull(iGrp);
-	      mEpdEpManager->fillEpdSubEpGrpShift(Psi1GrpShiftEast, Psi1GrpShiftWest, Psi1GrpShiftFull, iGrp);
-	      mEpdEpManager->fillEpdGrpShiftFull(iGrp);
-	    }
-	  }
-	}
-	*/
       }
       if(mMode == 4) // fill event plane resolution for ZDC-SMD & EPD & TPC Sub EP
       {
@@ -943,21 +902,18 @@ int StEventPlaneMaker::Make()
 	  // TVector2 vQ1EpdGrpFullCorr[mNumRingsGrps];
 	  for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
 	  {
-	    vQ1EpdGrpEast[iGrp] = mEpdEpManager->getQ1VecGrpShiftEast(iGrp); // get Q1Vector from EPD
-	    vQ1EpdGrpWest[iGrp] = mEpdEpManager->getQ1VecGrpShiftWest(iGrp);
-	    vQ1EpdGrpFull[iGrp] = mEpdEpManager->getQ1VecGrpShiftFull(iGrp);
-	    // vQ1EpdGrpFullCorr[iGrp] = mEpdEpManager->getQ1VecGrpShiftFullCorr(iGrp);
+	    vQ1EpdGrpEast[iGrp] = mEpdEpManager->getQ1VecGrpShiftTrkAveEast(iGrp); // get Q1Vector from EPD
+	    vQ1EpdGrpWest[iGrp] = mEpdEpManager->getQ1VecGrpShiftTrkAveWest(iGrp);
+	    vQ1EpdGrpFull[iGrp] = mEpdEpManager->getQ1VecGrpShiftTrkAveFull(iGrp);
 	    if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[iGrp],vQ1EpdGrpWest[iGrp],vQ1EpdGrpFull[iGrp],iGrp) ) // EPD EP
 	    {
-	      const double Psi1GrpShiftEast     = mEpdEpManager->getPsi1GrpShiftEast(iGrp);
-	      const double Psi1GrpShiftWest     = mEpdEpManager->getPsi1GrpShiftWest(iGrp);
+	      const double Psi1GrpShiftEast     = mEpdEpManager->getPsi1GrpShiftTrkAveEast(iGrp);
+	      const double Psi1GrpShiftWest     = mEpdEpManager->getPsi1GrpShiftTrkAveWest(iGrp);
 	      const double Psi1GrpShiftFull     = mEpdEpManager->getPsi1GrpShiftFull(iGrp);
-	      // const double Psi1GrpShiftFullCorr = mEpdEpManager->getPsi1GrpShiftFullCorr(iGrp);
-	      mEpdEpManager->fillEpdSubEpGrpShift(Psi1GrpShiftEast, Psi1GrpShiftWest, Psi1GrpShiftFull, iGrp);
-	      // mEpdEpManager->fillEpdFullEpGrpShift(Psi1GrpShiftFullCorr,iGrp); // Don't need Full EPD EP for FXT
+	      mEpdEpManager->fillEpdSubEpGrpShiftTrkAve(Psi1GrpShiftEast, Psi1GrpShiftWest, Psi1GrpShiftFull, iGrp);
 	      mEpdEpManager->fillEpdGrpResolution(Psi1GrpShiftEast, Psi1GrpShiftWest, iGrp);
 
-	      cout << "iGrp = " << iGrp << ", Psi1GrpShiftEast = " << Psi1GrpShiftEast << ", Psi1GrpShiftWest = " << Psi1GrpShiftWest << ", Psi1GrpShiftFull = " << Psi1GrpShiftFull << endl;
+	      // cout << "iGrp = " << iGrp << ", Psi1GrpShiftEast = " << Psi1GrpShiftEast << ", Psi1GrpShiftWest = " << Psi1GrpShiftWest << ", Psi1GrpShiftFull = " << Psi1GrpShiftFull << endl;
 	    }
 	  }
 
@@ -965,8 +921,8 @@ int StEventPlaneMaker::Make()
 	      mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[1],vQ1EpdGrpWest[1],vQ1EpdGrpFull[1],1) &&
 	      mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest) )
 	  { // 3-sub events method
-	    const double Psi1EpdGrp0 = mEpdEpManager->getPsi1GrpShiftEast(0); // Psi1 from EPD Grp 0 East
-	    const double Psi1EpdGrp1 = mEpdEpManager->getPsi1GrpShiftEast(1); // Psi1 from EPD Grp 1 East
+	    const double Psi1EpdGrp0 = mEpdEpManager->getPsi1GrpShiftTrkAveEast(0); // Psi1 from EPD Grp 0 East
+	    const double Psi1EpdGrp1 = mEpdEpManager->getPsi1GrpShiftTrkAveEast(1); // Psi1 from EPD Grp 1 East
 
 	    const TVector2 vQ1TpcEast = mTpcEpManager->getQ1VecReCtrEast();
 	    const TVector2 vQ1TpcWest = mTpcEpManager->getQ1VecReCtrWest();
@@ -1136,16 +1092,16 @@ int StEventPlaneMaker::Make()
 	  TVector2 vQ1EpdGrpEast[mNumRingsGrps], vQ1EpdGrpWest[mNumRingsGrps], vQ1EpdGrpFull[mNumRingsGrps]; 
 	  for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
 	  {
-	    vQ1EpdGrpEast[iGrp] = mEpdEpManager->getQ1VecGrpShiftEast(iGrp); // get Q1Vector from EPD
-	    vQ1EpdGrpWest[iGrp] = mEpdEpManager->getQ1VecGrpShiftWest(iGrp);
-	    vQ1EpdGrpFull[iGrp] = mEpdEpManager->getQ1VecGrpShiftFull(iGrp);
+	    vQ1EpdGrpEast[iGrp] = mEpdEpManager->getQ1VecGrpShiftTrkAveEast(iGrp); // get Q1Vector from EPD
+	    vQ1EpdGrpWest[iGrp] = mEpdEpManager->getQ1VecGrpShiftTrkAveWest(iGrp);
+	    vQ1EpdGrpFull[iGrp] = mEpdEpManager->getQ1VecGrpShiftTrkAveFull(iGrp);
 	  }
 
 	  if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[0],vQ1EpdGrpWest[0],vQ1EpdGrpFull[0],0) &&
 	      mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[1],vQ1EpdGrpWest[1],vQ1EpdGrpFull[1],1) &&
 	      mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest) )
 	  { // 3-sub events method
-	    const double Psi1EpdGrp0 = mEpdEpManager->getPsi1GrpShiftEast(0); // Psi1 from EPD Grp 0 East 
+	    const double Psi1EpdGrp0 = mEpdEpManager->getPsi1GrpShiftTrkAveEast(0); // Psi1 from EPD Grp 0 East 
 	    for(unsigned int iTrack = 0; iTrack < nTracks; ++iTrack)	  
 	    { // calculate charged charged hadron v2 & v3 int TPC w.r.t TPC
 	      StPicoTrack *picoTrack = (StPicoTrack*)mPicoDst->track(iTrack);

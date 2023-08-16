@@ -79,10 +79,10 @@ void StEpdEpManager::clearEpdEpManager()
     v_mQ1GrpWgtEast[iGrp].Set(0.0,0.0);
     v_mQ1GrpWgtWest[iGrp].Set(0.0,0.0);
 
-    mQ1WgtGrpReCtrEast[iGrp] = 0.0;
-    mQ1WgtGrpReCtrWest[iGrp] = 0.0;
-    v_mQ1GrpReCtrEast[iGrp].Set(0.0,0.0);
-    v_mQ1GrpReCtrWest[iGrp].Set(0.0,0.0);
+    mQ1WgtGrpReCtrTrkAveEast[iGrp] = 0.0;
+    mQ1WgtGrpReCtrTrkAveWest[iGrp] = 0.0;
+    v_mQ1GrpReCtrTrkAveEast[iGrp].Set(0.0,0.0);
+    v_mQ1GrpReCtrTrkAveWest[iGrp].Set(0.0,0.0);
   }
 }
 
@@ -123,7 +123,7 @@ TVector2 StEpdEpManager::calq1Vector(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
   return q1Vector;
 }
 
-double StEpdEpManager::getTileWeight(StPicoEpdHit *picoEpdHit)
+double StEpdEpManager::getTileWgt(StPicoEpdHit *picoEpdHit)
 {
   const double nMip = picoEpdHit->nMIP();
   double tileWgt = (nMip < anaUtils::mMipEpdEpMax[mType]) ? nMip : anaUtils::mMipEpdEpMax[mType];
@@ -132,7 +132,7 @@ double StEpdEpManager::getTileWeight(StPicoEpdHit *picoEpdHit)
   return tileWgt;
 }
 
-double StEpdEpManager::getPhiWeight(StPicoEpdHit *picoEpdHit)
+double StEpdEpManager::getPhiWgt(StPicoEpdHit *picoEpdHit)
 {
   double phiWgt = 1.0;
   if(mUsePhiWgt)
@@ -155,11 +155,21 @@ double StEpdEpManager::getPhiWeight(StPicoEpdHit *picoEpdHit)
   return phiWgt;
 }
 
-double StEpdEpManager::getEtaWeight(StPicoEpdHit *picoEpdHit)
+double StEpdEpManager::getEtaWgt(StPicoEpdHit *picoEpdHit)
 {
   double etaWgt = 1.0; // TODO: add real eta weight
 
   return etaWgt;
+}
+
+double StEpdEpManager::getEpdWgt(StPicoEpdHit *picoEpdHit)
+{
+  const double tileWgt = getTileWgt(picoEpdHit);
+  const double phiWgt  = getPhiWgt(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  const double etaWgt  = getEtaWgt(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  const double epdWgt  = tileWgt * phiWgt * etaWgt;
+
+  return epdWgt;
 }
 
 int StEpdEpManager::getEpdEpGrp(StPicoEpdHit *picoEpdHit)
@@ -193,7 +203,7 @@ bool StEpdEpManager::isPsi1InRange(double Psi1)
 // Calculate Q1Vector
 void StEpdEpManager::addHitSideRawEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double tileWgt = getTileWeight(picoEpdHit);
+  const double tileWgt = getTileWgt(picoEpdHit);
   const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
   if(ringId >= 0 && ringId < mNumRingsUsed)
   {
@@ -204,7 +214,7 @@ void StEpdEpManager::addHitSideRawEast(StPicoEpdHit *picoEpdHit, TVector3 primVt
 
 void StEpdEpManager::addHitSideRawWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double tileWgt = getTileWeight(picoEpdHit);
+  const double tileWgt = getTileWgt(picoEpdHit);
   const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
   if(ringId >= 0 && ringId < mNumRingsUsed)
   {
@@ -215,63 +225,67 @@ void StEpdEpManager::addHitSideRawWest(StPicoEpdHit *picoEpdHit, TVector3 primVt
 
 void StEpdEpManager::addHitSideWgtEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double tileWgt = getTileWeight(picoEpdHit);
-  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
-  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
-  const double wgt     = tileWgt * phiWgt * etaWgt;
+  // const double tileWgt = getTileWgt(picoEpdHit);
+  // const double phiWgt  = getPhiWgt(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  // const double etaWgt  = getEtaWgt(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  // const double wgt     = tileWgt * phiWgt * etaWgt;
+  const double epdWgt = getEpdWgt(picoEpdHit);
   const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
   if(ringId >= 0 && ringId < mNumRingsUsed)
   {
-    v_mQ1SideWgtEast  += wgt*calq1Vector(picoEpdHit,primVtx);
-    mQ1WgtSideWgtEast += wgt;
+    v_mQ1SideWgtEast  += epdWgt*calq1Vector(picoEpdHit,primVtx);
+    mQ1WgtSideWgtEast += epdWgt;
   }
 }
 
 void StEpdEpManager::addHitSideWgtWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double tileWgt = getTileWeight(picoEpdHit);
-  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
-  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
-  const double wgt     = tileWgt * phiWgt * etaWgt;
+  // const double tileWgt = getTileWgt(picoEpdHit);
+  // const double phiWgt  = getPhiWgt(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  // const double etaWgt  = getEtaWgt(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  // const double wgt     = tileWgt * phiWgt * etaWgt;
+  const double epdWgt = getEpdWgt(picoEpdHit);
   const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
   if(ringId >= 0 && ringId < mNumRingsUsed)
   {
-    v_mQ1SideWgtWest  += wgt*calq1Vector(picoEpdHit,primVtx);
-    mQ1WgtSideWgtWest += wgt;
+    v_mQ1SideWgtWest  += epdWgt*calq1Vector(picoEpdHit,primVtx);
+    mQ1WgtSideWgtWest += epdWgt;
   }
 }
 
 void StEpdEpManager::addHitSideReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double tileWgt = getTileWeight(picoEpdHit);
-  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
-  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
-  const double wgt     = tileWgt * phiWgt * etaWgt;
+  // const double tileWgt = getTileWgt(picoEpdHit);
+  // const double phiWgt  = getPhiWgt(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  // const double etaWgt  = getEtaWgt(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  // const double wgt     = tileWgt * phiWgt * etaWgt;
+  const double epdWgt = getEpdWgt(picoEpdHit);
   const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
   if(ringId >= 0 && ringId < mNumRingsUsed)
   {
-    v_mQ1SideReCtrEast  += wgt*(calq1Vector(picoEpdHit,primVtx) - getq1VecSideCtrEast());
-    mQ1WgtSideReCtrEast += wgt;
+    v_mQ1SideReCtrEast  += epdWgt*(calq1Vector(picoEpdHit,primVtx) - getq1VecSideCtrEast());
+    mQ1WgtSideReCtrEast += epdWgt;
   }
 }
 
 void StEpdEpManager::addHitSideReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double tileWgt = getTileWeight(picoEpdHit);
-  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
-  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
-  const double wgt     = tileWgt * phiWgt * etaWgt;
+  // const double tileWgt = getTileWgt(picoEpdHit);
+  // const double phiWgt  = getPhiWgt(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  // const double etaWgt  = getEtaWgt(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  // const double wgt     = tileWgt * phiWgt * etaWgt;
+  const double epdWgt = getEpdWgt(picoEpdHit);
   const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
   if(ringId >= 0 && ringId < mNumRingsUsed)
   {
-    v_mQ1SideReCtrWest  += wgt*(calq1Vector(picoEpdHit,primVtx) - getq1VecSideCtrWest());
-    mQ1WgtSideReCtrWest += wgt;
+    v_mQ1SideReCtrWest  += epdWgt*(calq1Vector(picoEpdHit,primVtx) - getq1VecSideCtrWest());
+    mQ1WgtSideReCtrWest += epdWgt;
   }
 }
 
 void StEpdEpManager::addHitGrpRawEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double tileWgt = getTileWeight(picoEpdHit);
+  const double tileWgt = getTileWgt(picoEpdHit);
   const int grpId = getEpdEpGrp(picoEpdHit);
   if(grpId >= 0)
   {
@@ -282,7 +296,7 @@ void StEpdEpManager::addHitGrpRawEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx
 
 void StEpdEpManager::addHitGrpRawWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double tileWgt = getTileWeight(picoEpdHit);
+  const double tileWgt = getTileWgt(picoEpdHit);
   const int grpId = getEpdEpGrp(picoEpdHit);
   if(grpId >= 0)
   {
@@ -293,57 +307,61 @@ void StEpdEpManager::addHitGrpRawWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx
 
 void StEpdEpManager::addHitGrpWgtEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double tileWgt = getTileWeight(picoEpdHit);
-  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
-  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
-  const double wgt     = tileWgt * phiWgt * etaWgt;
+  // const double tileWgt = getTileWgt(picoEpdHit);
+  // const double phiWgt  = getPhiWgt(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  // const double etaWgt  = getEtaWgt(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  // const double wgt     = tileWgt * phiWgt * etaWgt;
+  const double epdWgt = getEpdWgt(picoEpdHit);
   const int grpId = getEpdEpGrp(picoEpdHit);
   if(grpId >= 0)
   {
-    v_mQ1GrpWgtEast[grpId]  += wgt*calq1Vector(picoEpdHit,primVtx);
-    mQ1WgtGrpWgtEast[grpId] += wgt;
+    v_mQ1GrpWgtEast[grpId]  += epdWgt*calq1Vector(picoEpdHit,primVtx);
+    mQ1WgtGrpWgtEast[grpId] += epdWgt;
   }
 }
 
 void StEpdEpManager::addHitGrpWgtWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double tileWgt = getTileWeight(picoEpdHit);
-  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
-  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
-  const double wgt     = tileWgt * phiWgt * etaWgt;
+  // const double tileWgt = getTileWgt(picoEpdHit);
+  // const double phiWgt  = getPhiWgt(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  // const double etaWgt  = getEtaWgt(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  // const double wgt     = tileWgt * phiWgt * etaWgt;
+  const double epdWgt = getEpdWgt(picoEpdHit);
   const int grpId = getEpdEpGrp(picoEpdHit);
   if(grpId >= 0)
   {
-    v_mQ1GrpWgtWest[grpId]  += wgt*calq1Vector(picoEpdHit,primVtx);
-    mQ1WgtGrpWgtWest[grpId] += wgt;
+    v_mQ1GrpWgtWest[grpId]  += epdWgt*calq1Vector(picoEpdHit,primVtx);
+    mQ1WgtGrpWgtWest[grpId] += epdWgt;
   }
 }
 
-void StEpdEpManager::addHitGrpReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
+void StEpdEpManager::addHitGrpReCtrTrkAveEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double tileWgt = getTileWeight(picoEpdHit);
-  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
-  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
-  const double wgt     = tileWgt * phiWgt * etaWgt;
+  // const double tileWgt = getTileWgt(picoEpdHit);
+  // const double phiWgt  = getPhiWgt(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  // const double etaWgt  = getEtaWgt(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  // const double wgt     = tileWgt * phiWgt * etaWgt;
+  const double epdWgt = getEpdWgt(picoEpdHit);
   const int grpId = getEpdEpGrp(picoEpdHit);
   if(grpId >= 0)
   {
-    v_mQ1GrpReCtrEast[grpId]  += wgt*(calq1Vector(picoEpdHit,primVtx) - getq1VecGrpCtrEast(grpId));
-    mQ1WgtGrpReCtrEast[grpId] += wgt;
+    v_mQ1GrpReCtrTrkAveEast[grpId]  += epdWgt*(calq1Vector(picoEpdHit,primVtx) - getq1VecGrpCtrTrkAveEast(grpId));
+    mQ1WgtGrpReCtrTrkAveEast[grpId] += epdWgt;
   }
 }
 
-void StEpdEpManager::addHitGrpReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
+void StEpdEpManager::addHitGrpReCtrTrkAveWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double tileWgt = getTileWeight(picoEpdHit);
-  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
-  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
-  const double wgt     = tileWgt * phiWgt * etaWgt;
+  // const double tileWgt = getTileWgt(picoEpdHit);
+  // const double phiWgt  = getPhiWgt(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  // const double etaWgt  = getEtaWgt(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  // const double wgt     = tileWgt * phiWgt * etaWgt;
+  const double epdWgt = getEpdWgt(picoEpdHit);
   const int grpId = getEpdEpGrp(picoEpdHit);
   if(grpId >= 0)
   {
-    v_mQ1GrpReCtrWest[grpId]  += wgt*(calq1Vector(picoEpdHit,primVtx) - getq1VecGrpCtrWest(grpId));
-    mQ1WgtGrpReCtrWest[grpId] += wgt;
+    v_mQ1GrpReCtrTrkAveWest[grpId]  += epdWgt*(calq1Vector(picoEpdHit,primVtx) - getq1VecGrpCtrTrkAveWest(grpId));
+    mQ1WgtGrpReCtrTrkAveWest[grpId] += epdWgt;
   }
 }
 //---------------------------------------------------------------------------------
@@ -369,7 +387,7 @@ void StEpdEpManager::fillEpdPhiWgtEast(StPicoEpdHit* picoEpdHit)
   const int secId       = picoEpdHit->position()-1; // convert to 0-11
   const int tileIdOnSec = picoEpdHit->tile()-1;     // conver to 0-30
   const int ringId      = picoEpdHit->row()-1;      // conver to 0-15
-  const double tileWgt  = getTileWeight(picoEpdHit);
+  const double tileWgt  = getTileWgt(picoEpdHit);
   h_mEpdPhiWgtEast[mCent9]->Fill((double)secId,(double)tileIdOnSec,tileWgt);
 
   for(int iSec = 0; iSec < mNumSectors; ++iSec)
@@ -393,7 +411,7 @@ void StEpdEpManager::fillEpdPhiWgtWest(StPicoEpdHit* picoEpdHit)
   const int secId       = picoEpdHit->position()-1; // convert to 0-11
   const int tileIdOnSec = picoEpdHit->tile()-1;     // conver to 0-30
   const int ringId      = picoEpdHit->row()-1;      // conver to 0-15
-  const double tileWgt  = getTileWeight(picoEpdHit);
+  const double tileWgt  = getTileWgt(picoEpdHit);
   h_mEpdPhiWgtWest[mCent9]->Fill((double)secId,(double)tileIdOnSec,tileWgt);
 
   for(int iSec = 0; iSec < mNumSectors; ++iSec)
@@ -457,10 +475,11 @@ void StEpdEpManager::initEpdSideReCtr()
 
 void StEpdEpManager::fillEpdSideReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double tileWgt = getTileWeight(picoEpdHit);
-  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
-  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
-  const double wgt     = tileWgt * phiWgt * etaWgt;
+  // const double tileWgt = getTileWgt(picoEpdHit);
+  // const double phiWgt  = getPhiWgt(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  // const double etaWgt  = getEtaWgt(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  // const double wgt     = tileWgt * phiWgt * etaWgt;
+  const double epdWgt = getEpdWgt(picoEpdHit);
 
   const TVector2 q1Vector = calq1Vector(picoEpdHit,primVtx);
   const double q1x = q1Vector.X();
@@ -469,17 +488,18 @@ void StEpdEpManager::fillEpdSideReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 pri
   const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
   if(ringId >= 0 && ringId < mNumRingsUsed)
   {
-    p_mEpdQ1SideReCtrXEast[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1x,wgt);
-    p_mEpdQ1SideReCtrYEast[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1y,wgt);
+    p_mEpdQ1SideReCtrXEast[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1x,epdWgt);
+    p_mEpdQ1SideReCtrYEast[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1y,epdWgt);
   }
 }
 
 void StEpdEpManager::fillEpdSideReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double tileWgt = getTileWeight(picoEpdHit);
-  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
-  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
-  const double wgt     = tileWgt * phiWgt * etaWgt;
+  // const double tileWgt = getTileWgt(picoEpdHit);
+  // const double phiWgt  = getPhiWgt(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  // const double etaWgt  = getEtaWgt(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  // const double wgt     = tileWgt * phiWgt * etaWgt;
+  const double epdWgt = getEpdWgt(picoEpdHit);
 
   const TVector2 q1Vector = calq1Vector(picoEpdHit,primVtx);
   const double q1x = q1Vector.X();
@@ -488,8 +508,8 @@ void StEpdEpManager::fillEpdSideReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 pri
   const int ringId = picoEpdHit->row() - 1; // convert ring Id to 0-15
   if(ringId >= 0 && ringId < mNumRingsUsed)
   {
-    p_mEpdQ1SideReCtrXWest[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1x,wgt);
-    p_mEpdQ1SideReCtrYWest[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1y,wgt);
+    p_mEpdQ1SideReCtrXWest[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1x,epdWgt);
+    p_mEpdQ1SideReCtrYWest[mVzBin]->Fill((double)mRunIndex,(double)mCent9,q1y,epdWgt);
   }
 }
 
@@ -557,35 +577,36 @@ void StEpdEpManager::initEpdGrpReCtr()
   {
     for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
-      std::string proName = Form("p_mEpdQ1Grp%dReCtrXEastVz%d",iGrp,iVz); // 1st EP Trk Ave ReCtr
-      p_mEpdQ1GrpReCtrXEast[iVz][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-      proName = Form("p_mEpdQ1Grp%dReCtrYEastVz%d",iGrp,iVz);
-      p_mEpdQ1GrpReCtrYEast[iVz][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      std::string proName = Form("p_mEpdQ1Grp%dReCtrTrkAveXEastVz%d",iGrp,iVz); // 1st EP Trk Ave ReCtr
+      p_mEpdQ1GrpReCtrTrkAveXEast[iVz][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      proName = Form("p_mEpdQ1Grp%dReCtrTrkAveYEastVz%d",iGrp,iVz);
+      p_mEpdQ1GrpReCtrTrkAveYEast[iVz][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
-      proName = Form("p_mEpdQ1Grp%dReCtrXWestVz%d",iGrp,iVz);
-      p_mEpdQ1GrpReCtrXWest[iVz][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-      proName = Form("p_mEpdQ1Grp%dReCtrYWestVz%d",iGrp,iVz);
-      p_mEpdQ1GrpReCtrYWest[iVz][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      proName = Form("p_mEpdQ1Grp%dReCtrTrkAveXWestVz%d",iGrp,iVz);
+      p_mEpdQ1GrpReCtrTrkAveXWest[iVz][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      proName = Form("p_mEpdQ1Grp%dReCtrTrkAveYWestVz%d",iGrp,iVz);
+      p_mEpdQ1GrpReCtrTrkAveYWest[iVz][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
-      proName = Form("p_mEpdQ1GrpAve%dReCtrXEastVz%d",iGrp,iVz); // 1st EP Evt Ave ReCtr
-      p_mEpdQ1GrpAveReCtrXEast[iVz][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-      proName = Form("p_mEpdQ1GrpAve%dReCtrYEastVz%d",iGrp,iVz);
-      p_mEpdQ1GrpAveReCtrYEast[iVz][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      proName = Form("p_mEpdQ1Grp%dReCtrEvtAveXEastVz%d",iGrp,iVz); // 1st EP Evt Ave ReCtr
+      p_mEpdQ1GrpReCtrEvtAveXEast[iVz][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      proName = Form("p_mEpdQ1Grp%dReCtrEvtAveYEastVz%d",iGrp,iVz);
+      p_mEpdQ1GrpReCtrEvtAveYEast[iVz][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
-      proName = Form("p_mEpdQ1GrpAve%dReCtrXWestVz%d",iGrp,iVz);
-      p_mEpdQ1GrpAveReCtrXWest[iVz][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-      proName = Form("p_mEpdQ1GrpAve%dReCtrYWestVz%d",iGrp,iVz);
-      p_mEpdQ1GrpAveReCtrYWest[iVz][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      proName = Form("p_mEpdQ1Grp%dReCtrEvtAveXWestVz%d",iGrp,iVz);
+      p_mEpdQ1GrpReCtrEvtAveXWest[iVz][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+      proName = Form("p_mEpdQ1Grp%dReCtrEvtAveYWestVz%d",iGrp,iVz);
+      p_mEpdQ1GrpReCtrEvtAveYWest[iVz][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
     }
   }
 }
 
-void StEpdEpManager::fillEpdGrpReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
+void StEpdEpManager::fillEpdGrpReCtrTrkAveEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double tileWgt = getTileWeight(picoEpdHit);
-  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
-  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
-  const double wgt     = tileWgt * phiWgt * etaWgt;
+  // const double tileWgt = getTileWgt(picoEpdHit);
+  // const double phiWgt  = getPhiWgt(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  // const double etaWgt  = getEtaWgt(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  // const double wgt     = tileWgt * phiWgt * etaWgt;
+  const double epdWgt = getEpdWgt(picoEpdHit);
 
   const TVector2 q1Vector = calq1Vector(picoEpdHit,primVtx);
   const double q1x = q1Vector.X();
@@ -594,17 +615,18 @@ void StEpdEpManager::fillEpdGrpReCtrEast(StPicoEpdHit *picoEpdHit, TVector3 prim
   const int grpId = getEpdEpGrp(picoEpdHit);
   if(grpId >= 0)
   {
-    p_mEpdQ1GrpReCtrXEast[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,q1x,wgt);
-    p_mEpdQ1GrpReCtrYEast[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,q1y,wgt);
+    p_mEpdQ1GrpReCtrTrkAveXEast[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,q1x,epdWgt);
+    p_mEpdQ1GrpReCtrTrkAveYEast[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,q1y,epdWgt);
   }
 }
 
-void StEpdEpManager::fillEpdGrpReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
+void StEpdEpManager::fillEpdGrpReCtrTrkAveWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
-  const double tileWgt = getTileWeight(picoEpdHit);
-  const double phiWgt  = getPhiWeight(picoEpdHit); // phiWgt sets to 1.0 if no correction file
-  const double etaWgt  = getEtaWeight(picoEpdHit); // etaWgt sets to 1.0 if no correction file
-  const double wgt     = tileWgt * phiWgt * etaWgt;
+  // const double tileWgt = getTileWgt(picoEpdHit);
+  // const double phiWgt  = getPhiWgt(picoEpdHit); // phiWgt sets to 1.0 if no correction file
+  // const double etaWgt  = getEtaWgt(picoEpdHit); // etaWgt sets to 1.0 if no correction file
+  // const double wgt     = tileWgt * phiWgt * etaWgt;
+  const double epdWgt = getEpdWgt(picoEpdHit);
 
   const TVector2 q1Vector = calq1Vector(picoEpdHit,primVtx);
   const double q1x = q1Vector.X();
@@ -613,30 +635,30 @@ void StEpdEpManager::fillEpdGrpReCtrWest(StPicoEpdHit *picoEpdHit, TVector3 prim
   const int grpId = getEpdEpGrp(picoEpdHit);
   if(grpId >= 0)
   {
-    p_mEpdQ1GrpReCtrXWest[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,q1x,wgt);
-    p_mEpdQ1GrpReCtrYWest[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,q1y,wgt);
+    p_mEpdQ1GrpReCtrTrkAveXWest[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,q1x,epdWgt);
+    p_mEpdQ1GrpReCtrTrkAveYWest[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,q1y,epdWgt);
   }
 }
 
-void StEpdEpManager::fillEpdGrpAveReCtrEast(TVector2 Q1VecGrp, int grpId)
+void StEpdEpManager::fillEpdGrpReCtrEvtAveEast(TVector2 Q1VecGrp, int grpId)
 {
   const double Q1x = Q1VecGrp.X();
   const double Q1y = Q1VecGrp.Y();
   if(grpId >= 0)
   {
-    p_mEpdQ1GrpAveReCtrXEast[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,Q1x);
-    p_mEpdQ1GrpAveReCtrYEast[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,Q1y);
+    p_mEpdQ1GrpReCtrEvtAveXEast[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,Q1x);
+    p_mEpdQ1GrpReCtrEvtAveYEast[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,Q1y);
   }
 }
 
-void StEpdEpManager::fillEpdGrpAveReCtrWest(TVector2 Q1VecGrp, int grpId)
+void StEpdEpManager::fillEpdGrpReCtrEvtAveWest(TVector2 Q1VecGrp, int grpId)
 {
   const double Q1x = Q1VecGrp.X();
   const double Q1y = Q1VecGrp.Y();
   if(grpId >= 0)
   {
-    p_mEpdQ1GrpAveReCtrXWest[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,Q1x);
-    p_mEpdQ1GrpAveReCtrYWest[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,Q1y);
+    p_mEpdQ1GrpReCtrEvtAveXWest[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,Q1x);
+    p_mEpdQ1GrpReCtrEvtAveYWest[mVzBin][grpId]->Fill((double)mRunIndex,(double)mCent9,Q1y);
   }
 }
 
@@ -646,15 +668,15 @@ void StEpdEpManager::writeEpdGrpReCtr()
   {
     for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
-      p_mEpdQ1GrpReCtrXEast[iVz][iGrp]->Write();
-      p_mEpdQ1GrpReCtrYEast[iVz][iGrp]->Write();
-      p_mEpdQ1GrpReCtrXWest[iVz][iGrp]->Write();
-      p_mEpdQ1GrpReCtrYWest[iVz][iGrp]->Write();
+      p_mEpdQ1GrpReCtrTrkAveXEast[iVz][iGrp]->Write();
+      p_mEpdQ1GrpReCtrTrkAveYEast[iVz][iGrp]->Write();
+      p_mEpdQ1GrpReCtrTrkAveXWest[iVz][iGrp]->Write();
+      p_mEpdQ1GrpReCtrTrkAveYWest[iVz][iGrp]->Write();
 
-      p_mEpdQ1GrpAveReCtrXEast[iVz][iGrp]->Write();
-      p_mEpdQ1GrpAveReCtrYEast[iVz][iGrp]->Write();
-      p_mEpdQ1GrpAveReCtrXWest[iVz][iGrp]->Write();
-      p_mEpdQ1GrpAveReCtrYWest[iVz][iGrp]->Write();
+      p_mEpdQ1GrpReCtrEvtAveXEast[iVz][iGrp]->Write();
+      p_mEpdQ1GrpReCtrEvtAveYEast[iVz][iGrp]->Write();
+      p_mEpdQ1GrpReCtrEvtAveXWest[iVz][iGrp]->Write();
+      p_mEpdQ1GrpReCtrEvtAveYWest[iVz][iGrp]->Write();
     }
   }
 }
@@ -668,36 +690,36 @@ void StEpdEpManager::readEpdGrpReCtr()
   {
     for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
-      std::string proName = Form("p_mEpdQ1Grp%dReCtrXEastVz%d",iGrp,iVz); // 1st EP
-      p_mEpdQ1GrpReCtrXEast[iVz][iGrp] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
-      proName = Form("p_mEpdQ1Grp%dReCtrYEastVz%d",iGrp,iVz);
-      p_mEpdQ1GrpReCtrYEast[iVz][iGrp] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+      std::string proName = Form("p_mEpdQ1Grp%dReCtrTrkAveXEastVz%d",iGrp,iVz); // 1st EP
+      p_mEpdQ1GrpReCtrTrkAveXEast[iVz][iGrp] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+      proName = Form("p_mEpdQ1Grp%dReCtrTrkAveYEastVz%d",iGrp,iVz);
+      p_mEpdQ1GrpReCtrTrkAveYEast[iVz][iGrp] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
 
-      proName = Form("p_mEpdQ1Grp%dReCtrXWestVz%d",iGrp,iVz);
-      p_mEpdQ1GrpReCtrXWest[iVz][iGrp] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
-      proName = Form("p_mEpdQ1Grp%dReCtrYWestVz%d",iGrp,iVz);
-      p_mEpdQ1GrpReCtrYWest[iVz][iGrp] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+      proName = Form("p_mEpdQ1Grp%dReCtrTrkAveXWestVz%d",iGrp,iVz);
+      p_mEpdQ1GrpReCtrTrkAveXWest[iVz][iGrp] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+      proName = Form("p_mEpdQ1Grp%dReCtrTrkAveYWestVz%d",iGrp,iVz);
+      p_mEpdQ1GrpReCtrTrkAveYWest[iVz][iGrp] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
 
-      proName = Form("p_mEpdQ1GrpAve%dReCtrXEastVz%d",iGrp,iVz); // 1st EP
-      p_mEpdQ1GrpAveReCtrXEast[iVz][iGrp] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
-      proName = Form("p_mEpdQ1GrpAve%dReCtrYEastVz%d",iGrp,iVz);
-      p_mEpdQ1GrpAveReCtrYEast[iVz][iGrp] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+      proName = Form("p_mEpdQ1Grp%dReCtrEvtAveXEastVz%d",iGrp,iVz); // 1st EP
+      p_mEpdQ1GrpReCtrEvtAveXEast[iVz][iGrp] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+      proName = Form("p_mEpdQ1Grp%dReCtrEvtAveYEastVz%d",iGrp,iVz);
+      p_mEpdQ1GrpReCtrEvtAveYEast[iVz][iGrp] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
 
-      proName = Form("p_mEpdQ1GrpAve%dReCtrXWestVz%d",iGrp,iVz);
-      p_mEpdQ1GrpAveReCtrXWest[iVz][iGrp] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
-      proName = Form("p_mEpdQ1GrpAve%dReCtrYWestVz%d",iGrp,iVz);
-      p_mEpdQ1GrpAveReCtrYWest[iVz][iGrp] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+      proName = Form("p_mEpdQ1Grp%dReCtrEvtAveXWestVz%d",iGrp,iVz);
+      p_mEpdQ1GrpReCtrEvtAveXWest[iVz][iGrp] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
+      proName = Form("p_mEpdQ1Grp%dReCtrEvtAveYWestVz%d",iGrp,iVz);
+      p_mEpdQ1GrpReCtrEvtAveYWest[iVz][iGrp] = (TProfile2D*)file_mReCtrPar->Get(proName.c_str());
     }
   }
 }
 
-TVector2 StEpdEpManager::getq1VecGrpCtrEast(int grpId)
+TVector2 StEpdEpManager::getq1VecGrpCtrTrkAveEast(int grpId)
 {
-  const int binX   = p_mEpdQ1GrpReCtrXEast[mVzBin][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-  const double q1x = p_mEpdQ1GrpReCtrXEast[mVzBin][grpId]->GetBinContent(binX);
+  const int binX   = p_mEpdQ1GrpReCtrTrkAveXEast[mVzBin][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+  const double q1x = p_mEpdQ1GrpReCtrTrkAveXEast[mVzBin][grpId]->GetBinContent(binX);
 
-  const int binY   = p_mEpdQ1GrpReCtrYEast[mVzBin][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-  const double q1y = p_mEpdQ1GrpReCtrYEast[mVzBin][grpId]->GetBinContent(binY);
+  const int binY   = p_mEpdQ1GrpReCtrTrkAveYEast[mVzBin][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+  const double q1y = p_mEpdQ1GrpReCtrTrkAveYEast[mVzBin][grpId]->GetBinContent(binY);
 
   TVector2 q1Vector(0.0,0.0);
   q1Vector.Set(q1x,q1y);
@@ -705,18 +727,46 @@ TVector2 StEpdEpManager::getq1VecGrpCtrEast(int grpId)
   return q1Vector;
 }
 
-TVector2 StEpdEpManager::getq1VecGrpCtrWest(int grpId)
+TVector2 StEpdEpManager::getq1VecGrpCtrTrkAveWest(int grpId)
 {
-  const int binX   = p_mEpdQ1GrpReCtrXWest[mVzBin][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-  const double q1x = p_mEpdQ1GrpReCtrXWest[mVzBin][grpId]->GetBinContent(binX);
+  const int binX   = p_mEpdQ1GrpReCtrTrkAveXWest[mVzBin][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+  const double q1x = p_mEpdQ1GrpReCtrTrkAveXWest[mVzBin][grpId]->GetBinContent(binX);
 
-  const int binY   = p_mEpdQ1GrpReCtrYWest[mVzBin][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-  const double q1y = p_mEpdQ1GrpReCtrYWest[mVzBin][grpId]->GetBinContent(binY);
+  const int binY   = p_mEpdQ1GrpReCtrTrkAveYWest[mVzBin][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+  const double q1y = p_mEpdQ1GrpReCtrTrkAveYWest[mVzBin][grpId]->GetBinContent(binY);
 
   TVector2 q1Vector(0.0,0.0);
   q1Vector.Set(q1x,q1y);
 
   return q1Vector;
+}
+
+TVector2 StEpdEpManager::getQ1VecGrpCtrEvtAveEast(int grpId)
+{
+  const int binX   = p_mEpdQ1GrpReCtrEvtAveXEast[mVzBin][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+  const double Q1x = p_mEpdQ1GrpReCtrEvtAveXEast[mVzBin][grpId]->GetBinContent(binX);
+
+  const int binY   = p_mEpdQ1GrpReCtrEvtAveYEast[mVzBin][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+  const double Q1y = p_mEpdQ1GrpReCtrEvtAveYEast[mVzBin][grpId]->GetBinContent(binY);
+
+  TVector2 Q1Vector(0.0,0.0);
+  Q1Vector.Set(Q1x,Q1y);
+
+  return Q1Vector;
+}
+
+TVector2 StEpdEpManager::getQ1VecGrpCtrEvtAveWest(int grpId)
+{
+  const int binX   = p_mEpdQ1GrpReCtrEvtAveXWest[mVzBin][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+  const double Q1x = p_mEpdQ1GrpReCtrEvtAveXWest[mVzBin][grpId]->GetBinContent(binX);
+
+  const int binY   = p_mEpdQ1GrpReCtrEvtAveYWest[mVzBin][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+  const double Q1y = p_mEpdQ1GrpReCtrEvtAveYWest[mVzBin][grpId]->GetBinContent(binY);
+
+  TVector2 Q1Vector(0.0,0.0);
+  Q1Vector.Set(Q1x,Q1y);
+
+  return Q1Vector;
 }
 //---------------------------------------------------------------------------------
 // Shift Correction
@@ -921,79 +971,79 @@ void StEpdEpManager::initEpdGrpShift()
     {
       for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
       {
-	std::string proName = Form("p_mEpdQ1Grp%dShiftCos%dEastVz%d",iGrp,iShift,iVz); // 1st EP
-	p_mEpdQ1GrpShiftCosEast[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-	proName = Form("p_mEpdQ1Grp%dShiftSin%dEastVz%d",iGrp,iShift,iVz);
-	p_mEpdQ1GrpShiftSinEast[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+	std::string proName = Form("p_mEpdQ1Grp%dShiftCos%dTrkAveEastVz%d",iGrp,iShift,iVz); // 1st EP
+	p_mEpdQ1GrpShiftCosTrkAveEast[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+	proName = Form("p_mEpdQ1Grp%dShiftSin%dTrkAveEastVz%d",iGrp,iShift,iVz);
+	p_mEpdQ1GrpShiftSinTrkAveEast[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
-	proName = Form("p_mEpdQ1Grp%dShiftCos%dWestVz%d",iGrp,iShift,iVz);
-	p_mEpdQ1GrpShiftCosWest[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-	proName = Form("p_mEpdQ1Grp%dShiftSin%dWestVz%d",iGrp,iShift,iVz);
-	p_mEpdQ1GrpShiftSinWest[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+	proName = Form("p_mEpdQ1Grp%dShiftCos%dTrkAveWestVz%d",iGrp,iShift,iVz);
+	p_mEpdQ1GrpShiftCosTrkAveWest[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+	proName = Form("p_mEpdQ1Grp%dShiftSin%dTrkAveWestVz%d",iGrp,iShift,iVz);
+	p_mEpdQ1GrpShiftSinTrkAveWest[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
-	proName = Form("p_mEpdQ1GrpAve%dShiftCos%dEastVz%d",iGrp,iShift,iVz); // 1st EP
-	p_mEpdQ1GrpAveShiftCosEast[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-	proName = Form("p_mEpdQ1GrpAve%dShiftSin%dEastVz%d",iGrp,iShift,iVz);
-	p_mEpdQ1GrpAveShiftSinEast[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+	proName = Form("p_mEpdQ1Grp%dShiftCos%dEvtAveEastVz%d",iGrp,iShift,iVz); // 1st EP
+	p_mEpdQ1GrpShiftCosEvtAveEast[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+	proName = Form("p_mEpdQ1Grp%dShiftSin%dEvtAveEastVz%d",iGrp,iShift,iVz);
+	p_mEpdQ1GrpShiftSinEvtAveEast[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
 
-	proName = Form("p_mEpdQ1GrpAve%dShiftCos%dWestVz%d",iGrp,iShift,iVz);
-	p_mEpdQ1GrpAveShiftCosWest[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-	proName = Form("p_mEpdQ1GrpAve%dShiftSin%dWestVz%d",iGrp,iShift,iVz);
-	p_mEpdQ1GrpAveShiftSinWest[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+	proName = Form("p_mEpdQ1Grp%dShiftCos%dEvtAveWestVz%d",iGrp,iShift,iVz);
+	p_mEpdQ1GrpShiftCosEvtAveWest[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
+	proName = Form("p_mEpdQ1Grp%dShiftSin%dEvtAveWestVz%d",iGrp,iShift,iVz);
+	p_mEpdQ1GrpShiftSinEvtAveWest[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
       }
     }
   }
 }
 
-void StEpdEpManager::fillEpdGrpShiftEast(int grpId)
+void StEpdEpManager::fillEpdGrpShiftTrkAveEast(int grpId)
 {
-  TVector2 Q1VecGrp = getQ1VecGrpReCtrEast(grpId);
+  TVector2 Q1VecGrp = getQ1VecGrpReCtrTrkAveEast(grpId);
   const double Psi1 = TMath::ATan2(Q1VecGrp.Y(),Q1VecGrp.X()); // -pi to pi
   for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
   {
     const double Psi1Cos = TMath::Cos(((double)iShift+1.0)*Psi1);
     const double Psi1Sin = TMath::Sin(((double)iShift+1.0)*Psi1);
-    p_mEpdQ1GrpShiftCosEast[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
-    p_mEpdQ1GrpShiftSinEast[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
+    p_mEpdQ1GrpShiftCosTrkAveEast[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
+    p_mEpdQ1GrpShiftSinTrkAveEast[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
   }
 }
 
-void StEpdEpManager::fillEpdGrpShiftWest(int grpId)
+void StEpdEpManager::fillEpdGrpShiftTrkAveWest(int grpId)
 {
-  TVector2 Q1VecGrp = getQ1VecGrpReCtrWest(grpId);
+  TVector2 Q1VecGrp = getQ1VecGrpReCtrTrkAveWest(grpId);
   const double Psi1 = TMath::ATan2(Q1VecGrp.Y(),Q1VecGrp.X()); // -pi to pi
   for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
   {
     const double Psi1Cos = TMath::Cos(((double)iShift+1.0)*Psi1);
     const double Psi1Sin = TMath::Sin(((double)iShift+1.0)*Psi1);
-    p_mEpdQ1GrpShiftCosWest[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
-    p_mEpdQ1GrpShiftSinWest[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
+    p_mEpdQ1GrpShiftCosTrkAveWest[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
+    p_mEpdQ1GrpShiftSinTrkAveWest[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
   }
 }
 
-void StEpdEpManager::fillEpdGrpAveShiftEast(int grpId)
+void StEpdEpManager::fillEpdGrpShiftEvtAveEast(int grpId)
 {
-  TVector2 Q1VecGrp = getQ1VecGrpAveReCtrEast(grpId);
+  TVector2 Q1VecGrp = getQ1VecGrpReCtrEvtAveEast(grpId);
   const double Psi1 = TMath::ATan2(Q1VecGrp.Y(),Q1VecGrp.X()); // -pi to pi
   for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
   {
     const double Psi1Cos = TMath::Cos(((double)iShift+1.0)*Psi1);
     const double Psi1Sin = TMath::Sin(((double)iShift+1.0)*Psi1);
-    p_mEpdQ1GrpAveShiftCosEast[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
-    p_mEpdQ1GrpAveShiftSinEast[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
+    p_mEpdQ1GrpShiftCosEvtAveEast[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
+    p_mEpdQ1GrpShiftSinEvtAveEast[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
   }
 }
 
-void StEpdEpManager::fillEpdGrpAveShiftWest(int grpId)
+void StEpdEpManager::fillEpdGrpShiftEvtAveWest(int grpId)
 {
-  TVector2 Q1VecGrp = getQ1VecGrpAveReCtrWest(grpId);
+  TVector2 Q1VecGrp = getQ1VecGrpReCtrEvtAveWest(grpId);
   const double Psi1 = TMath::ATan2(Q1VecGrp.Y(),Q1VecGrp.X()); // -pi to pi
   for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
   {
     const double Psi1Cos = TMath::Cos(((double)iShift+1.0)*Psi1);
     const double Psi1Sin = TMath::Sin(((double)iShift+1.0)*Psi1);
-    p_mEpdQ1GrpAveShiftCosWest[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
-    p_mEpdQ1GrpAveShiftSinWest[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
+    p_mEpdQ1GrpShiftCosEvtAveWest[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
+    p_mEpdQ1GrpShiftSinEvtAveWest[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
   }
 }
 
@@ -1005,15 +1055,15 @@ void StEpdEpManager::writeEpdGrpShift()
     {
       for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
       {
-	p_mEpdQ1GrpShiftCosEast[iVz][iShift][iGrp]->Write();
-	p_mEpdQ1GrpShiftSinEast[iVz][iShift][iGrp]->Write();
-	p_mEpdQ1GrpShiftCosWest[iVz][iShift][iGrp]->Write();
-	p_mEpdQ1GrpShiftSinWest[iVz][iShift][iGrp]->Write();
+	p_mEpdQ1GrpShiftCosTrkAveEast[iVz][iShift][iGrp]->Write();
+	p_mEpdQ1GrpShiftSinTrkAveEast[iVz][iShift][iGrp]->Write();
+	p_mEpdQ1GrpShiftCosTrkAveWest[iVz][iShift][iGrp]->Write();
+	p_mEpdQ1GrpShiftSinTrkAveWest[iVz][iShift][iGrp]->Write();
 
-	p_mEpdQ1GrpAveShiftCosEast[iVz][iShift][iGrp]->Write();
-	p_mEpdQ1GrpAveShiftSinEast[iVz][iShift][iGrp]->Write();
-	p_mEpdQ1GrpAveShiftCosWest[iVz][iShift][iGrp]->Write();
-	p_mEpdQ1GrpAveShiftSinWest[iVz][iShift][iGrp]->Write();
+	p_mEpdQ1GrpShiftCosEvtAveEast[iVz][iShift][iGrp]->Write();
+	p_mEpdQ1GrpShiftSinEvtAveEast[iVz][iShift][iGrp]->Write();
+	p_mEpdQ1GrpShiftCosEvtAveWest[iVz][iShift][iGrp]->Write();
+	p_mEpdQ1GrpShiftSinEvtAveWest[iVz][iShift][iGrp]->Write();
       }
     }
   }
@@ -1030,45 +1080,45 @@ void StEpdEpManager::readEpdGrpShift()
     {
       for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
       {
-	std::string proName = Form("p_mEpdQ1Grp%dShiftCos%dEastVz%d",iGrp,iShift,iVz); // 1st EP
-	p_mEpdQ1GrpShiftCosEast[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
-	proName = Form("p_mEpdQ1Grp%dShiftSin%dEastVz%d",iGrp,iShift,iVz);
-	p_mEpdQ1GrpShiftSinEast[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
+	std::string proName = Form("p_mEpdQ1Grp%dShiftCos%dTrkAveEastVz%d",iGrp,iShift,iVz); // 1st EP
+	p_mEpdQ1GrpShiftCosTrkAveEast[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
+	proName = Form("p_mEpdQ1Grp%dShiftSin%dTrkAveEastVz%d",iGrp,iShift,iVz);
+	p_mEpdQ1GrpShiftSinTrkAveEast[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
 
-	proName = Form("p_mEpdQ1Grp%dShiftCos%dWestVz%d",iGrp,iShift,iVz);
-	p_mEpdQ1GrpShiftCosWest[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
-	proName = Form("p_mEpdQ1Grp%dShiftSin%dWestVz%d",iGrp,iShift,iVz);
-	p_mEpdQ1GrpShiftSinWest[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
+	proName = Form("p_mEpdQ1Grp%dShiftCos%dTrkAveWestVz%d",iGrp,iShift,iVz);
+	p_mEpdQ1GrpShiftCosTrkAveWest[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
+	proName = Form("p_mEpdQ1Grp%dShiftSin%dTrkAveWestVz%d",iGrp,iShift,iVz);
+	p_mEpdQ1GrpShiftSinTrkAveWest[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
 
-	proName = Form("p_mEpdQ1GrpAve%dShiftCos%dEastVz%d",iGrp,iShift,iVz); // 1st EP
-	p_mEpdQ1GrpAveShiftCosEast[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
-	proName = Form("p_mEpdQ1GrpAve%dShiftSin%dEastVz%d",iGrp,iShift,iVz);
-	p_mEpdQ1GrpAveShiftSinEast[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
+	proName = Form("p_mEpdQ1Grp%dShiftCos%dEvtAveEastVz%d",iGrp,iShift,iVz); // 1st EP
+	p_mEpdQ1GrpShiftCosEvtAveEast[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
+	proName = Form("p_mEpdQ1Grp%dShiftSin%dEvtAveEastVz%d",iGrp,iShift,iVz);
+	p_mEpdQ1GrpShiftSinEvtAveEast[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
 
-	proName = Form("p_mEpdQ1GrpAve%dShiftCos%dWestVz%d",iGrp,iShift,iVz);
-	p_mEpdQ1GrpAveShiftCosWest[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
-	proName = Form("p_mEpdQ1GrpAve%dShiftSin%dWestVz%d",iGrp,iShift,iVz);
-	p_mEpdQ1GrpAveShiftSinWest[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
+	proName = Form("p_mEpdQ1Grp%dShiftCos%dEvtAveWestVz%d",iGrp,iShift,iVz);
+	p_mEpdQ1GrpShiftCosEvtAveWest[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
+	proName = Form("p_mEpdQ1Grp%dShiftSin%dEvtAveWestVz%d",iGrp,iShift,iVz);
+	p_mEpdQ1GrpShiftSinEvtAveWest[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
       }
     }
   }
 }
 
-double StEpdEpManager::getPsi1GrpShiftEast(int grpId)
+double StEpdEpManager::getPsi1GrpShiftTrkAveEast(int grpId)
 {
   double Psi1Shift = -999.9;
-  TVector2 Q1Vector = getQ1VecGrpReCtrEast(grpId);
+  TVector2 Q1Vector = getQ1VecGrpReCtrTrkAveEast(grpId);
   if(Q1Vector.Mod() > 0.0)
   {
     const double Psi1ReCtr = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
     double deltaPsi1 = 0.0;
     for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
     {
-      const int binCos     = p_mEpdQ1GrpShiftCosEast[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-      const double meanCos = p_mEpdQ1GrpShiftCosEast[mVzBin][iShift][grpId]->GetBinContent(binCos);
+      const int binCos     = p_mEpdQ1GrpShiftCosTrkAveEast[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+      const double meanCos = p_mEpdQ1GrpShiftCosTrkAveEast[mVzBin][iShift][grpId]->GetBinContent(binCos);
 
-      const int binSin     = p_mEpdQ1GrpShiftSinEast[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-      const double meanSin = p_mEpdQ1GrpShiftSinEast[mVzBin][iShift][grpId]->GetBinContent(binSin);
+      const int binSin     = p_mEpdQ1GrpShiftSinTrkAveEast[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+      const double meanSin = p_mEpdQ1GrpShiftSinTrkAveEast[mVzBin][iShift][grpId]->GetBinContent(binSin);
 
       deltaPsi1 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(((double)iShift+1.0)*Psi1ReCtr)+meanCos*TMath::Sin(((double)iShift+1.0)*Psi1ReCtr));
     }
@@ -1080,21 +1130,21 @@ double StEpdEpManager::getPsi1GrpShiftEast(int grpId)
   return Psi1Shift;
 }
 
-double StEpdEpManager::getPsi1GrpShiftWest(int grpId)
+double StEpdEpManager::getPsi1GrpShiftTrkAveWest(int grpId)
 {
   double Psi1Shift = -999.9;
-  TVector2 Q1Vector = getQ1VecGrpReCtrWest(grpId);
+  TVector2 Q1Vector = getQ1VecGrpReCtrTrkAveWest(grpId);
   if(Q1Vector.Mod() > 0.0)
   {
     const double Psi1ReCtr = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
     double deltaPsi1 = 0.0;
     for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
     {
-      const int binCos     = p_mEpdQ1GrpShiftCosWest[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-      const double meanCos = p_mEpdQ1GrpShiftCosWest[mVzBin][iShift][grpId]->GetBinContent(binCos);
+      const int binCos     = p_mEpdQ1GrpShiftCosTrkAveWest[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+      const double meanCos = p_mEpdQ1GrpShiftCosTrkAveWest[mVzBin][iShift][grpId]->GetBinContent(binCos);
 
-      const int binSin     = p_mEpdQ1GrpShiftSinWest[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-      const double meanSin = p_mEpdQ1GrpShiftSinWest[mVzBin][iShift][grpId]->GetBinContent(binSin);
+      const int binSin     = p_mEpdQ1GrpShiftSinTrkAveWest[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+      const double meanSin = p_mEpdQ1GrpShiftSinTrkAveWest[mVzBin][iShift][grpId]->GetBinContent(binSin);
 
       deltaPsi1 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(((double)iShift+1.0)*Psi1ReCtr)+meanCos*TMath::Sin(((double)iShift+1.0)*Psi1ReCtr));
     }
@@ -1106,10 +1156,10 @@ double StEpdEpManager::getPsi1GrpShiftWest(int grpId)
   return Psi1Shift;
 }
 
-double StEpdEpManager::getPsi1GrpShiftFull(int grpId)
+double StEpdEpManager::getPsi1GrpShiftTrkAveFull(int grpId)
 {
   double Psi1Shift = -999.9;
-  TVector2 Q1Vector = getQ1VecGrpShiftFull(grpId);
+  TVector2 Q1Vector = getQ1VecGrpShiftTrkAveFull(grpId);
   if(Q1Vector.Mod() > 0.0)
   {
     double Psi1ShiftRaw = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
@@ -1119,21 +1169,21 @@ double StEpdEpManager::getPsi1GrpShiftFull(int grpId)
   return Psi1Shift;
 }
 
-double StEpdEpManager::getPsi1GrpAveShiftEast(int grpId)
+double StEpdEpManager::getPsi1GrpShiftEvtAveEast(int grpId)
 {
   double Psi1Shift = -999.9;
-  TVector2 Q1Vector = getQ1VecGrpAveReCtrEast(grpId);
+  TVector2 Q1Vector = getQ1VecGrpReCtrEvtAveEast(grpId);
   if(Q1Vector.Mod() > 0.0)
   {
     const double Psi1ReCtr = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
     double deltaPsi1 = 0.0;
     for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
     {
-      const int binCos     = p_mEpdQ1GrpAveShiftCosEast[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-      const double meanCos = p_mEpdQ1GrpAveShiftCosEast[mVzBin][iShift][grpId]->GetBinContent(binCos);
+      const int binCos     = p_mEpdQ1GrpShiftCosEvtAveEast[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+      const double meanCos = p_mEpdQ1GrpShiftCosEvtAveEast[mVzBin][iShift][grpId]->GetBinContent(binCos);
 
-      const int binSin     = p_mEpdQ1GrpAveShiftSinEast[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-      const double meanSin = p_mEpdQ1GrpAveShiftSinEast[mVzBin][iShift][grpId]->GetBinContent(binSin);
+      const int binSin     = p_mEpdQ1GrpShiftSinEvtAveEast[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+      const double meanSin = p_mEpdQ1GrpShiftSinEvtAveEast[mVzBin][iShift][grpId]->GetBinContent(binSin);
 
       deltaPsi1 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(((double)iShift+1.0)*Psi1ReCtr)+meanCos*TMath::Sin(((double)iShift+1.0)*Psi1ReCtr));
     }
@@ -1145,21 +1195,21 @@ double StEpdEpManager::getPsi1GrpAveShiftEast(int grpId)
   return Psi1Shift;
 }
 
-double StEpdEpManager::getPsi1GrpAveShiftWest(int grpId)
+double StEpdEpManager::getPsi1GrpShiftEvtAveWest(int grpId)
 {
   double Psi1Shift = -999.9;
-  TVector2 Q1Vector = getQ1VecGrpAveReCtrWest(grpId);
+  TVector2 Q1Vector = getQ1VecGrpReCtrEvtAveWest(grpId);
   if(Q1Vector.Mod() > 0.0)
   {
     const double Psi1ReCtr = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
     double deltaPsi1 = 0.0;
     for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
     {
-      const int binCos     = p_mEpdQ1GrpAveShiftCosWest[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-      const double meanCos = p_mEpdQ1GrpAveShiftCosWest[mVzBin][iShift][grpId]->GetBinContent(binCos);
+      const int binCos     = p_mEpdQ1GrpShiftCosEvtAveWest[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+      const double meanCos = p_mEpdQ1GrpShiftCosEvtAveWest[mVzBin][iShift][grpId]->GetBinContent(binCos);
 
-      const int binSin     = p_mEpdQ1GrpAveShiftSinWest[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-      const double meanSin = p_mEpdQ1GrpAveShiftSinWest[mVzBin][iShift][grpId]->GetBinContent(binSin);
+      const int binSin     = p_mEpdQ1GrpShiftSinEvtAveWest[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
+      const double meanSin = p_mEpdQ1GrpShiftSinEvtAveWest[mVzBin][iShift][grpId]->GetBinContent(binSin);
 
       deltaPsi1 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(((double)iShift+1.0)*Psi1ReCtr)+meanCos*TMath::Sin(((double)iShift+1.0)*Psi1ReCtr));
     }
@@ -1171,10 +1221,10 @@ double StEpdEpManager::getPsi1GrpAveShiftWest(int grpId)
   return Psi1Shift;
 }
 
-double StEpdEpManager::getPsi1GrpAveShiftFull(int grpId)
+double StEpdEpManager::getPsi1GrpShiftEvtAveFull(int grpId)
 {
   double Psi1Shift = -999.9;
-  TVector2 Q1Vector = getQ1VecGrpAveShiftFull(grpId);
+  TVector2 Q1Vector = getQ1VecGrpShiftEvtAveFull(grpId);
   if(Q1Vector.Mod() > 0.0)
   {
     double Psi1ShiftRaw = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
@@ -1184,10 +1234,10 @@ double StEpdEpManager::getPsi1GrpAveShiftFull(int grpId)
   return Psi1Shift;
 }
 
-TVector2 StEpdEpManager::getQ1VecGrpShiftEast(int grpId)
+TVector2 StEpdEpManager::getQ1VecGrpShiftTrkAveEast(int grpId)
 {
   TVector2 Q1Vector(0.0,0.0);
-  const double Psi1East = getPsi1GrpShiftEast(grpId);
+  const double Psi1East = getPsi1GrpShiftTrkAveEast(grpId);
   if(isPsi1InRange(Psi1East))
   {
     const double Q1x = TMath::Cos(1.0*Psi1East);
@@ -1198,10 +1248,10 @@ TVector2 StEpdEpManager::getQ1VecGrpShiftEast(int grpId)
   return Q1Vector;
 }
 
-TVector2 StEpdEpManager::getQ1VecGrpShiftWest(int grpId)
+TVector2 StEpdEpManager::getQ1VecGrpShiftTrkAveWest(int grpId)
 {
   TVector2 Q1Vector(0.0,0.0);
-  const double Psi1West = getPsi1GrpShiftWest(grpId);
+  const double Psi1West = getPsi1GrpShiftTrkAveWest(grpId);
   if(isPsi1InRange(Psi1West))
   {
     const double Q1x = TMath::Cos(1.0*Psi1West);
@@ -1212,11 +1262,11 @@ TVector2 StEpdEpManager::getQ1VecGrpShiftWest(int grpId)
   return Q1Vector;
 }
 
-TVector2 StEpdEpManager::getQ1VecGrpShiftFull(int grpId)
+TVector2 StEpdEpManager::getQ1VecGrpShiftTrkAveFull(int grpId)
 {
   TVector2 Q1VecFull(0.0,0.0);
-  TVector2 Q1VecEast = getQ1VecGrpShiftEast(grpId);
-  TVector2 Q1VecWest = getQ1VecGrpShiftWest(grpId);
+  TVector2 Q1VecEast = getQ1VecGrpShiftTrkAveEast(grpId);
+  TVector2 Q1VecWest = getQ1VecGrpShiftTrkAveWest(grpId);
   if(Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() >0.0)
   {
     Q1VecFull = Q1VecWest + Q1VecEast;
@@ -1225,10 +1275,10 @@ TVector2 StEpdEpManager::getQ1VecGrpShiftFull(int grpId)
   return Q1VecFull;
 }
 
-TVector2 StEpdEpManager::getQ1VecGrpAveShiftEast(int grpId)
+TVector2 StEpdEpManager::getQ1VecGrpShiftEvtAveEast(int grpId)
 {
   TVector2 Q1Vector(0.0,0.0);
-  const double Psi1East = getPsi1GrpAveShiftEast(grpId);
+  const double Psi1East = getPsi1GrpShiftEvtAveEast(grpId);
   if(isPsi1InRange(Psi1East))
   {
     const double Q1x = TMath::Cos(1.0*Psi1East);
@@ -1239,10 +1289,10 @@ TVector2 StEpdEpManager::getQ1VecGrpAveShiftEast(int grpId)
   return Q1Vector;
 }
 
-TVector2 StEpdEpManager::getQ1VecGrpAveShiftWest(int grpId)
+TVector2 StEpdEpManager::getQ1VecGrpShiftEvtAveWest(int grpId)
 {
   TVector2 Q1Vector(0.0,0.0);
-  const double Psi1West = getPsi1GrpAveShiftWest(grpId);
+  const double Psi1West = getPsi1GrpShiftEvtAveWest(grpId);
   if(isPsi1InRange(Psi1West))
   {
     const double Q1x = TMath::Cos(1.0*Psi1West);
@@ -1253,11 +1303,11 @@ TVector2 StEpdEpManager::getQ1VecGrpAveShiftWest(int grpId)
   return Q1Vector;
 }
 
-TVector2 StEpdEpManager::getQ1VecGrpAveShiftFull(int grpId)
+TVector2 StEpdEpManager::getQ1VecGrpShiftEvtAveFull(int grpId)
 {
   TVector2 Q1VecFull(0.0,0.0);
-  TVector2 Q1VecEast = getQ1VecGrpAveShiftEast(grpId);
-  TVector2 Q1VecWest = getQ1VecGrpAveShiftWest(grpId);
+  TVector2 Q1VecEast = getQ1VecGrpShiftEvtAveEast(grpId);
+  TVector2 Q1VecWest = getQ1VecGrpShiftEvtAveWest(grpId);
   if(Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() >0.0)
   {
     Q1VecFull = Q1VecWest + Q1VecEast;
@@ -1356,114 +1406,6 @@ TVector2 StEpdEpManager::getQ1VecSideShiftFullCorr()
 {
   TVector2 Q1Vector(0.0,0.0);
   const double Psi1FullCorr = getPsi1SideShiftFullCorr();
-  if(isPsi1InRange(Psi1FullCorr))
-  {
-    const double Q1x = TMath::Cos(1.0*Psi1FullCorr);
-    const double Q1y = TMath::Sin(1.0*Psi1FullCorr);
-    Q1Vector.Set(Q1x,Q1y);
-  }
-
-  return Q1Vector;
-}
-
-void StEpdEpManager::initEpdGrpShiftFull()
-{
-  for(int iVz = 0; iVz < mNumVzBin; ++iVz)
-  {
-    for(int iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order
-    {
-      for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
-      {
-	std::string proName = Form("p_mEpdQ1Grp%dShiftCos%dFullVz%d",iGrp,iShift,iVz);
-	p_mEpdQ1GrpShiftCosFull[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-	proName = Form("p_mEpdQ1Grp%dShiftSin%dFullVz%d",iGrp,iShift,iVz);
-	p_mEpdQ1GrpShiftSinFull[iVz][iShift][iGrp] = new TProfile2D(proName.c_str(),proName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,mNumCentrality,-0.5,(double)mNumCentrality-0.5);
-      }
-    }
-  }
-}
-
-void StEpdEpManager::fillEpdGrpShiftFull(int grpId)
-{
-  TVector2 Q1VecGrp = getQ1VecGrpShiftFull(grpId);
-  if(Q1VecGrp.Mod() > 0.0)
-  {
-    const double Psi1 = TMath::ATan2(Q1VecGrp.Y(),Q1VecGrp.X());
-    for(int iShift = 0; iShift < mNumShiftCorr; ++iShift)
-    {
-      const double Psi1Cos = TMath::Cos(((double)iShift+1.0)*Psi1);
-      const double Psi1Sin = TMath::Sin(((double)iShift+1.0)*Psi1);
-      p_mEpdQ1GrpShiftCosFull[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Cos);
-      p_mEpdQ1GrpShiftSinFull[mVzBin][iShift][grpId]->Fill((double)mRunIndex,(double)mCent9,Psi1Sin);
-    }
-  }
-}
-
-void StEpdEpManager::writeEpdGrpShiftFull()
-{
-  for(int iVz = 0; iVz < mNumVzBin; ++iVz)
-  {
-    for(int iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order
-    {
-      for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
-      {
-	p_mEpdQ1GrpShiftCosFull[iVz][iShift][iGrp]->Write();
-	p_mEpdQ1GrpShiftSinFull[iVz][iShift][iGrp]->Write();
-      }
-    }
-  }
-}
-
-void StEpdEpManager::readEpdGrpShiftFull()
-{
-  std::string inputFile = Form("Utility/EventPlaneMaker/%s/ShiftPar/file_EpdShiftParFull_%s.root",globCons::str_mBeamType[mType].c_str(),globCons::str_mBeamType[mType].c_str());
-
-  file_mShiftPar = TFile::Open(inputFile.c_str());
-  for(int iVz = 0; iVz < mNumVzBin; ++iVz)
-  {
-    for(int iShift = 0; iShift < 20; ++iShift) // Shift Order
-    {
-      for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
-      {
-	std::string proName = Form("p_mEpdQ1Grp%dShiftCos%dFullVz%d",iGrp,iShift,iVz);
-	p_mEpdQ1GrpShiftCosFull[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
-	proName = Form("p_mEpdQ1Grp%dShiftSin%dFullVz%d",iGrp,iShift,iVz);
-	p_mEpdQ1GrpShiftSinFull[iVz][iShift][iGrp] = (TProfile2D*)file_mShiftPar->Get(proName.c_str());
-      }
-    }
-  }
-}
-
-double StEpdEpManager::getPsi1GrpShiftFullCorr(int grpId)
-{
-  double Psi1ShiftCorr = -999.9;
-  TVector2 Q1Vector = getQ1VecGrpShiftFull(grpId);
-  if(Q1Vector.Mod() > 0.0)
-  {
-    const double Psi1Shift = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
-    double deltaPsi1 = 0.0;
-    for(Int_t iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order loop
-    {
-      const int binCos     = p_mEpdQ1GrpShiftCosFull[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-      const double meanCos = p_mEpdQ1GrpShiftCosFull[mVzBin][iShift][grpId]->GetBinContent(binCos);
-
-      const int binSin     = p_mEpdQ1GrpShiftSinFull[mVzBin][iShift][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-      const double meanSin = p_mEpdQ1GrpShiftSinFull[mVzBin][iShift][grpId]->GetBinContent(binSin);
-
-      deltaPsi1 += (2.0/((double)iShift+1.0))*(-1.0*meanSin*TMath::Cos(((double)iShift+1.0)*Psi1Shift)+meanCos*TMath::Sin(((double)iShift+1.0)*Psi1Shift));
-    }
-
-    double Psi1ShiftCorrRaw = Psi1Shift + deltaPsi1;
-    Psi1ShiftCorr = transPsi1(Psi1ShiftCorrRaw);
-  }
-
-  return Psi1ShiftCorr;
-}
-
-TVector2 StEpdEpManager::getQ1VecGrpShiftFullCorr(int grpId)
-{
-  TVector2 Q1Vector(0.0,0.0);
-  const double Psi1FullCorr = getPsi1GrpShiftFullCorr(grpId);
   if(isPsi1InRange(Psi1FullCorr))
   {
     const double Q1x = TMath::Cos(1.0*Psi1FullCorr);
@@ -1990,37 +1932,37 @@ TVector2 StEpdEpManager::getQ1VecGrpWgtFull(int grpId)
   return Q1VecFull;
 }
 
-TVector2 StEpdEpManager::getQ1VecGrpReCtrEast(int grpId)
+TVector2 StEpdEpManager::getQ1VecGrpReCtrTrkAveEast(int grpId)
 {
   TVector2 Q1Vector(0.0, 0.0);
-  if(mQ1WgtGrpReCtrEast[grpId] > 0.0)
+  if(mQ1WgtGrpReCtrTrkAveEast[grpId] > 0.0)
   {
-    const double Q1x = -1.0*v_mQ1GrpReCtrEast[grpId].X()/mQ1WgtGrpReCtrEast[grpId]; // flip the sign for Q1VecEast
-    const double Q1y = -1.0*v_mQ1GrpReCtrEast[grpId].Y()/mQ1WgtGrpReCtrEast[grpId];
+    const double Q1x = -1.0*v_mQ1GrpReCtrTrkAveEast[grpId].X()/mQ1WgtGrpReCtrTrkAveEast[grpId]; // flip the sign for Q1VecEast
+    const double Q1y = -1.0*v_mQ1GrpReCtrTrkAveEast[grpId].Y()/mQ1WgtGrpReCtrTrkAveEast[grpId];
     Q1Vector.Set(Q1x, Q1y);
   }
 
   return Q1Vector;
 }
 
-TVector2 StEpdEpManager::getQ1VecGrpReCtrWest(int grpId)
+TVector2 StEpdEpManager::getQ1VecGrpReCtrTrkAveWest(int grpId)
 {
   TVector2 Q1Vector(0.0, 0.0);
-  if(mQ1WgtGrpReCtrWest[grpId] > 0.0)
+  if(mQ1WgtGrpReCtrTrkAveWest[grpId] > 0.0)
   {
-    const double Q1x = v_mQ1GrpReCtrWest[grpId].X()/mQ1WgtGrpReCtrWest[grpId];
-    const double Q1y = v_mQ1GrpReCtrWest[grpId].Y()/mQ1WgtGrpReCtrWest[grpId];
+    const double Q1x = v_mQ1GrpReCtrTrkAveWest[grpId].X()/mQ1WgtGrpReCtrTrkAveWest[grpId];
+    const double Q1y = v_mQ1GrpReCtrTrkAveWest[grpId].Y()/mQ1WgtGrpReCtrTrkAveWest[grpId];
     Q1Vector.Set(Q1x, Q1y);
   }
 
   return Q1Vector;
 }
 
-TVector2 StEpdEpManager::getQ1VecGrpReCtrFull(int grpId)
+TVector2 StEpdEpManager::getQ1VecGrpReCtrTrkAveFull(int grpId)
 {
   TVector2 Q1VecFull(0.0,0.0);
-  TVector2 Q1VecEast = getQ1VecGrpReCtrEast(grpId);
-  TVector2 Q1VecWest = getQ1VecGrpReCtrWest(grpId);
+  TVector2 Q1VecEast = getQ1VecGrpReCtrTrkAveEast(grpId);
+  TVector2 Q1VecWest = getQ1VecGrpReCtrTrkAveWest(grpId);
   if(Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() >0.0)
   {
     Q1VecFull = Q1VecWest + Q1VecEast;
@@ -2029,20 +1971,16 @@ TVector2 StEpdEpManager::getQ1VecGrpReCtrFull(int grpId)
   return Q1VecFull;
 }
 
-TVector2 StEpdEpManager::getQ1VecGrpAveReCtrEast(int grpId)
+TVector2 StEpdEpManager::getQ1VecGrpReCtrEvtAveEast(int grpId)
 {
   TVector2 Q1VecReCtr(0.0,0.0);
-  TVector2 Q1VecRaw = getQ1VecGrpRawEast(grpId);
+  TVector2 Q1VecOrig = getQ1VecGrpRawEast(grpId);
+  if(mUsePhiWgt) Q1VecOrig = getQ1VecGrpWgtEast(grpId);
   if(Q1VecRaw.Mod() > 0.0)
   {
-    const int binX      = p_mEpdQ1GrpAveReCtrXEast[mVzBin][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-    const double Q1xCtr = p_mEpdQ1GrpAveReCtrXEast[mVzBin][grpId]->GetBinContent(binX);
-
-    const int binY      = p_mEpdQ1GrpAveReCtrYEast[mVzBin][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-    const double Q1yCtr = p_mEpdQ1GrpAveReCtrYEast[mVzBin][grpId]->GetBinContent(binY);
-
-    const double Q1x = Q1VecRaw.X() - Q1xCtr;
-    const double Q1y = Q1VecRaw.Y() - Q1yCtr;
+    TVector2 Q1VecCtr = getQ1VecGrpCtrEvtAveEast(grpId);
+    const double Q1x = Q1VecOrig.X() - Q1VecCtr.X();
+    const double Q1y = Q1VecOrig.Y() - Q1VecCtr.Y();
 
     Q1VecReCtr.Set(Q1x, Q1y);
   }
@@ -2050,20 +1988,16 @@ TVector2 StEpdEpManager::getQ1VecGrpAveReCtrEast(int grpId)
   return Q1VecReCtr;
 }
 
-TVector2 StEpdEpManager::getQ1VecGrpAveReCtrWest(int grpId)
+TVector2 StEpdEpManager::getQ1VecGrpReCtrEvtAveWest(int grpId)
 {
   TVector2 Q1VecReCtr(0.0,0.0);
-  TVector2 Q1VecRaw = getQ1VecGrpRawWest(grpId);
+  TVector2 Q1VecOrig = getQ1VecGrpRawWest(grpId);
+  if(mUsePhiWgt) Q1VecOrig = getQ1VecGrpWgtWest(grpId);
   if(Q1VecRaw.Mod() > 0.0)
   {
-    const int binX      = p_mEpdQ1GrpAveReCtrXWest[mVzBin][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-    const double Q1xCtr = p_mEpdQ1GrpAveReCtrXWest[mVzBin][grpId]->GetBinContent(binX);
-
-    const int binY      = p_mEpdQ1GrpAveReCtrYWest[mVzBin][grpId]->FindBin((double)mRunIndex,(double)mCent9);
-    const double Q1yCtr = p_mEpdQ1GrpAveReCtrYWest[mVzBin][grpId]->GetBinContent(binY);
-
-    const double Q1x = Q1VecRaw.X() - Q1xCtr;
-    const double Q1y = Q1VecRaw.Y() - Q1yCtr;
+    TVector2 Q1VecCtr = getQ1VecGrpCtrEvtAveWest(grpId);
+    const double Q1x = Q1VecOrig.X() - Q1VecCtr.X();
+    const double Q1y = Q1VecOrig.Y() - Q1VecCtr.Y();
 
     Q1VecReCtr.Set(Q1x, Q1y);
   }
@@ -2071,11 +2005,11 @@ TVector2 StEpdEpManager::getQ1VecGrpAveReCtrWest(int grpId)
   return Q1VecReCtr;
 }
 
-TVector2 StEpdEpManager::getQ1VecGrpAveReCtrFull(int grpId)
+TVector2 StEpdEpManager::getQ1VecGrpReCtrEvtAveFull(int grpId)
 {
   TVector2 Q1VecFull(0.0,0.0);
-  TVector2 Q1VecEast = getQ1VecGrpAveReCtrEast(grpId);
-  TVector2 Q1VecWest = getQ1VecGrpAveReCtrWest(grpId);
+  TVector2 Q1VecEast = getQ1VecGrpReCtrEvtAveEast(grpId);
+  TVector2 Q1VecWest = getQ1VecGrpReCtrEvtAveWest(grpId);
   if(Q1VecEast.Mod() > 0.0 && Q1VecWest.Mod() >0.0)
   {
     Q1VecFull = Q1VecWest + Q1VecEast;
@@ -2162,10 +2096,10 @@ double StEpdEpManager::getPsi1GrpWgtFull(int grpId)
   return Psi1Wgt;
 }
 
-double StEpdEpManager::getPsi1GrpReCtrEast(int grpId)
+double StEpdEpManager::getPsi1GrpReCtrTrkAveEast(int grpId)
 {
   double Psi1ReCtr = -999.9;
-  TVector2 Q1Vector = getQ1VecGrpReCtrEast(grpId);
+  TVector2 Q1Vector = getQ1VecGrpReCtrTrkAveEast(grpId);
   if(Q1Vector.Mod() > 0.0)
   {
     double Psi1 = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
@@ -2175,10 +2109,10 @@ double StEpdEpManager::getPsi1GrpReCtrEast(int grpId)
   return Psi1ReCtr;
 }
 
-double StEpdEpManager::getPsi1GrpReCtrWest(int grpId)
+double StEpdEpManager::getPsi1GrpReCtrTrkAveWest(int grpId)
 {
   double Psi1ReCtr = -999.9;
-  TVector2 Q1Vector = getQ1VecGrpReCtrWest(grpId);
+  TVector2 Q1Vector = getQ1VecGrpReCtrTrkAveWest(grpId);
   if(Q1Vector.Mod() > 0.0)
   {
     double Psi1 = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
@@ -2188,10 +2122,10 @@ double StEpdEpManager::getPsi1GrpReCtrWest(int grpId)
   return Psi1ReCtr;
 }
 
-double StEpdEpManager::getPsi1GrpReCtrFull(int grpId)
+double StEpdEpManager::getPsi1GrpReCtrTrkAveFull(int grpId)
 {
   double Psi1ReCtr = -999.9;
-  TVector2 Q1Vector = getQ1VecGrpReCtrFull(grpId);
+  TVector2 Q1Vector = getQ1VecGrpReCtrTrkAveFull(grpId);
   if(Q1Vector.Mod() > 0.0)
   {
     double Psi1 = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
@@ -2201,10 +2135,10 @@ double StEpdEpManager::getPsi1GrpReCtrFull(int grpId)
   return Psi1ReCtr;
 }
 
-double StEpdEpManager::getPsi1GrpAveReCtrEast(int grpId)
+double StEpdEpManager::getPsi1GrpReCtrEvtAveEast(int grpId)
 {
   double Psi1ReCtr = -999.9;
-  TVector2 Q1Vector = getQ1VecGrpAveReCtrEast(grpId);
+  TVector2 Q1Vector = getQ1VecGrpReCtrEvtAveEast(grpId);
   if(Q1Vector.Mod() > 0.0)
   {
     double Psi1 = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
@@ -2214,10 +2148,10 @@ double StEpdEpManager::getPsi1GrpAveReCtrEast(int grpId)
   return Psi1ReCtr;
 }
 
-double StEpdEpManager::getPsi1GrpAveReCtrWest(int grpId)
+double StEpdEpManager::getPsi1GrpReCtrEvtAveWest(int grpId)
 {
   double Psi1ReCtr = -999.9;
-  TVector2 Q1Vector = getQ1VecGrpAveReCtrWest(grpId);
+  TVector2 Q1Vector = getQ1VecGrpReCtrEvtAveWest(grpId);
   if(Q1Vector.Mod() > 0.0)
   {
     double Psi1 = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
@@ -2227,10 +2161,10 @@ double StEpdEpManager::getPsi1GrpAveReCtrWest(int grpId)
   return Psi1ReCtr;
 }
 
-double StEpdEpManager::getPsi1GrpAveReCtrFull(int grpId)
+double StEpdEpManager::getPsi1GrpReCtrEvtAveFull(int grpId)
 {
   double Psi1ReCtr = -999.9;
-  TVector2 Q1Vector = getQ1VecGrpAveReCtrFull(grpId);
+  TVector2 Q1Vector = getQ1VecGrpReCtrEvtAveFull(grpId);
   if(Q1Vector.Mod() > 0.0)
   {
     double Psi1 = TMath::ATan2(Q1Vector.Y(),Q1Vector.X()); // -pi to pi
@@ -2430,24 +2364,41 @@ void StEpdEpManager::initEpdSubEpGrpReCtr()
   {
     for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
-      std::string histName = Form("h_mEpdEp1Grp%dReCtrEastCent%d",iGrp,iCent);
-      h_mEpdEp1GrpReCtrEast[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
-      histName = Form("h_mEpdEp1Grp%dReCtrWestCent%d",iGrp,iCent);
-      h_mEpdEp1GrpReCtrWest[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
-      histName = Form("h_mEpdEp1Grp%dReCtrFullCent%d",iGrp,iCent);
-      h_mEpdEp1GrpReCtrFull[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
-      histName = Form("h_mEpdEp1Grp%dReCtrCorrCent%d",iGrp,iCent);
-      h_mEpdEp1GrpReCtrCorr[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
+      std::string histName = Form("h_mEpdEp1Grp%dReCtrTrkAveEastCent%d",iGrp,iCent);
+      h_mEpdEp1GrpReCtrTrkAveEast[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
+      histName = Form("h_mEpdEp1Grp%dReCtrTrkAveWestCent%d",iGrp,iCent);
+      h_mEpdEp1GrpReCtrTrkAveWest[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
+      histName = Form("h_mEpdEp1Grp%dReCtrTrkAveFullCent%d",iGrp,iCent);
+      h_mEpdEp1GrpReCtrTrkAveFull[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
+      histName = Form("h_mEpdEp1Grp%dReCtrTrkAveCorrCent%d",iGrp,iCent);
+      h_mEpdEp1GrpReCtrTrkAveCorr[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
+
+      histName = Form("h_mEpdEp1Grp%dReCtrEvtAveEastCent%d",iGrp,iCent);
+      h_mEpdEp1GrpReCtrEvtAveEast[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
+      histName = Form("h_mEpdEp1Grp%dReCtrEvtAveWestCent%d",iGrp,iCent);
+      h_mEpdEp1GrpReCtrEvtAveWest[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
+      histName = Form("h_mEpdEp1Grp%dReCtrEvtAveFullCent%d",iGrp,iCent);
+      h_mEpdEp1GrpReCtrEvtAveFull[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
+      histName = Form("h_mEpdEp1Grp%dReCtrEvtAveCorrCent%d",iGrp,iCent);
+      h_mEpdEp1GrpReCtrEvtAveCorr[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
     }
   }
 }
 
-void StEpdEpManager::fillEpdSubEpGrpReCtr(double Psi1East, double Psi1West, double Psi1Full, int grpId)
+void StEpdEpManager::fillEpdSubEpGrpReCtrTrkAve(double Psi1East, double Psi1West, double Psi1Full, int grpId)
 {
-  h_mEpdEp1GrpReCtrEast[mCent9][grpId]->Fill(mRunIndex,Psi1East);
-  h_mEpdEp1GrpReCtrWest[mCent9][grpId]->Fill(mRunIndex,Psi1West);
-  h_mEpdEp1GrpReCtrFull[mCent9][grpId]->Fill(mRunIndex,Psi1Full);
-  h_mEpdEp1GrpReCtrCorr[mCent9][grpId]->Fill(Psi1East,Psi1West);
+  h_mEpdEp1GrpReCtrTrkAveEast[mCent9][grpId]->Fill(mRunIndex,Psi1East);
+  h_mEpdEp1GrpReCtrTrkAveWest[mCent9][grpId]->Fill(mRunIndex,Psi1West);
+  h_mEpdEp1GrpReCtrTrkAveFull[mCent9][grpId]->Fill(mRunIndex,Psi1Full);
+  h_mEpdEp1GrpReCtrTrkAveCorr[mCent9][grpId]->Fill(Psi1East,Psi1West);
+}
+
+void StEpdEpManager::fillEpdSubEpGrpReCtrEvtAve(double Psi1East, double Psi1West, double Psi1Full, int grpId)
+{
+  h_mEpdEp1GrpReCtrEvtAveEast[mCent9][grpId]->Fill(mRunIndex,Psi1East);
+  h_mEpdEp1GrpReCtrEvtAveWest[mCent9][grpId]->Fill(mRunIndex,Psi1West);
+  h_mEpdEp1GrpReCtrEvtAveFull[mCent9][grpId]->Fill(mRunIndex,Psi1Full);
+  h_mEpdEp1GrpReCtrEvtAveCorr[mCent9][grpId]->Fill(Psi1East,Psi1West);
 }
 
 void StEpdEpManager::writeEpdSubEpGrpReCtr()
@@ -2456,10 +2407,15 @@ void StEpdEpManager::writeEpdSubEpGrpReCtr()
   {
     for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
-      h_mEpdEp1GrpReCtrEast[iCent][iGrp]->Write();
-      h_mEpdEp1GrpReCtrWest[iCent][iGrp]->Write();
-      h_mEpdEp1GrpReCtrFull[iCent][iGrp]->Write();
-      h_mEpdEp1GrpReCtrCorr[iCent][iGrp]->Write();
+      h_mEpdEp1GrpReCtrTrkAveEast[iCent][iGrp]->Write();
+      h_mEpdEp1GrpReCtrTrkAveWest[iCent][iGrp]->Write();
+      h_mEpdEp1GrpReCtrTrkAveFull[iCent][iGrp]->Write();
+      h_mEpdEp1GrpReCtrTrkAveCorr[iCent][iGrp]->Write();
+
+      h_mEpdEp1GrpReCtrEvtAveEast[iCent][iGrp]->Write();
+      h_mEpdEp1GrpReCtrEvtAveWest[iCent][iGrp]->Write();
+      h_mEpdEp1GrpReCtrEvtAveFull[iCent][iGrp]->Write();
+      h_mEpdEp1GrpReCtrEvtAveCorr[iCent][iGrp]->Write();
     }
   }
 }
@@ -2505,24 +2461,41 @@ void StEpdEpManager::initEpdSubEpGrpShift()
   {
     for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
-      std::string histName = Form("h_mEpdEp1Grp%dShiftEastCent%d",iGrp,iCent);
-      h_mEpdEp1GrpShiftEast[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
-      histName = Form("h_mEpdEp1Grp%dShiftWestCent%d",iGrp,iCent);
-      h_mEpdEp1GrpShiftWest[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
-      histName = Form("h_mEpdEp1Grp%dShiftFullCent%d",iGrp,iCent);
-      h_mEpdEp1GrpShiftFull[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
-      histName = Form("h_mEpdEp1Grp%dShiftCorrCent%d",iGrp,iCent);
-      h_mEpdEp1GrpShiftCorr[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
+      std::string histName = Form("h_mEpdEp1Grp%dShiftTrkAveEastCent%d",iGrp,iCent);
+      h_mEpdEp1GrpShiftTrkAveEast[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
+      histName = Form("h_mEpdEp1Grp%dShiftTrkAveWestCent%d",iGrp,iCent);
+      h_mEpdEp1GrpShiftTrkAveWest[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
+      histName = Form("h_mEpdEp1Grp%dShiftTrkAveFullCent%d",iGrp,iCent);
+      h_mEpdEp1GrpShiftTrkAveFull[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
+      histName = Form("h_mEpdEp1Grp%dShiftTrkAveCorrCent%d",iGrp,iCent);
+      h_mEpdEp1GrpShiftTrkAveCorr[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
+
+      histName = Form("h_mEpdEp1Grp%dShiftEvtAveEastCent%d",iGrp,iCent);
+      h_mEpdEp1GrpShiftEvtAveEast[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
+      histName = Form("h_mEpdEp1Grp%dShiftEvtAveWestCent%d",iGrp,iCent);
+      h_mEpdEp1GrpShiftEvtAveWest[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
+      histName = Form("h_mEpdEp1Grp%dShiftEvtAveFullCent%d",iGrp,iCent);
+      h_mEpdEp1GrpShiftEvtAveFull[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
+      histName = Form("h_mEpdEp1Grp%dShiftEvtAveCorrCent%d",iGrp,iCent);
+      h_mEpdEp1GrpShiftEvtAveCorr[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),135,-1.5*TMath::Pi(),1.5*TMath::Pi(),135,-1.5*TMath::Pi(),1.5*TMath::Pi());
     }
   }
 }
 
-void StEpdEpManager::fillEpdSubEpGrpShift(double Psi1East, double Psi1West, double Psi1Full, int grpId)
+void StEpdEpManager::fillEpdSubEpGrpShiftTrkAve(double Psi1East, double Psi1West, double Psi1Full, int grpId)
 {
-  h_mEpdEp1GrpShiftEast[mCent9][grpId]->Fill(mRunIndex,Psi1East);
-  h_mEpdEp1GrpShiftWest[mCent9][grpId]->Fill(mRunIndex,Psi1West);
-  h_mEpdEp1GrpShiftFull[mCent9][grpId]->Fill(mRunIndex,Psi1Full);
-  h_mEpdEp1GrpShiftCorr[mCent9][grpId]->Fill(Psi1East,Psi1West);
+  h_mEpdEp1GrpShiftTrkAveEast[mCent9][grpId]->Fill(mRunIndex,Psi1East);
+  h_mEpdEp1GrpShiftTrkAveWest[mCent9][grpId]->Fill(mRunIndex,Psi1West);
+  h_mEpdEp1GrpShiftTrkAveFull[mCent9][grpId]->Fill(mRunIndex,Psi1Full);
+  h_mEpdEp1GrpShiftTrkAveCorr[mCent9][grpId]->Fill(Psi1East,Psi1West);
+}
+
+void StEpdEpManager::fillEpdSubEpGrpShiftEvtAve(double Psi1East, double Psi1West, double Psi1Full, int grpId)
+{
+  h_mEpdEp1GrpShiftEvtAveEast[mCent9][grpId]->Fill(mRunIndex,Psi1East);
+  h_mEpdEp1GrpShiftEvtAveWest[mCent9][grpId]->Fill(mRunIndex,Psi1West);
+  h_mEpdEp1GrpShiftEvtAveFull[mCent9][grpId]->Fill(mRunIndex,Psi1Full);
+  h_mEpdEp1GrpShiftEvtAveCorr[mCent9][grpId]->Fill(Psi1East,Psi1West);
 }
 
 void StEpdEpManager::writeEpdSubEpGrpShift()
@@ -2531,10 +2504,15 @@ void StEpdEpManager::writeEpdSubEpGrpShift()
   {
     for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
     {
-      h_mEpdEp1GrpShiftEast[iCent][iGrp]->Write();
-      h_mEpdEp1GrpShiftWest[iCent][iGrp]->Write();
-      h_mEpdEp1GrpShiftFull[iCent][iGrp]->Write();
-      h_mEpdEp1GrpShiftCorr[iCent][iGrp]->Write();
+      h_mEpdEp1GrpShiftTrkAveEast[iCent][iGrp]->Write();
+      h_mEpdEp1GrpShiftTrkAveWest[iCent][iGrp]->Write();
+      h_mEpdEp1GrpShiftTrkAveFull[iCent][iGrp]->Write();
+      h_mEpdEp1GrpShiftTrkAveCorr[iCent][iGrp]->Write();
+
+      h_mEpdEp1GrpShiftEvtAveEast[iCent][iGrp]->Write();
+      h_mEpdEp1GrpShiftEvtAveWest[iCent][iGrp]->Write();
+      h_mEpdEp1GrpShiftEvtAveFull[iCent][iGrp]->Write();
+      h_mEpdEp1GrpShiftEvtAveCorr[iCent][iGrp]->Write();
     }
   }
 }
@@ -2559,34 +2537,6 @@ void StEpdEpManager::writeEpdFullEpSideShift()
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     h_mEpdEp1SideShiftFullCorr[iCent]->Write();
-  }
-}
-
-void StEpdEpManager::initEpdFullEpGrpShift()
-{
-  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
-  {
-    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
-    {
-      std::string histName = Form("h_mEpdEp1Grp%dShiftFullCorrCent%d",iGrp,iCent);
-      h_mEpdEp1GrpShiftFullCorr[iCent][iGrp] = new TH2F(histName.c_str(),histName.c_str(),globCons::mNumRunIndex[mType],(double)globCons::mRunIndexLo[mType]-0.5,(double)globCons::mRunIndexHi[mType]-0.5,540,-1.5*TMath::Pi(),1.5*TMath::Pi());
-    }
-  }
-}
-
-void StEpdEpManager::fillEpdFullEpGrpShift(double Psi1FullCorr, int grpId)
-{
-  h_mEpdEp1GrpShiftFullCorr[mCent9][grpId]->Fill(mRunIndex,Psi1FullCorr);
-}
-
-void StEpdEpManager::writeEpdFullEpGrpShift()
-{
-  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
-  {
-    for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
-    {
-      h_mEpdEp1GrpShiftFullCorr[iCent][iGrp]->Write();
-    }
   }
 }
 //---------------------------------------------------------------------------------
