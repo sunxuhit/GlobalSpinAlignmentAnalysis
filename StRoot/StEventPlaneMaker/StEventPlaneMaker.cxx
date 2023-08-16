@@ -398,6 +398,7 @@ int StEventPlaneMaker::Make()
   {
     // Event Information
     const int runId        = mPicoEvent->runId();
+    const int evtId        = mPicoEvent->eventId();
     int refMult            = mPicoEvent->refMult(); // initialize refMult
     const TVector3 primVtx = mPicoEvent->primaryVertex();
     const double primVz    = mPicoEvent->primaryVertex().z();
@@ -588,11 +589,13 @@ int StEventPlaneMaker::Make()
 	  { // fill recentered correction for EPD
 	    if( mAnaCut->passHitEpdEpEast(picoEpdHit) ) // negative eta
 	    {
+	      mEpdEpManager->addHitGrpRawEast(picoEpdHit, primVtx); // used by Evt Ave ReCenter Mehtod
 	      mEpdEpManager->addHitGrpWgtEast(picoEpdHit, primVtx);
 	      mEpdEpManager->fillEpdGrpReCtrTrkAveEast(picoEpdHit, primVtx);
 	    }
 	    if( mAnaCut->passHitEpdEpWest(picoEpdHit) ) // positive eta
 	    {
+	      mEpdEpManager->addHitGrpRawWest(picoEpdHit, primVtx); // used by Evt Ave ReCenter Mehtod
 	      mEpdEpManager->addHitGrpWgtWest(picoEpdHit, primVtx);
 	      mEpdEpManager->fillEpdGrpReCtrTrkAveWest(picoEpdHit, primVtx);
 	    }
@@ -601,10 +604,12 @@ int StEventPlaneMaker::Make()
 	  {
 	    if( mAnaCut->passHitEpdEpEast(picoEpdHit) ) // negative eta
 	    {
+	      mEpdEpManager->addHitGrpRawEast(picoEpdHit, primVtx); // used by Evt Ave ReCenter Mehtod
 	      mEpdEpManager->addHitGrpReCtrTrkAveEast(picoEpdHit, primVtx);
 	    }
 	    if( mAnaCut->passHitEpdEpWest(picoEpdHit) ) // positive eta
 	    {
+	      mEpdEpManager->addHitGrpRawWest(picoEpdHit, primVtx); // used by Evt Ave ReCenter Mehtod
 	      mEpdEpManager->addHitGrpReCtrTrkAveWest(picoEpdHit, primVtx);
 	    }
 	  }
@@ -715,6 +720,8 @@ int StEventPlaneMaker::Make()
 	      const double Psi1GrpWgtWest = mEpdEpManager->getPsi1GrpWgtWest(iGrp);
 	      const double Psi1GrpWgtFull = mEpdEpManager->getPsi1GrpWgtFull(iGrp);
 	      mEpdEpManager->fillEpdSubEpGrpWgt(Psi1GrpWgtEast, Psi1GrpWgtWest, Psi1GrpWgtFull, iGrp);
+	      mEpdEpManager->fillEpdGrpReCtrEvtAveEast(iGrp); // fill Evt Ave ReCenter Parameter
+	      mEpdEpManager->fillEpdGrpReCtrEvtAveWest(iGrp);
 	    }
 	  }
 
@@ -780,27 +787,38 @@ int StEventPlaneMaker::Make()
 
 	if( mAnaCut->isFxt3p85GeV_2018() )
 	{
-	  TVector2 vQ1EpdGrpEast[mNumRingsGrps], vQ1EpdGrpWest[mNumRingsGrps], vQ1EpdGrpFull[mNumRingsGrps];
+	  TVector2 vQ1EpdGrpTrkAveEast[mNumRingsGrps], vQ1EpdGrpTrkAveWest[mNumRingsGrps], vQ1EpdGrpTrkAveFull[mNumRingsGrps];
+	  TVector2 vQ1EpdGrpEvtAveEast[mNumRingsGrps], vQ1EpdGrpEvtAveWest[mNumRingsGrps], vQ1EpdGrpEvtAveFull[mNumRingsGrps];
 	  for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
 	  {
-	    vQ1EpdGrpEast[iGrp] = mEpdEpManager->getQ1VecGrpReCtrTrkAveEast(iGrp); // get Q1Vector from EPD groups
-	    vQ1EpdGrpWest[iGrp] = mEpdEpManager->getQ1VecGrpReCtrTrkAveWest(iGrp);
-	    vQ1EpdGrpFull[iGrp] = mEpdEpManager->getQ1VecGrpReCtrTrkAveFull(iGrp);
-	    if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[iGrp],vQ1EpdGrpWest[iGrp],vQ1EpdGrpFull[iGrp],iGrp) ) // EPD EP
+	    vQ1EpdGrpTrkAveEast[iGrp] = mEpdEpManager->getQ1VecGrpReCtrTrkAveEast(iGrp); // get Trk Ave ReCtr Q1Vector from EPD groups
+	    vQ1EpdGrpTrkAveWest[iGrp] = mEpdEpManager->getQ1VecGrpReCtrTrkAveWest(iGrp);
+	    vQ1EpdGrpTrkAveFull[iGrp] = mEpdEpManager->getQ1VecGrpReCtrTrkAveFull(iGrp);
+	    vQ1EpdGrpEvtAveEast[iGrp] = mEpdEpManager->getQ1VecGrpReCtrEvtAveEast(iGrp); // get Evt Ave ReCtr Q1Vector from EPD groups
+	    vQ1EpdGrpEvtAveWest[iGrp] = mEpdEpManager->getQ1VecGrpReCtrEvtAveWest(iGrp);
+	    vQ1EpdGrpEvtAveFull[iGrp] = mEpdEpManager->getQ1VecGrpReCtrEvtAveFull(iGrp);
+	    if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpTrkAveEast[iGrp],vQ1EpdGrpTrkAveWest[iGrp],vQ1EpdGrpTrkAveFull[iGrp],iGrp) ) // EPD EP
 	    {
-	      const double Psi1GrpReCtrEast = mEpdEpManager->getPsi1GrpReCtrTrkAveEast(iGrp);
-	      const double Psi1GrpReCtrWest = mEpdEpManager->getPsi1GrpReCtrTrkAveWest(iGrp);
-	      const double Psi1GrpReCtrFull = mEpdEpManager->getPsi1GrpReCtrTrkAveFull(iGrp);
-	      mEpdEpManager->fillEpdSubEpGrpReCtrTrkAve(Psi1GrpReCtrEast, Psi1GrpReCtrWest, Psi1GrpReCtrFull, iGrp);
-	      mEpdEpManager->fillEpdGrpShiftTrkAveEast(iGrp);
+	      const double Psi1GrpReCtrTrkAveEast = mEpdEpManager->getPsi1GrpReCtrTrkAveEast(iGrp);
+	      const double Psi1GrpReCtrTrkAveWest = mEpdEpManager->getPsi1GrpReCtrTrkAveWest(iGrp);
+	      const double Psi1GrpReCtrTrkAveFull = mEpdEpManager->getPsi1GrpReCtrTrkAveFull(iGrp);
+	      mEpdEpManager->fillEpdSubEpGrpReCtrTrkAve(Psi1GrpReCtrTrkAveEast, Psi1GrpReCtrTrkAveWest, Psi1GrpReCtrTrkAveFull, iGrp);
+	      mEpdEpManager->fillEpdGrpShiftTrkAveEast(iGrp); // fill Trk Ave Shift Parameter
 	      mEpdEpManager->fillEpdGrpShiftTrkAveWest(iGrp);
 
-	      // cout << "iGrp = " << iGrp << ", Psi1GrpReCtrEast = " << Psi1GrpReCtrEast << ", Psi1GrpReCtrWest = " << Psi1GrpReCtrWest << ", Psi1GrpReCtrFull = " << Psi1GrpReCtrFull << endl;
+	      const double Psi1GrpReCtrEvtAveEast = mEpdEpManager->getPsi1GrpReCtrEvtAveEast(iGrp);
+	      const double Psi1GrpReCtrEvtAveWest = mEpdEpManager->getPsi1GrpReCtrEvtAveWest(iGrp);
+	      const double Psi1GrpReCtrEvtAveFull = mEpdEpManager->getPsi1GrpReCtrEvtAveFull(iGrp);
+	      mEpdEpManager->fillEpdSubEpGrpReCtrTrkAve(Psi1GrpReCtrEvtAveEast, Psi1GrpReCtrEvtAveWest, Psi1GrpReCtrEvtAveFull, iGrp);
+	      mEpdEpManager->fillEpdGrpShiftEvtAveEast(iGrp); // fill Evt Ave Shift Parameter
+	      mEpdEpManager->fillEpdGrpShiftEvtAveWest(iGrp);
+
+	      // cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpReCtrEast = " << Psi1GrpReCtrEast << ", Psi1GrpReCtrWest = " << Psi1GrpReCtrWest << ", Psi1GrpReCtrFull = " << Psi1GrpReCtrFull << endl;
 	    }
 	  }
 
-	  if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[0],vQ1EpdGrpWest[0],vQ1EpdGrpFull[0],0) &&
-	      mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[1],vQ1EpdGrpWest[1],vQ1EpdGrpFull[1],1) &&
+	  if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpTrkAveEast[0],vQ1EpdGrpTrkAveWest[0],vQ1EpdGrpTrkAveFull[0],0) &&
+	      mAnaCut->passQVecEpdGrp(vQ1EpdGrpTrkAveEast[1],vQ1EpdGrpTrkAveWest[1],vQ1EpdGrpTrkAveFull[1],1) &&
 	      mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest) )
 	  { // 3-sub events method
 	    const double Psi1EpdGrp0 = mEpdEpManager->getPsi1GrpReCtrTrkAveEast(0); // Psi1 from EPD Grp 0 East
@@ -898,27 +916,35 @@ int StEventPlaneMaker::Make()
 
 	if( mAnaCut->isFxt3p85GeV_2018() )
 	{
-	  TVector2 vQ1EpdGrpEast[mNumRingsGrps], vQ1EpdGrpWest[mNumRingsGrps], vQ1EpdGrpFull[mNumRingsGrps]; 
-	  // TVector2 vQ1EpdGrpFullCorr[mNumRingsGrps];
+	  TVector2 vQ1EpdGrpTrkAveEast[mNumRingsGrps], vQ1EpdGrpTrkAveWest[mNumRingsGrps], vQ1EpdGrpTrkAveFull[mNumRingsGrps]; 
+	  TVector2 vQ1EpdGrpEvtAveEast[mNumRingsGrps], vQ1EpdGrpEvtAveWest[mNumRingsGrps], vQ1EpdGrpEvtAveFull[mNumRingsGrps]; 
 	  for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
 	  {
-	    vQ1EpdGrpEast[iGrp] = mEpdEpManager->getQ1VecGrpShiftTrkAveEast(iGrp); // get Q1Vector from EPD
-	    vQ1EpdGrpWest[iGrp] = mEpdEpManager->getQ1VecGrpShiftTrkAveWest(iGrp);
-	    vQ1EpdGrpFull[iGrp] = mEpdEpManager->getQ1VecGrpShiftTrkAveFull(iGrp);
-	    if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[iGrp],vQ1EpdGrpWest[iGrp],vQ1EpdGrpFull[iGrp],iGrp) ) // EPD EP
+	    vQ1EpdGrpTrkAveEast[iGrp] = mEpdEpManager->getQ1VecGrpShiftTrkAveEast(iGrp); // get Trk Ave ReCtr Q1Vector from EPD
+	    vQ1EpdGrpTrkAveWest[iGrp] = mEpdEpManager->getQ1VecGrpShiftTrkAveWest(iGrp);
+	    vQ1EpdGrpTrkAveFull[iGrp] = mEpdEpManager->getQ1VecGrpShiftTrkAveFull(iGrp);
+	    vQ1EpdGrpEvtAveEast[iGrp] = mEpdEpManager->getQ1VecGrpShiftEvtAveEast(iGrp); // get Evt Ave ReCtr Q1Vector from EPD
+	    vQ1EpdGrpEvtAveWest[iGrp] = mEpdEpManager->getQ1VecGrpShiftEvtAveWest(iGrp);
+	    vQ1EpdGrpEvtAveFull[iGrp] = mEpdEpManager->getQ1VecGrpShiftEvtAveFull(iGrp);
+	    if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpTrkAveEast[iGrp],vQ1EpdGrpTrkAveWest[iGrp],vQ1EpdGrpTrkAveFull[iGrp],iGrp) ) // EPD EP
 	    {
-	      const double Psi1GrpShiftEast     = mEpdEpManager->getPsi1GrpShiftTrkAveEast(iGrp);
-	      const double Psi1GrpShiftWest     = mEpdEpManager->getPsi1GrpShiftTrkAveWest(iGrp);
-	      const double Psi1GrpShiftFull     = mEpdEpManager->getPsi1GrpShiftTrkAveFull(iGrp);
-	      mEpdEpManager->fillEpdSubEpGrpShiftTrkAve(Psi1GrpShiftEast, Psi1GrpShiftWest, Psi1GrpShiftFull, iGrp);
-	      mEpdEpManager->fillEpdGrpResolution(Psi1GrpShiftEast, Psi1GrpShiftWest, iGrp);
+	      const double Psi1GrpShiftTrkAveEast = mEpdEpManager->getPsi1GrpShiftTrkAveEast(iGrp);
+	      const double Psi1GrpShiftTrkAveWest = mEpdEpManager->getPsi1GrpShiftTrkAveWest(iGrp);
+	      const double Psi1GrpShiftTrkAveFull = mEpdEpManager->getPsi1GrpShiftTrkAveFull(iGrp);
+	      mEpdEpManager->fillEpdSubEpGrpShiftTrkAve(Psi1GrpShiftTrkAveEast, Psi1GrpShiftTrkAveWest, Psi1GrpShiftTrkAveFull, iGrp);
+	      mEpdEpManager->fillEpdGrpResolution(Psi1GrpShiftTrkAveEast, Psi1GrpShiftTrkAveWest, iGrp);
 
-	      // cout << "iGrp = " << iGrp << ", Psi1GrpShiftEast = " << Psi1GrpShiftEast << ", Psi1GrpShiftWest = " << Psi1GrpShiftWest << ", Psi1GrpShiftFull = " << Psi1GrpShiftFull << endl;
+	      const double Psi1GrpShiftEvtAveEast = mEpdEpManager->getPsi1GrpShiftEvtAveEast(iGrp);
+	      const double Psi1GrpShiftEvtAveWest = mEpdEpManager->getPsi1GrpShiftEvtAveWest(iGrp);
+	      const double Psi1GrpShiftEvtAveFull = mEpdEpManager->getPsi1GrpShiftEvtAveFull(iGrp);
+	      mEpdEpManager->fillEpdSubEpGrpShiftEvtAve(Psi1GrpShiftEvtAveEast, Psi1GrpShiftEvtAveWest, Psi1GrpShiftEvtAveFull, iGrp);
+
+	      // cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpShiftEvtAveEast = " << Psi1GrpShiftEvtAveEast << endl;
 	    }
 	  }
 
-	  if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[0],vQ1EpdGrpWest[0],vQ1EpdGrpFull[0],0) &&
-	      mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[1],vQ1EpdGrpWest[1],vQ1EpdGrpFull[1],1) &&
+	  if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpTrkAveEast[0],vQ1EpdGrpTrkAveWest[0],vQ1EpdGrpTrkAveFull[0],0) &&
+	      mAnaCut->passQVecEpdGrp(vQ1EpdGrpTrkAveEast[1],vQ1EpdGrpTrkAveWest[1],vQ1EpdGrpTrkAveFull[1],1) &&
 	      mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest) )
 	  { // 3-sub events method
 	    const double Psi1EpdGrp0 = mEpdEpManager->getPsi1GrpShiftTrkAveEast(0); // Psi1 from EPD Grp 0 East

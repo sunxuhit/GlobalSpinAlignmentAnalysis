@@ -640,8 +640,10 @@ void StEpdEpManager::fillEpdGrpReCtrTrkAveWest(StPicoEpdHit *picoEpdHit, TVector
   }
 }
 
-void StEpdEpManager::fillEpdGrpReCtrEvtAveEast(TVector2 Q1VecGrp, int grpId)
+void StEpdEpManager::fillEpdGrpReCtrEvtAveEast(int grpId)
 {
+  TVector2 Q1VecGrp = getQ1VecGrpRawEast(grpId);
+  // if(mUsePhiWgt) Q1VecGrp = getQ1VecGrpWgtEast(grpId);
   const double Q1x = Q1VecGrp.X();
   const double Q1y = Q1VecGrp.Y();
   if(grpId >= 0)
@@ -651,8 +653,10 @@ void StEpdEpManager::fillEpdGrpReCtrEvtAveEast(TVector2 Q1VecGrp, int grpId)
   }
 }
 
-void StEpdEpManager::fillEpdGrpReCtrEvtAveWest(TVector2 Q1VecGrp, int grpId)
+void StEpdEpManager::fillEpdGrpReCtrEvtAveWest(int grpId)
 {
+  TVector2 Q1VecGrp = getQ1VecGrpRawWest(grpId);
+  // if(mUsePhiWgt) Q1VecGrp = getQ1VecGrpWgtWest(grpId);
   const double Q1x = Q1VecGrp.X();
   const double Q1y = Q1VecGrp.Y();
   if(grpId >= 0)
@@ -1975,7 +1979,7 @@ TVector2 StEpdEpManager::getQ1VecGrpReCtrEvtAveEast(int grpId)
 {
   TVector2 Q1VecReCtr(0.0,0.0);
   TVector2 Q1VecOrig = getQ1VecGrpRawEast(grpId);
-  if(mUsePhiWgt) Q1VecOrig = getQ1VecGrpWgtEast(grpId);
+  // if(mUsePhiWgt) Q1VecOrig = getQ1VecGrpWgtEast(grpId);
   if(Q1VecOrig.Mod() > 0.0)
   {
     TVector2 Q1VecCtr = getQ1VecGrpCtrEvtAveEast(grpId);
@@ -1992,7 +1996,7 @@ TVector2 StEpdEpManager::getQ1VecGrpReCtrEvtAveWest(int grpId)
 {
   TVector2 Q1VecReCtr(0.0,0.0);
   TVector2 Q1VecOrig = getQ1VecGrpRawWest(grpId);
-  if(mUsePhiWgt) Q1VecOrig = getQ1VecGrpWgtWest(grpId);
+  // if(mUsePhiWgt) Q1VecOrig = getQ1VecGrpWgtWest(grpId);
   if(Q1VecOrig.Mod() > 0.0)
   {
     TVector2 Q1VecCtr = getQ1VecGrpCtrEvtAveWest(grpId);

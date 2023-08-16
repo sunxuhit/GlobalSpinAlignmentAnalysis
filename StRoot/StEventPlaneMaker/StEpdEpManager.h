@@ -70,8 +70,8 @@ class StEpdEpManager : public TObject
     void initEpdGrpReCtr();
     void fillEpdGrpReCtrTrkAveEast(StPicoEpdHit *picoEpdHit, TVector3 primVtx);
     void fillEpdGrpReCtrTrkAveWest(StPicoEpdHit *picoEpdHit, TVector3 primVtx);
-    void fillEpdGrpReCtrEvtAveEast(TVector2 Q1VecGrp, int grpId); // need addHitGrpRawEast in StEventPlaneMaker
-    void fillEpdGrpReCtrEvtAveWest(TVector2 Q1VecGrp, int grpId); // need addHitGrpRawWest in StEventPlaneMaker
+    void fillEpdGrpReCtrEvtAveEast(int grpId); // need addHitGrpRawEast in StEventPlaneMaker
+    void fillEpdGrpReCtrEvtAveWest(int grpId); // need addHitGrpRawWest in StEventPlaneMaker
     void writeEpdGrpReCtr();
     void readEpdGrpReCtr();
     TVector2 getq1VecGrpCtrTrkAveEast(int grpId); // FXT
