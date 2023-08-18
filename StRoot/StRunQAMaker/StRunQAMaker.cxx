@@ -194,7 +194,7 @@ int StRunQAMaker::Make()
 	const double nSigKaon = picoTrack->nSigmaKaon();
 	const double mass2    = mAnaUtils->getPrimMass2(mPicoDst,iTrack);
 	const double beta     = mAnaUtils->getBeta(mPicoDst,iTrack);
-	const double betaExp   = primMom.Mag()/TMath::Sqrt(primMom.Mag2()+anaUtils::mMassKaon*anaUtils::mMassKaon); // expected beta of Kaon
+	const double betaExp   = primMom.Mag()/TMath::Sqrt(primMom.Mag2()+0.493677*0.493677); // expected beta of Kaon
 	const double deltaBeta = 1.0/beta - 1.0/betaExp;
 
 	mRunQAHistoManager->fillTrkQaKinematics(triggerBin,primMom,globMom, 0); // wo track cut
@@ -258,17 +258,20 @@ int StRunQAMaker::Make()
 	}
 
 	// test Kaon PID
-	mRunQAHistoManager->fillTrkQaKaonPid(cent9,primMom.Mag(),charge,mass2,deltaBeta);
-	if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx))
-	{ // Kaon candidate with TPC only
-	  mRunQAHistoManager->fillTrkQaKaonPidTpc(cent9,primMom.Mag(),charge,mass2,deltaBeta);
-	  if(mAnaCut->passTrkTofKaonBeta(primMom,charge,beta))
-	  { // Kaon candidate with TPC and ToF
-	    mRunQAHistoManager->fillTrkQaKaonPidTofB(cent9,primMom.Mag(),charge,mass2,deltaBeta);
-	  }
-	  if(mAnaCut->passTrkTofKaonMass(primMom,charge,mass2))
-	  { // Kaon candidate with TPC and ToF
-	    mRunQAHistoManager->fillTrkQaKaonPidTofM(cent9,primMom.Mag(),charge,mass2,deltaBeta);
+	if(beta > -10.0)
+	{
+	  mRunQAHistoManager->fillTrkQaKaonPid(cent9,primMom.Mag(),charge,mass2,deltaBeta);
+	  if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx))
+	  { // Kaon candidate with TPC only
+	    mRunQAHistoManager->fillTrkQaKaonPidTpc(cent9,primMom.Mag(),charge,mass2,deltaBeta);
+	    if(mAnaCut->passTrkTofKaonBeta(primMom,charge,beta))
+	    { // Kaon candidate with TPC and ToF
+	      mRunQAHistoManager->fillTrkQaKaonPidTofB(cent9,primMom.Mag(),charge,mass2,deltaBeta);
+	    }
+	    if(mAnaCut->passTrkTofKaonMass(primMom,charge,mass2))
+	    { // Kaon candidate with TPC and ToF
+	      mRunQAHistoManager->fillTrkQaKaonPidTofM(cent9,primMom.Mag(),charge,mass2,deltaBeta);
+	    }
 	  }
 	}
       }
