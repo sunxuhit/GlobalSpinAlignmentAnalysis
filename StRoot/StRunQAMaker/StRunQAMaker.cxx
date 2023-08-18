@@ -192,8 +192,10 @@ int StRunQAMaker::Make()
 	const double dEdx     = picoTrack->dEdx();
 	const short charge    = picoTrack->charge();
 	const double nSigKaon = picoTrack->nSigmaKaon();
-	const double beta     = mAnaUtils->getBeta(mPicoDst,iTrack);
 	const double mass2    = mAnaUtils->getPrimMass2(mPicoDst,iTrack);
+	const double beta     = mAnaUtils->getBeta(mPicoDst,iTrack);
+	const double betaExp   = primMom.Mag()/TMath::Sqrt(primMom.Mag2()+anaUtils::mMassKaon*anaUtils::mMassKaon); // expected beta of Kaon
+	const double deltaBeta = 1.0/beta - 1.0/betaExp;
 
 	mRunQAHistoManager->fillTrkQaKinematics(triggerBin,primMom,globMom, 0); // wo track cut
 	mRunQAHistoManager->fillTrkQaQuliaty(triggerBin,gDCA,nHitsFit,nHitsMax,nHitsDEdx,0);
@@ -252,6 +254,21 @@ int StRunQAMaker::Make()
 	    {
 	      mRunQAHistoManager->fillTrkQaKaonAcptSpin(triggerBin, cent9, charge, yLab, yCms, primMom.Pt(), refWgt);
 	    }
+	  }
+	}
+
+	// test Kaon PID
+	mRunQAHistoManager->fillTrkQaKaonPid(cent9,primMom.Mag(),charge,mass2,deltaBeta);
+	if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx))
+	{ // Kaon candidate with TPC only
+	  mRunQAHistoManager->fillTrkQaKaonPidTpc(cent9,primMom.Mag(),charge,mass2,deltaBeta);
+	  if(mAnaCut->passTrkTofKaonBeta(primMom,charge,beta))
+	  { // Kaon candidate with TPC and ToF
+	    mRunQAHistoManager->fillTrkQaKaonPidTofB(cent9,primMom.Mag(),charge,mass2,deltaBeta);
+	  }
+	  if(mAnaCut->passTrkTofKaonMass(primMom,charge,mass2))
+	  { // Kaon candidate with TPC and ToF
+	    mRunQAHistoManager->fillTrkQaKaonPidTofM(cent9,primMom.Mag(),charge,mass2,deltaBeta);
 	  }
 	}
       }

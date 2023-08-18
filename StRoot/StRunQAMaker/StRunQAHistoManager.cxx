@@ -258,6 +258,27 @@ void StRunQAHistoManager::initTrkQA()
       h_mAcptSpinCmsKm[iCent][iTrig] = new TH2F(histName.c_str(),histName.c_str(),mNumRapBinQA,-2.5,2.5,mNumPtBinQA,-0.05,9.95);
     }
   }
+
+  for(int iCent = 0; iCent < mNumCentrality+1; ++iCent)
+  {
+    std::string histName = Form("h_mBetaCent%d",iCent);
+    h_mBeta[iCent] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,400,-2.0,2.0);
+    histName = Form("h_mBetaTpcKaonCent%d",iCent);
+    h_mBetaTpcKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,400,-2.0,2.0);
+    histName = Form("h_mBetaTofBKaonCent%d",iCent);
+    h_mBetaTofBKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,400,-2.0,2.0);
+    histName = Form("h_mBetaTofMKaonCent%d",iCent);
+    h_mBetaTofMKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,400,-2.0,2.0);
+
+    histName = Form("h_mMassCent%d",iCent);
+    h_mMass[iCent] = new TH2F(histName.c_str(),histName.c_str(),1100,-0.5,10.5,400,-2.0,2.0);
+    histName = Form("h_mMassTpcKaonCent%d",iCent);
+    h_mMassTpcKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),1100,-0.5,10.5,400,-2.0,2.0);
+    histName = Form("h_mMassTofBKaonCent%d",iCent);
+    h_mMassTofBKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),1100,-0.5,10.5,400,-2.0,2.0);
+    histName = Form("h_mMassTofMKaonCent%d",iCent);
+    h_mMassTofMKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),1100,-0.5,10.5,400,-2.0,2.0);
+  }
 }
 
 void StRunQAHistoManager::fillTrkQaKinematics(int triggerBin, TVector3 pMom, TVector3 gMom, int cutSelection)
@@ -415,6 +436,42 @@ void StRunQAHistoManager::fillTrkQaKaonAcptSpin(int triggerBin, int cent9, int c
   }
 }
 
+void StRunQAHistoManager::fillTrkQaKaonPid(int cent9, double pMag, int charge, double mass2, double deltaBeta)
+{
+  h_mBeta[cent9]->Fill(pMag/charge,deltaBeta);
+  h_mMass[cent9]->Fill(mass2/(charge*charge),deltaBeta);
+
+  h_mBeta[9]->Fill(pMag/charge,deltaBeta);
+  h_mMass[9]->Fill(mass2/(charge*charge),deltaBeta);
+}
+
+void StRunQAHistoManager::fillTrkQaKaonPidTpc(int cent9, double pMag, int charge, double mass2, double deltaBeta)
+{
+  h_mBetaTpcKaon[cent9]->Fill(pMag/charge,deltaBeta);
+  h_mMassTpcKaon[cent9]->Fill(mass2/(charge*charge),deltaBeta);
+
+  h_mBetaTpcKaon[9]->Fill(pMag/charge,deltaBeta);
+  h_mMassTpcKaon[9]->Fill(mass2/(charge*charge),deltaBeta);
+}
+
+void StRunQAHistoManager::fillTrkQaKaonPidTofB(int cent9, double pMag, int charge, double mass2, double deltaBeta)
+{
+  h_mBetaTofBKaon[cent9]->Fill(pMag/charge,deltaBeta);
+  h_mMassTofBKaon[cent9]->Fill(mass2/(charge*charge),deltaBeta);
+
+  h_mBetaTofBKaon[9]->Fill(pMag/charge,deltaBeta);
+  h_mMassTofBKaon[9]->Fill(mass2/(charge*charge),deltaBeta);
+}
+
+void StRunQAHistoManager::fillTrkQaKaonPidTofM(int cent9, double pMag, int charge, double mass2, double deltaBeta)
+{
+  h_mBetaTofMKaon[cent9]->Fill(pMag/charge,deltaBeta);
+  h_mMassTofMKaon[cent9]->Fill(mass2/(charge*charge),deltaBeta);
+
+  h_mBetaTofMKaon[9]->Fill(pMag/charge,deltaBeta);
+  h_mMassTofMKaon[9]->Fill(mass2/(charge*charge),deltaBeta);
+}
+
 void StRunQAHistoManager::writeTrkQA()
 {
   for(int iCut = 0; iCut < mNumCuts; ++iCut)
@@ -462,6 +519,18 @@ void StRunQAHistoManager::writeTrkQA()
       h_mAcptSpinLabKm[iCent][iTrig]->Write();
       h_mAcptSpinCmsKm[iCent][iTrig]->Write();
     }
+  }
+
+  for(int iCent = 0; iCent < mNumCentrality+1; ++iCent)
+  {
+    h_mBeta[iCent]->Write();
+    h_mBetaTpcKaon[iCent]->Write();
+    h_mBetaTofBKaon[iCent]->Write();
+    h_mBetaTofMKaon[iCent]->Write();
+    h_mMass[iCent]->Write();
+    h_mMassTpcKaon[iCent]->Write();
+    h_mMassTofBKaon[iCent]->Write();
+    h_mMassTofMKaon[iCent]->Write();
   }
 }
 //-------------------------------------------------------------------------------------------
