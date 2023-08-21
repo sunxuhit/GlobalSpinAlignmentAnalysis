@@ -207,23 +207,25 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
   {
     StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(iTrk);
     TVector3 primMom = picoTrack->pMom();
-    int charge       = static_cast<int>(picoTrack->charge());
-    double mass2     = mAnaUtils->getPrimMass2(picoDst, iTrk);
-    double beta      = mAnaUtils->getBeta(picoDst, iTrk);
+    const int charge       = static_cast<int>(picoTrack->charge());
+    const double mass2     = mAnaUtils->getPrimMass2(picoDst, iTrk);
+    const double beta      = mAnaUtils->getBeta(picoDst, iTrk);
+    const double betaExp   = primMom.Mag()/TMath::Sqrt(primMom.Mag2()+0.493677*0.493677); // expected beta of Kaon
+    const double deltaBeta = 1.0/beta - 1.0/betaExp;
 
     if(beta > -10.0 && mCent9 >= 0 && mCent9 <= 8)
     {
-      h_mBeta->Fill(pMag/charge,deltaBeta);
+      h_mBeta->Fill(primMom.Mag()/charge,deltaBeta);
       if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx))
       { // Kaon candidate with TPC only
-	h_mBetaTpcKaon->Fill(pMag/charge,deltaBeta);
+	h_mBetaTpcKaon->Fill(primMom.Mag()/charge,deltaBeta);
 	if(mAnaCut->passTrkTofKaonBeta(primMom,charge,beta))
 	{ // Kaon candidate with TPC and ToF
-	  h_mBetaTofBKaon->Fill(pMag/charge,deltaBeta);
+	  h_mBetaTofBKaon->Fill(primMom.Mag()/charge,deltaBeta);
 	}
 	if(mAnaCut->passTrkTofKaonMass(primMom,charge,mass2))
 	{ // Kaon candidate with TPC and ToF
-	  h_mBetaTofMKaon->Fill(pMag/charge,deltaBeta);
+	  h_mBetaTofMKaon->Fill(primMom.Mag()/charge,deltaBeta);
 	}
       }
     }
