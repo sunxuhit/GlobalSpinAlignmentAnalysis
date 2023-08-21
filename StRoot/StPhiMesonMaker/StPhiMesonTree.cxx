@@ -219,10 +219,10 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
       if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx))
       { // Kaon candidate with TPC only
 	h_mBetaTpcKaon->Fill(primMom.Mag()/charge,deltaBeta);
-	if(mAnaCut->passTrkTofKaonBeta(primMom,charge,beta))
-	{ // Kaon candidate with TPC and ToF
-	  h_mBetaTofBKaon->Fill(primMom.Mag()/charge,deltaBeta);
-	}
+	// if(mAnaCut->passTrkTofKaonBeta(primMom,charge,beta))
+	// { // Kaon candidate with TPC and ToF
+	//   h_mBetaTofBKaon->Fill(primMom.Mag()/charge,deltaBeta);
+	// }
 	if(mAnaCut->passTrkTofKaonMass(primMom,charge,mass2))
 	{ // Kaon candidate with TPC and ToF
 	  h_mBetaTofMKaon->Fill(primMom.Mag()/charge,deltaBeta);
@@ -253,6 +253,7 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
 	map_mChargeKm[phiMixKey].push_back(static_cast<int>(picoTrack->charge())); // charge
 	map_mNHitsFitKm[phiMixKey].push_back(static_cast<double>(picoTrack->nHitsFit())); // nHitsFit
       }
+      if(beta > -10.0) h_mBetaTofBKaon->Fill(primMom.Mag()/charge,deltaBeta);
     }
   }
 
