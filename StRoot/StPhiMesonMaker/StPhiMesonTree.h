@@ -141,6 +141,7 @@ class StPhiMesonTree : public TObject
     TH2F *h_mBetaTpcKaon;  // p/q vs. 1/beta - 1/betaKaon after TPC Kaon cuts for minBias
     TH2F *h_mBetaTofBKaon; // p/q vs. 1/beta - 1/betaKaon after ToF Beta Kaon cuts for minBias
     TH2F *h_mBetaTofMKaon; // p/q vs. 1/beta - 1/betaKaon after ToF Mass Kaon cuts for minBias
+    TH2F *h_mBetaKaonCand; // p/q vs. 1/beta - 1/betaKaon after Kaon Candidate cuts
 
     // set QVector
     int mFlagZdcEp; 

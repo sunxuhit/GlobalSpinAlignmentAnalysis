@@ -57,6 +57,7 @@ void StPhiMesonTree::initPhiTree()
   h_mBetaTpcKaon  = new TH2F("h_mBetaTpcKaonCent9","h_mBetaTpcKaonCent9",450,-4.5,4.5,400,-2.0,2.0);
   h_mBetaTofBKaon = new TH2F("h_mBetaTofBKaonCent9","h_mBetaTofBKaonCent9",450,-4.5,4.5,400,-2.0,2.0);
   h_mBetaTofMKaon = new TH2F("h_mBetaTofMKaonCent9","h_mBetaTofMKaonCent9",450,-4.5,4.5,400,-2.0,2.0);
+  h_mBetaKaonCand = new TH2F("h_mBetaKaonCandCent9","h_mBetaKaonCandCent9",450,-4.5,4.5,400,-2.0,2.0);
 
   mPhiMesonEvent = new StPhiMesonEvent();
   t_mPhiMesonTree = new TTree("PhiMesonEvent","PhiMesonEvent");
@@ -76,6 +77,7 @@ void StPhiMesonTree::writePhiTree()
   h_mBetaTpcKaon->Write();
   h_mBetaTofBKaon->Write();
   h_mBetaTofMKaon->Write();
+  h_mBetaKaonCand->Write();
   t_mPhiMesonTree->Write("",TObject::kOverwrite);
 }
 
@@ -219,10 +221,10 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
       if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx))
       { // Kaon candidate with TPC only
 	h_mBetaTpcKaon->Fill(primMom.Mag()/charge,deltaBeta);
-	// if(mAnaCut->passTrkTofKaonBeta(primMom,charge,beta))
-	// { // Kaon candidate with TPC and ToF
-	//   h_mBetaTofBKaon->Fill(primMom.Mag()/charge,deltaBeta);
-	// }
+	if(mAnaCut->passTrkTofKaonBeta(primMom,charge,beta))
+	{ // Kaon candidate with TPC and ToF
+	  h_mBetaTofBKaon->Fill(primMom.Mag()/charge,deltaBeta);
+	}
 	if(mAnaCut->passTrkTofKaonMass(primMom,charge,mass2))
 	{ // Kaon candidate with TPC and ToF
 	  h_mBetaTofMKaon->Fill(primMom.Mag()/charge,deltaBeta);
@@ -253,7 +255,7 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
 	map_mChargeKm[phiMixKey].push_back(static_cast<int>(picoTrack->charge())); // charge
 	map_mNHitsFitKm[phiMixKey].push_back(static_cast<double>(picoTrack->nHitsFit())); // nHitsFit
       }
-      if(beta > -10.0) h_mBetaTofBKaon->Fill(primMom.Mag()/charge,deltaBeta);
+      if(beta > -10.0) h_mBetaKaonCand->Fill(primMom.Mag()/charge,deltaBeta);
     }
   }
 
