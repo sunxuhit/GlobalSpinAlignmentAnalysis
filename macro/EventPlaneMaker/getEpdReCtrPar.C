@@ -26,10 +26,14 @@ void getEpdReCtrPar(int beamType = 0)
   TProfile2D *p_mEpdQ1SideReCtrYEast[mNumVzBin];
   TProfile2D *p_mEpdQ1SideReCtrXWest[mNumVzBin];
   TProfile2D *p_mEpdQ1SideReCtrYWest[mNumVzBin];
-  TProfile2D *p_mEpdQ1GrpReCtrXEast[mNumVzBin][mNumRingsGrps];
-  TProfile2D *p_mEpdQ1GrpReCtrYEast[mNumVzBin][mNumRingsGrps];
-  TProfile2D *p_mEpdQ1GrpReCtrXWest[mNumVzBin][mNumRingsGrps];
-  TProfile2D *p_mEpdQ1GrpReCtrYWest[mNumVzBin][mNumRingsGrps];
+  TProfile2D *p_mEpdQ1GrpReCtrTrkAveXEast[mNumVzBin][mNumRingsGrps];
+  TProfile2D *p_mEpdQ1GrpReCtrTrkAveYEast[mNumVzBin][mNumRingsGrps];
+  TProfile2D *p_mEpdQ1GrpReCtrTrkAveXWest[mNumVzBin][mNumRingsGrps];
+  TProfile2D *p_mEpdQ1GrpReCtrTrkAveYWest[mNumVzBin][mNumRingsGrps];
+  TProfile2D *p_mEpdQ1GrpReCtrEvtAveXEast[mNumVzBin][mNumRingsGrps];
+  TProfile2D *p_mEpdQ1GrpReCtrEvtAveYEast[mNumVzBin][mNumRingsGrps];
+  TProfile2D *p_mEpdQ1GrpReCtrEvtAveXWest[mNumVzBin][mNumRingsGrps];
+  TProfile2D *p_mEpdQ1GrpReCtrEvtAveYWest[mNumVzBin][mNumRingsGrps];
 
   // ReCtr Correction | x axis is runIndex, y axis is Centrality
   if(beamType == 0 || beamType == 1) // IsoBar
@@ -54,15 +58,25 @@ void getEpdReCtrPar(int beamType = 0)
     {
       for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
       {
-	std::string proName = Form("p_mEpdQ1Grp%dReCtrXEastVz%d",iGrp,iVz); // 1st EP
-	p_mEpdQ1GrpReCtrXEast[iVz][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
-	proName = Form("p_mEpdQ1Grp%dReCtrYEastVz%d",iGrp,iVz);
-	p_mEpdQ1GrpReCtrYEast[iVz][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
+	std::string proName = Form("p_mEpdQ1Grp%dReCtrTrkAveXEastVz%d",iGrp,iVz); // 1st EP
+	p_mEpdQ1GrpReCtrTrkAveXEast[iVz][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
+	proName = Form("p_mEpdQ1Grp%dReCtrTrkAveYEastVz%d",iGrp,iVz);
+	p_mEpdQ1GrpReCtrTrkAveYEast[iVz][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
 
-	proName = Form("p_mEpdQ1Grp%dReCtrXWestVz%d",iGrp,iVz);
-	p_mEpdQ1GrpReCtrXWest[iVz][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
-	proName = Form("p_mEpdQ1Grp%dReCtrYWestVz%d",iGrp,iVz);
-	p_mEpdQ1GrpReCtrYWest[iVz][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
+	proName = Form("p_mEpdQ1Grp%dReCtrTrkAveXWestVz%d",iGrp,iVz);
+	p_mEpdQ1GrpReCtrTrkAveXWest[iVz][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
+	proName = Form("p_mEpdQ1Grp%dReCtrTrkAveYWestVz%d",iGrp,iVz);
+	p_mEpdQ1GrpReCtrTrkAveYWest[iVz][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
+
+	proName = Form("p_mEpdQ1Grp%dReCtrEvtAveXEastVz%d",iGrp,iVz); // 1st EP
+	p_mEpdQ1GrpReCtrEvtAveXEast[iVz][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
+	proName = Form("p_mEpdQ1Grp%dReCtrEvtAveYEastVz%d",iGrp,iVz);
+	p_mEpdQ1GrpReCtrEvtAveYEast[iVz][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
+
+	proName = Form("p_mEpdQ1Grp%dReCtrEvtAveXWestVz%d",iGrp,iVz);
+	p_mEpdQ1GrpReCtrEvtAveXWest[iVz][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
+	proName = Form("p_mEpdQ1Grp%dReCtrEvtAveYWestVz%d",iGrp,iVz);
+	p_mEpdQ1GrpReCtrEvtAveYWest[iVz][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
       }
     }
   }
@@ -97,10 +111,19 @@ void getEpdReCtrPar(int beamType = 0)
       {
 	for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
 	{
-	  c_EpdQ1ReCtr->cd(1)->Clear(); c_EpdQ1ReCtr->cd(1); p_mEpdQ1GrpReCtrXEast[iVz][iGrp]->DrawCopy("colz");
-	  c_EpdQ1ReCtr->cd(2)->Clear(); c_EpdQ1ReCtr->cd(2); p_mEpdQ1GrpReCtrYEast[iVz][iGrp]->DrawCopy("colz");
-	  c_EpdQ1ReCtr->cd(3)->Clear(); c_EpdQ1ReCtr->cd(3); p_mEpdQ1GrpReCtrXWest[iVz][iGrp]->DrawCopy("colz");
-	  c_EpdQ1ReCtr->cd(4)->Clear(); c_EpdQ1ReCtr->cd(4); p_mEpdQ1GrpReCtrYWest[iVz][iGrp]->DrawCopy("colz");
+	  c_EpdQ1ReCtr->cd(1)->Clear(); c_EpdQ1ReCtr->cd(1); p_mEpdQ1GrpReCtrTrkAveXEast[iVz][iGrp]->DrawCopy("colz");
+	  c_EpdQ1ReCtr->cd(2)->Clear(); c_EpdQ1ReCtr->cd(2); p_mEpdQ1GrpReCtrTrkAveYEast[iVz][iGrp]->DrawCopy("colz");
+	  c_EpdQ1ReCtr->cd(3)->Clear(); c_EpdQ1ReCtr->cd(3); p_mEpdQ1GrpReCtrTrkAveXWest[iVz][iGrp]->DrawCopy("colz");
+	  c_EpdQ1ReCtr->cd(4)->Clear(); c_EpdQ1ReCtr->cd(4); p_mEpdQ1GrpReCtrTrkAveYWest[iVz][iGrp]->DrawCopy("colz");
+	  c_EpdQ1ReCtr->Update();
+	  c_EpdQ1ReCtr->Print(figName.c_str());
+	}
+	for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
+	{
+	  c_EpdQ1ReCtr->cd(1)->Clear(); c_EpdQ1ReCtr->cd(1); p_mEpdQ1GrpReCtrEvtAveXEast[iVz][iGrp]->DrawCopy("colz");
+	  c_EpdQ1ReCtr->cd(2)->Clear(); c_EpdQ1ReCtr->cd(2); p_mEpdQ1GrpReCtrEvtAveYEast[iVz][iGrp]->DrawCopy("colz");
+	  c_EpdQ1ReCtr->cd(3)->Clear(); c_EpdQ1ReCtr->cd(3); p_mEpdQ1GrpReCtrEvtAveXWest[iVz][iGrp]->DrawCopy("colz");
+	  c_EpdQ1ReCtr->cd(4)->Clear(); c_EpdQ1ReCtr->cd(4); p_mEpdQ1GrpReCtrEvtAveYWest[iVz][iGrp]->DrawCopy("colz");
 	  c_EpdQ1ReCtr->Update();
 	  c_EpdQ1ReCtr->Print(figName.c_str());
 	}
@@ -127,10 +150,15 @@ void getEpdReCtrPar(int beamType = 0)
     {
       for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
       {
-	p_mEpdQ1GrpReCtrXEast[iVz][iGrp]->Write();
-	p_mEpdQ1GrpReCtrYEast[iVz][iGrp]->Write();
-	p_mEpdQ1GrpReCtrXWest[iVz][iGrp]->Write();
-	p_mEpdQ1GrpReCtrYWest[iVz][iGrp]->Write();
+	p_mEpdQ1GrpReCtrTrkAveXEast[iVz][iGrp]->Write();
+	p_mEpdQ1GrpReCtrTrkAveYEast[iVz][iGrp]->Write();
+	p_mEpdQ1GrpReCtrTrkAveXWest[iVz][iGrp]->Write();
+	p_mEpdQ1GrpReCtrTrkAveYWest[iVz][iGrp]->Write();
+
+	p_mEpdQ1GrpReCtrEvtAveXEast[iVz][iGrp]->Write();
+	p_mEpdQ1GrpReCtrEvtAveYEast[iVz][iGrp]->Write();
+	p_mEpdQ1GrpReCtrEvtAveXWest[iVz][iGrp]->Write();
+	p_mEpdQ1GrpReCtrEvtAveYWest[iVz][iGrp]->Write();
       }
     }
   }

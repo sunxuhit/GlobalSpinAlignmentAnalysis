@@ -809,7 +809,7 @@ int StEventPlaneMaker::Make()
 	      const double Psi1GrpReCtrEvtAveEast = mEpdEpManager->getPsi1GrpReCtrEvtAveEast(iGrp);
 	      const double Psi1GrpReCtrEvtAveWest = mEpdEpManager->getPsi1GrpReCtrEvtAveWest(iGrp);
 	      const double Psi1GrpReCtrEvtAveFull = mEpdEpManager->getPsi1GrpReCtrEvtAveFull(iGrp);
-	      mEpdEpManager->fillEpdSubEpGrpReCtrTrkAve(Psi1GrpReCtrEvtAveEast, Psi1GrpReCtrEvtAveWest, Psi1GrpReCtrEvtAveFull, iGrp);
+	      mEpdEpManager->fillEpdSubEpGrpReCtrEvtAve(Psi1GrpReCtrEvtAveEast, Psi1GrpReCtrEvtAveWest, Psi1GrpReCtrEvtAveFull, iGrp);
 	      mEpdEpManager->fillEpdGrpShiftEvtAveEast(iGrp); // fill Evt Ave Shift Parameter
 	      mEpdEpManager->fillEpdGrpShiftEvtAveWest(iGrp);
 
