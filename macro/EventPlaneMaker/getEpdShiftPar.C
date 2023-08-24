@@ -28,10 +28,14 @@ void getEpdShiftPar(int beamType = 0)
   TProfile2D *p_mEpdQ1SideShiftSinEast[mNumVzBin][mNumShiftCorr];
   TProfile2D *p_mEpdQ1SideShiftCosWest[mNumVzBin][mNumShiftCorr];
   TProfile2D *p_mEpdQ1SideShiftSinWest[mNumVzBin][mNumShiftCorr];
-  TProfile2D *p_mEpdQ1GrpShiftCosEast[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
-  TProfile2D *p_mEpdQ1GrpShiftSinEast[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
-  TProfile2D *p_mEpdQ1GrpShiftCosWest[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
-  TProfile2D *p_mEpdQ1GrpShiftSinWest[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
+  TProfile2D *p_mEpdQ1GrpShiftCosTrkAveEast[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
+  TProfile2D *p_mEpdQ1GrpShiftSinTrkAveEast[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
+  TProfile2D *p_mEpdQ1GrpShiftCosTrkAveWest[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
+  TProfile2D *p_mEpdQ1GrpShiftSinTrkAveWest[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
+  TProfile2D *p_mEpdQ1GrpShiftCosEvtAveEast[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
+  TProfile2D *p_mEpdQ1GrpShiftSinEvtAveEast[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
+  TProfile2D *p_mEpdQ1GrpShiftCosEvtAveWest[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
+  TProfile2D *p_mEpdQ1GrpShiftSinEvtAveWest[mNumVzBin][mNumShiftCorr][mNumRingsGrps];
   for(int iVz = 0; iVz < mNumVzBin; ++iVz)
   {
     for(int iShift = 0; iShift < mNumShiftCorr; ++iShift) // Shift Order
@@ -52,15 +56,25 @@ void getEpdShiftPar(int beamType = 0)
       {
 	for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
 	{
-	  std::string proName = Form("p_mEpdQ1Grp%dShiftCos%dEastVz%d",iGrp,iShift,iVz); // 1st EP
-	  p_mEpdQ1GrpShiftCosEast[iVz][iShift][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
-	  proName = Form("p_mEpdQ1Grp%dShiftSin%dEastVz%d",iGrp,iShift,iVz);
-	  p_mEpdQ1GrpShiftSinEast[iVz][iShift][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
+	  std::string proName = Form("p_mEpdQ1Grp%dShiftCos%dTrkAveEastVz%d",iGrp,iShift,iVz); // 1st EP
+	  p_mEpdQ1GrpShiftCosTrkAveEast[iVz][iShift][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
+	  proName = Form("p_mEpdQ1Grp%dShiftSin%dTrkAveEastVz%d",iGrp,iShift,iVz);
+	  p_mEpdQ1GrpShiftSinTrkAveEast[iVz][iShift][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
 
-	  proName = Form("p_mEpdQ1Grp%dShiftCos%dWestVz%d",iGrp,iShift,iVz);
-	  p_mEpdQ1GrpShiftCosWest[iVz][iShift][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
-	  proName = Form("p_mEpdQ1Grp%dShiftSin%dWestVz%d",iGrp,iShift,iVz);
-	  p_mEpdQ1GrpShiftSinWest[iVz][iShift][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
+	  proName = Form("p_mEpdQ1Grp%dShiftCos%dTrkAveWestVz%d",iGrp,iShift,iVz);
+	  p_mEpdQ1GrpShiftCosTrkAveWest[iVz][iShift][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
+	  proName = Form("p_mEpdQ1Grp%dShiftSin%dTrkAveWestVz%d",iGrp,iShift,iVz);
+	  p_mEpdQ1GrpShiftSinTrkAveWest[iVz][iShift][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
+
+	  proName = Form("p_mEpdQ1Grp%dShiftCos%dEvtAveEastVz%d",iGrp,iShift,iVz); // 1st EP
+	  p_mEpdQ1GrpShiftCosEvtAveEast[iVz][iShift][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
+	  proName = Form("p_mEpdQ1Grp%dShiftSin%dEvtAveEastVz%d",iGrp,iShift,iVz);
+	  p_mEpdQ1GrpShiftSinEvtAveEast[iVz][iShift][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
+
+	  proName = Form("p_mEpdQ1Grp%dShiftCos%dEvtAveWestVz%d",iGrp,iShift,iVz);
+	  p_mEpdQ1GrpShiftCosEvtAveWest[iVz][iShift][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
+	  proName = Form("p_mEpdQ1Grp%dShiftSin%dEvtAveWestVz%d",iGrp,iShift,iVz);
+	  p_mEpdQ1GrpShiftSinEvtAveWest[iVz][iShift][iGrp] = (TProfile2D*)file_InPut->Get(proName.c_str());
 	}
       }
     }
@@ -98,10 +112,19 @@ void getEpdShiftPar(int beamType = 0)
 	{
 	  for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
 	  {
-	    c_EpdQ1Shift->cd(1)->Clear(); c_EpdQ1Shift->cd(1); p_mEpdQ1GrpShiftCosEast[iVz][iShift][iGrp]->DrawCopy("colz");
-	    c_EpdQ1Shift->cd(2)->Clear(); c_EpdQ1Shift->cd(2); p_mEpdQ1GrpShiftSinEast[iVz][iShift][iGrp]->DrawCopy("colz");
-	    c_EpdQ1Shift->cd(3)->Clear(); c_EpdQ1Shift->cd(3); p_mEpdQ1GrpShiftCosWest[iVz][iShift][iGrp]->DrawCopy("colz");
-	    c_EpdQ1Shift->cd(4)->Clear(); c_EpdQ1Shift->cd(4); p_mEpdQ1GrpShiftSinWest[iVz][iShift][iGrp]->DrawCopy("colz");
+	    c_EpdQ1Shift->cd(1)->Clear(); c_EpdQ1Shift->cd(1); p_mEpdQ1GrpShiftCosTrkAveEast[iVz][iShift][iGrp]->DrawCopy("colz");
+	    c_EpdQ1Shift->cd(2)->Clear(); c_EpdQ1Shift->cd(2); p_mEpdQ1GrpShiftSinTrkAveEast[iVz][iShift][iGrp]->DrawCopy("colz");
+	    c_EpdQ1Shift->cd(3)->Clear(); c_EpdQ1Shift->cd(3); p_mEpdQ1GrpShiftCosTrkAveWest[iVz][iShift][iGrp]->DrawCopy("colz");
+	    c_EpdQ1Shift->cd(4)->Clear(); c_EpdQ1Shift->cd(4); p_mEpdQ1GrpShiftSinTrkAveWest[iVz][iShift][iGrp]->DrawCopy("colz");
+	    c_EpdQ1Shift->Update();
+	    c_EpdQ1Shift->Print(figName.c_str());
+	  }
+	  for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
+	  {
+	    c_EpdQ1Shift->cd(1)->Clear(); c_EpdQ1Shift->cd(1); p_mEpdQ1GrpShiftCosEvtAveEast[iVz][iShift][iGrp]->DrawCopy("colz");
+	    c_EpdQ1Shift->cd(2)->Clear(); c_EpdQ1Shift->cd(2); p_mEpdQ1GrpShiftSinEvtAveEast[iVz][iShift][iGrp]->DrawCopy("colz");
+	    c_EpdQ1Shift->cd(3)->Clear(); c_EpdQ1Shift->cd(3); p_mEpdQ1GrpShiftCosEvtAveWest[iVz][iShift][iGrp]->DrawCopy("colz");
+	    c_EpdQ1Shift->cd(4)->Clear(); c_EpdQ1Shift->cd(4); p_mEpdQ1GrpShiftSinEvtAveWest[iVz][iShift][iGrp]->DrawCopy("colz");
 	    c_EpdQ1Shift->Update();
 	    c_EpdQ1Shift->Print(figName.c_str());
 	  }
@@ -131,10 +154,15 @@ void getEpdShiftPar(int beamType = 0)
       {
 	for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
 	{
-	  p_mEpdQ1GrpShiftCosEast[iVz][iShift][iGrp]->Write();
-	  p_mEpdQ1GrpShiftSinEast[iVz][iShift][iGrp]->Write();
-	  p_mEpdQ1GrpShiftCosWest[iVz][iShift][iGrp]->Write();
-	  p_mEpdQ1GrpShiftSinWest[iVz][iShift][iGrp]->Write();
+	  p_mEpdQ1GrpShiftCosTrkAveEast[iVz][iShift][iGrp]->Write();
+	  p_mEpdQ1GrpShiftSinTrkAveEast[iVz][iShift][iGrp]->Write();
+	  p_mEpdQ1GrpShiftCosTrkAveWest[iVz][iShift][iGrp]->Write();
+	  p_mEpdQ1GrpShiftSinTrkAveWest[iVz][iShift][iGrp]->Write();
+
+	  p_mEpdQ1GrpShiftCosEvtAveEast[iVz][iShift][iGrp]->Write();
+	  p_mEpdQ1GrpShiftSinEvtAveEast[iVz][iShift][iGrp]->Write();
+	  p_mEpdQ1GrpShiftCosEvtAveWest[iVz][iShift][iGrp]->Write();
+	  p_mEpdQ1GrpShiftSinEvtAveWest[iVz][iShift][iGrp]->Write();
 	}
       }
     }
@@ -146,10 +174,14 @@ void getEpdShiftPar(int beamType = 0)
   TH2F *h_mEpdEp1SideReCtrWest[mNumCentrality];
   TH2F *h_mEpdEp1SideReCtrFull[mNumCentrality];
   TH2F *h_mEpdEp1SideReCtrCorr[mNumCentrality]; // Psi1East vs Psi1West
-  TH2F *h_mEpdEp1GrpReCtrEast[mNumCentrality][mNumRingsGrps];
-  TH2F *h_mEpdEp1GrpReCtrWest[mNumCentrality][mNumRingsGrps];
-  TH2F *h_mEpdEp1GrpReCtrFull[mNumCentrality][mNumRingsGrps];
-  TH2F *h_mEpdEp1GrpReCtrCorr[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpReCtrTrkAveEast[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpReCtrTrkAveWest[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpReCtrTrkAveFull[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpReCtrTrkAveCorr[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpReCtrEvtAveEast[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpReCtrEvtAveWest[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpReCtrEvtAveFull[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpReCtrEvtAveCorr[mNumCentrality][mNumRingsGrps];
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     if(beamType == 0 || beamType == 1)
@@ -167,14 +199,23 @@ void getEpdShiftPar(int beamType = 0)
     {
       for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
       {
-	std::string histName = Form("h_mEpdEp1Grp%dReCtrEastCent%d",iGrp,iCent);
-	h_mEpdEp1GrpReCtrEast[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
-	histName = Form("h_mEpdEp1Grp%dReCtrWestCent%d",iGrp,iCent);
-	h_mEpdEp1GrpReCtrWest[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
-	histName = Form("h_mEpdEp1Grp%dReCtrFullCent%d",iGrp,iCent);
-	h_mEpdEp1GrpReCtrFull[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
-	histName = Form("h_mEpdEp1Grp%dReCtrCorrCent%d",iGrp,iCent);
-	h_mEpdEp1GrpReCtrCorr[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	std::string histName = Form("h_mEpdEp1Grp%dReCtrTrkAveEastCent%d",iGrp,iCent);
+	h_mEpdEp1GrpReCtrTrkAveEast[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	histName = Form("h_mEpdEp1Grp%dReCtrTrkAveWestCent%d",iGrp,iCent);
+	h_mEpdEp1GrpReCtrTrkAveWest[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	histName = Form("h_mEpdEp1Grp%dReCtrTrkAveFullCent%d",iGrp,iCent);
+	h_mEpdEp1GrpReCtrTrkAveFull[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	histName = Form("h_mEpdEp1Grp%dReCtrTrkAveCorrCent%d",iGrp,iCent);
+	h_mEpdEp1GrpReCtrTrkAveCorr[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+
+	histName = Form("h_mEpdEp1Grp%dReCtrEvtAveEastCent%d",iGrp,iCent);
+	h_mEpdEp1GrpReCtrEvtAveEast[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	histName = Form("h_mEpdEp1Grp%dReCtrEvtAveWestCent%d",iGrp,iCent);
+	h_mEpdEp1GrpReCtrEvtAveWest[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	histName = Form("h_mEpdEp1Grp%dReCtrEvtAveFullCent%d",iGrp,iCent);
+	h_mEpdEp1GrpReCtrEvtAveFull[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	histName = Form("h_mEpdEp1Grp%dReCtrEvtAveCorrCent%d",iGrp,iCent);
+	h_mEpdEp1GrpReCtrEvtAveCorr[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
       }
     }
   }
@@ -209,10 +250,19 @@ void getEpdShiftPar(int beamType = 0)
       {
 	for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
 	{
-	  c_EpdEp1SideReCtrDist->cd(1)->Clear(); c_EpdEp1SideReCtrDist->cd(1); h_mEpdEp1GrpReCtrEast[iCent][iGrp]->ProjectionY()->DrawCopy();
-	  c_EpdEp1SideReCtrDist->cd(2)->Clear(); c_EpdEp1SideReCtrDist->cd(2); h_mEpdEp1GrpReCtrWest[iCent][iGrp]->ProjectionY()->DrawCopy();
-	  c_EpdEp1SideReCtrDist->cd(3)->Clear(); c_EpdEp1SideReCtrDist->cd(3); h_mEpdEp1GrpReCtrFull[iCent][iGrp]->ProjectionY()->DrawCopy();
-	  c_EpdEp1SideReCtrDist->cd(4)->Clear(); c_EpdEp1SideReCtrDist->cd(4); h_mEpdEp1GrpReCtrCorr[iCent][iGrp]->DrawCopy("colz");
+	  c_EpdEp1SideReCtrDist->cd(1)->Clear(); c_EpdEp1SideReCtrDist->cd(1); h_mEpdEp1GrpReCtrTrkAveEast[iCent][iGrp]->ProjectionY()->DrawCopy();
+	  c_EpdEp1SideReCtrDist->cd(2)->Clear(); c_EpdEp1SideReCtrDist->cd(2); h_mEpdEp1GrpReCtrTrkAveWest[iCent][iGrp]->ProjectionY()->DrawCopy();
+	  c_EpdEp1SideReCtrDist->cd(3)->Clear(); c_EpdEp1SideReCtrDist->cd(3); h_mEpdEp1GrpReCtrTrkAveFull[iCent][iGrp]->ProjectionY()->DrawCopy();
+	  c_EpdEp1SideReCtrDist->cd(4)->Clear(); c_EpdEp1SideReCtrDist->cd(4); h_mEpdEp1GrpReCtrTrkAveCorr[iCent][iGrp]->DrawCopy("colz");
+	  c_EpdEp1SideReCtrDist->Update();
+	  c_EpdEp1SideReCtrDist->Print(figName.c_str());
+	}
+	for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
+	{
+	  c_EpdEp1SideReCtrDist->cd(1)->Clear(); c_EpdEp1SideReCtrDist->cd(1); h_mEpdEp1GrpReCtrEvtAveEast[iCent][iGrp]->ProjectionY()->DrawCopy();
+	  c_EpdEp1SideReCtrDist->cd(2)->Clear(); c_EpdEp1SideReCtrDist->cd(2); h_mEpdEp1GrpReCtrEvtAveWest[iCent][iGrp]->ProjectionY()->DrawCopy();
+	  c_EpdEp1SideReCtrDist->cd(3)->Clear(); c_EpdEp1SideReCtrDist->cd(3); h_mEpdEp1GrpReCtrEvtAveFull[iCent][iGrp]->ProjectionY()->DrawCopy();
+	  c_EpdEp1SideReCtrDist->cd(4)->Clear(); c_EpdEp1SideReCtrDist->cd(4); h_mEpdEp1GrpReCtrEvtAveCorr[iCent][iGrp]->DrawCopy("colz");
 	  c_EpdEp1SideReCtrDist->Update();
 	  c_EpdEp1SideReCtrDist->Print(figName.c_str());
 	}
@@ -239,10 +289,15 @@ void getEpdShiftPar(int beamType = 0)
     {
       for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
       {
-	h_mEpdEp1GrpReCtrEast[iCent][iGrp]->Write();
-	h_mEpdEp1GrpReCtrWest[iCent][iGrp]->Write();
-	h_mEpdEp1GrpReCtrFull[iCent][iGrp]->Write();
-	h_mEpdEp1GrpReCtrCorr[iCent][iGrp]->Write();
+	h_mEpdEp1GrpReCtrTrkAveEast[iCent][iGrp]->Write();
+	h_mEpdEp1GrpReCtrTrkAveWest[iCent][iGrp]->Write();
+	h_mEpdEp1GrpReCtrTrkAveFull[iCent][iGrp]->Write();
+	h_mEpdEp1GrpReCtrTrkAveCorr[iCent][iGrp]->Write();
+
+	h_mEpdEp1GrpReCtrEvtAveEast[iCent][iGrp]->Write();
+	h_mEpdEp1GrpReCtrEvtAveWest[iCent][iGrp]->Write();
+	h_mEpdEp1GrpReCtrEvtAveFull[iCent][iGrp]->Write();
+	h_mEpdEp1GrpReCtrEvtAveCorr[iCent][iGrp]->Write();
       }
     }
   }

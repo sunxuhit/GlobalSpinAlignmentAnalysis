@@ -103,11 +103,14 @@ void getEpdResolution(int beamType = 0)
   TH2F *h_mEpdEp1SideShiftFull[mNumCentrality]; // Qwest-QEast
   TH2F *h_mEpdEp1SideShiftCorr[mNumCentrality]; // Psi1East vs Psi1West
   TH2F *h_mEpdEp1SideShiftFullCorr[mNumCentrality];
-  TH2F *h_mEpdEp1GrpShiftEast[mNumCentrality][mNumRingsGrps];
-  TH2F *h_mEpdEp1GrpShiftWest[mNumCentrality][mNumRingsGrps];
-  TH2F *h_mEpdEp1GrpShiftFull[mNumCentrality][mNumRingsGrps];
-  TH2F *h_mEpdEp1GrpShiftCorr[mNumCentrality][mNumRingsGrps];
-  // TH2F *h_mEpdEp1GrpShiftFullCorr[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpShiftTrkAveEast[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpShiftTrkAveWest[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpShiftTrkAveFull[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpShiftTrkAveCorr[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpShiftEvtAveEast[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpShiftEvtAveWest[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpShiftEvtAveFull[mNumCentrality][mNumRingsGrps];
+  TH2F *h_mEpdEp1GrpShiftEvtAveCorr[mNumCentrality][mNumRingsGrps];
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     if(beamType == 0 || beamType == 1)
@@ -127,16 +130,23 @@ void getEpdResolution(int beamType = 0)
     {
       for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
       {
-	std::string histName = Form("h_mEpdEp1Grp%dShiftEastCent%d",iGrp,iCent);
-	h_mEpdEp1GrpShiftEast[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
-	histName = Form("h_mEpdEp1Grp%dShiftWestCent%d",iGrp,iCent);
-	h_mEpdEp1GrpShiftWest[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
-	histName = Form("h_mEpdEp1Grp%dShiftFullCent%d",iGrp,iCent);
-	h_mEpdEp1GrpShiftFull[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
-	histName = Form("h_mEpdEp1Grp%dShiftCorrCent%d",iGrp,iCent);
-	h_mEpdEp1GrpShiftCorr[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
-	// histName = Form("h_mEpdEp1Grp%dShiftFullCorrCent%d",iGrp,iCent);
-	// h_mEpdEp1GrpShiftFullCorr[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	std::string histName = Form("h_mEpdEp1Grp%dShiftTrkAveEastCent%d",iGrp,iCent);
+	h_mEpdEp1GrpShiftTrkAveEast[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	histName = Form("h_mEpdEp1Grp%dShiftTrkAveWestCent%d",iGrp,iCent);
+	h_mEpdEp1GrpShiftTrkAveWest[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	histName = Form("h_mEpdEp1Grp%dShiftTrkAveFullCent%d",iGrp,iCent);
+	h_mEpdEp1GrpShiftTrkAveFull[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	histName = Form("h_mEpdEp1Grp%dShiftTrkAveCorrCent%d",iGrp,iCent);
+	h_mEpdEp1GrpShiftTrkAveCorr[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+
+	histName = Form("h_mEpdEp1Grp%dShiftEvtAveEastCent%d",iGrp,iCent);
+	h_mEpdEp1GrpShiftEvtAveEast[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	histName = Form("h_mEpdEp1Grp%dShiftEvtAveWestCent%d",iGrp,iCent);
+	h_mEpdEp1GrpShiftEvtAveWest[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	histName = Form("h_mEpdEp1Grp%dShiftEvtAveFullCent%d",iGrp,iCent);
+	h_mEpdEp1GrpShiftEvtAveFull[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
+	histName = Form("h_mEpdEp1Grp%dShiftEvtAveCorrCent%d",iGrp,iCent);
+	h_mEpdEp1GrpShiftEvtAveCorr[iCent][iGrp] = (TH2F*)file_InPut->Get(histName.c_str());
       }
     }
   }
@@ -172,11 +182,19 @@ void getEpdResolution(int beamType = 0)
       {
 	for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
 	{
-	  c_EpdEp1ShiftDist->cd(1)->Clear(); c_EpdEp1ShiftDist->cd(1); h_mEpdEp1GrpShiftEast[iCent][iGrp]->ProjectionY()->DrawCopy();
-	  c_EpdEp1ShiftDist->cd(2)->Clear(); c_EpdEp1ShiftDist->cd(2); h_mEpdEp1GrpShiftWest[iCent][iGrp]->ProjectionY()->DrawCopy();
-	  c_EpdEp1ShiftDist->cd(3)->Clear(); c_EpdEp1ShiftDist->cd(3); h_mEpdEp1GrpShiftFull[iCent][iGrp]->ProjectionY()->DrawCopy();
-	  // c_EpdEp1ShiftDist->cd(4)->Clear(); c_EpdEp1ShiftDist->cd(4); h_mEpdEp1GrpShiftFullCorr[iCent][iGrp]->ProjectionY()->DrawCopy();
-	  c_EpdEp1ShiftDist->cd(5)->Clear(); c_EpdEp1ShiftDist->cd(5); h_mEpdEp1GrpShiftCorr[iCent][iGrp]->DrawCopy("colz");
+	  c_EpdEp1ShiftDist->cd(1)->Clear(); c_EpdEp1ShiftDist->cd(1); h_mEpdEp1GrpShiftTrkAveEast[iCent][iGrp]->ProjectionY()->DrawCopy();
+	  c_EpdEp1ShiftDist->cd(2)->Clear(); c_EpdEp1ShiftDist->cd(2); h_mEpdEp1GrpShiftTrkAveWest[iCent][iGrp]->ProjectionY()->DrawCopy();
+	  c_EpdEp1ShiftDist->cd(3)->Clear(); c_EpdEp1ShiftDist->cd(3); h_mEpdEp1GrpShiftTrkAveFull[iCent][iGrp]->ProjectionY()->DrawCopy();
+	  c_EpdEp1ShiftDist->cd(5)->Clear(); c_EpdEp1ShiftDist->cd(5); h_mEpdEp1GrpShiftTrkAveCorr[iCent][iGrp]->DrawCopy("colz");
+	  c_EpdEp1ShiftDist->Update();
+	  c_EpdEp1ShiftDist->Print(figName.c_str());
+	}
+	for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
+	{
+	  c_EpdEp1ShiftDist->cd(1)->Clear(); c_EpdEp1ShiftDist->cd(1); h_mEpdEp1GrpShiftEvtAveEast[iCent][iGrp]->ProjectionY()->DrawCopy();
+	  c_EpdEp1ShiftDist->cd(2)->Clear(); c_EpdEp1ShiftDist->cd(2); h_mEpdEp1GrpShiftEvtAveWest[iCent][iGrp]->ProjectionY()->DrawCopy();
+	  c_EpdEp1ShiftDist->cd(3)->Clear(); c_EpdEp1ShiftDist->cd(3); h_mEpdEp1GrpShiftEvtAveFull[iCent][iGrp]->ProjectionY()->DrawCopy();
+	  c_EpdEp1ShiftDist->cd(5)->Clear(); c_EpdEp1ShiftDist->cd(5); h_mEpdEp1GrpShiftEvtAveCorr[iCent][iGrp]->DrawCopy("colz");
 	  c_EpdEp1ShiftDist->Update();
 	  c_EpdEp1ShiftDist->Print(figName.c_str());
 	}
@@ -204,11 +222,15 @@ void getEpdResolution(int beamType = 0)
     {
       for(int iGrp = 0; iGrp < mNumRingsGrps; ++iGrp)
       {
-	h_mEpdEp1GrpShiftEast[iCent][iGrp]->Write();
-	h_mEpdEp1GrpShiftWest[iCent][iGrp]->Write();
-	h_mEpdEp1GrpShiftFull[iCent][iGrp]->Write();
-	h_mEpdEp1GrpShiftCorr[iCent][iGrp]->Write();
-	// h_mEpdEp1GrpShiftFullCorr[iCent][iGrp]->Write();
+	h_mEpdEp1GrpShiftTrkAveEast[iCent][iGrp]->Write();
+	h_mEpdEp1GrpShiftTrkAveWest[iCent][iGrp]->Write();
+	h_mEpdEp1GrpShiftTrkAveFull[iCent][iGrp]->Write();
+	h_mEpdEp1GrpShiftTrkAveCorr[iCent][iGrp]->Write();
+
+	h_mEpdEp1GrpShiftEvtAveEast[iCent][iGrp]->Write();
+	h_mEpdEp1GrpShiftEvtAveWest[iCent][iGrp]->Write();
+	h_mEpdEp1GrpShiftEvtAveFull[iCent][iGrp]->Write();
+	h_mEpdEp1GrpShiftEvtAveCorr[iCent][iGrp]->Write();
       }
     }
   }
