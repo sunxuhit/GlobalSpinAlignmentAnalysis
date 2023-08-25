@@ -156,6 +156,9 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
   int PsiBin = getPsiMixBin(mPsiShiftFull,2); // for IsoBar
   if(mAnaCut->isFxt3p85GeV_2018()) PsiBin = getPsiMixBin(mPsiShiftFull,1); // for FXT
   int evtBin = mEventCounter[mCent9][vzBin][PsiBin];
+  int phiMixKey = getPhiMixKey(mCent9,vzBin,PsiBin,evtBin);
+
+  cout << "mCent9 = " << mCent9 << ", vzBin = " << vzBin << ", PsiBin = " << PsiBin << ", evtBin = " << evtBin << ", phiMixKey = " << phiMixKey << endl;
 
   const unsigned int nTracks = picoDst->numberOfTracks();
   TVector3 primVtx = picoEvent->primaryVertex();
@@ -234,7 +237,6 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
 
     if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx) && mAnaCut->passTrkTofKaonBeta(primMom,charge,beta))
     {
-      int phiMixKey = getPhiMixKey(mCent9,vzBin,PsiBin,evtBin);
       if(charge > 0)
       { // K+ candidate
 	map_mMomVecKp[phiMixKey].push_back(static_cast<TVector3>(picoTrack->pMom()));// primMom 
@@ -360,6 +362,7 @@ void StPhiMesonTree::recoPhi(int cent9, int vzBin, int PsiBin) // reconstruct ph
 	  mPhiMesonTrack->setFlagKp(iEvt); // K+
 	  mPhiMesonTrack->setFlagKm(iEvt); // K-
 	  h_mInvMassPhi[cent9]->Fill(ptPhi,invMassPhi); // Fill histogram with InvMassAB information
+	  cout << "runId = " << vec_mRunId[cent9][vzBin][PsiBin][evtBin] << ", evtId = " << vec_mEvtId[cent9][vzBin][PsiBin][evtBin] << ", phiMixKey = " << phiMixKey << ", ptPhi = " << ptPhi << ", invMassPhi = " << invMassPhi << endl;
 	}
       }
     }
