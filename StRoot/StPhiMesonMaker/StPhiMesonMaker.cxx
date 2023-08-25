@@ -329,7 +329,7 @@ int StPhiMesonMaker::Make()
 	  const double Psi2ShiftFull  = mTpcEpManager->getPsi2ShiftFull(vQ2TpcFull); // Psi2 from Full TPC EP & Used for Event Mixing
 
 	  mPhiMesonTree->clearEvtInfo();
-	  mPhiMesonTree->setEvtInfo(runIdx, cent9, cent16, refWgt, vz, Psi2ShiftFull); // Use Psi2ShiftFull for Event Mixing
+	  mPhiMesonTree->setEvtInfo(runIdx, refMult, cent9, cent16, refWgt, vz, Psi2ShiftFull); // Use Psi2ShiftFull for Event Mixing
 	  mPhiMesonTree->setZdcQ1Flag(flagZdcEp); // ZDC EP
 	  mPhiMesonTree->setZdcQ1Vec(vQ1ZdcEast, vQ1ZdcWest, vQ1ZdcFull); // Shift Corrected ZDC Q1Vector: East & West & Full
 	  mPhiMesonTree->setEpdQ1SideFlag(flagEpdSideEp); // EPD Side EP
