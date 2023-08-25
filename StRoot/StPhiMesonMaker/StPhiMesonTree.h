@@ -40,7 +40,7 @@ class StPhiMesonTree : public TObject
 
     // set event info
     void clearEvtInfo();
-    void setEvtInfo(int runIdx, int cent9, int cent16, double refwgt, double vz, double PsiShiftFull);
+    void setEvtInfo(int runIdx, int refMult, int cent9, int cent16, double refwgt, double vz, double PsiShiftFull);
     void setZdcQ1Flag(int flagEp); // ZDC Flag
     void setZdcQ1Vec(TVector2 Q1VecZdcShiftEast,TVector2 Q1VecZdcShiftWest, TVector2 Q1VecZdcShiftFull); // Shift Corrected ZDC Q1Vector: East & West & Full
     void setEpdQ1SideFlag(int flagEp); // EPD Side FLag
@@ -84,7 +84,7 @@ class StPhiMesonTree : public TObject
     std::vector<int> vec_mNumTofMatch[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
     std::vector<int> vec_mCent9[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
     std::vector<int> vec_mCent16[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
-    std::vector<int> vec_mRefWgt[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
+    std::vector<double> vec_mRefWgt[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
     std::vector<double> vec_mZDCx[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
     std::vector<double> vec_mBBCx[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
     std::vector<double> vec_mVzVpd[mNumCentrality][mNumMixVzBin][mNumMixPsiBin];
@@ -161,7 +161,7 @@ class StPhiMesonTree : public TObject
     TVector2 v_mQ3VecTpcReCtrEast, v_mQ3VecTpcReCtrWest;
     int mNumTrkReCtrEast, mNumTrkReCtrWest;
 
-    int mRunIdx, mCent9, mCent16;
+    int mRunIdx, mRefMult, mCent9, mCent16;
     double mRefWgt, mVz, mPsiShiftFull;
 
     const int mType;

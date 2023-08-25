@@ -350,7 +350,6 @@ void StPhiMesonAnalyzer::Make()
 	if( mAnaCut->passTrkTofKaonBeta(mPhiTrk) )
 	{ // always require ToF Info
 	  mHistManager->fillPhiQA(cent9,ptPhi,yPhiLab,yPhiCms,invMassPhi,refWgt);
-	  cout << "runId = " << runId << ", evtId = " << evtId << ", ptPhi = " << ptPhi << ", invMassPhi = " << invMassPhi << endl;
 	}
       }
       if(mMode == 1)

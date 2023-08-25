@@ -158,8 +158,6 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
   int evtBin = mEventCounter[mCent9][vzBin][PsiBin];
   int phiMixKey = getPhiMixKey(mCent9,vzBin,PsiBin,evtBin);
 
-  cout << "mCent9 = " << mCent9 << ", vzBin = " << vzBin << ", PsiBin = " << PsiBin << ", evtBin = " << evtBin << ", phiMixKey = " << phiMixKey << endl;
-
   const unsigned int nTracks = picoDst->numberOfTracks();
   TVector3 primVtx = picoEvent->primaryVertex();
 
@@ -168,7 +166,8 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
   vec_mRunId[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->runId()));
   vec_mRunIdx[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mRunIdx));
   vec_mEvtId[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->eventId()));
-  vec_mRefMult[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->refMult()));
+  // vec_mRefMult[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->refMult()));
+  vec_mRefMult[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mRefMult));
   vec_mNumTofMatch[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->nBTOFMatch()));
   vec_mCent9[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mCent9));
   vec_mCent16[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mCent16));
@@ -362,7 +361,6 @@ void StPhiMesonTree::recoPhi(int cent9, int vzBin, int PsiBin) // reconstruct ph
 	  mPhiMesonTrack->setFlagKp(iEvt); // K+
 	  mPhiMesonTrack->setFlagKm(iEvt); // K-
 	  h_mInvMassPhi[cent9]->Fill(ptPhi,invMassPhi); // Fill histogram with InvMassAB information
-	  cout << "runId = " << vec_mRunId[cent9][vzBin][PsiBin][evtBin] << ", evtId = " << vec_mEvtId[cent9][vzBin][PsiBin][evtBin] << ", phiMixKey = " << phiMixKey << ", ptPhi = " << ptPhi << ", invMassPhi = " << invMassPhi << endl;
 	}
       }
     }
@@ -632,9 +630,10 @@ void StPhiMesonTree::clearEvtInfo()
   mNumTrkReCtrWest = -1;
 }
 
-void StPhiMesonTree::setEvtInfo(int runIdx, int cent9, int cent16, double refwgt, double vz, double PsiShiftFull)
+void StPhiMesonTree::setEvtInfo(int runIdx, int refMult, int cent9, int cent16, double refwgt, double vz, double PsiShiftFull)
 {
   mRunIdx        = runIdx;
+  mRefMult       = refMult;
   mCent9         = cent9;
   mCent16        = cent16;
   mRefWgt        = refwgt;
