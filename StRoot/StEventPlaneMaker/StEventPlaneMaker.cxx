@@ -114,7 +114,7 @@ int StEventPlaneMaker::Init()
     }
     if(mAnaCut->isFxt3p85GeV_2018()) 
     {
-      mEpdEpManager->readEpdPhiWgt(); // EPD
+      // mEpdEpManager->readEpdPhiWgt(); // EPD
       mEpdEpManager->initEpdGrpReCtr();
       mEpdEpManager->initEpdSubEpGrpWgt();
       mMixEpManager->initMixSubEpRaw(); // Mix
@@ -138,7 +138,7 @@ int StEventPlaneMaker::Init()
     }
     if(mAnaCut->isFxt3p85GeV_2018()) 
     {
-      mEpdEpManager->readEpdPhiWgt(); // EPD
+      // mEpdEpManager->readEpdPhiWgt(); // EPD
       mEpdEpManager->readEpdGrpReCtr();
       mEpdEpManager->initEpdGrpShift();
       mEpdEpManager->initEpdSubEpGrpReCtr();
@@ -187,7 +187,7 @@ int StEventPlaneMaker::Init()
     }
     if(mAnaCut->isFxt3p85GeV_2018()) 
     {
-      mEpdEpManager->readEpdPhiWgt(); // EPD
+      // mEpdEpManager->readEpdPhiWgt(); // EPD
       mEpdEpManager->readEpdGrpReCtr();
       mEpdEpManager->readEpdGrpShift();
       mEpdEpManager->initEpdGrpResolution();
@@ -220,7 +220,7 @@ int StEventPlaneMaker::Init()
     }
     if(mAnaCut->isFxt3p85GeV_2018()) 
     {
-      mEpdEpManager->readEpdPhiWgt(); // EPD
+      // mEpdEpManager->readEpdPhiWgt(); // EPD
       mEpdEpManager->readEpdGrpReCtr();
       mEpdEpManager->readEpdGrpShift();
       // mEpdEpManager->readEpdGrpShiftFull();
@@ -722,6 +722,7 @@ int StEventPlaneMaker::Make()
 	      mEpdEpManager->fillEpdSubEpGrpWgt(Psi1GrpWgtEast, Psi1GrpWgtWest, Psi1GrpWgtFull, iGrp);
 	      mEpdEpManager->fillEpdGrpReCtrEvtAveEast(iGrp); // fill Evt Ave ReCenter Parameter
 	      mEpdEpManager->fillEpdGrpReCtrEvtAveWest(iGrp);
+	      cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpWgtEast = " << Psi1GrpWgtEast << endl;
 	    }
 	  }
 
@@ -813,7 +814,7 @@ int StEventPlaneMaker::Make()
 	      mEpdEpManager->fillEpdGrpShiftEvtAveEast(iGrp); // fill Evt Ave Shift Parameter
 	      mEpdEpManager->fillEpdGrpShiftEvtAveWest(iGrp);
 
-	      // cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpReCtrEast = " << Psi1GrpReCtrEast << ", Psi1GrpReCtrWest = " << Psi1GrpReCtrWest << ", Psi1GrpReCtrFull = " << Psi1GrpReCtrFull << endl;
+	      cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpReCtrEvtAveEast = " << Psi1GrpReCtrEvtAveEast << endl;
 	    }
 	  }
 
@@ -939,7 +940,7 @@ int StEventPlaneMaker::Make()
 	      const double Psi1GrpShiftEvtAveFull = mEpdEpManager->getPsi1GrpShiftEvtAveFull(iGrp);
 	      mEpdEpManager->fillEpdSubEpGrpShiftEvtAve(Psi1GrpShiftEvtAveEast, Psi1GrpShiftEvtAveWest, Psi1GrpShiftEvtAveFull, iGrp);
 
-	      // cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpShiftEvtAveEast = " << Psi1GrpShiftEvtAveEast << endl;
+	      cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpShiftEvtAveEast = " << Psi1GrpShiftEvtAveEast << endl;
 	    }
 	  }
 
