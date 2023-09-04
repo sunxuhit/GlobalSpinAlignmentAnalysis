@@ -4,3 +4,9 @@
 > Based on VecMesonSpinAlignment <https://github.com/sunxuhit/VecMesonSpinAlignment.git>.    
 > Updates to adapt "new" picoDst format and "new" detectors used in event plan reconstruction.    
 
+### FXT
+> Code Pacakge for FXT Analysis
+
+###  IsoBar
+> Code Package for IsoBar Analysis
+
