@@ -722,9 +722,11 @@ int StEventPlaneMaker::Make()
 	      mEpdEpManager->fillEpdSubEpGrpWgt(Psi1GrpWgtEast, Psi1GrpWgtWest, Psi1GrpWgtFull, iGrp);
 	      mEpdEpManager->fillEpdGrpReCtrEvtAveEast(iGrp); // fill Evt Ave ReCenter Parameter
 	      mEpdEpManager->fillEpdGrpReCtrEvtAveWest(iGrp);
-	      cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpWgtEast = " << Psi1GrpWgtEast << endl;
+	      TVector2 Q1VecEastDisplay = -1.0*vQ1EpdGrpEast[iGrp];
+	      cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpWgtEast = " << Q1VecEastDisplay.Phi() << endl;
 	    }
 	  }
+	  cout << endl;
 
 	  if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[0],vQ1EpdGrpWest[0],vQ1EpdGrpFull[0],0) &&
 	      mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[1],vQ1EpdGrpWest[1],vQ1EpdGrpFull[1],1) &&
@@ -817,6 +819,7 @@ int StEventPlaneMaker::Make()
 	      cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpReCtrEvtAveEast = " << Psi1GrpReCtrEvtAveEast << endl;
 	    }
 	  }
+	  cout << endl;
 
 	  if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpTrkAveEast[0],vQ1EpdGrpTrkAveWest[0],vQ1EpdGrpTrkAveFull[0],0) &&
 	      mAnaCut->passQVecEpdGrp(vQ1EpdGrpTrkAveEast[1],vQ1EpdGrpTrkAveWest[1],vQ1EpdGrpTrkAveFull[1],1) &&
@@ -943,6 +946,7 @@ int StEventPlaneMaker::Make()
 	      cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpShiftEvtAveEast = " << Psi1GrpShiftEvtAveEast << endl;
 	    }
 	  }
+	  cout << endl;
 
 	  if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpTrkAveEast[0],vQ1EpdGrpTrkAveWest[0],vQ1EpdGrpTrkAveFull[0],0) &&
 	      mAnaCut->passQVecEpdGrp(vQ1EpdGrpTrkAveEast[1],vQ1EpdGrpTrkAveWest[1],vQ1EpdGrpTrkAveFull[1],1) &&

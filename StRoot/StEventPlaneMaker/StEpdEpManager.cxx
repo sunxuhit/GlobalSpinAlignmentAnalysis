@@ -113,8 +113,8 @@ TVector3 StEpdEpManager::getEpdRanVec(StPicoEpdHit *picoEpdHit, TVector3 primVtx
 TVector2 StEpdEpManager::calq1Vector(StPicoEpdHit *picoEpdHit, TVector3 primVtx)
 {
   TVector2 q1Vector(0.0,0.0);
-  // TVector3 EpdVector = getEpdCtrVec(picoEpdHit, primVtx);
-  TVector3 EpdVector = getEpdRanVec(picoEpdHit, primVtx);
+  TVector3 EpdVector = getEpdCtrVec(picoEpdHit, primVtx);
+  // TVector3 EpdVector = getEpdRanVec(picoEpdHit, primVtx);
   const double phi   = EpdVector.Phi(); // -pi to pi
   const double q1x   = TMath::Cos(1.0*phi);
   const double q1y   = TMath::Sin(1.0*phi);
