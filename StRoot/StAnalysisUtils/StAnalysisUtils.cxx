@@ -216,6 +216,8 @@ int StAnalysisUtils::getTriggerBin(StPicoEvent *picoEvent)
 
 int StAnalysisUtils::getVzBin(double vz)
 {
+  if(mType == 2) return 0; // Temp fix of vz independent EP correction for Fxt3p85GeV_2018
+
   if(vz >= anaUtils::mVzMin[mType] && vz < anaUtils::mVzCtr[mType]) 
   {
     return 0;
