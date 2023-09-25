@@ -215,17 +215,17 @@ void plotRho00BESI()
   lNica = new TLatex(4.5, 0.31,"NICA");
   lNica->SetTextFont(42);
   lNica->SetTextSize(0.023);
-  lNica->SetTextColor(kGreen+3);
+  lNica->SetTextColor(1);
   lNica->SetLineWidth(2);
   lNica->Draw();
   TArrow *aNica;
   aNica = new TArrow(3.0, 0.308, 11.0, 0.308, 0.02,"<>");
   aNica->SetFillColor(1);
   aNica->SetFillStyle(1001);
-  aNica->SetLineColor(kGreen+3);
+  aNica->SetLineColor(17);
   aNica->SetLineWidth(1);
   aNica->SetLineStyle(1);
-  aNica->SetAngle(29);
+  aNica->SetAngle(30);
   aNica->Draw();
   
   //FXT : 3.0 - 7.7
@@ -245,19 +245,19 @@ void plotRho00BESI()
   aFxt->SetAngle(30);
   aFxt->Draw();
   
-  //BES-II: 3.0 - 7.7
+  //BES-II: 7.7 - 27.0
   TLatex *lBESII;
   lBESII = new TLatex(7.75, 0.275,"STAR-BESII");
   lBESII->SetTextFont(42);
   lBESII->SetTextSize(0.023);
-  lBESII->SetTextColor(kAzure+2);
+  lBESII->SetTextColor(kRed-2);
   lBESII->SetLineWidth(2);
   lBESII->Draw();
   TArrow *aBESII;
   aBESII = new TArrow(7.7, 0.282, 27.0, 0.282, 0.02,"<>");
-  aBESII->SetFillColor(kAzure+2);
+  aBESII->SetFillColor(kRed-7);
   aBESII->SetFillStyle(1002);
-  aBESII->SetLineColor(kAzure+2);
+  aBESII->SetLineColor(kRed-7);
   aBESII->SetLineWidth(1);
   aBESII->SetAngle(30);
   aBESII->Draw();
@@ -278,7 +278,7 @@ void plotRho00BESI()
   aFair->SetAngle(30);
   aFair->Draw();
   
-  // HIAF @ IMP: 2 - 4 GeV
+  // CEE @ HIAF : 2 - 4 GeV
   TLatex *lHiaf;
   lHiaf = new TLatex(1.7, 0.25,"CEE@HIAF");
   lHiaf->SetTextFont(42);
@@ -290,7 +290,7 @@ void plotRho00BESI()
   aHiaf = new TArrow(2.0, 0.248, 4.0, 0.248, 0.02,"<>");
   aHiaf->SetFillColor(1);
   aHiaf->SetFillStyle(1001);
-  aHiaf->SetLineColor(kRed-2);
+  aHiaf->SetLineColor(kRed-7);
   aHiaf->SetLineWidth(1);
   aHiaf->SetAngle(30);
   aHiaf->Draw();
