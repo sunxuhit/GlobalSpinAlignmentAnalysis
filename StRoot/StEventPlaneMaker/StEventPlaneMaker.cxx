@@ -816,7 +816,9 @@ int StEventPlaneMaker::Make()
 	      mEpdEpManager->fillEpdGrpShiftEvtAveEast(iGrp); // fill Evt Ave Shift Parameter
 	      mEpdEpManager->fillEpdGrpShiftEvtAveWest(iGrp);
 
-	      cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpReCtrEvtAveEast = " << Psi1GrpReCtrEvtAveEast << endl;
+	      // cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpReCtrEvtAveEast = " << Psi1GrpReCtrEvtAveEast << endl;
+	      TVector2 Q1VecEastDisplay = -1.0*vQ1EpdGrpEvtAveEast[iGrp];
+	      cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpReCtrEvtAveEast = " << Q1VecEastDisplay.Phi() << endl;
 	    }
 	  }
 	  cout << endl;
@@ -943,7 +945,9 @@ int StEventPlaneMaker::Make()
 	      const double Psi1GrpShiftEvtAveFull = mEpdEpManager->getPsi1GrpShiftEvtAveFull(iGrp);
 	      mEpdEpManager->fillEpdSubEpGrpShiftEvtAve(Psi1GrpShiftEvtAveEast, Psi1GrpShiftEvtAveWest, Psi1GrpShiftEvtAveFull, iGrp);
 
-	      cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpShiftEvtAveEast = " << Psi1GrpShiftEvtAveEast << endl;
+	      // cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpShiftEvtAveEast = " << Psi1GrpShiftEvtAveEast << endl;
+	      TVector2 Q1VecEastDisplay = -1.0*vQ1EpdGrpEvtAveEast[iGrp];
+	      cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpShiftEvtAveEast = " << Q1VecEastDisplay.Phi() << endl;
 	    }
 	  }
 	  cout << endl;
