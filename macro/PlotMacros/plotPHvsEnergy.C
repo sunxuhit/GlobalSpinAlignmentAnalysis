@@ -220,7 +220,7 @@ void plotPHvsEnergy(){
 
   // future measurement
   TBox *bHighMuB= new TBox(2.0, 0.0, 7.5, 5.0);
-  bHighMuB->SetFillColor(kYellow);
+  bHighMuB->SetFillColor(kYellow-9);
   bHighMuB->SetFillStyle(3001);
   bHighMuB->Draw("same");
 
@@ -292,45 +292,59 @@ void plotPHvsEnergy(){
   aFair->SetAngle(30);
   aFair->Draw();
   
-  // CEE @ HIAF: 2 - 4 GeV
+  // CEE @ HIAF : 2.24 - 2.85 GeV | CEE @ HIAF-U: 3.01-4.54 GeV
   TLatex *lHiaf;
-  lHiaf = new TLatex(1.7, 1.75,"CEE@HIAF");
+  lHiaf = new TLatex(1.7, 1.3,"HIAF-CEE");
   lHiaf->SetTextFont(42);
   lHiaf->SetTextSize(0.022);
   lHiaf->SetTextColor(kRed-2);
   lHiaf->SetLineWidth(1);
   lHiaf->Draw();
-  TArrow *aHiaf;
-  aHiaf = new TArrow(2.0, 1.7, 4.0, 1.7, 0.02,"<>");
-  aHiaf->SetFillColor(1);
-  aHiaf->SetFillStyle(1001);
-  aHiaf->SetLineColor(kRed-7);
-  aHiaf->SetLineWidth(1);
-  aHiaf->SetAngle(30);
-  aHiaf->Draw();
+  TBox *bHiaf = new TBox(2.24,0.85,2.85,1.15);
+  bHiaf->SetFillColor(0);
+  bHiaf->SetFillStyle(0);
+  bHiaf->SetLineStyle(2);
+  bHiaf->SetLineWidth(2);
+  bHiaf->SetLineColor(kRed-7);
+  bHiaf->Draw("b Same");
+  // TArrow *aHiaf;
+  // aHiaf = new TArrow(2.0, 1.7, 4.0, 1.7, 0.02,"<>");
+  // aHiaf->SetFillColor(1);
+  // aHiaf->SetFillStyle(1001);
+  // aHiaf->SetLineColor(kRed-7);
+  // aHiaf->SetLineWidth(1);
+  // aHiaf->SetAngle(30);
+  // aHiaf->Draw();
   
   // CEE @ HIRFL: 2.11 GeV
   TLatex *lHirfl;
-  lHirfl = new TLatex(2.5, 1.15,"CEE@HIRFL");
+  lHirfl = new TLatex(2.5, 0.25,"HIRFL-CEE");
   lHirfl->SetTextFont(42);
   lHirfl->SetTextSize(0.022);
   lHirfl->SetTextColor(kRed-2);
   lHirfl->SetLineWidth(1);
   lHirfl->Draw();
-  TArrow *aHirflL = new TArrow(1.65, 1.0, 2.11, 1.0, 0.02,">");
-  aHirflL->SetFillColor(1);
-  aHirflL->SetFillStyle(1001);
-  aHirflL->SetLineColor(kRed-7);
-  aHirflL->SetLineWidth(1);
-  aHirflL->SetAngle(30);
-  aHirflL->Draw();
-  TArrow *aHirflR = new TArrow(2.32, 1.0, 3.0, 1.0, 0.02,"<");
-  aHirflR->SetFillColor(1);
-  aHirflR->SetFillStyle(1001);
-  aHirflR->SetLineColor(kRed-7);
-  aHirflR->SetLineWidth(1);
-  aHirflR->SetAngle(30);
-  aHirflR->Draw();
+  TBox *bHirfl = new TBox(2.11,-0.15,2.32,0.15);
+  bHirfl->SetFillColor(0);
+  bHirfl->SetFillStyle(0);
+  bHirfl->SetLineStyle(2);
+  bHirfl->SetLineWidth(2);
+  bHirfl->SetLineColor(kRed-7);
+  bHirfl->Draw("b Same");
+  // TArrow *aHirflL = new TArrow(1.65, 1.0, 2.11, 1.0, 0.02,">");
+  // aHirflL->SetFillColor(1);
+  // aHirflL->SetFillStyle(1001);
+  // aHirflL->SetLineColor(kRed-7);
+  // aHirflL->SetLineWidth(1);
+  // aHirflL->SetAngle(30);
+  // aHirflL->Draw();
+  // TArrow *aHirflR = new TArrow(2.32, 1.0, 3.0, 1.0, 0.02,"<");
+  // aHirflR->SetFillColor(1);
+  // aHirflR->SetFillStyle(1001);
+  // aHirflR->SetLineColor(kRed-7);
+  // aHirflR->SetLineWidth(1);
+  // aHirflR->SetAngle(30);
+  // aHirflR->Draw();
 
   c1->SaveAs("../../figures/AnalysisNote/fig_PhFutureMeasurement.eps");
 }

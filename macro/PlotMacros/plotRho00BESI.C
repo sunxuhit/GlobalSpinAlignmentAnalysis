@@ -206,7 +206,7 @@ void plotRho00BESI()
 
   // future measurement
   TBox *bHighMuB= new TBox(2.0, 0.23, 7.5, 0.38);
-  bHighMuB->SetFillColor(kYellow);
+  bHighMuB->SetFillColor(kYellow-9);
   bHighMuB->SetFillStyle(3001);
   bHighMuB->Draw("same");
 
@@ -278,22 +278,29 @@ void plotRho00BESI()
   aFair->SetAngle(30);
   aFair->Draw();
   
-  // CEE @ HIAF : 2 - 4 GeV
+  // CEE @ HIAF : 2.24 - 2.85 GeV | CEE @ HIAF-U: 3.01-4.54 GeV
   TLatex *lHiaf;
-  lHiaf = new TLatex(1.7, 0.25,"CEE@HIAF");
+  lHiaf = new TLatex(1.7, 0.34,"HIAF-CEE");
   lHiaf->SetTextFont(42);
   lHiaf->SetTextSize(0.022);
   lHiaf->SetTextColor(kRed-2);
   lHiaf->SetLineWidth(1);
   lHiaf->Draw();
-  TArrow *aHiaf;
-  aHiaf = new TArrow(2.0, 0.248, 4.0, 0.248, 0.02,"<>");
-  aHiaf->SetFillColor(1);
-  aHiaf->SetFillStyle(1001);
-  aHiaf->SetLineColor(kRed-7);
-  aHiaf->SetLineWidth(1);
-  aHiaf->SetAngle(30);
-  aHiaf->Draw();
+  TBox *bHiaf = new TBox(2.24,1.0/3.0-0.005,2.85,1.0/3.0+0.005);
+  bHiaf->SetFillColor(0);
+  bHiaf->SetFillStyle(0);
+  bHiaf->SetLineStyle(2);
+  bHiaf->SetLineWidth(2);
+  bHiaf->SetLineColor(kRed-7);
+  bHiaf->Draw("b Same");
+  // TArrow *aHiaf;
+  // aHiaf = new TArrow(2.0, 0.248, 4.0, 0.248, 0.02,"<>");
+  // aHiaf->SetFillColor(1);
+  // aHiaf->SetFillStyle(1001);
+  // aHiaf->SetLineColor(kRed-7);
+  // aHiaf->SetLineWidth(1);
+  // aHiaf->SetAngle(30);
+  // aHiaf->Draw();
 
   c_rho00->SaveAs("../../figures/AnalysisNote/fig_rho00FutureMeasurement.eps");
 }
