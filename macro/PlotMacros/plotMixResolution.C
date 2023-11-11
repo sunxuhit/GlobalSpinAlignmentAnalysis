@@ -239,6 +239,17 @@ void plotMixResolution(int beamType = 2)
   c_MixSubEp1Res->Print(figName.c_str());
 
   file_InPut->Close();
+
+  string outputFile = "../../data/EventPlaneMaker/Fxt3p85GeV_2018/mixResXu.root";
+  TFile *file_OutPut = new TFile(outputFile.c_str(),"RECREATE");
+  file_OutPut->cd();
+  g_mMixSubEp1Res1[0]->SetName("g_mMixSubEp1Res1EpdAB");
+  g_mMixSubEp1Res1[0]->SetTitle("R1: Epd0AB vs. Epd1CD && TpcWest");
+  g_mMixSubEp1Res1[0]->Write();
+  g_mMixSubEp1Res1[3]->SetName("g_mMixSubEp1Res1EpdCD");
+  g_mMixSubEp1Res1[3]->SetTitle("R1: Epd1CD vs. Epd0AB && TpcWest");
+  g_mMixSubEp1Res1[3]->Write();
+  file_OutPut->Close();
 }
 
 double propMixEpResErr(double valA, double sigA, double valB, double sigB, double valC, double sigC)
