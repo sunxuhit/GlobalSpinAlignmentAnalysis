@@ -30,6 +30,10 @@ class StRunQAHistoManager
     void fillTrkQaKaonCut(int triggerBin, TVector3 pMom, double nSigKaon, bool isFull, bool isEast, bool isWest, int cutSelection);
     void fillTrkQaKaonAcptTree(int triggerBin, int cent9, int charge, double yLab, double yCms, double pt, double refWgt);
     void fillTrkQaKaonAcptSpin(int triggerBin, int cent9, int charge, double yLab, double yCms, double pt, double refWgt);
+    void fillTrkQaKaonPid(int cent9, double pMag, int charge, double mass2, double deltaBeta);
+    void fillTrkQaKaonPidTpc(int cent9, double pMag, int charge, double mass2, double deltaBeta);
+    void fillTrkQaKaonPidTofB(int cent9, double pMag, int charge, double mass2, double deltaBeta);
+    void fillTrkQaKaonPidTofM(int cent9, double pMag, int charge, double mass2, double deltaBeta);
     void writeTrkQA();
     //--------------QA---------------
 
@@ -82,7 +86,6 @@ class StRunQAHistoManager
     TH2F *h_mPrimEtaNSigKaonFull[mNumCuts][mNumTriggerBins];
     TH2F *h_mPrimEtaNSigKaonEast[mNumCuts][mNumTriggerBins];
     TH2F *h_mPrimEtaNSigKaonWest[mNumCuts][mNumTriggerBins];
-
     // Kaon Acceptance
     TH2F *h_mAcptTreeLabKp[mNumCentrality][mNumTriggerBins]; // y vs. pT
     TH2F *h_mAcptTreeCmsKp[mNumCentrality][mNumTriggerBins];
@@ -92,6 +95,15 @@ class StRunQAHistoManager
     TH2F *h_mAcptSpinCmsKp[mNumCentrality][mNumTriggerBins];
     TH2F *h_mAcptSpinLabKm[mNumCentrality][mNumTriggerBins];
     TH2F *h_mAcptSpinCmsKm[mNumCentrality][mNumTriggerBins];
+    // Kaon PID
+    TH2F *h_mBeta[10];         // p/q vs. 1/beta - 1/betaKaon for all particles
+    TH2F *h_mBetaTpcKaon[10];  // p/q vs. 1/beta - 1/betaKaon after TPC Kaon cuts
+    TH2F *h_mBetaTofBKaon[10]; // p/q vs. 1/beta - 1/betaKaon after ToF Beta Kaon cuts
+    TH2F *h_mBetaTofMKaon[10]; // p/q vs. 1/beta - 1/betaKaon after ToF Mass Kaon cuts
+    TH2F *h_mMass[10];         // m^2/q^2 vs. 1/beta - 1/betaKaon for all particles
+    TH2F *h_mMassTpcKaon[10];  // m^2/q^2 vs. 1/beta - 1/betaKaon after TPC Kaon cuts
+    TH2F *h_mMassTofBKaon[10]; // m^2/q^2 vs. 1/beta - 1/betaKaon after ToF Beta Kaon cuts
+    TH2F *h_mMassTofMKaon[10]; // m^2/q^2 vs. 1/beta - 1/betaKaon after ToF Mass Kaon cuts
 
     std::string str_mCutStatus[mNumCuts] = {"Bf","Af"};
 

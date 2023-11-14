@@ -38,19 +38,6 @@ void StPhiMesonTree::initPhiTree()
 
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
-    std::string histName = Form("h_mInvMassPhiCent%d",iCent);
-    h_mInvMassPhi[iCent] = new TH2F(histName.c_str(),histName.c_str(),25,0.0,5.0,anaUtils::mNumInvMassPhi,anaUtils::mMassPhiMin,anaUtils::mMassPhiMax);
-
-    histName = Form("h_mBetaKaonCent%d",iCent);
-    h_mBetaKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,400,-2.0,2.0);
-    histName = Form("h_mBetaKaonCutCent%d",iCent);
-    h_mBetaKaonCut[iCent] = new TH2F(histName.c_str(),histName.c_str(),450,-4.5,4.5,400,-2.0,2.0);
-
-    histName = Form("h_mMassKaonCent%d",iCent);
-    h_mMassKaon[iCent] = new TH2F(histName.c_str(),histName.c_str(),1100,-0.5,10.5,400,-2.0,2.0);
-    histName = Form("h_mMassKaonCutCent%d",iCent);
-    h_mMassKaonCut[iCent] = new TH2F(histName.c_str(),histName.c_str(),1100,-0.5,10.5,400,-2.0,2.0);
-
     for(int iVz = 0; iVz < mNumMixVzBin; ++iVz)
     {
       for(int iPsi = 0; iPsi < mNumMixPsiBin; ++iPsi)
@@ -59,6 +46,18 @@ void StPhiMesonTree::initPhiTree()
       }
     }
   }
+
+  for(int iCent = 0; iCent < mNumCentrality; ++iCent)
+  {
+    std::string histName = Form("h_mInvMassPhiCent%d",iCent);
+    h_mInvMassPhi[iCent] = new TH2F(histName.c_str(),histName.c_str(),25,0.0,5.0,anaUtils::mNumInvMassPhi,anaUtils::mMassPhiMin,anaUtils::mMassPhiMax);
+  }
+
+  h_mBeta         = new TH2F("h_mBetaCent9","h_mBetaCent9",450,-4.5,4.5,400,-2.0,2.0);
+  h_mBetaTpcKaon  = new TH2F("h_mBetaTpcKaonCent9","h_mBetaTpcKaonCent9",450,-4.5,4.5,400,-2.0,2.0);
+  h_mBetaTofBKaon = new TH2F("h_mBetaTofBKaonCent9","h_mBetaTofBKaonCent9",450,-4.5,4.5,400,-2.0,2.0);
+  h_mBetaTofMKaon = new TH2F("h_mBetaTofMKaonCent9","h_mBetaTofMKaonCent9",450,-4.5,4.5,400,-2.0,2.0);
+  h_mBetaKaonCand = new TH2F("h_mBetaKaonCandCent9","h_mBetaKaonCandCent9",450,-4.5,4.5,400,-2.0,2.0);
 
   mPhiMesonEvent = new StPhiMesonEvent();
   t_mPhiMesonTree = new TTree("PhiMesonEvent","PhiMesonEvent");
@@ -73,11 +72,12 @@ void StPhiMesonTree::writePhiTree()
   for(int iCent = 0; iCent < mNumCentrality; ++iCent)
   {
     h_mInvMassPhi[iCent]->Write();
-    h_mBetaKaon[iCent]->Write();
-    h_mBetaKaonCut[iCent]->Write();
-    h_mMassKaon[iCent]->Write();
-    h_mMassKaonCut[iCent]->Write();
   }
+  h_mBeta->Write();
+  h_mBetaTpcKaon->Write();
+  h_mBetaTofBKaon->Write();
+  h_mBetaTofMKaon->Write();
+  h_mBetaKaonCand->Write();
   t_mPhiMesonTree->Write("",TObject::kOverwrite);
 }
 
@@ -156,6 +156,7 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
   int PsiBin = getPsiMixBin(mPsiShiftFull,2); // for IsoBar
   if(mAnaCut->isFxt3p85GeV_2018()) PsiBin = getPsiMixBin(mPsiShiftFull,1); // for FXT
   int evtBin = mEventCounter[mCent9][vzBin][PsiBin];
+  int phiMixKey = getPhiMixKey(mCent9,vzBin,PsiBin,evtBin);
 
   const unsigned int nTracks = picoDst->numberOfTracks();
   TVector3 primVtx = picoEvent->primaryVertex();
@@ -165,7 +166,8 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
   vec_mRunId[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->runId()));
   vec_mRunIdx[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mRunIdx));
   vec_mEvtId[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->eventId()));
-  vec_mRefMult[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->refMult()));
+  // vec_mRefMult[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->refMult()));
+  vec_mRefMult[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mRefMult));
   vec_mNumTofMatch[mCent9][vzBin][PsiBin].push_back(static_cast<int>(picoEvent->nBTOFMatch()));
   vec_mCent9[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mCent9));
   vec_mCent16[mCent9][vzBin][PsiBin].push_back(static_cast<int>(mCent16));
@@ -209,22 +211,31 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
   {
     StPicoTrack *picoTrack = (StPicoTrack*)picoDst->track(iTrk);
     TVector3 primMom = picoTrack->pMom();
-    int charge       = static_cast<int>(picoTrack->charge());
-    double mass2     = mAnaUtils->getPrimMass2(picoDst, iTrk);
-    double beta      = mAnaUtils->getBeta(picoDst, iTrk);
-    double betaExp   = primMom.Mag()/TMath::Sqrt(primMom.Mag2()+anaUtils::mMassKaon*anaUtils::mMassKaon); // expected beta of Kaon
-    double deltaBeta = 1.0/beta - 1.0/betaExp;
-    h_mBetaKaon[mCent9]->Fill(primMom.Mag()/charge,deltaBeta);
-    h_mMassKaon[mCent9]->Fill(mass2/(charge*charge),deltaBeta);
-    if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx))
-    { // Kaon candidate with TPC only
-      h_mBetaKaonCut[mCent9]->Fill(primMom.Mag()/charge,deltaBeta);
-      h_mMassKaonCut[mCent9]->Fill(mass2/(charge*charge),deltaBeta);
+    const int charge       = static_cast<int>(picoTrack->charge());
+    const double mass2     = mAnaUtils->getPrimMass2(picoDst, iTrk);
+    const double beta      = mAnaUtils->getBeta(picoDst, iTrk);
+    const double betaExp   = primMom.Mag()/TMath::Sqrt(primMom.Mag2()+0.493677*0.493677); // expected beta of Kaon
+    const double deltaBeta = 1.0/beta - 1.0/betaExp;
+
+    if(beta > -10.0 && mCent9 >= 0 && mCent9 <= 8)
+    {
+      h_mBeta->Fill(primMom.Mag()/charge,deltaBeta);
+      if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx))
+      { // Kaon candidate with TPC only
+	h_mBetaTpcKaon->Fill(primMom.Mag()/charge,deltaBeta);
+	if(mAnaCut->passTrkTofKaonBeta(primMom,charge,beta))
+	{ // Kaon candidate with TPC and ToF
+	  h_mBetaTofBKaon->Fill(primMom.Mag()/charge,deltaBeta);
+	}
+	if(mAnaCut->passTrkTofKaonMass(primMom,charge,mass2))
+	{ // Kaon candidate with TPC and ToF
+	  h_mBetaTofMKaon->Fill(primMom.Mag()/charge,deltaBeta);
+	}
+      }
     }
 
     if(mAnaCut->passTrkTpcKaonFull(picoTrack, primVtx) && mAnaCut->passTrkTofKaonBeta(primMom,charge,beta))
     {
-      int phiMixKey = getPhiMixKey(mCent9,vzBin,PsiBin,evtBin);
       if(charge > 0)
       { // K+ candidate
 	map_mMomVecKp[phiMixKey].push_back(static_cast<TVector3>(picoTrack->pMom()));// primMom 
@@ -245,6 +256,7 @@ void StPhiMesonTree::fillPhiTree(StPicoDst *picoDst, int flagME)
 	map_mChargeKm[phiMixKey].push_back(static_cast<int>(picoTrack->charge())); // charge
 	map_mNHitsFitKm[phiMixKey].push_back(static_cast<double>(picoTrack->nHitsFit())); // nHitsFit
       }
+      if(beta > -10.0) h_mBetaKaonCand->Fill(primMom.Mag()/charge,deltaBeta);
     }
   }
 
@@ -618,9 +630,10 @@ void StPhiMesonTree::clearEvtInfo()
   mNumTrkReCtrWest = -1;
 }
 
-void StPhiMesonTree::setEvtInfo(int runIdx, int cent9, int cent16, double refwgt, double vz, double PsiShiftFull)
+void StPhiMesonTree::setEvtInfo(int runIdx, int refMult, int cent9, int cent16, double refwgt, double vz, double PsiShiftFull)
 {
   mRunIdx        = runIdx;
+  mRefMult       = refMult;
   mCent9         = cent9;
   mCent16        = cent16;
   mRefWgt        = refwgt;

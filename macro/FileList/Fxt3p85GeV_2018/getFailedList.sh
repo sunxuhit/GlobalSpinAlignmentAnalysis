@@ -6,11 +6,11 @@ date
 if [ $# -eq 0 ]
 then
   BeamType=Fxt3p85GeV_2018
-  JobId=446626FC39E6AEDC58E8969D22CDBEFD #generate faild list for this Job
+  JobId=846D734CE39B083F941454ACC48E19D0 #generate faild list for this Job
   # Task=RunQA
   # Task=EventPlaneMaker
-  # Task=PhiMesonMaker
-  Task=PhiMesonAnalyzer
+  Task=PhiMesonMaker
+  # Task=PhiMesonAnalyzer
 
   LogDirectory="/star/u/sunxuhit/$BeamType/SpinAlignment/${Task}/Log"
 

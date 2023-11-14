@@ -329,7 +329,7 @@ int StPhiMesonMaker::Make()
 	  const double Psi2ShiftFull  = mTpcEpManager->getPsi2ShiftFull(vQ2TpcFull); // Psi2 from Full TPC EP & Used for Event Mixing
 
 	  mPhiMesonTree->clearEvtInfo();
-	  mPhiMesonTree->setEvtInfo(runIdx, cent9, cent16, refWgt, vz, Psi2ShiftFull); // Use Psi2ShiftFull for Event Mixing
+	  mPhiMesonTree->setEvtInfo(runIdx, refMult, cent9, cent16, refWgt, vz, Psi2ShiftFull); // Use Psi2ShiftFull for Event Mixing
 	  mPhiMesonTree->setZdcQ1Flag(flagZdcEp); // ZDC EP
 	  mPhiMesonTree->setZdcQ1Vec(vQ1ZdcEast, vQ1ZdcWest, vQ1ZdcFull); // Shift Corrected ZDC Q1Vector: East & West & Full
 	  mPhiMesonTree->setEpdQ1SideFlag(flagEpdSideEp); // EPD Side EP
@@ -393,7 +393,7 @@ int StPhiMesonMaker::Make()
 	  const double Psi1EpdGrp0 = mEpdEpManager->getPsi1GrpShiftTrkAveEast(0); // Psi1 from EPD Grp 0 East & Used for Event Mixing
 
 	  mPhiMesonTree->clearEvtInfo();
-	  mPhiMesonTree->setEvtInfo(runIdx, cent9, cent16, refWgt, vz, Psi1EpdGrp0); // Use Psi1EpdGrp0 for Event Mixing
+	  mPhiMesonTree->setEvtInfo(runIdx, refMult, cent9, cent16, refWgt, vz, Psi1EpdGrp0); // Use Psi1EpdGrp0 for Event Mixing
 	  mPhiMesonTree->setZdcQ1Flag(flagZdcEp); // ZDC EP
 	  mPhiMesonTree->setZdcQ1Vec(vQ1ZdcEast, vQ1ZdcWest, vQ1ZdcFull); // Shift Corrected ZDC Q1Vector: East & West & Full
 	  mPhiMesonTree->setEpdQ1SideFlag(flagEpdSideEp); // EPD Side EP
