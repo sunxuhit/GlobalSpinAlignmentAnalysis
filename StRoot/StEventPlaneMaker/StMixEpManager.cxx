@@ -253,22 +253,30 @@ float StMixEpManager::calcDeuEfficiency(float pT, float pMag, float etaLab, floa
 // deutron Directed Flow
 void StMixEpManager::initMixSubEpFlow()
 {
-  p_mMixSubEpDeuV1Eff = new TProfile("p_mMixSubEpDeuV1Eff","p_mMixSubEpDeuV1Eff",20,-1.0,1.0);
-  p_mMixSubEpDeuV1Eff->Sumw2();
+  p_mMixSubEpProV1 = new TProfile("p_mMixSubEpProV1","p_mMixSubEpProV1",20,-1.0,1.0);
+  p_mMixSubEpProV1->Sumw2();
   p_mMixSubEpDeuV1 = new TProfile("p_mMixSubEpDeuV1","p_mMixSubEpDeuV1",20,-1.0,1.0);
   p_mMixSubEpDeuV1->Sumw2();
+  p_mMixSubEpDeuV1Eff = new TProfile("p_mMixSubEpDeuV1Eff","p_mMixSubEpDeuV1Eff",20,-1.0,1.0);
+  p_mMixSubEpDeuV1Eff->Sumw2();
+}
+
+void StMixEpManager::fillMixSubEpProV1(double yCms, double v1, double refWgt, double eff)
+{
+  p_mMixSubEpProV1->Fill(yCms, v1, refWgt);
 }
 
 void StMixEpManager::fillMixSubEpDeuV1(double yCms, double v1, double refWgt, double eff)
 {
-  p_mMixSubEpDeuV1Eff->Fill(yCms, v1, refWgt/eff);
   p_mMixSubEpDeuV1->Fill(yCms, v1, refWgt);
+  p_mMixSubEpDeuV1Eff->Fill(yCms, v1, refWgt/eff);
 }
 
 void StMixEpManager::writeMixSubEpFlow()
 {
-  p_mMixSubEpDeuV1Eff->Write();
+  p_mMixSubEpProV1->Write();
   p_mMixSubEpDeuV1->Write();
+  p_mMixSubEpDeuV1Eff->Write();
 }
 //---------------------------------------------------------------------------------
 // Event Plane Distribution

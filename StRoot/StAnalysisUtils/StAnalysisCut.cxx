@@ -656,6 +656,39 @@ bool StAnalysisCut::passQVecZdc(TVector2 Q1VecEast, TVector2 Q1VecWest, TVector2
 }
 
 // only used for deuteron flow comparison in Fxt3p85GeV_2018
+bool StAnalysisCut::passTrkTpcFlow(StPicoTrack *picoTrack, TVector3 primVtx)
+{
+  if(!picoTrack) return false;
+  if(!picoTrack->isPrimary()) return false; // require primary tracks only
+
+  // nHitsFit cut
+  if(picoTrack->nHitsFit() <= 15) return false;
+
+  // nHitsRatio cut
+  if(picoTrack->nHitsMax() <= anaUtils::mHitsMaxTpcMin[mType]) return false;
+  if((double)picoTrack->nHitsFit()/(double)picoTrack->nHitsMax() <= 0.52) return false;
+
+  // dca cut
+  const double vx = primVtx.x();
+  const double vy = primVtx.y();
+  const double vz = primVtx.z();
+  if(picoTrack->gDCA(vx,vy,vz) >= 3) return false;
+
+  const TVector3 primMom = picoTrack->pMom(); // primary Momentum
+  const double eta = primMom.PseudoRapidity();
+  if(eta < -2.0 || eta > 0.0) return false;
+
+  return true;
+}
+
+bool StAnalysisCut::passTrkProFlow(StPicoTrack *picoTrack)
+{
+  const double nSigProton = picoTrack->nSigmaProton();
+  if(nSigProton < -2.0 || nSigProton > 2.0) return false;
+
+  return true;
+}
+
 bool StAnalysisCut::passTrkDeuFlow(double pMag, double deuteronZ, double mass2)
 {
   double pBins[51] = {

@@ -66,7 +66,9 @@ class StAnalysisCut : public TObject
     // ZDC Hit Cuts for ZDC EP
     bool passQVecZdc(TVector2 Q1VecEast, TVector2 Q1VecWest, TVector2 Q1VecFull);
 
-    // only used for deuteron flow comparison in Fxt3p85GeV_2018
+    // only used for proton & deuteron flow comparison in Fxt3p85GeV_2018
+    bool passTrkTpcFlow(StPicoTrack *picoTrack, TVector3 primVtx);
+    bool passTrkProFlow(StPicoTrack *picoTrack);
     bool passTrkDeuFlow(double pMag, double deuteronZ, double mass2);
 
     // TPC EP: used in StPhiMesonAnalyzer

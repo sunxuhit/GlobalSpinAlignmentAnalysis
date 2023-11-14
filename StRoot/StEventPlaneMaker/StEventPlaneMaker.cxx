@@ -452,6 +452,8 @@ int StEventPlaneMaker::Make()
     bool isPileUpEvt = isPileUpStAnalysisCut || isPileUpStRefMultCorr;
     // cout << "isPileUpEvt = " << isPileUpEvt << ", isPileUpStAnalysisCut = " << isPileUpStAnalysisCut << ", isPileUpStRefMultCorr = " << isPileUpStRefMultCorr << endl;
 
+    // cout << "runId = " << runId << ", runIdx = " << runIdx << ", evtId = " << evtId << ", cent9 = " << cent9 << ", isPileUpEvt = " << isPileUpEvt << ", passEventCut = " << mAnaCut->passEventCut(mPicoEvent) << ", isGoodCent9 = " << mAnaCut->isGoodCent9(cent9) << endl;
+
     if( !isPileUpEvt && mAnaCut->isGoodCent9(cent9) && mAnaCut->passEventCut(mPicoEvent) )
     { // apply Event Cuts for anlaysis 
       mZdcEpManager->initZdcEpManager(cent9,runIdx,vzBin); // initialize ZDC EP Manager
@@ -722,11 +724,11 @@ int StEventPlaneMaker::Make()
 	      mEpdEpManager->fillEpdSubEpGrpWgt(Psi1GrpWgtEast, Psi1GrpWgtWest, Psi1GrpWgtFull, iGrp);
 	      mEpdEpManager->fillEpdGrpReCtrEvtAveEast(iGrp); // fill Evt Ave ReCenter Parameter
 	      mEpdEpManager->fillEpdGrpReCtrEvtAveWest(iGrp);
-	      TVector2 Q1VecEastDisplay = -1.0*vQ1EpdGrpEast[iGrp];
-	      cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpWgtEast = " << Q1VecEastDisplay.Phi() << endl;
+	      // TVector2 Q1VecEastDisplay = -1.0*vQ1EpdGrpEast[iGrp];
+	      // cout << "runId = " << runId << ", runIdx = " << runIdx << ", evtId = " << evtId << ", cent9 = " << cent9 << ", iGrp = " << iGrp << ", Psi1GrpWgtEast = " << Q1VecEastDisplay.Phi() << endl;
 	    }
 	  }
-	  cout << endl;
+	  // cout << endl;
 
 	  if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[0],vQ1EpdGrpWest[0],vQ1EpdGrpFull[0],0) &&
 	      mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[1],vQ1EpdGrpWest[1],vQ1EpdGrpFull[1],1) &&
@@ -817,11 +819,11 @@ int StEventPlaneMaker::Make()
 	      mEpdEpManager->fillEpdGrpShiftEvtAveWest(iGrp);
 
 	      // cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpReCtrEvtAveEast = " << Psi1GrpReCtrEvtAveEast << endl;
-	      TVector2 Q1VecEastDisplay = -1.0*vQ1EpdGrpEvtAveEast[iGrp];
-	      cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpReCtrEvtAveEast = " << Q1VecEastDisplay.Phi() << endl;
+	      // TVector2 Q1VecEastDisplay = -1.0*vQ1EpdGrpEvtAveEast[iGrp];
+	      // cout << "runId = " << runId << ", runIdx = " << runIdx << ", evtId = " << evtId << ", cent9 = " << cent9 << ", iGrp = " << iGrp << ", Psi1GrpReCtrEvtAveEast = " << Q1VecEastDisplay.Phi() << endl;
 	    }
 	  }
-	  cout << endl;
+	  // cout << endl;
 
 	  if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpTrkAveEast[0],vQ1EpdGrpTrkAveWest[0],vQ1EpdGrpTrkAveFull[0],0) &&
 	      mAnaCut->passQVecEpdGrp(vQ1EpdGrpTrkAveEast[1],vQ1EpdGrpTrkAveWest[1],vQ1EpdGrpTrkAveFull[1],1) &&
@@ -946,15 +948,17 @@ int StEventPlaneMaker::Make()
 	      mEpdEpManager->fillEpdSubEpGrpShiftEvtAve(Psi1GrpShiftEvtAveEast, Psi1GrpShiftEvtAveWest, Psi1GrpShiftEvtAveFull, iGrp);
 
 	      // cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpShiftEvtAveEast = " << Psi1GrpShiftEvtAveEast << endl;
-	      TVector2 Q1VecEastDisplay = -1.0*vQ1EpdGrpEvtAveEast[iGrp];
-	      cout << "runId = " << runId << ", evtId = " << evtId << ", iGrp = " << iGrp << ", Psi1GrpShiftEvtAveEast = " << Q1VecEastDisplay.Phi() << endl;
+	      // TVector2 Q1VecEastDisplay = -1.0*vQ1EpdGrpEvtAveEast[iGrp];
+	      // cout << "runId = " << runId << ", runIdx = " << runIdx << ", evtId = " << evtId << ", cent9 = " << cent9 << ", iGrp = " << iGrp << ", Psi1GrpShiftEvtAveEast = " << Q1VecEastDisplay.Phi() << endl;
 	    }
 	  }
-	  cout << endl;
+	  // cout << endl;
 
 	  if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpTrkAveEast[0],vQ1EpdGrpTrkAveWest[0],vQ1EpdGrpTrkAveFull[0],0) &&
-	      mAnaCut->passQVecEpdGrp(vQ1EpdGrpTrkAveEast[1],vQ1EpdGrpTrkAveWest[1],vQ1EpdGrpTrkAveFull[1],1) &&
-	      mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest) )
+	      mAnaCut->passQVecEpdGrp(vQ1EpdGrpTrkAveEast[1],vQ1EpdGrpTrkAveWest[1],vQ1EpdGrpTrkAveFull[1],1) )
+	  // if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpTrkAveEast[0],vQ1EpdGrpTrkAveWest[0],vQ1EpdGrpTrkAveFull[0],0) &&
+	  //     mAnaCut->passQVecEpdGrp(vQ1EpdGrpTrkAveEast[1],vQ1EpdGrpTrkAveWest[1],vQ1EpdGrpTrkAveFull[1],1) &&
+	  //     mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest) )
 	  { // 3-sub events method
 	    const double Psi1EpdGrp0 = mEpdEpManager->getPsi1GrpShiftTrkAveEast(0); // Psi1 from EPD Grp 0 East
 	    const double Psi1EpdGrp1 = mEpdEpManager->getPsi1GrpShiftTrkAveEast(1); // Psi1 from EPD Grp 1 East
@@ -1133,8 +1137,10 @@ int StEventPlaneMaker::Make()
 	  }
 
 	  if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[0],vQ1EpdGrpWest[0],vQ1EpdGrpFull[0],0) &&
-	      mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[1],vQ1EpdGrpWest[1],vQ1EpdGrpFull[1],1) &&
-	      mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest) )
+	      mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[1],vQ1EpdGrpWest[1],vQ1EpdGrpFull[1],1) )
+	  // if( mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[0],vQ1EpdGrpWest[0],vQ1EpdGrpFull[0],0) &&
+	  //     mAnaCut->passQVecEpdGrp(vQ1EpdGrpEast[1],vQ1EpdGrpWest[1],vQ1EpdGrpFull[1],1) &&
+	  //     mAnaCut->passNumTrkTpcSubEpReCtr(numTrkReCtrEast, numTrkReCtrWest) )
 	  { // 3-sub events method
 	    const double Psi1EpdGrp0 = mEpdEpManager->getPsi1GrpShiftTrkAveEast(0); // Psi1 from EPD Grp 0 East 
 	    for(unsigned int iTrack = 0; iTrack < nTracks; ++iTrack)	  
@@ -1149,16 +1155,30 @@ int StEventPlaneMaker::Make()
 	      const double deuteronZ = mAnaUtils->calcNSigmaZ(1.0,anaUtils::mMassDeuteron,pMag,picoTrack->dEdx()); // assume every track is deutron
 	      const double mass2     = mAnaUtils->getPrimMass2(mPicoDst,iTrack);
 
-	      if(mAnaCut->passTrkDeuFlow(pMag,deuteronZ,mass2) && mMixEpManager->getMixSubEp1Res1Val(cent9,0) > 0.0)
+	      if(mAnaCut->passTrkTpcFlow(picoTrack, primVtx) && mMixEpManager->getMixSubEp1Res1Val(cent9,0) > 0.0)
 	      {
-		if( pT > 0.8 && pT < 2.0 && cent9 >=4 && cent9 <=6 )
-		{ // 10-40% with the same cuts as PLB827,136941
-		  const double etaLab = primMom.PseudoRapidity();
-		  const double yLab   = mAnaUtils->getRapidityLab(picoTrack, 1234); // calculate deuteron rapidity in lab frame
-		  const double yCms   = mAnaUtils->getRapidityCMS(yLab);
-		  const double d_eff  = mMixEpManager->calcDeuEfficiency(pT,pMag,etaLab,yCms);
-		  const double v1Epd  = TMath::Cos(1.0*(phi-Psi1EpdGrp0))/mMixEpManager->getMixSubEp1Res1Val(cent9,0);
-		  if(d_eff > 0.0 && yCms > 0.0) mMixEpManager->fillMixSubEpDeuV1(yCms, v1Epd, refWgt, d_eff);
+		const double etaLab = primMom.PseudoRapidity();
+		const double v1Epd  = TMath::Cos(1.0*(phi-Psi1EpdGrp0))/mMixEpManager->getMixSubEp1Res1Val(cent9,0);
+		if(mAnaCut->passTrkProFlow(picoTrack))
+		{
+		  if( pT > 0.4 && pT < 1.0 && cent9 >=4 && cent9 <=6 )
+		  { // 10-40% with the same cuts as PLB827,136941
+		    const double yLab   = mAnaUtils->getRapidityLab(picoTrack, 2212); // y_proton in lab frame
+		    const double yCms   = mAnaUtils->getRapidityCMS(yLab);
+		    const double p_eff  = 1.0;
+		    if(p_eff > 0.0 && yCms > 0.0) mMixEpManager->fillMixSubEpProV1(yCms, v1Epd, refWgt, p_eff);
+		  }
+		}
+		if(mAnaCut->passTrkDeuFlow(pMag,deuteronZ,mass2))
+		{
+		  if( pT > 0.8 && pT < 2.0 && cent9 >=4 && cent9 <=6 )
+		  { // 10-40% with the same cuts as PLB827,136941
+		    const double yLab   = mAnaUtils->getRapidityLab(picoTrack, 1234); // y_deuteron in lab frame
+		    const double yCms   = mAnaUtils->getRapidityCMS(yLab);
+		    const double d_eff  = mMixEpManager->calcDeuEfficiency(pT,pMag,etaLab,yCms);
+		    // const double d_eff  = 1.0;
+		    if(d_eff > 0.0 && yCms > 0.0) mMixEpManager->fillMixSubEpDeuV1(yCms, v1Epd, refWgt, d_eff);
+		  }
 		}
 	      }
 	    }
